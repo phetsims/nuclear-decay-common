@@ -5,12 +5,13 @@
  * @author Agustín Vallejo
  */
 
-import BooleanProperty from '../../../axon/js/BooleanProperty.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import ScreenView, { ScreenViewOptions } from '../../../joist/js/ScreenView.js';
-import TimeControlNode from '../../../scenery-phet/js/TimeControlNode.js';
-import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import ResetAllButton from '../../../scenery-phet/js/buttons/ResetAllButton.js';
+import RestartButton from '../../../scenery-phet/js/buttons/RestartButton.js';
+import TimeControlNode from '../../../scenery-phet/js/TimeControlNode.js';
+import TimeSpeed from '../../../scenery-phet/js/TimeSpeed.js';
+import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import nuclearDecayCommon from '../nuclearDecayCommon.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 
@@ -37,17 +38,24 @@ export default class NuclearDecayScreenView extends ScreenView {
     } );
     this.addChild( resetAllButton );
 
-    const timeControls = new TimeControlNode( new BooleanProperty( false ), {
+    const timeControlNode = new TimeControlNode( model.isPlayingProperty, {
+      timeSpeedProperty: model.timeSpeedProperty,
+      timeSpeeds: [ TimeSpeed.NORMAL, TimeSpeed.SLOW ],
       playPauseStepButtonOptions: {
         stepForwardButtonOptions: {
-          listener: () => {}
+          listener: () => model.manualStep()
         }
       },
       bottom: resetAllButton.top - 20,
       right: resetAllButton.right
     } );
-    this.addChild( timeControls );
 
+    const restartButton = new RestartButton( {
+      listener: () => model.restart()
+    } );
+    timeControlNode.addPushButton( restartButton, 0 );
+
+    this.addChild( timeControlNode );
   }
 
   public reset(): void {
