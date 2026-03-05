@@ -12,6 +12,9 @@ export default class NuclearDecayCommonConstants {
   public constructor() {
     // no-op
   }
+
+  public static readonly SCREEN_VIEW_X_MARGIN = 15;
+  public static readonly SCREEN_VIEW_Y_MARGIN = 15;
 }
 
 nuclearDecayCommon.register( 'NuclearDecayCommonConstants', NuclearDecayCommonConstants );
