@@ -12,5 +12,8 @@
   "phet": {
     "requirejsNamespace": "NUCLEAR_DECAY_COMMON",
     "supportsOutputJS": true
-  }
+  },
+  "phetLibs": [
+    "shred"
+  ]
 }
