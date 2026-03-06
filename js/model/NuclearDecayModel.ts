@@ -5,6 +5,8 @@
  * @author Agustín Vallejo
  */
 
+import NumberProperty from '../../../axon/js/NumberProperty.js';
+import Property from '../../../axon/js/Property.js';
 import TModel from '../../../joist/js/TModel.js';
 import { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import BooleanProperty from '../../../axon/js/BooleanProperty.js';
@@ -12,6 +14,7 @@ import EnumerationProperty from '../../../axon/js/EnumerationProperty.js';
 import TimeSpeed from '../../../scenery-phet/js/TimeSpeed.js';
 import nuclearDecayCommon from '../nuclearDecayCommon.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
+import Isotope from './Isotope.js';
 
 export type NuclearDecayModelOptions = EmptySelfOptions;
 
@@ -19,8 +22,17 @@ export default class NuclearDecayModel implements TModel {
 
   public readonly isPlayingProperty: BooleanProperty;
   public readonly timeSpeedProperty: EnumerationProperty<TimeSpeed>;
+  public readonly timeProperty: NumberProperty;
 
-  public constructor( providedOptions: NuclearDecayModelOptions ) {
+  public readonly selectedIsotopeProperty: Property<Isotope>;
+
+  public constructor( providedOptions?: NuclearDecayModelOptions ) {
+
+    this.selectedIsotopeProperty = new Property<Isotope>( new Isotope( 84, 127 ) );
+
+    this.timeProperty = new NumberProperty( 0, {
+      // tandem: ???
+    } );
 
     this.isPlayingProperty = new BooleanProperty( false, {
       // tandem: ???
@@ -37,6 +49,7 @@ export default class NuclearDecayModel implements TModel {
   public reset(): void {
     this.isPlayingProperty.reset();
     this.timeSpeedProperty.reset();
+    this.timeProperty.reset();
   }
 
   /**
@@ -71,7 +84,7 @@ export default class NuclearDecayModel implements TModel {
    * @param dt - effective time step, in seconds (can be negative for backward steps)
    */
   protected stepModel( dt: number ): void {
-    // Override in subclasses to implement actual model behavior
+    this.timeProperty.value += dt;
   }
 }
 

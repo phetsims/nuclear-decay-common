@@ -36,6 +36,8 @@ type StringsType = {
   'distanceStringProperty': LocalizedStringProperty;
   'energy': string;
   'energyStringProperty': LocalizedStringProperty;
+  'custom': string;
+  'customStringProperty': LocalizedStringProperty;
   'decayTime': string;
   'decayTimeStringProperty': LocalizedStringProperty;
 };

@@ -34,6 +34,7 @@ addToMapIfDefined( 'initialEnergy', 'initialEnergyStringProperty' );
 addToMapIfDefined( 'finalEnergy', 'finalEnergyStringProperty' );
 addToMapIfDefined( 'distance', 'distanceStringProperty' );
 addToMapIfDefined( 'energy', 'energyStringProperty' );
+addToMapIfDefined( 'custom', 'customStringProperty' );
 addToMapIfDefined( 'decayTime', 'decayTimeStringProperty' );
 
 // A function that creates contents for a new Fluent file, which will be needed if any string changes.
@@ -61,6 +62,7 @@ const NuclearDecayCommonFluent = {
   finalEnergyStringProperty: _.get( NuclearDecayCommonStrings, 'finalEnergyStringProperty' ),
   distanceStringProperty: _.get( NuclearDecayCommonStrings, 'distanceStringProperty' ),
   energyStringProperty: _.get( NuclearDecayCommonStrings, 'energyStringProperty' ),
+  customStringProperty: _.get( NuclearDecayCommonStrings, 'customStringProperty' ),
   decayTimeStringProperty: _.get( NuclearDecayCommonStrings, 'decayTimeStringProperty' )
 };
 

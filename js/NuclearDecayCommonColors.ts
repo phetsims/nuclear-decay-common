@@ -20,6 +20,16 @@ const NuclearDecayCommonColors = {
   backgroundProperty: new ProfileColorProperty( nuclearDecayCommon, 'background', {
     default: 'black',
     projector: 'white'
+  } ),
+
+  // TODO are these the proper names? Surely not https://github.com/phetsims/alpha-decay/issues/3
+  //  Don't call me Shirley!
+  pinkProperty: new ProfileColorProperty( nuclearDecayCommon, 'pink', {
+    default: '#ff00ff'
+  } ),
+
+  blueProperty: new ProfileColorProperty( nuclearDecayCommon, 'blue', {
+    default: '#5555ff'
   } )
 };
 

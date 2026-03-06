@@ -32,6 +32,9 @@
   "energy": {
     "value": "Energy"
   },
+  "custom": {
+    "value": "Custom"
+  },
   "decayTime": {
     "value": "Decay Time:"
   }

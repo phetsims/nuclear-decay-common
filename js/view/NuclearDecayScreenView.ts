@@ -48,7 +48,7 @@ export default class NuclearDecayScreenView extends ScreenView {
 
     // Right column panels
 
-    const isotopePanel = new IsotopePanel();
+    const isotopePanel = new IsotopePanel( model );
     const particleCountsAccordionBox = new ParticleCountsAccordionBox();
     const equationAccordionBox = new EquationAccordionBox();
 
@@ -86,7 +86,8 @@ export default class NuclearDecayScreenView extends ScreenView {
     } );
 
     const restartButton = new RestartButton( {
-      listener: () => model.restart()
+      listener: () => model.restart(),
+      enabledProperty: model.timeProperty.derived( time => time > 0 )
     } );
     timeControlNode.addPushButton( restartButton, 0 );
 

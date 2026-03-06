@@ -6,10 +6,16 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
-import PhetFont from '../../../scenery-phet/js/PhetFont.js';
-import nuclearDecayCommon from '../nuclearDecayCommon.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
+import PhetFont from '../../../scenery-phet/js/PhetFont.js';
+import VBox from '../../../scenery/js/layout/nodes/VBox.js';
 import Text from '../../../scenery/js/nodes/Text.js';
+import type { AquaRadioButtonGroupItem } from '../../../sun/js/AquaRadioButtonGroup.js';
+import VerticalAquaRadioButtonGroup from '../../../sun/js/VerticalAquaRadioButtonGroup.js';
+import Isotope from '../model/Isotope.js';
+import NuclearDecayModel from '../model/NuclearDecayModel.js';
+import nuclearDecayCommon from '../nuclearDecayCommon.js';
+import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
@@ -19,13 +25,46 @@ type SelfOptions = EmptySelfOptions;
 export type IsotopePanelOptions = SelfOptions & NuclearDecayPanelOptions;
 
 export default class IsotopePanel extends NuclearDecayPanel {
-  public constructor( providedOptions?: IsotopePanelOptions ) {
+  public constructor( model: NuclearDecayModel, providedOptions?: IsotopePanelOptions ) {
     const options = optionize<IsotopePanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {
       minWidth: NuclearDecayCommonConstants.RIGHT_PANEL_WIDTH
     }, providedOptions );
 
-    const contentsNode = new Text( NuclearDecayCommonFluent.isotopeStringProperty, {
+    const titleNode = new Text( NuclearDecayCommonFluent.isotopeStringProperty, {
       font: new PhetFont( { size: 18, weight: 'bold' } )
+    } );
+
+    // TODO: These should be populated from the model.possibleIsotopes or something https://github.com/phetsims/alpha-decay/issues/3
+    const isotope = new Isotope( 84, 210 );
+    const customIsotope = new Isotope( 1, 1 );
+    const radioButtonItems: AquaRadioButtonGroupItem<Isotope>[] = [
+      {
+        value: isotope,
+        createNode: () => new Text( isotope.elementNameStringProperty, {
+          font: new PhetFont( { size: 18 } ),
+          fill: NuclearDecayCommonColors.pinkProperty
+        } )
+      },
+      {
+        value: customIsotope,
+        createNode: () => new Text( NuclearDecayCommonFluent.customStringProperty, {
+          font: new PhetFont( { size: 18 } ),
+          fill: NuclearDecayCommonColors.blueProperty
+        } )
+      }
+    ];
+    const isotopeSelectorRadioButtonGroup = new VerticalAquaRadioButtonGroup(
+      model.selectedIsotopeProperty,
+      radioButtonItems
+    );
+
+    const contentsNode = new VBox( {
+      spacing: 10,
+      align: 'left',
+      children: [
+        titleNode,
+        isotopeSelectorRadioButtonGroup
+      ]
     } );
 
     super( contentsNode, options );
