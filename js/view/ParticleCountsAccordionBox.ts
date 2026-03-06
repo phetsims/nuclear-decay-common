@@ -2,29 +2,29 @@
 /**
  * AccordionBox that holds the ParticleCounts title as well as the number of particles in the nucleus.
  *
- * @author Agustín Vallejo
+ * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
 import nuclearDecayCommon from '../nuclearDecayCommon.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
-import AccordionBox, { AccordionBoxOptions } from '../../../sun/js/AccordionBox.js';
-import Node from '../../../scenery/js/nodes/Node.js';
+import Text from '../../../scenery/js/nodes/Text.js';
+import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
+import NuclearDecayAccordionBox, { NuclearDecayAccordionBoxOptions } from './NuclearDecayAccordionBox.js';
 
 type SelfOptions = EmptySelfOptions;
 
-export type ParticleLegendAccordionBoxOptions = SelfOptions & AccordionBoxOptions;
+export type ParticleCountsAccordionBoxOptions = SelfOptions & NuclearDecayAccordionBoxOptions;
 
-export default class ParticleCountsAccordionBox extends AccordionBox {
-  public constructor( providedOptions: ParticleLegendAccordionBoxOptions ) {
-    const options = optionize<SelfOptions, EmptySelfOptions, ParticleLegendAccordionBoxOptions>()( {
-      // Default options go here
+export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox {
+  public constructor( providedOptions?: ParticleCountsAccordionBoxOptions ) {
+    const options = optionize<ParticleCountsAccordionBoxOptions, SelfOptions, NuclearDecayAccordionBoxOptions>()( {
+      minWidth: NuclearDecayCommonConstants.RIGHT_PANEL_WIDTH
     }, providedOptions );
 
     // TO BE IMPLEMENTED
-    const contentsNode = new Node();
+    const contentsNode = new Text( 'Hola' );
 
     super( contentsNode, options );
-    //nop
   }
 }
 

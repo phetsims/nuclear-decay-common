@@ -16,6 +16,15 @@ export default class NuclearDecayCommonConstants {
   public static readonly SCREEN_VIEW_X_MARGIN = 15;
   public static readonly SCREEN_VIEW_Y_MARGIN = 15;
 
+  // Layout constants for panel sizing and spacing
+  public static readonly LONG_PANEL_WIDTH = 600;
+  public static readonly RIGHT_PANEL_WIDTH = 200;
+  public static readonly PANEL_X_MARGIN = 10;
+  public static readonly PANEL_Y_MARGIN = 10;
+  public static readonly PANEL_SPACING = 10;
+  public static readonly PANEL_FILL = 'rgb( 238, 238, 238 )';
+  public static readonly MAIN_PANEL_FILL = '#F1FAFE';
+
   // Time control constants
   public static readonly MANUAL_STEP_DT = 1 / 60; // seconds, one frame
   public static readonly NORMAL_SPEED_SCALE = 1;

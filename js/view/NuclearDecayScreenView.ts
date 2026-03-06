@@ -14,26 +14,72 @@ import TimeSpeed from '../../../scenery-phet/js/TimeSpeed.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import nuclearDecayCommon from '../nuclearDecayCommon.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
+import IsotopePanel from './IsotopePanel.js';
+import ParticleCountsAccordionBox from './ParticleCountsAccordionBox.js';
+import EquationAccordionBox from './EquationAccordionBox.js';
+import EnergyDiagramAccordionBox from './EnergyDiagramAccordionBox.js';
+import HalfLifePanel from './HalfLifePanel.js';
+import VBox from '../../../scenery/js/layout/nodes/VBox.js';
 
 type SelfOptions = EmptySelfOptions;
 
 export type NuclearDecayScreenViewOptions = SelfOptions & ScreenViewOptions;
 
 export default class NuclearDecayScreenView extends ScreenView {
-  public constructor( model: NuclearDecayModel, providedOptions: NuclearDecayScreenViewOptions ) {
+  public constructor( model: NuclearDecayModel, providedOptions?: NuclearDecayScreenViewOptions ) {
     const options = optionize<SelfOptions, EmptySelfOptions, NuclearDecayScreenViewOptions>()( {
       // Default options go here
     }, providedOptions );
 
     super( options );
 
+    const MARGIN = NuclearDecayCommonConstants.SCREEN_VIEW_X_MARGIN;
+    const MARGIN_Y = NuclearDecayCommonConstants.SCREEN_VIEW_Y_MARGIN;
+    const PANEL_SPACING = NuclearDecayCommonConstants.PANEL_SPACING;
+
+    // --- Top-left panel ---
+
+    const halfLifePanel = new HalfLifePanel( {
+      minWidth: NuclearDecayCommonConstants.LONG_PANEL_WIDTH,
+      left: this.layoutBounds.minX + MARGIN,
+      top: this.layoutBounds.minY + MARGIN_Y,
+      fill: NuclearDecayCommonConstants.MAIN_PANEL_FILL
+    } );
+    this.addChild( halfLifePanel );
+
+    // --- Right column panels ---
+
+    const isotopePanel = new IsotopePanel();
+    const particleCountsAccordionBox = new ParticleCountsAccordionBox();
+    const equationAccordionBox = new EquationAccordionBox();
+
+    const rightColumnVBox = new VBox( {
+      spacing: PANEL_SPACING,
+      right: this.layoutBounds.maxX - MARGIN,
+      top: this.layoutBounds.minY + MARGIN_Y,
+      children: [ isotopePanel, particleCountsAccordionBox, equationAccordionBox ]
+    } );
+    this.addChild( rightColumnVBox );
+
+    // --- Bottom-left panel ---
+
+    const energyDiagramAccordionBox = new EnergyDiagramAccordionBox( {
+      minWidth: NuclearDecayCommonConstants.LONG_PANEL_WIDTH,
+      left: this.layoutBounds.minX + MARGIN,
+      bottom: this.layoutBounds.maxY - MARGIN_Y,
+      fill: NuclearDecayCommonConstants.MAIN_PANEL_FILL
+    } );
+    this.addChild( energyDiagramAccordionBox );
+
+    // --- Bottom-right controls ---
+
     const resetAllButton = new ResetAllButton( {
       listener: () => {
         model.reset();
         this.reset();
       },
-      right: this.layoutBounds.maxX - NuclearDecayCommonConstants.SCREEN_VIEW_X_MARGIN,
-      bottom: this.layoutBounds.maxY - NuclearDecayCommonConstants.SCREEN_VIEW_Y_MARGIN
+      right: this.layoutBounds.maxX - MARGIN,
+      bottom: this.layoutBounds.maxY - MARGIN_Y
       // tandem: options.tandem.createTandem( 'resetAllButton' )
     } );
     this.addChild( resetAllButton );
@@ -46,7 +92,7 @@ export default class NuclearDecayScreenView extends ScreenView {
           listener: () => model.manualStep()
         }
       },
-      bottom: resetAllButton.top - 20,
+      bottom: resetAllButton.top - PANEL_SPACING,
       right: resetAllButton.right
     } );
 

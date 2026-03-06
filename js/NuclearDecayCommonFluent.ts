@@ -23,7 +23,18 @@ const addToMapIfDefined = ( key: string, path: string ) => {
   }
 };
 
+addToMapIfDefined( 'nuclear_decay_common_title', 'nuclear-decay-common.titleStringProperty' );
 addToMapIfDefined( 'resetNucleus', 'resetNucleusStringProperty' );
+addToMapIfDefined( 'equation', 'equationStringProperty' );
+addToMapIfDefined( 'halfLife', 'halfLifeStringProperty' );
+addToMapIfDefined( 'isotope', 'isotopeStringProperty' );
+addToMapIfDefined( 'addAtom', 'addAtomStringProperty' );
+addToMapIfDefined( 'alphaParticleEnergy', 'alphaParticleEnergyStringProperty' );
+addToMapIfDefined( 'initialEnergy', 'initialEnergyStringProperty' );
+addToMapIfDefined( 'finalEnergy', 'finalEnergyStringProperty' );
+addToMapIfDefined( 'distance', 'distanceStringProperty' );
+addToMapIfDefined( 'energy', 'energyStringProperty' );
+addToMapIfDefined( 'decayTime', 'decayTimeStringProperty' );
 
 // A function that creates contents for a new Fluent file, which will be needed if any string changes.
 const createFluentFile = (): string => {
@@ -37,7 +48,20 @@ const createFluentFile = (): string => {
 const fluentSupport = new FluentContainer( createFluentFile, Array.from(fluentKeyToStringPropertyMap.values()) );
 
 const NuclearDecayCommonFluent = {
-  resetNucleusStringProperty: _.get( NuclearDecayCommonStrings, 'resetNucleusStringProperty' )
+  "nuclear-decay-common": {
+    titleStringProperty: _.get( NuclearDecayCommonStrings, 'nuclear-decay-common.titleStringProperty' )
+  },
+  resetNucleusStringProperty: _.get( NuclearDecayCommonStrings, 'resetNucleusStringProperty' ),
+  equationStringProperty: _.get( NuclearDecayCommonStrings, 'equationStringProperty' ),
+  halfLifeStringProperty: _.get( NuclearDecayCommonStrings, 'halfLifeStringProperty' ),
+  isotopeStringProperty: _.get( NuclearDecayCommonStrings, 'isotopeStringProperty' ),
+  addAtomStringProperty: _.get( NuclearDecayCommonStrings, 'addAtomStringProperty' ),
+  alphaParticleEnergyStringProperty: _.get( NuclearDecayCommonStrings, 'alphaParticleEnergyStringProperty' ),
+  initialEnergyStringProperty: _.get( NuclearDecayCommonStrings, 'initialEnergyStringProperty' ),
+  finalEnergyStringProperty: _.get( NuclearDecayCommonStrings, 'finalEnergyStringProperty' ),
+  distanceStringProperty: _.get( NuclearDecayCommonStrings, 'distanceStringProperty' ),
+  energyStringProperty: _.get( NuclearDecayCommonStrings, 'energyStringProperty' ),
+  decayTimeStringProperty: _.get( NuclearDecayCommonStrings, 'decayTimeStringProperty' )
 };
 
 export default NuclearDecayCommonFluent;

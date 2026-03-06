@@ -12,8 +12,32 @@ import type LocalizedStringProperty from '../../chipper/js/browser/LocalizedStri
 import nuclearDecayCommon from './nuclearDecayCommon.js';
 
 type StringsType = {
+  'nuclear-decay-common': {
+    'title': string;
+    'titleStringProperty': LocalizedStringProperty;
+  };
   'resetNucleus': string;
   'resetNucleusStringProperty': LocalizedStringProperty;
+  'equation': string;
+  'equationStringProperty': LocalizedStringProperty;
+  'halfLife': string;
+  'halfLifeStringProperty': LocalizedStringProperty;
+  'isotope': string;
+  'isotopeStringProperty': LocalizedStringProperty;
+  'addAtom': string;
+  'addAtomStringProperty': LocalizedStringProperty;
+  'alphaParticleEnergy': string;
+  'alphaParticleEnergyStringProperty': LocalizedStringProperty;
+  'initialEnergy': string;
+  'initialEnergyStringProperty': LocalizedStringProperty;
+  'finalEnergy': string;
+  'finalEnergyStringProperty': LocalizedStringProperty;
+  'distance': string;
+  'distanceStringProperty': LocalizedStringProperty;
+  'energy': string;
+  'energyStringProperty': LocalizedStringProperty;
+  'decayTime': string;
+  'decayTimeStringProperty': LocalizedStringProperty;
 };
 
 const NuclearDecayCommonStrings = getStringModule( 'NUCLEAR_DECAY_COMMON' ) as StringsType;

@@ -10,10 +10,15 @@
     "grunt": "~1.5.3"
   },
   "phet": {
+    "runnable": true,
+    "generatedUnitTests": true,
     "requirejsNamespace": "NUCLEAR_DECAY_COMMON",
-    "supportsOutputJS": true
-  },
-  "phetLibs": [
-    "shred"
-  ]
+    "supportsOutputJS": true,
+    "phetLibs": [
+      "shred"
+    ],
+    "supportedBrands": [
+      "phet"
+    ]
+  }
 }

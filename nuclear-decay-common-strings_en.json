@@ -1,5 +1,38 @@
 {
+  "nuclear-decay-common.title": {
+    "value": "Nuclear Decay Common"
+  },
   "resetNucleus": {
     "value": "Reset Nucleus"
+  },
+  "equation": {
+    "value": "Equation"
+  },
+  "halfLife": {
+    "value": "Half-life"
+  },
+  "isotope": {
+    "value": "Isotope"
+  },
+  "addAtom": {
+    "value": "Add Atom"
+  },
+  "alphaParticleEnergy": {
+    "value": "Alpha Particle Energy"
+  },
+  "initialEnergy": {
+    "value": "Initial Energy"
+  },
+  "finalEnergy": {
+    "value": "Final Energy"
+  },
+  "distance": {
+    "value": "Distance"
+  },
+  "energy": {
+    "value": "Energy"
+  },
+  "decayTime": {
+    "value": "Decay Time:"
   }
 }
