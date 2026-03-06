@@ -5,8 +5,8 @@
  * @author Agustín Vallejo
  */
 
-import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import ScreenView, { ScreenViewOptions } from '../../../joist/js/ScreenView.js';
+import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import ResetAllButton from '../../../scenery-phet/js/buttons/ResetAllButton.js';
 import RestartButton from '../../../scenery-phet/js/buttons/RestartButton.js';
 import TimeControlNode from '../../../scenery-phet/js/TimeControlNode.js';
@@ -33,7 +33,7 @@ export default class NuclearDecayScreenView extends ScreenView {
         this.reset();
       },
       right: this.layoutBounds.maxX - NuclearDecayCommonConstants.SCREEN_VIEW_X_MARGIN,
-      bottom: this.layoutBounds.maxY - NuclearDecayCommonConstants.SCREEN_VIEW_Y_MARGIN,
+      bottom: this.layoutBounds.maxY - NuclearDecayCommonConstants.SCREEN_VIEW_Y_MARGIN
       // tandem: options.tandem.createTandem( 'resetAllButton' )
     } );
     this.addChild( resetAllButton );
