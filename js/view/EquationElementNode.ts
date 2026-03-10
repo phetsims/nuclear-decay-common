@@ -48,7 +48,7 @@ export default class EquationElementNode extends Node {
       fill: options.fill,
       right: symbolText.left - SMALL_TEXT_OFFSET,
       bottom: symbolText.bottom + SMALL_TEXT_OFFSET
-    } );
+    } )
 
     options.children = [
       symbolText,
