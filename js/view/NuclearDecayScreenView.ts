@@ -25,6 +25,10 @@ type SelfOptions = EmptySelfOptions;
 export type NuclearDecayScreenViewOptions = SelfOptions & ScreenViewOptions;
 
 export default class NuclearDecayScreenView extends ScreenView {
+
+  // Child classes will need to reference this panel for layout
+  protected readonly halfLifePanel: HalfLifePanel;
+
   public constructor( model: NuclearDecayModel, providedOptions?: NuclearDecayScreenViewOptions ) {
     const options = optionize<SelfOptions, EmptySelfOptions, NuclearDecayScreenViewOptions>()( {
       // Default options go here
@@ -38,13 +42,13 @@ export default class NuclearDecayScreenView extends ScreenView {
 
     // Top-left panel
 
-    const halfLifePanel = new HalfLifePanel( model, {
+    this.halfLifePanel = new HalfLifePanel( model, {
       minWidth: NuclearDecayCommonConstants.LONG_PANEL_WIDTH,
       left: this.layoutBounds.minX + MARGIN_X,
       top: this.layoutBounds.minY + MARGIN_Y,
       fill: NuclearDecayCommonConstants.MAIN_PANEL_FILL
     } );
-    this.addChild( halfLifePanel );
+    this.addChild( this.halfLifePanel );
 
     // Right column panels
 

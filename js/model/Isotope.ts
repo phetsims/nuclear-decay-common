@@ -6,6 +6,7 @@
  * @author Agustín Vallejo
  */
 
+import DerivedProperty from '../../../axon/js/DerivedProperty.js';
 import DerivedStringProperty from '../../../axon/js/DerivedStringProperty.js';
 import NumberProperty from '../../../axon/js/NumberProperty.js';
 import Property from '../../../axon/js/Property.js';
@@ -24,14 +25,21 @@ export type IsotopeOptions = SelfOptions;
 
 export default class Isotope {
 
+  // Name of the element regardless of isotope, e.g. "Polonium"
   public readonly elementNameStringProperty: TReadOnlyProperty<string>;
+
+  // Name of the isotope, e.g. "Polonium-211"
   public readonly isotopeNameStringProperty: TReadOnlyProperty<string>;
+
+  // Symbol of the isotope, e.g. "<sup>211</sup>Po". Intended for use with RichText.
   public readonly isotopeSymbolStringProperty: TReadOnlyProperty<string>;
 
   public readonly protonCountProperty: TReadOnlyProperty<number>;
   public readonly neutronCountProperty: TReadOnlyProperty<number>;
 
-  public readonly decaysIntoProperty: TReadOnlyProperty<Isotope> | null;
+  public readonly decaysIntoProperty: TReadOnlyProperty<Isotope | null>;
+
+  public readonly halfLifeProperty: TReadOnlyProperty<number | null>;
 
   public constructor( protons: number, neutrons: number, providedOptions?: IsotopeOptions ) {
     const options = optionize<SelfOptions, EmptySelfOptions, IsotopeOptions>()( {
@@ -41,7 +49,17 @@ export default class Isotope {
     this.protonCountProperty = new NumberProperty( protons );
     this.neutronCountProperty = new NumberProperty( neutrons );
 
-    this.decaysIntoProperty = options.decaysInto ? new Property<Isotope>( options.decaysInto ) : null;
+    this.decaysIntoProperty = new Property<Isotope | null>( options.decaysInto );
+
+    this.halfLifeProperty = new DerivedProperty(
+      [
+        this.protonCountProperty,
+        this.neutronCountProperty
+      ], ( protonCount: number, neutronCount: number ) => {
+        return AtomIdentifier.getNuclideHalfLife( protonCount, neutronCount );
+      }
+    );
+
 
     this.elementNameStringProperty = AtomIdentifier.createDynamicNameProperty( this.protonCountProperty );
 

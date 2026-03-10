@@ -67,7 +67,7 @@ export default class HalfLifePanel extends NuclearDecayPanel {
 
     // TODO: Should also react when selectedIsotopeProperty itself changes https://github.com/phetsims/alpha-decay/issues/3
     const isotope = model.selectedIsotopeProperty.value;
-    const decayProductSymbolProperty: TReadOnlyProperty<string> = isotope.decaysIntoProperty
+    const decayProductSymbolProperty: TReadOnlyProperty<string> = isotope.decaysIntoProperty.value
       ? isotope.decaysIntoProperty.value.isotopeSymbolStringProperty
       : new Property( '--' );
 
