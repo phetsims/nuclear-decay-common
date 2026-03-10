@@ -40,6 +40,16 @@ type StringsType = {
   'customStringProperty': LocalizedStringProperty;
   'decayTime': string;
   'decayTimeStringProperty': LocalizedStringProperty;
+  'protonsPattern': string;
+  'protonsPatternStringProperty': LocalizedStringProperty;
+  'neutronsPattern': string;
+  'neutronsPatternStringProperty': LocalizedStringProperty;
+  'isotopeNameNumberPattern': string;
+  'isotopeNameNumberPatternStringProperty': LocalizedStringProperty;
+  'isotopeNumberSymbolPattern': string;
+  'isotopeNumberSymbolPatternStringProperty': LocalizedStringProperty;
+  'isotopeInfoTitle': string;
+  'isotopeInfoTitleStringProperty': LocalizedStringProperty;
 };
 
 const NuclearDecayCommonStrings = getStringModule( 'NUCLEAR_DECAY_COMMON' ) as StringsType;

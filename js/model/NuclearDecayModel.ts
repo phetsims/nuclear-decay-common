@@ -28,7 +28,12 @@ export default class NuclearDecayModel implements TModel {
 
   public constructor( providedOptions?: NuclearDecayModelOptions ) {
 
-    this.selectedIsotopeProperty = new Property<Isotope>( new Isotope( 84, 127 ) );
+    const leadIsotope = new Isotope( 82, 125 );
+    const poloniumIsotope = new Isotope( 84, 127, {
+      decaysInto: leadIsotope
+    } );
+
+    this.selectedIsotopeProperty = new Property<Isotope>( poloniumIsotope );
 
     this.timeProperty = new NumberProperty( 0, {
       // tandem: ???

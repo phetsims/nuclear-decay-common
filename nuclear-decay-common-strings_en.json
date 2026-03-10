@@ -37,5 +37,20 @@
   },
   "decayTime": {
     "value": "Decay Time:"
+  },
+  "protonsPattern": {
+    "value": "Protons: {{protons}}"
+  },
+  "neutronsPattern": {
+    "value": "Neutrons: {{neutrons}}"
+  },
+  "isotopeNameNumberPattern": {
+    "value": "{{name}}-{{massNumber}}"
+  },
+  "isotopeNumberSymbolPattern": {
+    "value": "<sup>{{massNumber}}</sup>{{symbol}}"
+  },
+  "isotopeInfoTitle": {
+    "value": "{{nameAndNumber}} ({{numberSymbol}})"
   }
 }

@@ -6,12 +6,15 @@
  * @author Agustín Vallejo
  */
 
+import DerivedStringProperty from '../../../axon/js/DerivedStringProperty.js';
 import NumberProperty from '../../../axon/js/NumberProperty.js';
 import Property from '../../../axon/js/Property.js';
 import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
+import StringUtils from '../../../phetcommon/js/util/StringUtils.js';
 import nuclearDecayCommon from '../nuclearDecayCommon.js';
 import AtomIdentifier from '../../../shred/js/AtomIdentifier.js';
+import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 
 type SelfOptions = {
   decaysInto?: Isotope | null; // Optional property to specify the isotope that this one decays into
@@ -22,6 +25,8 @@ export type IsotopeOptions = SelfOptions;
 export default class Isotope {
 
   public readonly elementNameStringProperty: TReadOnlyProperty<string>;
+  public readonly isotopeNameStringProperty: TReadOnlyProperty<string>;
+  public readonly isotopeSymbolStringProperty: TReadOnlyProperty<string>;
 
   public readonly protonCountProperty: TReadOnlyProperty<number>;
   public readonly neutronCountProperty: TReadOnlyProperty<number>;
@@ -39,6 +44,32 @@ export default class Isotope {
     this.decaysIntoProperty = options.decaysInto ? new Property<Isotope>( options.decaysInto ) : null;
 
     this.elementNameStringProperty = AtomIdentifier.createDynamicNameProperty( this.protonCountProperty );
+
+    this.isotopeNameStringProperty = new DerivedStringProperty(
+      [
+        this.elementNameStringProperty,
+        this.protonCountProperty,
+        this.neutronCountProperty,
+        NuclearDecayCommonFluent.isotopeNameNumberPatternStringProperty
+      ], ( elementName, protons, neutrons, pattern ) => {
+        return StringUtils.fillIn( pattern, {
+          name: elementName,
+          massNumber: protons + neutrons
+        } );
+      } );
+
+    this.isotopeSymbolStringProperty = new DerivedStringProperty(
+      [
+        this.protonCountProperty,
+        this.neutronCountProperty,
+        NuclearDecayCommonFluent.isotopeNumberSymbolPatternStringProperty
+      ], ( protons, neutrons, pattern ) => {
+        return StringUtils.fillIn( pattern, {
+          massNumber: protons + neutrons,
+          symbol: AtomIdentifier.getSymbol( protons )
+        } );
+      } );
+
   }
 }
 

@@ -5,10 +5,20 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
-import nuclearDecayCommon from '../nuclearDecayCommon.js';
+import DerivedStringProperty from '../../../axon/js/DerivedStringProperty.js';
+import DynamicProperty from '../../../axon/js/DynamicProperty.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
+import StringUtils from '../../../phetcommon/js/util/StringUtils.js';
+import PhetFont from '../../../scenery-phet/js/PhetFont.js';
+import VBox from '../../../scenery/js/layout/nodes/VBox.js';
+import RichText from '../../../scenery/js/nodes/RichText.js';
 import Text from '../../../scenery/js/nodes/Text.js';
+import Isotope from '../model/Isotope.js';
+import NuclearDecayModel from '../model/NuclearDecayModel.js';
+import nuclearDecayCommon from '../nuclearDecayCommon.js';
+import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import NuclearDecayAccordionBox, { NuclearDecayAccordionBoxOptions } from './NuclearDecayAccordionBox.js';
 
 type SelfOptions = EmptySelfOptions;
@@ -16,13 +26,67 @@ type SelfOptions = EmptySelfOptions;
 export type ParticleCountsAccordionBoxOptions = SelfOptions & NuclearDecayAccordionBoxOptions;
 
 export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox {
-  public constructor( providedOptions?: ParticleCountsAccordionBoxOptions ) {
+  public constructor( model: NuclearDecayModel, providedOptions?: ParticleCountsAccordionBoxOptions ) {
+
+    const currentIsotopeNameProperty = new DynamicProperty<string, string, Isotope>( model.selectedIsotopeProperty, {
+      derive: 'isotopeNameStringProperty'
+    } );
+
+    const currentIsotopeSymbolStringProperty = new DynamicProperty<string, string, Isotope>( model.selectedIsotopeProperty, {
+      derive: 'isotopeSymbolStringProperty'
+    } );
+
+    const currentIsotopeProtonCountProperty = new DynamicProperty<number, number, Isotope>( model.selectedIsotopeProperty, {
+      derive: 'protonCountProperty'
+    } );
+
+    const currentIsotopeNeutronCountProperty = new DynamicProperty<number, number, Isotope>( model.selectedIsotopeProperty, {
+      derive: 'neutronCountProperty'
+    } );
+
+    const isotopeInfoTitleStringProperty = new DerivedStringProperty(
+      [
+        currentIsotopeNameProperty,
+        currentIsotopeSymbolStringProperty,
+        NuclearDecayCommonFluent.isotopeInfoTitleStringProperty
+      ], ( nameAndNumber, numberSymbol, pattern ) => {
+        return StringUtils.fillIn( pattern, { nameAndNumber: nameAndNumber, numberSymbol: numberSymbol } );
+      } );
+
+    const titleNode = new RichText( isotopeInfoTitleStringProperty, {
+      font: new PhetFont( { size: 16, weight: 'bold' } ),
+      fill: NuclearDecayCommonColors.pinkProperty
+    } );
+
+    const protonsStringProperty = new DerivedStringProperty(
+      [
+        currentIsotopeProtonCountProperty,
+        NuclearDecayCommonFluent.protonsPatternStringProperty
+      ], ( protons, pattern ) => {
+        return StringUtils.fillIn( pattern, { protons: protons } );
+      } );
+
+    const neutronsStringProperty = new DerivedStringProperty(
+      [
+        currentIsotopeNeutronCountProperty,
+        NuclearDecayCommonFluent.neutronsPatternStringProperty
+      ], ( neutrons, pattern ) => {
+        return StringUtils.fillIn( pattern, { neutrons: neutrons } );
+      } );
+
     const options = optionize<ParticleCountsAccordionBoxOptions, SelfOptions, NuclearDecayAccordionBoxOptions>()( {
+      titleNode: titleNode,
       minWidth: NuclearDecayCommonConstants.RIGHT_PANEL_WIDTH
     }, providedOptions );
 
-    // TO BE IMPLEMENTED
-    const contentsNode = new Text( 'Hola' );
+    const contentsNode = new VBox( {
+      spacing: 5,
+      align: 'left',
+      children: [
+        new Text( protonsStringProperty, { font: new PhetFont( 14 ) } ),
+        new Text( neutronsStringProperty, { font: new PhetFont( 14 ) } )
+      ]
+    } );
 
     super( contentsNode, options );
   }
