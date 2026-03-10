@@ -40,6 +40,12 @@ type StringsType = {
   'customStringProperty': LocalizedStringProperty;
   'decayTime': string;
   'decayTimeStringProperty': LocalizedStringProperty;
+  'proton': string;
+  'protonStringProperty': LocalizedStringProperty;
+  'neutron': string;
+  'neutronStringProperty': LocalizedStringProperty;
+  'alphaParticle': string;
+  'alphaParticleStringProperty': LocalizedStringProperty;
   'protonsPattern': string;
   'protonsPatternStringProperty': LocalizedStringProperty;
   'neutronsPattern': string;

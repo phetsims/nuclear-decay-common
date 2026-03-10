@@ -21,7 +21,7 @@ export default class EquationAccordionBox extends NuclearDecayAccordionBox {
 
   public constructor( providedOptions?: EquationAccordionBoxOptions ) {
 
-    const titleNode = new Text( NuclearDecayCommonFluent.energyStringProperty, {
+    const titleNode = new Text( NuclearDecayCommonFluent.equationStringProperty, {
       font: new PhetFont( { size: 18, weight: 'bold' } )
     } );
 

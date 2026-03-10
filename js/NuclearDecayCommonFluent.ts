@@ -36,6 +36,9 @@ addToMapIfDefined( 'distance', 'distanceStringProperty' );
 addToMapIfDefined( 'energy', 'energyStringProperty' );
 addToMapIfDefined( 'custom', 'customStringProperty' );
 addToMapIfDefined( 'decayTime', 'decayTimeStringProperty' );
+addToMapIfDefined( 'proton', 'protonStringProperty' );
+addToMapIfDefined( 'neutron', 'neutronStringProperty' );
+addToMapIfDefined( 'alphaParticle', 'alphaParticleStringProperty' );
 
 // A function that creates contents for a new Fluent file, which will be needed if any string changes.
 const createFluentFile = (): string => {
@@ -64,6 +67,9 @@ const NuclearDecayCommonFluent = {
   energyStringProperty: _.get( NuclearDecayCommonStrings, 'energyStringProperty' ),
   customStringProperty: _.get( NuclearDecayCommonStrings, 'customStringProperty' ),
   decayTimeStringProperty: _.get( NuclearDecayCommonStrings, 'decayTimeStringProperty' ),
+  protonStringProperty: _.get( NuclearDecayCommonStrings, 'protonStringProperty' ),
+  neutronStringProperty: _.get( NuclearDecayCommonStrings, 'neutronStringProperty' ),
+  alphaParticleStringProperty: _.get( NuclearDecayCommonStrings, 'alphaParticleStringProperty' ),
   protonsPatternStringProperty: _.get( NuclearDecayCommonStrings, 'protonsPatternStringProperty' ),
   neutronsPatternStringProperty: _.get( NuclearDecayCommonStrings, 'neutronsPatternStringProperty' ),
   isotopeNameNumberPatternStringProperty: _.get( NuclearDecayCommonStrings, 'isotopeNameNumberPatternStringProperty' ),

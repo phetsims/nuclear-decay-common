@@ -30,6 +30,10 @@ const NuclearDecayCommonColors = {
 
   blueProperty: new ProfileColorProperty( nuclearDecayCommon, 'blue', {
     default: '#5555ff'
+  } ),
+
+  alphaParticleColorProperty: new ProfileColorProperty( nuclearDecayCommon, 'alphaParticle', {
+    default: '#ff8800'
   } )
 };
 

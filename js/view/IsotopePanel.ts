@@ -21,6 +21,7 @@ import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
+import ParticlesLegendNode from './ParticlesLegendNode.js';
 
 type SelfOptions = EmptySelfOptions;
 
@@ -66,7 +67,8 @@ export default class IsotopePanel extends NuclearDecayPanel {
       children: [
         titleNode,
         isotopeSelectorRadioButtonGroup,
-        new HSeparator()
+        new HSeparator(),
+        new ParticlesLegendNode()
       ]
     } );
 

@@ -38,6 +38,15 @@
   "decayTime": {
     "value": "Decay Time:"
   },
+  "proton": {
+    "value": "Proton"
+  },
+  "neutron": {
+    "value": "Neutron"
+  },
+  "alphaParticle": {
+    "value": "Alpha<br>Particle"
+  },
   "protonsPattern": {
     "value": "Protons: {{protons}}"
   },
