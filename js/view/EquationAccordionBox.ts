@@ -5,12 +5,15 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
+import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
 import PhetFont from '../../../scenery-phet/js/PhetFont.js';
+import Isotope from '../model/Isotope.js';
 import nuclearDecayCommon from '../nuclearDecayCommon.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import Text from '../../../scenery/js/nodes/Text.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
+import EquationNode from './EquationNode.js';
 import NuclearDecayAccordionBox, { NuclearDecayAccordionBoxOptions } from './NuclearDecayAccordionBox.js';
 
 type SelfOptions = EmptySelfOptions;
@@ -19,7 +22,7 @@ export type EquationAccordionBoxOptions = SelfOptions & NuclearDecayAccordionBox
 
 export default class EquationAccordionBox extends NuclearDecayAccordionBox {
 
-  public constructor( providedOptions?: EquationAccordionBoxOptions ) {
+  public constructor( isotopeProperty: TReadOnlyProperty<Isotope>, providedOptions?: EquationAccordionBoxOptions ) {
 
     const titleNode = new Text( NuclearDecayCommonFluent.equationStringProperty, {
       font: new PhetFont( { size: 18, weight: 'bold' } )
@@ -30,10 +33,10 @@ export default class EquationAccordionBox extends NuclearDecayAccordionBox {
       minWidth: NuclearDecayCommonConstants.RIGHT_PANEL_WIDTH
     }, providedOptions );
 
-    // TO BE IMPLEMENTED
-    const contentsNode = new Text( 'Hola' );
+    // TODO handle change of isotope and update the equation accordingly https://github.com/phetsims/alpha-decay/issues/3
+    const equationNode = EquationNode.createFromIsotope( isotopeProperty.value );
 
-    super( contentsNode, options );
+    super( equationNode, options );
   }
 }
 

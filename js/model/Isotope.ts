@@ -28,6 +28,9 @@ export default class Isotope {
   // Name of the element regardless of isotope, e.g. "Polonium"
   public readonly elementNameStringProperty: TReadOnlyProperty<string>;
 
+  // Symbol of the element regardless of isotope, e.g. "Po"
+  public readonly elementSymbolStringProperty: TReadOnlyProperty<string>;
+
   // Name of the isotope, e.g. "Polonium-211"
   public readonly isotopeNameStringProperty: TReadOnlyProperty<string>;
 
@@ -36,6 +39,7 @@ export default class Isotope {
 
   public readonly protonCountProperty: TReadOnlyProperty<number>;
   public readonly neutronCountProperty: TReadOnlyProperty<number>;
+  public readonly massNumberProperty: TReadOnlyProperty<number>;
 
   public readonly decaysIntoProperty: TReadOnlyProperty<Isotope | null>;
 
@@ -48,6 +52,14 @@ export default class Isotope {
 
     this.protonCountProperty = new NumberProperty( protons );
     this.neutronCountProperty = new NumberProperty( neutrons );
+    this.massNumberProperty = new DerivedProperty(
+      [
+        this.protonCountProperty,
+        this.neutronCountProperty
+      ], ( protonCount: number, neutronCount: number ) => {
+        return protonCount + neutronCount;
+      }
+    );
 
     this.decaysIntoProperty = new Property<Isotope | null>( options.decaysInto );
 
@@ -63,27 +75,27 @@ export default class Isotope {
 
     this.elementNameStringProperty = AtomIdentifier.createDynamicNameProperty( this.protonCountProperty );
 
+    this.elementSymbolStringProperty = this.protonCountProperty.derived( protons => AtomIdentifier.getSymbol( protons ) );
+
     this.isotopeNameStringProperty = new DerivedStringProperty(
       [
+        this.massNumberProperty,
         this.elementNameStringProperty,
-        this.protonCountProperty,
-        this.neutronCountProperty,
         NuclearDecayCommonFluent.isotopeNameNumberPatternStringProperty
-      ], ( elementName, protons, neutrons, pattern ) => {
+      ], ( massNumber: number, elementName: string, pattern: string ) => {
         return StringUtils.fillIn( pattern, {
           name: elementName,
-          massNumber: protons + neutrons
+          massNumber: massNumber
         } );
       } );
 
     this.isotopeSymbolStringProperty = new DerivedStringProperty(
       [
-        this.protonCountProperty,
-        this.neutronCountProperty,
+        this.massNumberProperty,
         NuclearDecayCommonFluent.isotopeNumberSymbolPatternStringProperty
-      ], ( protons, neutrons, pattern ) => {
+      ], ( massNumber: number, pattern: string ) => {
         return StringUtils.fillIn( pattern, {
-          massNumber: protons + neutrons,
+          massNumber: massNumber,
           symbol: AtomIdentifier.getSymbol( protons )
         } );
       } );

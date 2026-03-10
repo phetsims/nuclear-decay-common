@@ -54,7 +54,7 @@ export default class NuclearDecayScreenView extends ScreenView {
 
     const isotopePanel = new IsotopePanel( model );
     const particleCountsAccordionBox = new ParticleCountsAccordionBox( model );
-    const equationAccordionBox = new EquationAccordionBox();
+    const equationAccordionBox = new EquationAccordionBox( model.selectedIsotopeProperty );
 
     const rightColumnVBox = new VBox( {
       spacing: PANEL_SPACING,
