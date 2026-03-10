@@ -135,7 +135,7 @@ export default class HalfLifePanel extends NuclearDecayPanel {
       }
     } );
     eraserButton.right = 2 * GRAPH_X_OFFSET + GRAPH_WIDTH;
-    eraserButton.top = GRAPH_HEIGHT
+    eraserButton.top = GRAPH_HEIGHT;
 
     // Assemble
 
