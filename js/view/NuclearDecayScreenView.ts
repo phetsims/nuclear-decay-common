@@ -38,7 +38,7 @@ export default class NuclearDecayScreenView extends ScreenView {
 
     // Top-left panel
 
-    const halfLifePanel = new HalfLifePanel( {
+    const halfLifePanel = new HalfLifePanel( model, {
       minWidth: NuclearDecayCommonConstants.LONG_PANEL_WIDTH,
       left: this.layoutBounds.minX + MARGIN_X,
       top: this.layoutBounds.minY + MARGIN_Y,

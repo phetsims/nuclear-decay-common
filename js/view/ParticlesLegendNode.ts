@@ -55,6 +55,7 @@ export default class ParticlesLegendNode extends Node {
       NuclearDecayCommonStrings.neutronStringProperty
     );
 
+    // TODO: Should we use an existing utility function for building this Helium atom? https://github.com/phetsims/alpha-decay/issues/3
     const PARTICLE_OFFSET = 0.7 * SPHERE_DIAMETER; // The distance between the centers of the particles in the alpha particle icon, with some overlap for aesthetics
     const alphaParticleIcon = new Node( {
       children: [

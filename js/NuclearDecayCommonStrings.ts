@@ -24,6 +24,8 @@ type StringsType = {
   'halfLifeStringProperty': LocalizedStringProperty;
   'isotope': string;
   'isotopeStringProperty': LocalizedStringProperty;
+  'time': string;
+  'timeStringProperty': LocalizedStringProperty;
   'addAtom': string;
   'addAtomStringProperty': LocalizedStringProperty;
   'alphaParticleEnergy': string;

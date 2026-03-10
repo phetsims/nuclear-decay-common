@@ -28,6 +28,7 @@ addToMapIfDefined( 'resetNucleus', 'resetNucleusStringProperty' );
 addToMapIfDefined( 'equation', 'equationStringProperty' );
 addToMapIfDefined( 'halfLife', 'halfLifeStringProperty' );
 addToMapIfDefined( 'isotope', 'isotopeStringProperty' );
+addToMapIfDefined( 'time', 'timeStringProperty' );
 addToMapIfDefined( 'addAtom', 'addAtomStringProperty' );
 addToMapIfDefined( 'alphaParticleEnergy', 'alphaParticleEnergyStringProperty' );
 addToMapIfDefined( 'initialEnergy', 'initialEnergyStringProperty' );
@@ -59,6 +60,7 @@ const NuclearDecayCommonFluent = {
   equationStringProperty: _.get( NuclearDecayCommonStrings, 'equationStringProperty' ),
   halfLifeStringProperty: _.get( NuclearDecayCommonStrings, 'halfLifeStringProperty' ),
   isotopeStringProperty: _.get( NuclearDecayCommonStrings, 'isotopeStringProperty' ),
+  timeStringProperty: _.get( NuclearDecayCommonStrings, 'timeStringProperty' ),
   addAtomStringProperty: _.get( NuclearDecayCommonStrings, 'addAtomStringProperty' ),
   alphaParticleEnergyStringProperty: _.get( NuclearDecayCommonStrings, 'alphaParticleEnergyStringProperty' ),
   initialEnergyStringProperty: _.get( NuclearDecayCommonStrings, 'initialEnergyStringProperty' ),
