@@ -83,8 +83,8 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
       spacing: 5,
       align: 'left',
       children: [
-        new Text( protonsStringProperty, { font: new PhetFont( 14 ) } ),
-        new Text( neutronsStringProperty, { font: new PhetFont( 14 ) } )
+        new Text( protonsStringProperty, { font: NuclearDecayCommonConstants.CONTROL_FONT } ),
+        new Text( neutronsStringProperty, { font: NuclearDecayCommonConstants.CONTROL_FONT } )
       ]
     } );
 

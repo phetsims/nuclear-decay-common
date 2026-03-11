@@ -6,11 +6,10 @@
  */
 
 import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
-import PhetFont from '../../../scenery-phet/js/PhetFont.js';
-import Isotope from '../model/Isotope.js';
-import nuclearDecayCommon from '../nuclearDecayCommon.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import Text from '../../../scenery/js/nodes/Text.js';
+import Isotope from '../model/Isotope.js';
+import nuclearDecayCommon from '../nuclearDecayCommon.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import EquationNode from './EquationNode.js';
@@ -25,7 +24,7 @@ export default class EquationAccordionBox extends NuclearDecayAccordionBox {
   public constructor( isotopeProperty: TReadOnlyProperty<Isotope>, providedOptions?: EquationAccordionBoxOptions ) {
 
     const titleNode = new Text( NuclearDecayCommonFluent.equationStringProperty, {
-      font: new PhetFont( { size: 18, weight: 'bold' } )
+      font: NuclearDecayCommonConstants.TITLE_BOLD_FONT
     } );
 
     const options = optionize<EquationAccordionBoxOptions, SelfOptions, NuclearDecayAccordionBoxOptions>()( {

@@ -8,12 +8,12 @@
 import Shape from '../../../kite/js/Shape.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import ArrowNode from '../../../scenery-phet/js/ArrowNode.js';
-import PhetFont from '../../../scenery-phet/js/PhetFont.js';
 import Node from '../../../scenery/js/nodes/Node.js';
 import Path from '../../../scenery/js/nodes/Path.js';
 import Text from '../../../scenery/js/nodes/Text.js';
 import nuclearDecayCommon from '../nuclearDecayCommon.js';
 import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
+import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import NuclearDecayAccordionBox, { NuclearDecayAccordionBoxOptions } from './NuclearDecayAccordionBox.js';
 
@@ -22,9 +22,9 @@ type SelfOptions = EmptySelfOptions;
 export type EnergyDiagramAccordionBoxOptions = SelfOptions & NuclearDecayAccordionBoxOptions;
 
 // Fonts
-const AXIS_FONT = new PhetFont( 14 );
-const SUBTITLE_FONT = new PhetFont( { size: 14, weight: 'bold' } );
-const LEGEND_FONT = new PhetFont( 14 );
+const AXIS_FONT = NuclearDecayCommonConstants.CONTROL_FONT;
+const SUBTITLE_FONT = NuclearDecayCommonConstants.CONTROL_BOLD_FONT;
+const LEGEND_FONT = NuclearDecayCommonConstants.CONTROL_FONT;
 
 // Graph dimensions (adjust these to tune the layout)
 const GRAPH_WIDTH = 400;    // length of the horizontal distance axis

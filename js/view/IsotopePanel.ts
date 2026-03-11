@@ -33,9 +33,8 @@ export default class IsotopePanel extends NuclearDecayPanel {
       minWidth: NuclearDecayCommonConstants.RIGHT_PANEL_WIDTH
     }, providedOptions );
 
-    // TODO: Don't hardcode font sizes!!!!!! https://github.com/phetsims/alpha-decay/issues/3
     const titleNode = new Text( NuclearDecayCommonFluent.isotopeStringProperty, {
-      font: new PhetFont( { size: 14, weight: 'bold' } )
+      font: NuclearDecayCommonConstants.CONTROL_BOLD_FONT
     } );
 
     // TODO: These should be populated from the model.possibleIsotopes or something https://github.com/phetsims/alpha-decay/issues/3
