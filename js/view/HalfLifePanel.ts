@@ -36,7 +36,7 @@ const ISOTOPE_SYMBOL_FONT = new PhetFont( { size: 16, weight: 'bold' } );
 const HALF_LIFE_FONT = new PhetFont( { size: 14, weight: 'bold' } );
 
 // Graph dimensions (adjust these to tune the layout)
-const GRAPH_WIDTH = 380;
+const GRAPH_WIDTH = 530;
 const GRAPH_HEIGHT = 80;
 
 // left margin: room for rotated label + isotope symbols
