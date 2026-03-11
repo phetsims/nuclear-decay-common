@@ -13,6 +13,7 @@ import RichText from '../../../scenery/js/nodes/RichText.js';
 import type TPaint from '../../../scenery/js/util/TPaint.js';
 import Isotope from '../model/Isotope.js';
 import nuclearDecayCommon from '../nuclearDecayCommon.js';
+import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 
 type SelfOptions = {
   fill?: TPaint;
@@ -20,7 +21,7 @@ type SelfOptions = {
 
 export type EquationElementNodeOptions = SelfOptions & NodeOptions;
 
-const TEXT_FONT = new PhetFont( 14 );
+const TEXT_FONT = NuclearDecayCommonConstants.CONTROL_FONT;
 
 // With small text we refer to the superscript and subscript, which are typically smaller than the main symbol text.
 const SMALL_TEXT_FONT = new PhetFont( 10 );

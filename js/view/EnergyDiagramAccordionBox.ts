@@ -21,11 +21,6 @@ type SelfOptions = EmptySelfOptions;
 
 export type EnergyDiagramAccordionBoxOptions = SelfOptions & NuclearDecayAccordionBoxOptions;
 
-// Fonts
-const AXIS_FONT = NuclearDecayCommonConstants.CONTROL_FONT;
-const SUBTITLE_FONT = NuclearDecayCommonConstants.CONTROL_BOLD_FONT;
-const LEGEND_FONT = NuclearDecayCommonConstants.CONTROL_FONT;
-
 // Graph dimensions (adjust these to tune the layout)
 const GRAPH_WIDTH = 400;    // length of the horizontal distance axis
 const GRAPH_HEIGHT = 140;    // height of the vertical energy axis
@@ -68,24 +63,27 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     // Axis labels
 
     const energyAxisLabel = new Text( NuclearDecayCommonFluent.energyStringProperty, {
-      font: AXIS_FONT,
+      font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
       rotation: -Math.PI / 2,
       centerX: GRAPH_X_OFFSET - 15,
-      centerY: GRAPH_HEIGHT / 2 - 20
+      centerY: GRAPH_HEIGHT / 2 - 20,
+      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
     const distanceAxisLabel = new Text( NuclearDecayCommonFluent.distanceStringProperty, {
-      font: AXIS_FONT,
+      font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
       right: GRAPH_X_OFFSET + GRAPH_WIDTH - 15,
-      centerY: 10
+      centerY: 10,
+      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
     // Subtitle: "Alpha Particle Energy"
 
     const subtitleText = new Text( NuclearDecayCommonFluent.alphaParticleEnergyStringProperty, {
-      font: SUBTITLE_FONT,
+      font: NuclearDecayCommonConstants.SMALL_LABEL_BOLD_FONT,
       left: LEGEND_X,
-      top: LEGEND_Y
+      top: LEGEND_Y,
+      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
     // Legend lines and labels
@@ -101,9 +99,10 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     );
 
     const initialEnergyLabel = new Text( NuclearDecayCommonFluent.initialEnergyStringProperty, {
-      font: LEGEND_FONT,
+      font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
       left: LEGEND_X + LEGEND_TEXT_OFFSET,
-      centerY: initialEnergyLine.centerY
+      centerY: initialEnergyLine.centerY,
+      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
     const potentialEnergyLine = new Path(
@@ -117,9 +116,10 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     );
 
     const potentialEnergyLabel = new Text( NuclearDecayCommonFluent.finalEnergyStringProperty, {
-      font: LEGEND_FONT,
+      font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
       left: LEGEND_X + LEGEND_TEXT_OFFSET,
-      centerY: potentialEnergyLine.centerY
+      centerY: potentialEnergyLine.centerY,
+      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
     // Assemble

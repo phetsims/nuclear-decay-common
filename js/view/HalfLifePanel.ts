@@ -13,7 +13,6 @@ import Shape from '../../../kite/js/Shape.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import ArrowNode from '../../../scenery-phet/js/ArrowNode.js';
 import EraserButton from '../../../scenery-phet/js/buttons/EraserButton.js';
-import PhetFont from '../../../scenery-phet/js/PhetFont.js';
 import VBox from '../../../scenery/js/layout/nodes/VBox.js';
 import Node from '../../../scenery/js/nodes/Node.js';
 import Path from '../../../scenery/js/nodes/Path.js';
@@ -23,17 +22,13 @@ import Isotope from '../model/Isotope.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import nuclearDecayCommon from '../nuclearDecayCommon.js';
 import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
+import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
 
 type SelfOptions = EmptySelfOptions;
 
 export type HalfLifePanelOptions = SelfOptions & NuclearDecayPanelOptions;
-
-// Fonts
-const AXIS_FONT = new PhetFont( 14 );
-const ISOTOPE_SYMBOL_FONT = new PhetFont( { size: 16, weight: 'bold' } );
-const HALF_LIFE_FONT = new PhetFont( { size: 14, weight: 'bold' } );
 
 // Graph dimensions (adjust these to tune the layout)
 const GRAPH_WIDTH = 530;
@@ -53,10 +48,11 @@ export default class HalfLifePanel extends NuclearDecayPanel {
     // Y-axis rotated label: "Isotope"
 
     const isotopeAxisLabel = new Text( NuclearDecayCommonFluent.isotopeStringProperty, {
-      font: AXIS_FONT,
+      font: NuclearDecayCommonConstants.CONTROL_FONT,
       rotation: -Math.PI / 2,
       centerX: AXIS_LABEL_X,
-      centerY: GRAPH_HEIGHT / 2
+      centerY: GRAPH_HEIGHT / 2,
+      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
     // Isotope symbols
@@ -72,16 +68,18 @@ export default class HalfLifePanel extends NuclearDecayPanel {
       : new Property( '--' );
 
     const initialIsotopeSymbol = new RichText( selectedIsotopeSymbolProperty, {
-      font: ISOTOPE_SYMBOL_FONT,
+      font: NuclearDecayCommonConstants.CONTROL_BOLD_FONT,
       fill: NuclearDecayCommonColors.pinkProperty,
       left: ISOTOPE_SYMBOL_X,
-      centerY: 0
+      centerY: 0,
+      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
     const decayProductSymbol = new RichText( decayProductSymbolProperty, {
-      font: ISOTOPE_SYMBOL_FONT,
+      font: NuclearDecayCommonConstants.CONTROL_BOLD_FONT,
       left: ISOTOPE_SYMBOL_X,
-      centerY: GRAPH_HEIGHT * 0.9
+      centerY: GRAPH_HEIGHT * 0.9,
+      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
     // Time axis
@@ -94,9 +92,10 @@ export default class HalfLifePanel extends NuclearDecayPanel {
     } );
 
     const timeText = new Text( NuclearDecayCommonFluent.timeStringProperty, {
-      font: AXIS_FONT,
+      font: NuclearDecayCommonConstants.CONTROL_FONT,
       left: GRAPH_X_OFFSET,
-      centerY: GRAPH_HEIGHT + 20
+      centerY: GRAPH_HEIGHT + 20,
+      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
     // Half-life dashed line and label
@@ -115,10 +114,11 @@ export default class HalfLifePanel extends NuclearDecayPanel {
     );
 
     const halfLifeText = new Text( NuclearDecayCommonFluent.halfLifeStringProperty, {
-      font: HALF_LIFE_FONT,
+      font: NuclearDecayCommonConstants.CONTROL_BOLD_FONT,
       fill: NuclearDecayCommonColors.greenProperty,
       centerX: halfLifeLineX,
-      bottom: -6
+      bottom: -6,
+      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
     const halfLifeIndicator = new VBox( {

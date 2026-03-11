@@ -18,20 +18,17 @@ export default class NuclearDecayCommonConstants {
   public static readonly SCREEN_VIEW_Y_MARGIN = 15;
 
   // Text constants
-  public static readonly HEADER_FONT = new PhetFont( 20 );
+  public static readonly TEXT_MAX_WIDTH = 200;
   public static readonly TITLE_FONT = new PhetFont( 18 );
-  public static readonly CONTROL_FONT = new PhetFont( 14 );
-  public static readonly SMALL_LABEL_FONT = new PhetFont( 12 );
-  public static readonly TINY_LABEL_FONT = new PhetFont( 8 );
-  public static readonly HEADER_BOLD_FONT = new PhetFont( { size: 20, weight: 'bold' } );
+  public static readonly CONTROL_FONT = new PhetFont( 16 );
+  public static readonly SMALL_LABEL_FONT = new PhetFont( 14 );
   public static readonly TITLE_BOLD_FONT = new PhetFont( { size: 18, weight: 'bold' } );
-  public static readonly CONTROL_BOLD_FONT = new PhetFont( { size: 14, weight: 'bold' } );
-  public static readonly SMALL_LABEL_BOLD_FONT = new PhetFont( { size: 12, weight: 'bold' } );
-  public static readonly TINY_LABEL_BOLD_FONT = new PhetFont( { size: 8, weight: 'bold' } );
+  public static readonly CONTROL_BOLD_FONT = new PhetFont( { size: 16, weight: 'bold' } );
+  public static readonly SMALL_LABEL_BOLD_FONT = new PhetFont( { size: 14, weight: 'bold' } );
 
   // Layout constants for panel sizing and spacing
   public static readonly LONG_PANEL_WIDTH = 600;
-  public static readonly RIGHT_PANEL_WIDTH = 200;
+  public static readonly RIGHT_PANEL_WIDTH = 250;
   public static readonly PANEL_X_MARGIN = 10;
   public static readonly PANEL_Y_MARGIN = 10;
   public static readonly PANEL_SPACING = 10;

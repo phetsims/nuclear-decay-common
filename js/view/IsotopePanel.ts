@@ -7,7 +7,6 @@
  */
 
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
-import PhetFont from '../../../scenery-phet/js/PhetFont.js';
 import HSeparator from '../../../scenery/js/layout/nodes/HSeparator.js';
 import VBox from '../../../scenery/js/layout/nodes/VBox.js';
 import RichText from '../../../scenery/js/nodes/RichText.js';
@@ -34,7 +33,8 @@ export default class IsotopePanel extends NuclearDecayPanel {
     }, providedOptions );
 
     const titleNode = new Text( NuclearDecayCommonFluent.isotopeStringProperty, {
-      font: NuclearDecayCommonConstants.CONTROL_BOLD_FONT
+      font: NuclearDecayCommonConstants.TITLE_BOLD_FONT,
+      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
     // TODO: These should be populated from the model.possibleIsotopes or something https://github.com/phetsims/alpha-decay/issues/3
@@ -44,15 +44,17 @@ export default class IsotopePanel extends NuclearDecayPanel {
       {
         value: isotope,
         createNode: () => new RichText( isotope.isotopeNameStringProperty, {
-          font: new PhetFont( { size: 14 } ),
-          fill: NuclearDecayCommonColors.pinkProperty
+          font: NuclearDecayCommonConstants.CONTROL_FONT,
+          fill: NuclearDecayCommonColors.pinkProperty,
+          maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
         } )
       },
       {
         value: customIsotope,
         createNode: () => new RichText( NuclearDecayCommonFluent.customStringProperty, {
-          font: new PhetFont( { size: 14 } ),
-          fill: NuclearDecayCommonColors.blueProperty
+          font: NuclearDecayCommonConstants.CONTROL_FONT,
+          fill: NuclearDecayCommonColors.blueProperty,
+          maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
         } )
       }
     ];

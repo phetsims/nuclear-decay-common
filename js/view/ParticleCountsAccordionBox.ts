@@ -9,7 +9,6 @@ import DerivedStringProperty from '../../../axon/js/DerivedStringProperty.js';
 import DynamicProperty from '../../../axon/js/DynamicProperty.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import StringUtils from '../../../phetcommon/js/util/StringUtils.js';
-import PhetFont from '../../../scenery-phet/js/PhetFont.js';
 import VBox from '../../../scenery/js/layout/nodes/VBox.js';
 import RichText from '../../../scenery/js/nodes/RichText.js';
 import Text from '../../../scenery/js/nodes/Text.js';
@@ -54,8 +53,9 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
       } );
 
     const titleNode = new RichText( isotopeInfoTitleStringProperty, {
-      font: new PhetFont( { size: 16, weight: 'bold' } ),
-      fill: NuclearDecayCommonColors.pinkProperty
+      font: NuclearDecayCommonConstants.TITLE_BOLD_FONT,
+      fill: NuclearDecayCommonColors.pinkProperty,
+      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
     const protonsStringProperty = new DerivedStringProperty(
@@ -83,8 +83,14 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
       spacing: 5,
       align: 'left',
       children: [
-        new Text( protonsStringProperty, { font: NuclearDecayCommonConstants.CONTROL_FONT } ),
-        new Text( neutronsStringProperty, { font: NuclearDecayCommonConstants.CONTROL_FONT } )
+        new Text( protonsStringProperty, {
+          font: NuclearDecayCommonConstants.CONTROL_FONT,
+      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
+        } ),
+        new Text( neutronsStringProperty, {
+          font: NuclearDecayCommonConstants.CONTROL_FONT,
+      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
+        } )
       ]
     } );
 

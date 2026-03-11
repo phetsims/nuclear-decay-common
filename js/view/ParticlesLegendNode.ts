@@ -8,7 +8,6 @@
 
 import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
-import PhetFont from '../../../scenery-phet/js/PhetFont.js';
 import ShadedSphereNode from '../../../scenery-phet/js/ShadedSphereNode.js';
 import HBox from '../../../scenery/js/layout/nodes/HBox.js';
 import VBox from '../../../scenery/js/layout/nodes/VBox.js';
@@ -23,7 +22,6 @@ type SelfOptions = EmptySelfOptions;
 
 export type ParticlesLegendNodeOptions = SelfOptions & NodeOptions;
 
-const LABEL_FONT = new PhetFont( 14 );
 const ITEM_SPACING = 6;
 const SPHERE_DIAMETER = NuclearDecayCommonConstants.NUCLEON_DIAMETER;
 
@@ -40,7 +38,10 @@ export default class ParticlesLegendNode extends Node {
         spacing: ITEM_SPACING,
         children: [
           labelIconNode,
-          new RichText( labelStringProperty, { font: LABEL_FONT } )
+          new RichText( labelStringProperty, {
+            font: NuclearDecayCommonConstants.CONTROL_FONT,
+            maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
+          } )
         ]
       } );
     };
