@@ -33,7 +33,7 @@ const NuclearDecayCommonColors = {
   } ),
 
   greenProperty: new ProfileColorProperty( nuclearDecayCommon, 'green', {
-    default: '#33aa33'
+    default: '#ec4123'
   } )
 };
 
