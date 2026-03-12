@@ -93,9 +93,31 @@ export default class HalfLifePanel extends NuclearDecayPanel {
 
     const timeText = new Text( NuclearDecayCommonFluent.timeStringProperty, {
       font: NuclearDecayCommonConstants.CONTROL_FONT,
-      left: GRAPH_X_OFFSET,
+      left: 0,
       centerY: GRAPH_HEIGHT + 20,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
+    } );
+
+    // Time ticks
+    const TICKS = 4;
+    _.times( TICKS, ( n: number ) => {
+      const tickX = GRAPH_X_OFFSET + ( n ) * 0.9 * GRAPH_WIDTH / ( TICKS - 1 );
+      const tick = new Path(
+        new Shape().moveTo( 0, 0 ).lineTo( 0, 10 ),
+        {
+          stroke: 'black',
+          lineWidth: 1,
+          x: tickX,
+          y: GRAPH_HEIGHT
+        }
+      );
+      const tickLabel = new Text( n, {
+        font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
+        centerX: tickX,
+        top: GRAPH_HEIGHT + 12
+      } );
+      timeAxis.addChild( tick );
+      timeAxis.addChild( tickLabel );
     } );
 
     // Half-life dashed line and label
@@ -135,7 +157,7 @@ export default class HalfLifePanel extends NuclearDecayPanel {
       }
     } );
     eraserButton.right = 2 * GRAPH_X_OFFSET + GRAPH_WIDTH;
-    eraserButton.top = GRAPH_HEIGHT;
+    eraserButton.bottom = GRAPH_HEIGHT;
 
     // Assemble
 
