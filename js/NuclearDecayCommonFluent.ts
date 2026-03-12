@@ -71,6 +71,7 @@ const NuclearDecayCommonFluent = {
   decayTimeStringProperty: _.get( NuclearDecayCommonStrings, 'decayTimeStringProperty' ),
   protonStringProperty: _.get( NuclearDecayCommonStrings, 'protonStringProperty' ),
   neutronStringProperty: _.get( NuclearDecayCommonStrings, 'neutronStringProperty' ),
+  timeSecondsStringProperty: _.get( NuclearDecayCommonStrings, 'timeSecondsStringProperty' ),
   alphaParticleStringProperty: _.get( NuclearDecayCommonStrings, 'alphaParticleStringProperty' ),
   protonsPatternStringProperty: _.get( NuclearDecayCommonStrings, 'protonsPatternStringProperty' ),
   neutronsPatternStringProperty: _.get( NuclearDecayCommonStrings, 'neutronsPatternStringProperty' ),

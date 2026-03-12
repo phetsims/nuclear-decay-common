@@ -46,6 +46,8 @@ type StringsType = {
   'protonStringProperty': LocalizedStringProperty;
   'neutron': string;
   'neutronStringProperty': LocalizedStringProperty;
+  'timeSeconds': string;
+  'timeSecondsStringProperty': LocalizedStringProperty;
   'alphaParticle': string;
   'alphaParticleStringProperty': LocalizedStringProperty;
   'protonsPattern': string;

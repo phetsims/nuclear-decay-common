@@ -47,6 +47,9 @@
   "neutron": {
     "value": "Neutron"
   },
+  "timeSeconds": {
+    "value": "{{time}} seconds"
+  },
   "alphaParticle": {
     "value": "Alpha<br>Particle"
   },
