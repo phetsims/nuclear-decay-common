@@ -26,8 +26,8 @@
   "initialEnergy": {
     "value": "Initial Energy"
   },
-  "finalEnergy": {
-    "value": "Final Energy"
+  "potentialEnergy": {
+    "value": "Potential Energy"
   },
   "distance": {
     "value": "Distance"

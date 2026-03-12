@@ -5,12 +5,12 @@
  * @author Agustín Vallejo
  */
 
+import BooleanProperty from '../../../axon/js/BooleanProperty.js';
+import EnumerationProperty from '../../../axon/js/EnumerationProperty.js';
 import NumberProperty from '../../../axon/js/NumberProperty.js';
 import Property from '../../../axon/js/Property.js';
 import TModel from '../../../joist/js/TModel.js';
 import { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
-import BooleanProperty from '../../../axon/js/BooleanProperty.js';
-import EnumerationProperty from '../../../axon/js/EnumerationProperty.js';
 import TimeSpeed from '../../../scenery-phet/js/TimeSpeed.js';
 import nuclearDecayCommon from '../nuclearDecayCommon.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
@@ -26,6 +26,8 @@ export default class NuclearDecayModel implements TModel {
 
   public readonly selectedIsotopeProperty: Property<Isotope>;
 
+  public readonly isPlayAreaEmptyProperty: BooleanProperty;
+
   public constructor( providedOptions?: NuclearDecayModelOptions ) {
 
     const leadIsotope = new Isotope( 82, 125 );
@@ -35,11 +37,13 @@ export default class NuclearDecayModel implements TModel {
 
     this.selectedIsotopeProperty = new Property<Isotope>( poloniumIsotope );
 
+    this.isPlayAreaEmptyProperty = new BooleanProperty( true );
+
     this.timeProperty = new NumberProperty( 0, {
       // tandem: ???
     } );
 
-    this.isPlayingProperty = new BooleanProperty( false, {
+    this.isPlayingProperty = new BooleanProperty( true, {
       // tandem: ???
     } );
 
@@ -76,7 +80,7 @@ export default class NuclearDecayModel implements TModel {
    * @param dt - time step, in seconds
    */
   public step( dt: number ): void {
-    if ( this.isPlayingProperty.value ) {
+    if ( this.isPlayingProperty.value && !this.isPlayAreaEmptyProperty.value ) {
       const timeSpeedScale = this.timeSpeedProperty.value === TimeSpeed.NORMAL ?
                              NuclearDecayCommonConstants.NORMAL_SPEED_SCALE :
                              NuclearDecayCommonConstants.SLOW_SPEED_SCALE;

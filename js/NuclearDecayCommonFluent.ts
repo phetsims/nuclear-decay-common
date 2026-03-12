@@ -32,7 +32,7 @@ addToMapIfDefined( 'time', 'timeStringProperty' );
 addToMapIfDefined( 'addAtom', 'addAtomStringProperty' );
 addToMapIfDefined( 'alphaParticleEnergy', 'alphaParticleEnergyStringProperty' );
 addToMapIfDefined( 'initialEnergy', 'initialEnergyStringProperty' );
-addToMapIfDefined( 'finalEnergy', 'finalEnergyStringProperty' );
+addToMapIfDefined( 'potentialEnergy', 'potentialEnergyStringProperty' );
 addToMapIfDefined( 'distance', 'distanceStringProperty' );
 addToMapIfDefined( 'energy', 'energyStringProperty' );
 addToMapIfDefined( 'custom', 'customStringProperty' );
@@ -64,7 +64,7 @@ const NuclearDecayCommonFluent = {
   addAtomStringProperty: _.get( NuclearDecayCommonStrings, 'addAtomStringProperty' ),
   alphaParticleEnergyStringProperty: _.get( NuclearDecayCommonStrings, 'alphaParticleEnergyStringProperty' ),
   initialEnergyStringProperty: _.get( NuclearDecayCommonStrings, 'initialEnergyStringProperty' ),
-  finalEnergyStringProperty: _.get( NuclearDecayCommonStrings, 'finalEnergyStringProperty' ),
+  potentialEnergyStringProperty: _.get( NuclearDecayCommonStrings, 'potentialEnergyStringProperty' ),
   distanceStringProperty: _.get( NuclearDecayCommonStrings, 'distanceStringProperty' ),
   energyStringProperty: _.get( NuclearDecayCommonStrings, 'energyStringProperty' ),
   customStringProperty: _.get( NuclearDecayCommonStrings, 'customStringProperty' ),

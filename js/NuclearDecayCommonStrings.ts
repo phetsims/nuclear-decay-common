@@ -32,8 +32,8 @@ type StringsType = {
   'alphaParticleEnergyStringProperty': LocalizedStringProperty;
   'initialEnergy': string;
   'initialEnergyStringProperty': LocalizedStringProperty;
-  'finalEnergy': string;
-  'finalEnergyStringProperty': LocalizedStringProperty;
+  'potentialEnergy': string;
+  'potentialEnergyStringProperty': LocalizedStringProperty;
   'distance': string;
   'distanceStringProperty': LocalizedStringProperty;
   'energy': string;
