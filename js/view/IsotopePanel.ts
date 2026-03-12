@@ -16,7 +16,6 @@ import VerticalAquaRadioButtonGroup from '../../../sun/js/VerticalAquaRadioButto
 import Isotope from '../model/Isotope.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import nuclearDecayCommon from '../nuclearDecayCommon.js';
-import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
@@ -45,7 +44,6 @@ export default class IsotopePanel extends NuclearDecayPanel {
         value: isotope,
         createNode: () => new RichText( isotope.isotopeNameStringProperty, {
           font: NuclearDecayCommonConstants.CONTROL_FONT,
-          fill: NuclearDecayCommonColors.pinkProperty,
           maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
         } )
       },
@@ -53,7 +51,6 @@ export default class IsotopePanel extends NuclearDecayPanel {
         value: customIsotope,
         createNode: () => new RichText( NuclearDecayCommonFluent.customStringProperty, {
           font: NuclearDecayCommonConstants.CONTROL_FONT,
-          fill: NuclearDecayCommonColors.blueProperty,
           maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
         } )
       }

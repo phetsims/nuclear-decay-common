@@ -36,12 +36,13 @@ const LEGEND_LINE_SPACING = 18;
 const LEGEND_TEXT_OFFSET = LEGEND_LINE_LENGTH + 6;
 
 // Potential energy curve parameters (screen coordinates: negative Y = higher energy)
-const WELL_CENTER_X = GRAPH_X_OFFSET + GRAPH_WIDTH * 0.5; // horizontal center of the nuclear well
+const WELL_CENTER_X = GRAPH_X_OFFSET + GRAPH_WIDTH * 0.5 - 5; // horizontal center of the nuclear well
 const WELL_HALF_WIDTH = 45; // half-width of the flat-bottomed well
 const COULOMB_MIN_Y = -5; // asymptotic Coulomb energy at large distance (just above x-axis)
-const POTENTIAL_PEAK_Y = -GRAPH_HEIGHT * 0.43; // top of the Coulomb barrier (above initial energy line)
-const WELL_BOTTOM_Y = GRAPH_HEIGHT * 0.38; // bottom of the nuclear potential well (below x-axis)
-const POTENTIAL_POINTINESS_FACTOR = 25; // sharpness of the quadratic curve at the barrier peak. 0 = max pointiness, 100 least.
+const POTENTIAL_PEAK_Y = -GRAPH_HEIGHT * 0.5; // top of the Coulomb barrier (above initial energy line)
+const WELL_BOTTOM_Y = GRAPH_HEIGHT * 0.4; // bottom of the nuclear potential well (below x-axis)
+const POINTINESS_FACTOR = 25; // sharpness of the quadratic curve at the barrier peak. 0 = max pointiness, 100 least.
+const CURVINESS_FACTOR = 0.2; // how curvy the potential energy curve is at the barrier peak. 0 = very curvy, rapid falloff, 1 = closer to a straight line.
 
 export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox {
   public constructor( providedOptions?: EnergyDiagramAccordionBoxOptions ) {
@@ -139,14 +140,14 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       new Shape()
         .moveTo( GRAPH_X_OFFSET, COULOMB_MIN_Y )
         .quadraticCurveTo(
-          WELL_CENTER_X - WELL_HALF_WIDTH - POTENTIAL_POINTINESS_FACTOR, 0.5 * POTENTIAL_PEAK_Y,
+          WELL_CENTER_X - WELL_HALF_WIDTH - POINTINESS_FACTOR, CURVINESS_FACTOR * POTENTIAL_PEAK_Y,
           WELL_CENTER_X - WELL_HALF_WIDTH, POTENTIAL_PEAK_Y
         )
         .lineTo( WELL_CENTER_X - WELL_HALF_WIDTH, WELL_BOTTOM_Y )
         .lineTo( WELL_CENTER_X + WELL_HALF_WIDTH, WELL_BOTTOM_Y )
         .lineTo( WELL_CENTER_X + WELL_HALF_WIDTH, POTENTIAL_PEAK_Y )
         .quadraticCurveTo(
-          WELL_CENTER_X + WELL_HALF_WIDTH + POTENTIAL_POINTINESS_FACTOR, 0.5 * POTENTIAL_PEAK_Y,
+          WELL_CENTER_X + WELL_HALF_WIDTH + POINTINESS_FACTOR, CURVINESS_FACTOR * POTENTIAL_PEAK_Y,
           GRAPH_X_OFFSET + GRAPH_WIDTH, COULOMB_MIN_Y
         ),
       {
