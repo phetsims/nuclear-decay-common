@@ -22,7 +22,7 @@ type SelfOptions = EmptySelfOptions;
 export type EnergyDiagramAccordionBoxOptions = SelfOptions & NuclearDecayAccordionBoxOptions;
 
 // Graph dimensions (adjust these to tune the layout)
-const GRAPH_WIDTH = 400;    // length of the horizontal distance axis
+const GRAPH_WIDTH = 575;    // length of the horizontal distance axis
 const GRAPH_HEIGHT = 140;    // height of the vertical energy axis
 
 // Left margin: room for the rotated "Energy" label
@@ -38,7 +38,8 @@ const LEGEND_TEXT_OFFSET = LEGEND_LINE_LENGTH + 6;
 export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox {
   public constructor( providedOptions?: EnergyDiagramAccordionBoxOptions ) {
     const options = optionize<EnergyDiagramAccordionBoxOptions, SelfOptions, NuclearDecayAccordionBoxOptions>()( {
-      // Default options go here
+      contentAlign: 'left',
+      contentXMargin: 50
     }, providedOptions );
 
     // Y-axis: upward arrow
@@ -91,7 +92,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     const initialEnergyLine = new Path(
       new Shape().moveTo( 0, 0 ).lineTo( LEGEND_LINE_LENGTH, 0 ),
       {
-        stroke: NuclearDecayCommonColors.pinkProperty,
+        stroke: NuclearDecayCommonColors.initialEnergyColorProperty,
         lineWidth: 2,
         left: LEGEND_X,
         centerY: LEGEND_Y + LEGEND_LINE_SPACING + subtitleText.height
@@ -108,8 +109,8 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     const potentialEnergyLine = new Path(
       new Shape().moveTo( 0, 0 ).lineTo( LEGEND_LINE_LENGTH, 0 ),
       {
-        stroke: NuclearDecayCommonColors.blueProperty,
-        lineWidth: 2,
+        stroke: NuclearDecayCommonColors.finalEnergyColorProperty,
+        lineWidth: 4,
         left: LEGEND_X,
         centerY: initialEnergyLine.centerY + LEGEND_LINE_SPACING
       }
@@ -121,6 +122,16 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       centerY: potentialEnergyLine.centerY,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
+
+    // Graph lines
+
+    const initialEnergyGraphLine = new Path(
+      new Shape().moveTo( -GRAPH_X_OFFSET, -GRAPH_HEIGHT / 4 ).lineTo( GRAPH_X_OFFSET + GRAPH_WIDTH, -GRAPH_HEIGHT / 4 ),
+      {
+        stroke: NuclearDecayCommonColors.initialEnergyColorProperty,
+        lineWidth: 2
+      }
+    );
 
     // Assemble
 
@@ -134,7 +145,8 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         initialEnergyLine,
         initialEnergyLabel,
         potentialEnergyLine,
-        potentialEnergyLabel
+        potentialEnergyLabel,
+        initialEnergyGraphLine
       ]
     } );
 

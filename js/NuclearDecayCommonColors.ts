@@ -32,6 +32,14 @@ const NuclearDecayCommonColors = {
     default: '#5555ff'
   } ),
 
+  initialEnergyColorProperty: new ProfileColorProperty( nuclearDecayCommon, 'initialEnergyColor', {
+    default: '#36ac0d'
+  } ),
+
+  finalEnergyColorProperty: new ProfileColorProperty( nuclearDecayCommon, 'finalEnergyColor', {
+    default: '#5f00ff'
+  } ),
+
   greenProperty: new ProfileColorProperty( nuclearDecayCommon, 'green', {
     default: '#ec4123'
   } ),
