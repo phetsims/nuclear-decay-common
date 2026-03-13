@@ -68,6 +68,7 @@ export default class Isotope {
         this.protonCountProperty,
         this.neutronCountProperty
       ], ( protonCount: number, neutronCount: number ) => {
+        console.log( AtomIdentifier.getNuclideHalfLife( protonCount, neutronCount ) );
         return AtomIdentifier.getNuclideHalfLife( protonCount, neutronCount );
       }
     );

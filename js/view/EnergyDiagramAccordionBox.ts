@@ -23,7 +23,7 @@ export type EnergyDiagramAccordionBoxOptions = SelfOptions & NuclearDecayAccordi
 
 // Graph dimensions (adjust these to tune the layout)
 const GRAPH_WIDTH = 575;    // length of the horizontal distance axis
-const GRAPH_HEIGHT = 140;    // height of the vertical energy axis
+const GRAPH_HEIGHT = 160;    // height of the vertical energy axis
 
 // Left margin: room for the rotated "Energy" label
 const GRAPH_X_OFFSET = 15;
@@ -35,20 +35,25 @@ const LEGEND_Y = 14;
 const LEGEND_LINE_SPACING = 18;
 const LEGEND_TEXT_OFFSET = LEGEND_LINE_LENGTH + 6;
 
+const INITIAL_ENERGY_HEIGHT = -GRAPH_HEIGHT * 0.2;
+
 // Potential energy curve parameters (screen coordinates: negative Y = higher energy)
 const WELL_CENTER_X = GRAPH_X_OFFSET + GRAPH_WIDTH * 0.5 - 5; // horizontal center of the nuclear well
 const WELL_HALF_WIDTH = 45; // half-width of the flat-bottomed well
 const COULOMB_MIN_Y = -5; // asymptotic Coulomb energy at large distance (just above x-axis)
-const POTENTIAL_PEAK_Y = -GRAPH_HEIGHT * 0.5; // top of the Coulomb barrier (above initial energy line)
+const POTENTIAL_PEAK_Y = -GRAPH_HEIGHT * 0.4; // top of the Coulomb barrier (above initial energy line)
 const WELL_BOTTOM_Y = GRAPH_HEIGHT * 0.4; // bottom of the nuclear potential well (below x-axis)
 const POINTINESS_FACTOR = 25; // sharpness of the quadratic curve at the barrier peak. 0 = max pointiness, 100 least.
-const CURVINESS_FACTOR = 0.2; // how curvy the potential energy curve is at the barrier peak. 0 = very curvy, rapid falloff, 1 = closer to a straight line.
+const CURVINESS_FACTOR = 0; // how curvy the potential energy curve is at the barrier peak. 0 = very curvy, rapid falloff, 1 = closer to a straight line.
 
 export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox {
   public constructor( providedOptions?: EnergyDiagramAccordionBoxOptions ) {
     const options = optionize<EnergyDiagramAccordionBoxOptions, SelfOptions, NuclearDecayAccordionBoxOptions>()( {
       contentAlign: 'left',
-      contentXMargin: 50
+      contentVerticalAlign: 'top',
+      contentXMargin: 50,
+      contentYMargin: 20,
+      allowContentToOverlapTitle: true
     }, providedOptions );
 
     // Y-axis: upward arrow
@@ -138,7 +143,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     // flat bottom → straight up → quadratic back down to Coulomb asymptote. Mirrors the Java AlphaDecayEnergyChart.
     const potentialEnergyGraphCurve = new Path(
       new Shape()
-        .moveTo( GRAPH_X_OFFSET, COULOMB_MIN_Y )
+        .moveTo( -GRAPH_X_OFFSET, COULOMB_MIN_Y )
         .quadraticCurveTo(
           WELL_CENTER_X - WELL_HALF_WIDTH - POINTINESS_FACTOR, CURVINESS_FACTOR * POTENTIAL_PEAK_Y,
           WELL_CENTER_X - WELL_HALF_WIDTH, POTENTIAL_PEAK_Y
@@ -157,7 +162,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     );
 
     const initialEnergyGraphLine = new Path(
-      new Shape().moveTo( -GRAPH_X_OFFSET, -GRAPH_HEIGHT / 4 ).lineTo( GRAPH_X_OFFSET + GRAPH_WIDTH, -GRAPH_HEIGHT / 4 ),
+      new Shape().moveTo( -GRAPH_X_OFFSET, INITIAL_ENERGY_HEIGHT ).lineTo( GRAPH_X_OFFSET + GRAPH_WIDTH, INITIAL_ENERGY_HEIGHT ),
       {
         stroke: NuclearDecayCommonColors.initialEnergyColorProperty,
         lineWidth: 2
