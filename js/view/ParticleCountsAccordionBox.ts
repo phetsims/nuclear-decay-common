@@ -12,6 +12,7 @@ import StringUtils from '../../../phetcommon/js/util/StringUtils.js';
 import VBox from '../../../scenery/js/layout/nodes/VBox.js';
 import RichText from '../../../scenery/js/nodes/RichText.js';
 import Text from '../../../scenery/js/nodes/Text.js';
+import AtomIdentifier from '../../../shred/js/AtomIdentifier.js';
 import Isotope from '../model/Isotope.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import nuclearDecayCommon from '../nuclearDecayCommon.js';
@@ -31,8 +32,8 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
       derive: 'isotopeNameStringProperty'
     } );
 
-    const currentIsotopeSymbolStringProperty = new DynamicProperty<string, string, Isotope>( model.selectedIsotopeProperty, {
-      derive: 'isotopeSymbolStringProperty'
+    const currentIsotopeSymbolStringProperty = model.selectedIsotopeProperty.derived( ( isotope: Isotope ) => {
+      return AtomIdentifier.getMassAndSymbol( isotope.protonCountProperty.value, isotope.neutronCountProperty.value );
     } );
 
     const currentIsotopeProtonCountProperty = new DynamicProperty<number, number, Isotope>( model.selectedIsotopeProperty, {

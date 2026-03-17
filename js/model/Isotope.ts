@@ -34,9 +34,6 @@ export default class Isotope {
   // Name of the isotope, e.g. "Polonium-211"
   public readonly isotopeNameStringProperty: TReadOnlyProperty<string>;
 
-  // Symbol of the isotope, e.g. "<sup>211</sup>Po". Intended for use with RichText.
-  public readonly isotopeSymbolStringProperty: TReadOnlyProperty<string>;
-
   public readonly protonCountProperty: TReadOnlyProperty<number>;
   public readonly neutronCountProperty: TReadOnlyProperty<number>;
   public readonly massNumberProperty: TReadOnlyProperty<number>;
@@ -88,18 +85,6 @@ export default class Isotope {
           massNumber: massNumber
         } );
       } );
-
-    this.isotopeSymbolStringProperty = new DerivedStringProperty(
-      [
-        this.massNumberProperty,
-        NuclearDecayCommonFluent.isotopeNumberSymbolPatternStringProperty
-      ], ( massNumber: number, pattern: string ) => {
-        return StringUtils.fillIn( pattern, {
-          massNumber: massNumber,
-          symbol: AtomIdentifier.getSymbol( protons )
-        } );
-      } );
-
   }
 }
 

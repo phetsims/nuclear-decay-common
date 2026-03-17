@@ -6,7 +6,6 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
-import DynamicProperty from '../../../axon/js/DynamicProperty.js';
 import Property from '../../../axon/js/Property.js';
 import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
 import Shape from '../../../kite/js/Shape.js';
@@ -18,6 +17,7 @@ import Node from '../../../scenery/js/nodes/Node.js';
 import Path from '../../../scenery/js/nodes/Path.js';
 import RichText from '../../../scenery/js/nodes/RichText.js';
 import Text from '../../../scenery/js/nodes/Text.js';
+import AtomIdentifier from '../../../shred/js/AtomIdentifier.js';
 import Isotope from '../model/Isotope.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import nuclearDecayCommon from '../nuclearDecayCommon.js';
@@ -57,14 +57,15 @@ export default class HalfLifePanel extends NuclearDecayPanel {
 
     // Isotope symbols
 
-    const selectedIsotopeSymbolProperty = new DynamicProperty<string, string, Isotope>(
-      model.selectedIsotopeProperty, { derive: 'isotopeSymbolStringProperty' }
-    );
+    const selectedIsotopeSymbolProperty = model.selectedIsotopeProperty.derived( ( isotope: Isotope ) => {
+      return AtomIdentifier.getMassAndSymbol( isotope.protonCountProperty.value, isotope.neutronCountProperty.value );
+    } );
 
     // TODO: Should also react when selectedIsotopeProperty itself changes https://github.com/phetsims/alpha-decay/issues/3
     const isotope = model.selectedIsotopeProperty.value;
-    const decayProductSymbolProperty: TReadOnlyProperty<string> = isotope.decaysIntoProperty.value
-      ? isotope.decaysIntoProperty.value.isotopeSymbolStringProperty
+    const decaysInto = isotope.decaysIntoProperty.value;
+    const decayProductSymbolProperty: TReadOnlyProperty<string> | string = decaysInto
+      ? AtomIdentifier.getMassAndSymbol( decaysInto.protonCountProperty.value, decaysInto.neutronCountProperty.value )
       : new Property( '--' );
 
     const initialIsotopeSymbol = new RichText( selectedIsotopeSymbolProperty, {
