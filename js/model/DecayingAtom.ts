@@ -5,9 +5,9 @@
  * @author Agustín Vallejo
  */
 
-import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import NumberProperty from '../../../axon/js/NumberProperty.js';
 import TProperty from '../../../axon/js/TProperty.js';
+import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import nuclearDecayCommon from '../nuclearDecayCommon.js';
 import Isotope, { IsotopeOptions } from './Isotope.js';
 
@@ -15,7 +15,7 @@ type SelfOptions = EmptySelfOptions;
 
 export type DecayingIsotopeOptions = SelfOptions & IsotopeOptions;
 
-export default class DecayingIsotope extends Isotope {
+export default class DecayingAtom extends Isotope {
 
   public readonly timeProperty: TProperty<number>;
 
@@ -29,8 +29,8 @@ export default class DecayingIsotope extends Isotope {
     this.timeProperty = new NumberProperty( 0 );
   }
 
-  public static startDecay( isotope: Isotope ): DecayingIsotope {
-    return new DecayingIsotope( isotope.protonCountProperty.value, isotope.neutronCountProperty.value, {
+  public static startDecay( isotope: Isotope ): DecayingAtom {
+    return new DecayingAtom( isotope.protonCountProperty.value, isotope.neutronCountProperty.value, {
       decaysInto: isotope.decaysIntoProperty.value
     } );
   }
@@ -44,4 +44,4 @@ export default class DecayingIsotope extends Isotope {
   }
 }
 
-nuclearDecayCommon.register( 'DecayingIsotope', DecayingIsotope );
+nuclearDecayCommon.register( 'DecayingAtom', DecayingAtom );
