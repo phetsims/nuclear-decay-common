@@ -11,6 +11,7 @@ import HSeparator from '../../../scenery/js/layout/nodes/HSeparator.js';
 import VBox from '../../../scenery/js/layout/nodes/VBox.js';
 import RichText from '../../../scenery/js/nodes/RichText.js';
 import Text from '../../../scenery/js/nodes/Text.js';
+import AtomIdentifier from '../../../shred/js/AtomIdentifier.js';
 import type { AquaRadioButtonGroupItem } from '../../../sun/js/AquaRadioButtonGroup.js';
 import VerticalAquaRadioButtonGroup from '../../../sun/js/VerticalAquaRadioButtonGroup.js';
 import Isotope from '../model/Isotope.js';
@@ -42,7 +43,10 @@ export default class IsotopePanel extends NuclearDecayPanel {
     const radioButtonItems: AquaRadioButtonGroupItem<Isotope>[] = [
       {
         value: isotope,
-        createNode: () => new RichText( isotope.isotopeNameStringProperty, {
+        createNode: () => new RichText( AtomIdentifier.getNameAndMass(
+          isotope.protonCountProperty.value,
+          isotope.neutronCountProperty.value
+        ), {
           font: NuclearDecayCommonConstants.CONTROL_FONT,
           maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
         } )

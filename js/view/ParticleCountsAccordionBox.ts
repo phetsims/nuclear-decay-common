@@ -28,8 +28,12 @@ export type ParticleCountsAccordionBoxOptions = SelfOptions & NuclearDecayAccord
 export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox {
   public constructor( model: NuclearDecayModel, providedOptions?: ParticleCountsAccordionBoxOptions ) {
 
-    const currentIsotopeNameProperty = new DynamicProperty<string, string, Isotope>( model.selectedIsotopeProperty, {
-      derive: 'isotopeNameStringProperty'
+    // TODO: This is not yet dynamic! https://github.com/phetsims/alpha-decay/issues/3
+    const currentIsotopeNameProperty = model.selectedIsotopeProperty.derived( ( isotope: Isotope ) => {
+      return AtomIdentifier.getNameAndMass(
+        isotope.protonCountProperty.value,
+        isotope.neutronCountProperty.value
+      );
     } );
 
     const currentIsotopeSymbolStringProperty = model.selectedIsotopeProperty.derived( ( isotope: Isotope ) => {

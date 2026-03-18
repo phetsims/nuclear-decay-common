@@ -11,6 +11,7 @@ import PhetFont from '../../../scenery-phet/js/PhetFont.js';
 import Node, { NodeOptions } from '../../../scenery/js/nodes/Node.js';
 import RichText from '../../../scenery/js/nodes/RichText.js';
 import type TPaint from '../../../scenery/js/util/TPaint.js';
+import AtomIdentifier from '../../../shred/js/AtomIdentifier.js';
 import Isotope from '../model/Isotope.js';
 import nuclearDecayCommon from '../nuclearDecayCommon.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
@@ -29,7 +30,7 @@ const SMALL_TEXT_OFFSET = 4;
 
 export default class EquationElementNode extends Node {
   public constructor(
-    symbolStringProperty: TReadOnlyProperty<string>,
+    symbolStringProperty: string,
     superscriptStringProperty: TReadOnlyProperty<string>,
     subscriptStringProperty: TReadOnlyProperty<string>,
     providedOptions: EquationElementNodeOptions ) {
@@ -63,7 +64,7 @@ export default class EquationElementNode extends Node {
 
   public static createFromIsotope( isotope: Isotope, providedOptions: EquationElementNodeOptions ): EquationElementNode {
     return new EquationElementNode(
-      isotope.elementSymbolStringProperty,
+      AtomIdentifier.getSymbol( isotope.protonCountProperty.value ),
       isotope.massNumberProperty.derived( number => number.toString() ),
       isotope.protonCountProperty.derived( number => number.toString() ),
       providedOptions

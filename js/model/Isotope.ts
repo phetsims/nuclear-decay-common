@@ -7,15 +7,12 @@
  */
 
 import DerivedProperty from '../../../axon/js/DerivedProperty.js';
-import DerivedStringProperty from '../../../axon/js/DerivedStringProperty.js';
 import NumberProperty from '../../../axon/js/NumberProperty.js';
 import Property from '../../../axon/js/Property.js';
 import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
-import StringUtils from '../../../phetcommon/js/util/StringUtils.js';
 import AtomIdentifier from '../../../shred/js/AtomIdentifier.js';
 import nuclearDecayCommon from '../nuclearDecayCommon.js';
-import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 
 type SelfOptions = {
   decaysInto?: Isotope | null; // Optional property to specify the isotope that this one decays into
@@ -24,15 +21,6 @@ type SelfOptions = {
 export type IsotopeOptions = SelfOptions;
 
 export default class Isotope {
-
-  // Name of the element regardless of isotope, e.g. "Polonium"
-  public readonly elementNameStringProperty: TReadOnlyProperty<string>;
-
-  // Symbol of the element regardless of isotope, e.g. "Po"
-  public readonly elementSymbolStringProperty: TReadOnlyProperty<string>;
-
-  // Name of the isotope, e.g. "Polonium-211"
-  public readonly isotopeNameStringProperty: TReadOnlyProperty<string>;
 
   public readonly protonCountProperty: TReadOnlyProperty<number>;
   public readonly neutronCountProperty: TReadOnlyProperty<number>;
@@ -70,21 +58,6 @@ export default class Isotope {
       }
     );
 
-    this.elementNameStringProperty = AtomIdentifier.createDynamicNameProperty( this.protonCountProperty );
-
-    this.elementSymbolStringProperty = this.protonCountProperty.derived( protons => AtomIdentifier.getSymbol( protons ) );
-
-    this.isotopeNameStringProperty = new DerivedStringProperty(
-      [
-        this.massNumberProperty,
-        this.elementNameStringProperty,
-        NuclearDecayCommonFluent.isotopeNameNumberPatternStringProperty
-      ], ( massNumber: number, elementName: string, pattern: string ) => {
-        return StringUtils.fillIn( pattern, {
-          name: elementName,
-          massNumber: massNumber
-        } );
-      } );
   }
 }
 
