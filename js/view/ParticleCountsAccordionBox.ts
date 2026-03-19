@@ -12,7 +12,7 @@ import StringUtils from '../../../phetcommon/js/util/StringUtils.js';
 import VBox from '../../../scenery/js/layout/nodes/VBox.js';
 import RichText from '../../../scenery/js/nodes/RichText.js';
 import Text from '../../../scenery/js/nodes/Text.js';
-import AtomIdentifier from '../../../shred/js/AtomIdentifier.js';
+import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
 import Isotope from '../model/Isotope.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import nuclearDecayCommon from '../nuclearDecayCommon.js';
@@ -30,14 +30,14 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
 
     // TODO: This is not yet dynamic! https://github.com/phetsims/alpha-decay/issues/3
     const currentIsotopeNameProperty = model.selectedIsotopeProperty.derived( ( isotope: Isotope ) => {
-      return AtomIdentifier.getNameAndMass(
+      return AtomNameUtils.getNameAndMass(
         isotope.protonCountProperty.value,
         isotope.neutronCountProperty.value
       );
     } );
 
     const currentIsotopeSymbolStringProperty = model.selectedIsotopeProperty.derived( ( isotope: Isotope ) => {
-      return AtomIdentifier.getMassAndSymbol( isotope.protonCountProperty.value, isotope.neutronCountProperty.value );
+      return AtomNameUtils.getMassAndSymbol( isotope.protonCountProperty.value, isotope.neutronCountProperty.value );
     } );
 
     const currentIsotopeProtonCountProperty = new DynamicProperty<number, number, Isotope>( model.selectedIsotopeProperty, {

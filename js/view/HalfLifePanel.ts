@@ -17,7 +17,7 @@ import Node from '../../../scenery/js/nodes/Node.js';
 import Path from '../../../scenery/js/nodes/Path.js';
 import RichText from '../../../scenery/js/nodes/RichText.js';
 import Text from '../../../scenery/js/nodes/Text.js';
-import AtomIdentifier from '../../../shred/js/AtomIdentifier.js';
+import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
 import Isotope from '../model/Isotope.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import nuclearDecayCommon from '../nuclearDecayCommon.js';
@@ -58,14 +58,14 @@ export default class HalfLifePanel extends NuclearDecayPanel {
     // Isotope symbols
 
     const selectedIsotopeSymbolProperty = model.selectedIsotopeProperty.derived( ( isotope: Isotope ) => {
-      return AtomIdentifier.getMassAndSymbol( isotope.protonCountProperty.value, isotope.neutronCountProperty.value );
+      return AtomNameUtils.getMassAndSymbol( isotope.protonCountProperty.value, isotope.neutronCountProperty.value );
     } );
 
     // TODO: Should also react when selectedIsotopeProperty itself changes https://github.com/phetsims/alpha-decay/issues/3
     const isotope = model.selectedIsotopeProperty.value;
     const decaysInto = isotope.decaysIntoProperty.value;
     const decayProductSymbolProperty: TReadOnlyProperty<string> | string = decaysInto
-      ? AtomIdentifier.getMassAndSymbol( decaysInto.protonCountProperty.value, decaysInto.neutronCountProperty.value )
+      ? AtomNameUtils.getMassAndSymbol( decaysInto.protonCountProperty.value, decaysInto.neutronCountProperty.value )
       : new Property( '--' );
 
     const initialIsotopeSymbol = new RichText( selectedIsotopeSymbolProperty, {
