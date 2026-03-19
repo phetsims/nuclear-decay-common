@@ -11,7 +11,7 @@ import NumberProperty from '../../../axon/js/NumberProperty.js';
 import Property from '../../../axon/js/Property.js';
 import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
-import AtomIdentifier from '../../../shred/js/AtomIdentifier.js';
+import AtomInfoUtils from '../../../shred/js/AtomInfoUtils.js';
 import nuclearDecayCommon from '../nuclearDecayCommon.js';
 
 type SelfOptions = {
@@ -53,8 +53,8 @@ export default class Isotope {
         this.protonCountProperty,
         this.neutronCountProperty
       ], ( protonCount: number, neutronCount: number ) => {
-        console.log( AtomIdentifier.getNuclideHalfLife( protonCount, neutronCount ) );
-        return AtomIdentifier.getNuclideHalfLife( protonCount, neutronCount );
+        console.log( AtomInfoUtils.getNuclideHalfLife( protonCount, neutronCount ) );
+        return AtomInfoUtils.getNuclideHalfLife( protonCount, neutronCount );
       }
     );
 
