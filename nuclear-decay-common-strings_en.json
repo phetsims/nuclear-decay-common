@@ -53,6 +53,12 @@
   "alphaParticle": {
     "value": "Alpha<br>Particle"
   },
+  "isotopeA": {
+    "value": "Isotope A"
+  },
+  "isotopeB": {
+    "value": "Isotope B"
+  },
   "protonsPattern": {
     "value": "Protons: {{protons}}"
   },

@@ -50,6 +50,10 @@ type StringsType = {
   'timeSecondsStringProperty': LocalizedStringProperty;
   'alphaParticle': string;
   'alphaParticleStringProperty': LocalizedStringProperty;
+  'isotopeA': string;
+  'isotopeAStringProperty': LocalizedStringProperty;
+  'isotopeB': string;
+  'isotopeBStringProperty': LocalizedStringProperty;
   'protonsPattern': string;
   'protonsPatternStringProperty': LocalizedStringProperty;
   'neutronsPattern': string;

@@ -9,7 +9,7 @@ import optionize from '../../../phet-core/js/optionize.js';
 import ShadedSphereNode from '../../../scenery-phet/js/ShadedSphereNode.js';
 import Node, { NodeOptions } from '../../../scenery/js/nodes/Node.js';
 import ShredColors from '../../../shred/js/ShredColors.js';
-import DecayingAtom from '../model/DecayingAtom.js';
+import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 
 type SelfOptions = {
 
@@ -24,7 +24,7 @@ type SelfOptions = {
 export type DecayingAtomNodeOptions = SelfOptions & NodeOptions;
 
 export default class DecayingAtomNode extends Node {
-  public constructor( decayingAtom: DecayingAtom, providedOptions: DecayingAtomNodeOptions ) {
+  public constructor( decayingAtom: NuclearDecayAtom, providedOptions: DecayingAtomNodeOptions ) {
     const options = optionize<DecayingAtomNodeOptions, SelfOptions, NodeOptions>()( {
       protonNumber: 10,
       neutronNumber: 10,

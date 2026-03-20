@@ -56,7 +56,9 @@ export default class ParticlesLegendNode extends Node {
       NuclearDecayCommonStrings.neutronStringProperty
     );
 
-    const alphaParticleIcon = new AlphaParticleNode( {} );
+    const alphaParticleIcon = new AlphaParticleNode( {
+      nucleonDiameter: SPHERE_DIAMETER
+    } );
 
     const alphaParticleLegend = particleLegendItem(
       alphaParticleIcon,

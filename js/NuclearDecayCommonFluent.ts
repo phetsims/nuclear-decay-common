@@ -40,6 +40,8 @@ addToMapIfDefined( 'decayTime', 'decayTimeStringProperty' );
 addToMapIfDefined( 'proton', 'protonStringProperty' );
 addToMapIfDefined( 'neutron', 'neutronStringProperty' );
 addToMapIfDefined( 'alphaParticle', 'alphaParticleStringProperty' );
+addToMapIfDefined( 'isotopeA', 'isotopeAStringProperty' );
+addToMapIfDefined( 'isotopeB', 'isotopeBStringProperty' );
 addToMapIfDefined( 'electronCloud', 'electronCloudStringProperty' );
 addToMapIfDefined( 'stopwatch', 'stopwatchStringProperty' );
 
@@ -75,6 +77,8 @@ const NuclearDecayCommonFluent = {
   neutronStringProperty: _.get( NuclearDecayCommonStrings, 'neutronStringProperty' ),
   timeSecondsStringProperty: _.get( NuclearDecayCommonStrings, 'timeSecondsStringProperty' ),
   alphaParticleStringProperty: _.get( NuclearDecayCommonStrings, 'alphaParticleStringProperty' ),
+  isotopeAStringProperty: _.get( NuclearDecayCommonStrings, 'isotopeAStringProperty' ),
+  isotopeBStringProperty: _.get( NuclearDecayCommonStrings, 'isotopeBStringProperty' ),
   protonsPatternStringProperty: _.get( NuclearDecayCommonStrings, 'protonsPatternStringProperty' ),
   neutronsPatternStringProperty: _.get( NuclearDecayCommonStrings, 'neutronsPatternStringProperty' ),
   isotopeNameNumberPatternStringProperty: _.get( NuclearDecayCommonStrings, 'isotopeNameNumberPatternStringProperty' ),

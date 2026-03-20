@@ -15,8 +15,7 @@ import Text from '../../../scenery/js/nodes/Text.js';
 import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
 import type { AquaRadioButtonGroupItem } from '../../../sun/js/AquaRadioButtonGroup.js';
 import VerticalAquaRadioButtonGroup from '../../../sun/js/VerticalAquaRadioButtonGroup.js';
-import Isotope from '../model/Isotope.js';
-import NuclearDecayModel from '../model/NuclearDecayModel.js';
+import NuclearDecayModel, { ValidIsotopes } from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
@@ -44,21 +43,20 @@ export default class IsotopePanel extends NuclearDecayPanel {
     } );
 
     // TODO: These should be populated from the model.possibleIsotopes or something https://github.com/phetsims/alpha-decay/issues/3
-    const isotope = model.selectedIsotopeProperty.value;
-    const customIsotope = new Isotope( 1, 1 );
-    const radioButtonItems: AquaRadioButtonGroupItem<Isotope>[] = [
+    const polonium = NuclearDecayCommonConstants.POLONIUM_211;
+    const radioButtonItems: AquaRadioButtonGroupItem<ValidIsotopes>[] = [
       {
-        value: isotope,
+        value: 'polonium-211',
         createNode: () => new RichText( AtomNameUtils.getNameAndMass(
-          isotope.protonCountProperty.value,
-          isotope.neutronCountProperty.value
+          polonium.protonCount,
+          polonium.neutronCount
         ), {
           font: NuclearDecayCommonConstants.CONTROL_FONT,
           maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
         } )
       },
       {
-        value: customIsotope,
+        value: 'custom',
         createNode: () => new RichText( NuclearDecayCommonFluent.customStringProperty, {
           font: NuclearDecayCommonConstants.CONTROL_FONT,
           maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH

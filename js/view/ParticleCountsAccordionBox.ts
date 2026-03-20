@@ -6,15 +6,13 @@
  */
 
 import DerivedStringProperty from '../../../axon/js/DerivedStringProperty.js';
-import DynamicProperty from '../../../axon/js/DynamicProperty.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import StringUtils from '../../../phetcommon/js/util/StringUtils.js';
 import VBox from '../../../scenery/js/layout/nodes/VBox.js';
 import RichText from '../../../scenery/js/nodes/RichText.js';
 import Text from '../../../scenery/js/nodes/Text.js';
 import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
-import Isotope from '../model/Isotope.js';
-import NuclearDecayModel from '../model/NuclearDecayModel.js';
+import NuclearDecayModel, { SelectableIsotopes } from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
@@ -27,33 +25,39 @@ export type ParticleCountsAccordionBoxOptions = SelfOptions & NuclearDecayAccord
 export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox {
   public constructor( model: NuclearDecayModel, providedOptions?: ParticleCountsAccordionBoxOptions ) {
 
-    // TODO: This is not yet dynamic! https://github.com/phetsims/alpha-decay/issues/3
-    const currentIsotopeNameProperty = model.selectedIsotopeProperty.derived( ( isotope: Isotope ) => {
-      return AtomNameUtils.getNameAndMass(
-        isotope.protonCountProperty.value,
-        isotope.neutronCountProperty.value
-      );
+    const currentIsotopeProtonCountProperty = model.selectedIsotopeProperty.derived( ( isotope: SelectableIsotopes ) => {
+      if ( isotope === 'custom' ) {
+        return 'p';
+      }
+      else {
+        const atomConfig = model.getSelectedIsotopeAtomConfig();
+        return atomConfig.protonCount;
+      }
     } );
 
-    const currentIsotopeSymbolStringProperty = model.selectedIsotopeProperty.derived( ( isotope: Isotope ) => {
-      return AtomNameUtils.getMassAndSymbol( isotope.protonCountProperty.value, isotope.neutronCountProperty.value );
-    } );
-
-    const currentIsotopeProtonCountProperty = new DynamicProperty<number, number, Isotope>( model.selectedIsotopeProperty, {
-      derive: 'protonCountProperty'
-    } );
-
-    const currentIsotopeNeutronCountProperty = new DynamicProperty<number, number, Isotope>( model.selectedIsotopeProperty, {
-      derive: 'neutronCountProperty'
+    const currentIsotopeNeutronCountProperty = model.selectedIsotopeProperty.derived( ( isotope: SelectableIsotopes ) => {
+      if ( isotope === 'custom' ) {
+        return 'n';
+      }
+      else {
+        const atomConfig = model.getSelectedIsotopeAtomConfig();
+        return atomConfig.neutronCount;
+      }
     } );
 
     const isotopeInfoTitleStringProperty = new DerivedStringProperty(
       [
-        currentIsotopeNameProperty,
-        currentIsotopeSymbolStringProperty,
+        model.selectedIsotopeProperty,
         NuclearDecayCommonFluent.isotopeInfoTitleStringProperty
-      ], ( nameAndNumber, numberSymbol, pattern ) => {
-        return StringUtils.fillIn( pattern, { nameAndNumber: nameAndNumber, numberSymbol: numberSymbol } );
+      ], ( selectedIsotope: SelectableIsotopes, pattern: string ) => {
+        if ( selectedIsotope === 'custom' ) {
+          return NuclearDecayCommonFluent.isotopeAStringProperty.value;
+        }
+        const atomConfig = model.getSelectedIsotopeAtomConfig();
+        return StringUtils.fillIn( pattern, {
+          nameAndNumber: AtomNameUtils.getName( atomConfig.protonCount ),
+          numberSymbol: AtomNameUtils.getMassAndSymbol( atomConfig.protonCount, atomConfig.neutronCount )
+        } );
       } );
 
     const titleNode = new RichText( isotopeInfoTitleStringProperty, {

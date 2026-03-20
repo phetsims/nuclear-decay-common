@@ -7,12 +7,23 @@
  */
 
 import PhetFont from '../../scenery-phet/js/PhetFont.js';
+import AtomConfig from '../../shred/js/model/AtomConfig.js';
 
 export default class NuclearDecayCommonConstants {
   public constructor() {
     // no-op
   }
 
+  // Isotopes
+  public static readonly ALPHA_PARTICLE = new AtomConfig( 2, 2, 0 );
+  public static readonly POLONIUM_211 = new AtomConfig( 84, 127, 84 );
+  public static readonly LEAD_207 = new AtomConfig( 82, 125, 82 );
+  public static readonly CARBON_14 = new AtomConfig( 6, 8, 6 );
+  public static readonly NITROGEN_14 = new AtomConfig( 7, 7, 7 );
+  public static readonly HYDROGEN_3 = new AtomConfig( 1, 2, 1 );
+  public static readonly HELIUM_3 = new AtomConfig( 2, 1, 2 );
+
+  // Screen view margins
   public static readonly SCREEN_VIEW_X_MARGIN = 15;
   public static readonly SCREEN_VIEW_Y_MARGIN = 15;
 

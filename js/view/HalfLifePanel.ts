@@ -6,8 +6,6 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
-import Property from '../../../axon/js/Property.js';
-import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
 import Shape from '../../../kite/js/Shape.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import ArrowNode from '../../../scenery-phet/js/ArrowNode.js';
@@ -17,9 +15,7 @@ import Node from '../../../scenery/js/nodes/Node.js';
 import Path from '../../../scenery/js/nodes/Path.js';
 import RichText from '../../../scenery/js/nodes/RichText.js';
 import Text from '../../../scenery/js/nodes/Text.js';
-import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
-import Isotope from '../model/Isotope.js';
-import NuclearDecayModel from '../model/NuclearDecayModel.js';
+import NuclearDecayModel, { SelectableIsotopes } from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
@@ -56,16 +52,15 @@ export default class HalfLifePanel extends NuclearDecayPanel {
 
     // Isotope symbols
 
-    const selectedIsotopeSymbolProperty = model.selectedIsotopeProperty.derived( ( isotope: Isotope ) => {
-      return AtomNameUtils.getMassAndSymbol( isotope.protonCountProperty.value, isotope.neutronCountProperty.value );
+    const selectedIsotopeSymbolProperty = model.selectedIsotopeProperty.derived( ( isotope: SelectableIsotopes ) => {
+      return NuclearDecayModel.getIsotopeMassAndSymbolString( isotope, 'A' );
+
     } );
 
-    // TODO: Should also react when selectedIsotopeProperty itself changes https://github.com/phetsims/alpha-decay/issues/3
-    const isotope = model.selectedIsotopeProperty.value;
-    const decaysInto = isotope.decaysIntoProperty.value;
-    const decayProductSymbolProperty: TReadOnlyProperty<string> | string = decaysInto
-      ? AtomNameUtils.getMassAndSymbol( decaysInto.protonCountProperty.value, decaysInto.neutronCountProperty.value )
-      : new Property( '--' );
+    const decayProductSymbolProperty = model.selectedIsotopeProperty.derived( ( isotope: SelectableIsotopes ) => {
+      const decayProduct = NuclearDecayModel.getDecayProduct( isotope );
+      return NuclearDecayModel.getIsotopeMassAndSymbolString( decayProduct, 'B' );
+    } );
 
     const initialIsotopeSymbol = new RichText( selectedIsotopeSymbolProperty, {
       font: NuclearDecayCommonConstants.CONTROL_BOLD_FONT,

@@ -12,7 +12,7 @@ import Node, { NodeOptions } from '../../../scenery/js/nodes/Node.js';
 import RichText from '../../../scenery/js/nodes/RichText.js';
 import type TPaint from '../../../scenery/js/util/TPaint.js';
 import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
-import Isotope from '../model/Isotope.js';
+import NuclearDecayModel, { ValidIsotopes } from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 
 type SelfOptions = {
@@ -30,8 +30,8 @@ const SMALL_TEXT_OFFSET = 4;
 export default class EquationElementNode extends Node {
   public constructor(
     symbolStringProperty: string,
-    superscriptStringProperty: TReadOnlyProperty<string>,
-    subscriptStringProperty: TReadOnlyProperty<string>,
+    superscriptStringProperty: TReadOnlyProperty<string> | string,
+    subscriptStringProperty: TReadOnlyProperty<string> | string,
     providedOptions: EquationElementNodeOptions ) {
     const options = optionize<SelfOptions, EmptySelfOptions, EquationElementNodeOptions>()( {
       // Default options go here
@@ -61,11 +61,12 @@ export default class EquationElementNode extends Node {
     //nop
   }
 
-  public static createFromIsotope( isotope: Isotope, providedOptions: EquationElementNodeOptions ): EquationElementNode {
+  public static createFromIsotope( isotope: ValidIsotopes, providedOptions: EquationElementNodeOptions ): EquationElementNode {
+    const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
     return new EquationElementNode(
-      AtomNameUtils.getSymbol( isotope.protonCountProperty.value ),
-      isotope.massNumberProperty.derived( number => number.toString() ),
-      isotope.protonCountProperty.derived( number => number.toString() ),
+      AtomNameUtils.getSymbol( atomConfig.protonCount ),
+      `${atomConfig.protonCount + atomConfig.neutronCount}`,
+      `${atomConfig.protonCount}`,
       providedOptions
     );
   }

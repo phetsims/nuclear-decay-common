@@ -11,7 +11,7 @@ import ArrowNode from '../../../scenery-phet/js/ArrowNode.js';
 import PlusNode from '../../../scenery-phet/js/PlusNode.js';
 import HBox, { HBoxOptions } from '../../../scenery/js/layout/nodes/HBox.js';
 import Node from '../../../scenery/js/nodes/Node.js';
-import Isotope from '../model/Isotope.js';
+import { ValidIsotopes } from '../model/NuclearDecayModel.js';
 import EquationElementNode from './EquationElementNode.js';
 
 type SelfOptions = EmptySelfOptions;
@@ -44,10 +44,10 @@ export default class EquationNode extends HBox {
     super( options );
   }
 
-  public static createFromIsotope( isotope: Isotope ): EquationNode {
+  public static createFromIsotope( isotope: ValidIsotopes ): EquationNode {
     const firstTerm = EquationElementNode.createFromIsotope( isotope, {} );
-    const secondTerm = EquationElementNode.createFromIsotope( isotope.decaysIntoProperty.value!, {} );
-    const thirdTerm = EquationElementNode.createFromIsotope( new Isotope( 2, 2 ), {} );
+    const secondTerm = EquationElementNode.createFromIsotope( isotope, {} );
+    const thirdTerm = EquationElementNode.createFromIsotope( 'helium-2', {} );
 
     return new EquationNode( firstTerm, secondTerm, thirdTerm, {} );
   }
