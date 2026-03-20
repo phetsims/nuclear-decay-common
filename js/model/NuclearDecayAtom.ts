@@ -11,7 +11,6 @@ import affirm from '../../../perennial-alias/js/browser-and-node/affirm.js';
 import { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import AtomInfoUtils from '../../../shred/js/AtomInfoUtils.js';
 import AtomConfig from '../../../shred/js/model/AtomConfig.js';
-import nuclearDecayCommon from '../nuclearDecayCommon.js';
 
 type SelfOptions = EmptySelfOptions;
 
