@@ -12,7 +12,6 @@ import Property from '../../../axon/js/Property.js';
 import TModel from '../../../joist/js/TModel.js';
 import { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import TimeSpeed from '../../../scenery-phet/js/TimeSpeed.js';
-import nuclearDecayCommon from '../nuclearDecayCommon.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import Isotope from './Isotope.js';
 
@@ -96,5 +95,3 @@ export default class NuclearDecayModel implements TModel {
     this.timeProperty.value += dt;
   }
 }
-
-nuclearDecayCommon.register( 'NuclearDecayModel', NuclearDecayModel );

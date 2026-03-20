@@ -14,7 +14,6 @@ import VBox from '../../../scenery/js/layout/nodes/VBox.js';
 import Node, { NodeOptions } from '../../../scenery/js/nodes/Node.js';
 import RichText from '../../../scenery/js/nodes/RichText.js';
 import ShredColors from '../../../shred/js/ShredColors.js';
-import nuclearDecayCommon from '../nuclearDecayCommon.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonStrings from '../NuclearDecayCommonStrings.js';
 
@@ -89,5 +88,3 @@ export default class ParticlesLegendNode extends Node {
     this.addChild( content );
   }
 }
-
-nuclearDecayCommon.register( 'ParticlesLegendNode', ParticlesLegendNode );

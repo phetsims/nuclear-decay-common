@@ -7,7 +7,6 @@
  */
 
 import PhetFont from '../../scenery-phet/js/PhetFont.js';
-import nuclearDecayCommon from './nuclearDecayCommon.js';
 
 export default class NuclearDecayCommonConstants {
   public constructor() {
@@ -43,5 +42,3 @@ export default class NuclearDecayCommonConstants {
   public static readonly NORMAL_SPEED_SCALE = 1;
   public static readonly SLOW_SPEED_SCALE = 0.25;
 }
-
-nuclearDecayCommon.register( 'NuclearDecayCommonConstants', NuclearDecayCommonConstants );

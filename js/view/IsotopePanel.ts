@@ -16,7 +16,6 @@ import type { AquaRadioButtonGroupItem } from '../../../sun/js/AquaRadioButtonGr
 import VerticalAquaRadioButtonGroup from '../../../sun/js/VerticalAquaRadioButtonGroup.js';
 import Isotope from '../model/Isotope.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
-import nuclearDecayCommon from '../nuclearDecayCommon.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
@@ -78,5 +77,3 @@ export default class IsotopePanel extends NuclearDecayPanel {
     super( contentsNode, options );
   }
 }
-
-nuclearDecayCommon.register( 'IsotopePanel', IsotopePanel );

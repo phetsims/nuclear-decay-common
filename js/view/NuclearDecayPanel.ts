@@ -8,7 +8,6 @@
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import Panel, { PanelOptions } from '../../../sun/js/Panel.js';
 import Node from '../../../scenery/js/nodes/Node.js';
-import nuclearDecayCommon from '../nuclearDecayCommon.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 
 type SelfOptions = EmptySelfOptions;
@@ -27,5 +26,3 @@ export default class NuclearDecayPanel extends Panel {
     super( contentNode, options );
   }
 }
-
-nuclearDecayCommon.register( 'NuclearDecayPanel', NuclearDecayPanel );

@@ -15,7 +15,6 @@ import Text from '../../../scenery/js/nodes/Text.js';
 import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
 import Isotope from '../model/Isotope.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
-import nuclearDecayCommon from '../nuclearDecayCommon.js';
 import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
@@ -102,5 +101,3 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
     super( contentsNode, options );
   }
 }
-
-nuclearDecayCommon.register( 'ParticleCountsAccordionBox', ParticleCountsAccordionBox );

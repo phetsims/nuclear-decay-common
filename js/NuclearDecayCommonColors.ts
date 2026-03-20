@@ -53,5 +53,4 @@ const NuclearDecayCommonColors = {
   } )
 };
 
-nuclearDecayCommon.register( 'NuclearDecayCommonColors', NuclearDecayCommonColors );
 export default NuclearDecayCommonColors;

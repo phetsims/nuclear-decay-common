@@ -8,7 +8,6 @@
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import AccordionBox, { AccordionBoxOptions } from '../../../sun/js/AccordionBox.js';
 import Node from '../../../scenery/js/nodes/Node.js';
-import nuclearDecayCommon from '../nuclearDecayCommon.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 
 type SelfOptions = EmptySelfOptions;
@@ -29,5 +28,3 @@ export default class NuclearDecayAccordionBox extends AccordionBox {
     super( contentNode, options );
   }
 }
-
-nuclearDecayCommon.register( 'NuclearDecayAccordionBox', NuclearDecayAccordionBox );

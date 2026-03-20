@@ -11,7 +11,6 @@ import ArrowNode from '../../../scenery-phet/js/ArrowNode.js';
 import Node from '../../../scenery/js/nodes/Node.js';
 import Path from '../../../scenery/js/nodes/Path.js';
 import Text from '../../../scenery/js/nodes/Text.js';
-import nuclearDecayCommon from '../nuclearDecayCommon.js';
 import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
@@ -190,5 +189,3 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     super( contentsNode, options );
   }
 }
-
-nuclearDecayCommon.register( 'EnergyDiagramAccordionBox', EnergyDiagramAccordionBox );

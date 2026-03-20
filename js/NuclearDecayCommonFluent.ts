@@ -81,5 +81,3 @@ const NuclearDecayCommonFluent = {
 };
 
 export default NuclearDecayCommonFluent;
-
-nuclearDecayCommon.register('NuclearDecayCommonFluent', NuclearDecayCommonFluent);

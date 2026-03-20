@@ -12,7 +12,6 @@ import PlusNode from '../../../scenery-phet/js/PlusNode.js';
 import HBox, { HBoxOptions } from '../../../scenery/js/layout/nodes/HBox.js';
 import Node from '../../../scenery/js/nodes/Node.js';
 import Isotope from '../model/Isotope.js';
-import nuclearDecayCommon from '../nuclearDecayCommon.js';
 import EquationElementNode from './EquationElementNode.js';
 
 type SelfOptions = EmptySelfOptions;
@@ -53,5 +52,3 @@ export default class EquationNode extends HBox {
     return new EquationNode( firstTerm, secondTerm, thirdTerm, {} );
   }
 }
-
-nuclearDecayCommon.register( 'EquationNode', EquationNode );

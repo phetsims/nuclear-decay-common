@@ -13,7 +13,6 @@ import TimeControlNode from '../../../scenery-phet/js/TimeControlNode.js';
 import TimeSpeed from '../../../scenery-phet/js/TimeSpeed.js';
 import VBox from '../../../scenery/js/layout/nodes/VBox.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
-import nuclearDecayCommon from '../nuclearDecayCommon.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import EquationAccordionBox from './EquationAccordionBox.js';
 import HalfLifePanel from './HalfLifePanel.js';
@@ -102,5 +101,3 @@ export default class NuclearDecayScreenView extends ScreenView {
     // TO BE IMPLEMENTED
   }
 }
-
-nuclearDecayCommon.register( 'NuclearDecayScreenView', NuclearDecayScreenView );

@@ -64,6 +64,4 @@ type StringsType = {
 
 const NuclearDecayCommonStrings = getStringModule( 'NUCLEAR_DECAY_COMMON' ) as StringsType;
 
-nuclearDecayCommon.register( 'NuclearDecayCommonStrings', NuclearDecayCommonStrings );
-
 export default NuclearDecayCommonStrings;

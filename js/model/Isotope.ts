@@ -12,7 +12,6 @@ import Property from '../../../axon/js/Property.js';
 import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import AtomInfoUtils from '../../../shred/js/AtomInfoUtils.js';
-import nuclearDecayCommon from '../nuclearDecayCommon.js';
 
 type SelfOptions = {
   decaysInto?: Isotope | null; // Optional property to specify the isotope that this one decays into
@@ -59,5 +58,3 @@ export default class Isotope {
 
   }
 }
-
-nuclearDecayCommon.register( 'Isotope', Isotope );

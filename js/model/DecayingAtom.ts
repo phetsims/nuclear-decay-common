@@ -10,7 +10,6 @@ import NumberProperty from '../../../axon/js/NumberProperty.js';
 import TProperty from '../../../axon/js/TProperty.js';
 import dotRandom from '../../../dot/js/dotRandom.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
-import nuclearDecayCommon from '../nuclearDecayCommon.js';
 import Isotope, { IsotopeOptions } from './Isotope.js';
 
 type SelfOptions = EmptySelfOptions;
@@ -76,5 +75,3 @@ export default class DecayingAtom extends Isotope {
     return 1 - Math.exp( -lambda * dt );
   }
 }
-
-nuclearDecayCommon.register( 'DecayingAtom', DecayingAtom );
