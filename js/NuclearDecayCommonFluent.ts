@@ -40,6 +40,8 @@ addToMapIfDefined( 'decayTime', 'decayTimeStringProperty' );
 addToMapIfDefined( 'proton', 'protonStringProperty' );
 addToMapIfDefined( 'neutron', 'neutronStringProperty' );
 addToMapIfDefined( 'alphaParticle', 'alphaParticleStringProperty' );
+addToMapIfDefined( 'electronCloud', 'electronCloudStringProperty' );
+addToMapIfDefined( 'stopwatch', 'stopwatchStringProperty' );
 
 // A function that creates contents for a new Fluent file, which will be needed if any string changes.
 const createFluentFile = (): string => {
@@ -77,7 +79,11 @@ const NuclearDecayCommonFluent = {
   neutronsPatternStringProperty: _.get( NuclearDecayCommonStrings, 'neutronsPatternStringProperty' ),
   isotopeNameNumberPatternStringProperty: _.get( NuclearDecayCommonStrings, 'isotopeNameNumberPatternStringProperty' ),
   isotopeNumberSymbolPatternStringProperty: _.get( NuclearDecayCommonStrings, 'isotopeNumberSymbolPatternStringProperty' ),
-  isotopeInfoTitleStringProperty: _.get( NuclearDecayCommonStrings, 'isotopeInfoTitleStringProperty' )
+  isotopeInfoTitleStringProperty: _.get( NuclearDecayCommonStrings, 'isotopeInfoTitleStringProperty' ),
+  electronCloudStringProperty: _.get( NuclearDecayCommonStrings, 'electronCloudStringProperty' ),
+  stopwatchStringProperty: _.get( NuclearDecayCommonStrings, 'stopwatchStringProperty' )
 };
 
 export default NuclearDecayCommonFluent;
+
+nuclearDecayCommon.register('NuclearDecayCommonFluent', NuclearDecayCommonFluent);

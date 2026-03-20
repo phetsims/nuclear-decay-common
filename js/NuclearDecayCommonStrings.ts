@@ -60,8 +60,14 @@ type StringsType = {
   'isotopeNumberSymbolPatternStringProperty': LocalizedStringProperty;
   'isotopeInfoTitle': string;
   'isotopeInfoTitleStringProperty': LocalizedStringProperty;
+  'electronCloud': string;
+  'electronCloudStringProperty': LocalizedStringProperty;
+  'stopwatch': string;
+  'stopwatchStringProperty': LocalizedStringProperty;
 };
 
 const NuclearDecayCommonStrings = getStringModule( 'NUCLEAR_DECAY_COMMON' ) as StringsType;
+
+nuclearDecayCommon.register( 'NuclearDecayCommonStrings', NuclearDecayCommonStrings );
 
 export default NuclearDecayCommonStrings;

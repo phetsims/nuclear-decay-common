@@ -67,5 +67,11 @@
   },
   "isotopeInfoTitle": {
     "value": "{{nameAndNumber}} ({{numberSymbol}})"
+  },
+  "electronCloud": {
+    "value": "Electron Cloud"
+  },
+  "stopwatch": {
+    "value": "Stopwatch"
   }
 }

@@ -6,9 +6,10 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
-import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
+import optionize from '../../../phet-core/js/optionize.js';
 import HSeparator from '../../../scenery/js/layout/nodes/HSeparator.js';
 import VBox from '../../../scenery/js/layout/nodes/VBox.js';
+import Node from '../../../scenery/js/nodes/Node.js';
 import RichText from '../../../scenery/js/nodes/RichText.js';
 import Text from '../../../scenery/js/nodes/Text.js';
 import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
@@ -21,14 +22,20 @@ import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
 import ParticlesLegendNode from './ParticlesLegendNode.js';
 
-type SelfOptions = EmptySelfOptions;
+type SelfOptions = {
+  // The second screen has additional checkboxes in the middle of the panel
+  middleContent?: Node[] | null;
+};
 
 export type IsotopePanelOptions = SelfOptions & NuclearDecayPanelOptions;
 
 export default class IsotopePanel extends NuclearDecayPanel {
   public constructor( model: NuclearDecayModel, providedOptions?: IsotopePanelOptions ) {
     const options = optionize<IsotopePanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {
-      minWidth: NuclearDecayCommonConstants.RIGHT_PANEL_WIDTH
+      minWidth: NuclearDecayCommonConstants.RIGHT_PANEL_WIDTH,
+
+      // Self Options
+      middleContent: null
     }, providedOptions );
 
     const titleNode = new Text( NuclearDecayCommonFluent.isotopeStringProperty, {
@@ -63,15 +70,30 @@ export default class IsotopePanel extends NuclearDecayPanel {
       radioButtonItems
     );
 
-    const contentsNode = new VBox( {
-      spacing: 10,
-      align: 'left',
-      children: [
+    let children: Node[];
+    if ( options.middleContent ) {
+      children = [
+        titleNode,
+        isotopeSelectorRadioButtonGroup,
+        new HSeparator(),
+        ...options.middleContent,
+        new HSeparator(),
+        new ParticlesLegendNode()
+      ];
+    }
+    else {
+      children = [
         titleNode,
         isotopeSelectorRadioButtonGroup,
         new HSeparator(),
         new ParticlesLegendNode()
-      ]
+      ];
+    }
+
+    const contentsNode = new VBox( {
+      spacing: 10,
+      align: 'left',
+      children: children
     } );
 
     super( contentsNode, options );

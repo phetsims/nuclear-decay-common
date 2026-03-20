@@ -6,12 +6,13 @@
  */
 
 import ScreenView, { ScreenViewOptions } from '../../../joist/js/ScreenView.js';
-import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
+import optionize from '../../../phet-core/js/optionize.js';
 import ResetAllButton from '../../../scenery-phet/js/buttons/ResetAllButton.js';
 import RestartButton from '../../../scenery-phet/js/buttons/RestartButton.js';
 import TimeControlNode from '../../../scenery-phet/js/TimeControlNode.js';
 import TimeSpeed from '../../../scenery-phet/js/TimeSpeed.js';
 import VBox from '../../../scenery/js/layout/nodes/VBox.js';
+import Node from '../../../scenery/js/nodes/Node.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import EquationAccordionBox from './EquationAccordionBox.js';
@@ -19,7 +20,9 @@ import HalfLifePanel from './HalfLifePanel.js';
 import IsotopePanel from './IsotopePanel.js';
 import ParticleCountsAccordionBox from './ParticleCountsAccordionBox.js';
 
-type SelfOptions = EmptySelfOptions;
+type SelfOptions = {
+  isotopePanelMiddleContent?: Node[] | null;
+};
 
 export type NuclearDecayScreenViewOptions = SelfOptions & ScreenViewOptions;
 
@@ -29,8 +32,10 @@ export default class NuclearDecayScreenView extends ScreenView {
   protected readonly halfLifePanel: HalfLifePanel;
 
   public constructor( model: NuclearDecayModel, providedOptions?: NuclearDecayScreenViewOptions ) {
-    const options = optionize<SelfOptions, EmptySelfOptions, NuclearDecayScreenViewOptions>()( {
-      // Default options go here
+
+    const options = optionize<NuclearDecayScreenViewOptions, SelfOptions, ScreenViewOptions>()( {
+      // Self Options
+      isotopePanelMiddleContent: null
     }, providedOptions );
 
     super( options );
@@ -51,7 +56,9 @@ export default class NuclearDecayScreenView extends ScreenView {
 
     // Right column panels
 
-    const isotopePanel = new IsotopePanel( model );
+    const isotopePanel = new IsotopePanel( model, {
+      middleContent: options.isotopePanelMiddleContent
+    } );
     const particleCountsAccordionBox = new ParticleCountsAccordionBox( model );
     const equationAccordionBox = new EquationAccordionBox( model.selectedIsotopeProperty );
 
