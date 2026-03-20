@@ -5,8 +5,10 @@
  * @author Agustín Vallejo
  */
 
+import BooleanProperty from '../../../axon/js/BooleanProperty.js';
 import NumberProperty from '../../../axon/js/NumberProperty.js';
 import TProperty from '../../../axon/js/TProperty.js';
+import dotRandom from '../../../dot/js/dotRandom.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import nuclearDecayCommon from '../nuclearDecayCommon.js';
 import Isotope, { IsotopeOptions } from './Isotope.js';
@@ -18,6 +20,9 @@ export type DecayingIsotopeOptions = SelfOptions & IsotopeOptions;
 export default class DecayingAtom extends Isotope {
 
   public readonly timeProperty: TProperty<number>;
+
+  // This is temporary.  JPB.
+  private readonly decayedProperty: TProperty<boolean> = new BooleanProperty( false );
 
   public constructor( protons: number, neutrons: number, providedOptions: DecayingIsotopeOptions ) {
     const options = optionize<SelfOptions, EmptySelfOptions, DecayingIsotopeOptions>()( {
@@ -35,12 +40,40 @@ export default class DecayingAtom extends Isotope {
     } );
   }
 
+  /**
+   * Resets the decay process, which resets the time experienced by the atom back to zero and, if the atom has decayed,
+   * resets the atom back to its original state.
+   */
+  public resetDecay(): void {
+    this.timeProperty.value = 0;
+    this.decayedProperty.value = false;
+  }
+
   public step( dt: number ): void {
     this.timeProperty.value += dt;
 
-    if ( this.halfLifeProperty.value && this.decaysIntoProperty.value && this.timeProperty.value > this.halfLifeProperty.value ) {
-      // Do something when it decays, e.g. KABOOM
+    if ( this.halfLifeProperty.value && !this.decayedProperty.value ) {
+      const probabilityOfDecay = DecayingAtom.decayProbabilityOverInterval( this.halfLifeProperty.value, dt );
+      if ( dotRandom.nextDouble() < probabilityOfDecay ) {
+        this.decayedProperty.value = true;
+        console.log( `decay occurred at ${this.timeProperty.value}` );
+      }
     }
+  }
+
+  private static decayConstantFromHalfLife( halfLife: number ): number {
+    if ( halfLife <= 0 ) {
+      throw new Error( 'halfLife must be > 0' );
+    }
+    return Math.LN2 / halfLife;
+  }
+
+  private static decayProbabilityOverInterval( halfLife: number, dt: number ): number {
+    if ( dt <= 0 ) {
+      return 0;
+    }
+    const lambda = DecayingAtom.decayConstantFromHalfLife( halfLife );
+    return 1 - Math.exp( -lambda * dt );
   }
 }
 

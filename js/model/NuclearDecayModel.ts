@@ -72,7 +72,7 @@ export default class NuclearDecayModel implements TModel {
    * Restarts the simulation to its initial state. Override in subclasses to implement specific restart behavior.
    */
   public restart(): void {
-    this.reset();
+    // no-op in base class, but can be overridden in subclasses to implement specific restart behavior
   }
 
   /**
