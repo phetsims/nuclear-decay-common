@@ -16,6 +16,7 @@ import RichText from '../../../scenery/js/nodes/RichText.js';
 import ShredColors from '../../../shred/js/ShredColors.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonStrings from '../NuclearDecayCommonStrings.js';
+import AlphaParticleNode from './AlphaParticleNode.js';
 
 type SelfOptions = EmptySelfOptions;
 
@@ -55,16 +56,7 @@ export default class ParticlesLegendNode extends Node {
       NuclearDecayCommonStrings.neutronStringProperty
     );
 
-    // TODO: Should we use an existing utility function for building this Helium atom? https://github.com/phetsims/alpha-decay/issues/3
-    const PARTICLE_OFFSET = 0.7 * SPHERE_DIAMETER; // The distance between the centers of the particles in the alpha particle icon, with some overlap for aesthetics
-    const alphaParticleIcon = new Node( {
-      children: [
-        new ShadedSphereNode( SPHERE_DIAMETER, { mainColor: ShredColors.protonColorProperty, x: 0, y: 0 } ),
-        new ShadedSphereNode( SPHERE_DIAMETER, { mainColor: ShredColors.neutronColorProperty, x: PARTICLE_OFFSET, y: 0 } ),
-        new ShadedSphereNode( SPHERE_DIAMETER, { mainColor: ShredColors.neutronColorProperty, x: 0, y: PARTICLE_OFFSET } ),
-        new ShadedSphereNode( SPHERE_DIAMETER, { mainColor: ShredColors.protonColorProperty, x: PARTICLE_OFFSET, y: PARTICLE_OFFSET } )
-      ]
-    } );
+    const alphaParticleIcon = new AlphaParticleNode( {} );
 
     const alphaParticleLegend = particleLegendItem(
       alphaParticleIcon,
