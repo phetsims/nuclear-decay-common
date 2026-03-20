@@ -21,23 +21,38 @@ import NuclearDecayAtom from './NuclearDecayAtom.js';
 export const ValidIsotopeValues = [ 'custom', 'polonium-211', 'lead-207', 'carbon-14', 'nitrogen-14', 'hydrogen-3', 'helium-3', 'helium-2' ] as const;
 export type ValidIsotopes = ( typeof ValidIsotopeValues )[ number ];
 
-export const SelectableIsotopesValues = [ 'custom', 'polonium-211', 'helium-3', 'carbon-14' ] as const;
+export const SelectableIsotopesValues = [ 'custom', 'polonium-211', 'hydrogen-3', 'carbon-14' ] as const;
 export type SelectableIsotopes = ( typeof SelectableIsotopesValues )[ number ];
 
-const ISOTOPE_TO_ATOM_CONFIG = new Map<ValidIsotopes, AtomConfig>( [
-  [ 'polonium-211', NuclearDecayCommonConstants.POLONIUM_211 ],
-  [ 'lead-207', NuclearDecayCommonConstants.LEAD_207 ],
-  [ 'carbon-14', NuclearDecayCommonConstants.CARBON_14 ],
-  [ 'nitrogen-14', NuclearDecayCommonConstants.NITROGEN_14 ],
-  [ 'hydrogen-3', NuclearDecayCommonConstants.HYDROGEN_3 ],
-  [ 'helium-3', NuclearDecayCommonConstants.HELIUM_3 ],
-  [ 'helium-2', NuclearDecayCommonConstants.ALPHA_PARTICLE ],
-  [ 'custom', new AtomConfig( 1, 1, 1 ) ]
-] );
+// Selectable isotopes in alpha-decay
+export const ADSelectableIsotopesValues = [ 'custom', 'polonium-211' ] as const;
+export type ADSelectableIsotopes = ( typeof ADSelectableIsotopesValues )[ number ];
+
+// Selectable isotopes in beta-decay
+export const BDSelectableIsotopesValues = [ 'custom', 'hydrogen-3', 'carbon-14' ] as const;
+export type BDSelectableIsotopes = ( typeof BDSelectableIsotopesValues )[ number ];
+
+const ISOTOPE_TO_ATOM_CONFIG: Record<ValidIsotopes, AtomConfig> = {
+  'polonium-211': NuclearDecayCommonConstants.POLONIUM_211,
+  'lead-207': NuclearDecayCommonConstants.LEAD_207,
+  'carbon-14': NuclearDecayCommonConstants.CARBON_14,
+  'nitrogen-14': NuclearDecayCommonConstants.NITROGEN_14,
+  'hydrogen-3': NuclearDecayCommonConstants.HYDROGEN_3,
+  'helium-3': NuclearDecayCommonConstants.HELIUM_3,
+  'helium-2': NuclearDecayCommonConstants.ALPHA_PARTICLE,
+  custom: new AtomConfig( 1, 1, 1 )
+};
 
 export type NuclearDecayModelOptions = EmptySelfOptions;
 
-export default class NuclearDecayModel implements TModel {
+export default abstract class NuclearDecayModel<T extends ValidIsotopes> implements TModel {
+
+  // List of the selectable isotopes in the sim. Defined by subclasses.
+  public readonly abstract selectableIsotopes: ( T )[];
+
+  // What isotope is currently selected in the sim. Defined by subclasses.
+  // 'polonium-211' vs 'custom' in Alpha Decay, or 'carbon-14' vs 'hydrogen-3' vs 'custom' in Beta Decay.
+  public readonly abstract selectedIsotopeProperty: Property<T>;
 
   public readonly isPlayingProperty: BooleanProperty;
   public readonly timeSpeedProperty: EnumerationProperty<TimeSpeed>;
@@ -46,17 +61,14 @@ export default class NuclearDecayModel implements TModel {
   // Atoms currently in the play area
   public readonly activeAtoms: NuclearDecayAtom[];
 
-  // What isotope is currently selected in the sim.
-  // 'polonium-211' vs 'custom' in Alpha Decay, or 'carbon-14' vs 'hydrogen-3' vs 'custom' in Beta Decay.
-  public readonly selectedIsotopeProperty: Property<SelectableIsotopes>;
-
   public readonly isPlayAreaEmptyProperty: BooleanProperty;
 
-  public constructor( providedOptions?: NuclearDecayModelOptions ) {
+  public constructor( providedOptions: NuclearDecayModelOptions ) {
+
+    // const options = combineOptions<NuclearDecayModelOptions>( {
+    // }, providedOptions );
 
     this.activeAtoms = [];
-
-    this.selectedIsotopeProperty = new Property<SelectableIsotopes>( 'polonium-211' );
 
     this.isPlayAreaEmptyProperty = new BooleanProperty( true );
 
@@ -79,15 +91,14 @@ export default class NuclearDecayModel implements TModel {
   public getSelectedIsotopeAtomConfig(): AtomConfig {
     const selectedIsotope = this.selectedIsotopeProperty.value;
     affirm( selectedIsotope !== 'custom', 'Should not be called when custom is selected' );
-    return NuclearDecayModel.getIsotopeAtomConfig( selectedIsotope );
+    return ISOTOPE_TO_ATOM_CONFIG[ selectedIsotope ];
   }
 
   /**
    * Get the atom config of an arbitrary isotope
    */
   public static getIsotopeAtomConfig( isotope: ValidIsotopes ): AtomConfig {
-    affirm( ISOTOPE_TO_ATOM_CONFIG.has( isotope ), `No AtomConfig found for selected isotope: ${isotope}` );
-    return ISOTOPE_TO_ATOM_CONFIG.get( isotope )!;
+    return ISOTOPE_TO_ATOM_CONFIG[ isotope ];
   }
 
   /**
@@ -95,7 +106,7 @@ export default class NuclearDecayModel implements TModel {
    */
   public static getIsotopeMassAndSymbolString( isotope: ValidIsotopes, customAnswer = '' ): string {
     if ( isotope === 'custom' ) { return customAnswer; }
-    const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
+    const atomConfig = ISOTOPE_TO_ATOM_CONFIG[ isotope ];
     return AtomNameUtils.getMassAndSymbol( atomConfig.protonCount, atomConfig.neutronCount );
   }
 
@@ -106,8 +117,8 @@ export default class NuclearDecayModel implements TModel {
     else if ( isotope === 'polonium-211' ) {
       return 'lead-207';
     }
-    else if ( isotope === 'helium-3' ) {
-      return 'helium-2';
+    else if ( isotope === 'hydrogen-3' ) {
+      return 'helium-3';
     }
     else if ( isotope === 'carbon-14' ) {
       return 'nitrogen-14';

@@ -44,8 +44,6 @@ addToMapIfDefined( 'isotopeA', 'isotopeAStringProperty' );
 addToMapIfDefined( 'isotopeB', 'isotopeBStringProperty' );
 addToMapIfDefined( 'electronCloud', 'electronCloudStringProperty' );
 addToMapIfDefined( 'stopwatch', 'stopwatchStringProperty' );
-addToMapIfDefined( 'dataProbe', 'dataProbeStringProperty' );
-addToMapIfDefined( 'percentRemaining', 'percentRemainingStringProperty' );
 
 // A function that creates contents for a new Fluent file, which will be needed if any string changes.
 const createFluentFile = (): string => {
@@ -87,9 +85,7 @@ const NuclearDecayCommonFluent = {
   isotopeNumberSymbolPatternStringProperty: _.get( NuclearDecayCommonStrings, 'isotopeNumberSymbolPatternStringProperty' ),
   isotopeInfoTitleStringProperty: _.get( NuclearDecayCommonStrings, 'isotopeInfoTitleStringProperty' ),
   electronCloudStringProperty: _.get( NuclearDecayCommonStrings, 'electronCloudStringProperty' ),
-  stopwatchStringProperty: _.get( NuclearDecayCommonStrings, 'stopwatchStringProperty' ),
-  dataProbeStringProperty: _.get( NuclearDecayCommonStrings, 'dataProbeStringProperty' ),
-  percentRemainingStringProperty: _.get( NuclearDecayCommonStrings, 'percentRemainingStringProperty' )
+  stopwatchStringProperty: _.get( NuclearDecayCommonStrings, 'stopwatchStringProperty' )
 };
 
 export default NuclearDecayCommonFluent;

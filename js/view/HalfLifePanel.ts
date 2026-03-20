@@ -35,8 +35,8 @@ const HALF_LIFE_X = GRAPH_WIDTH * 0.35; // x position of the half-life dashed li
 const ISOTOPE_SYMBOL_X = 35; // x of the isotope symbol column
 const AXIS_LABEL_X = 10; // x center of the rotated "Isotope" label
 
-export default class HalfLifePanel extends NuclearDecayPanel {
-  public constructor( model: NuclearDecayModel, providedOptions?: HalfLifePanelOptions ) {
+export default class HalfLifePanel<T extends SelectableIsotopes> extends NuclearDecayPanel {
+  public constructor( model: NuclearDecayModel<T>, providedOptions?: HalfLifePanelOptions ) {
     const options = optionize<HalfLifePanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {
     }, providedOptions );
 
@@ -52,12 +52,12 @@ export default class HalfLifePanel extends NuclearDecayPanel {
 
     // Isotope symbols
 
-    const selectedIsotopeSymbolProperty = model.selectedIsotopeProperty.derived( ( isotope: SelectableIsotopes ) => {
+    const selectedIsotopeSymbolProperty = model.selectedIsotopeProperty.derived( ( isotope: T ) => {
       return NuclearDecayModel.getIsotopeMassAndSymbolString( isotope, 'A' );
 
     } );
 
-    const decayProductSymbolProperty = model.selectedIsotopeProperty.derived( ( isotope: SelectableIsotopes ) => {
+    const decayProductSymbolProperty = model.selectedIsotopeProperty.derived( ( isotope: T ) => {
       const decayProduct = NuclearDecayModel.getDecayProduct( isotope );
       return NuclearDecayModel.getIsotopeMassAndSymbolString( decayProduct, 'B' );
     } );
@@ -122,7 +122,7 @@ export default class HalfLifePanel extends NuclearDecayPanel {
     const halfLifeLine = new Path(
       new Shape().moveTo( 0, 0 ).lineTo( 0, GRAPH_HEIGHT ),
       {
-        stroke: NuclearDecayCommonColors.halfLifeColorProperty,
+        stroke: NuclearDecayCommonColors.greenProperty,
         lineWidth: 2,
         lineDash: [ 5, 5 ],
         x: halfLifeLineX,
@@ -132,7 +132,7 @@ export default class HalfLifePanel extends NuclearDecayPanel {
 
     const halfLifeText = new Text( NuclearDecayCommonFluent.halfLifeStringProperty, {
       font: NuclearDecayCommonConstants.CONTROL_BOLD_FONT,
-      fill: NuclearDecayCommonColors.halfLifeColorProperty,
+      fill: NuclearDecayCommonColors.greenProperty,
       centerX: halfLifeLineX,
       bottom: -6,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH

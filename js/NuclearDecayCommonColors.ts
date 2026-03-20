@@ -40,7 +40,7 @@ const NuclearDecayCommonColors = {
     default: '#5f00ff'
   } ),
 
-  halfLifeColorProperty: new ProfileColorProperty( nuclearDecayCommon, 'halfLifeColor', {
+  greenProperty: new ProfileColorProperty( nuclearDecayCommon, 'green', {
     default: '#ec4123'
   } ),
 

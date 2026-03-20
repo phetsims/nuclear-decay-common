@@ -68,10 +68,6 @@ type StringsType = {
   'electronCloudStringProperty': LocalizedStringProperty;
   'stopwatch': string;
   'stopwatchStringProperty': LocalizedStringProperty;
-  'dataProbe': string;
-  'dataProbeStringProperty': LocalizedStringProperty;
-  'percentRemaining': string;
-  'percentRemainingStringProperty': LocalizedStringProperty;
 };
 
 const NuclearDecayCommonStrings = getStringModule( 'NUCLEAR_DECAY_COMMON' ) as StringsType;

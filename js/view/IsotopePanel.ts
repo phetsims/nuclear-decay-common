@@ -15,7 +15,7 @@ import Text from '../../../scenery/js/nodes/Text.js';
 import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
 import type { AquaRadioButtonGroupItem } from '../../../sun/js/AquaRadioButtonGroup.js';
 import VerticalAquaRadioButtonGroup from '../../../sun/js/VerticalAquaRadioButtonGroup.js';
-import NuclearDecayModel, { ValidIsotopes } from '../model/NuclearDecayModel.js';
+import NuclearDecayModel, { SelectableIsotopes, ValidIsotopes } from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
@@ -28,8 +28,8 @@ type SelfOptions = {
 
 export type IsotopePanelOptions = SelfOptions & NuclearDecayPanelOptions;
 
-export default class IsotopePanel extends NuclearDecayPanel {
-  public constructor( model: NuclearDecayModel, providedOptions?: IsotopePanelOptions ) {
+export default class IsotopePanel<T extends SelectableIsotopes> extends NuclearDecayPanel {
+  public constructor( model: NuclearDecayModel<T>, providedOptions?: IsotopePanelOptions ) {
     const options = optionize<IsotopePanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {
       minWidth: NuclearDecayCommonConstants.RIGHT_PANEL_WIDTH,
 
@@ -42,19 +42,25 @@ export default class IsotopePanel extends NuclearDecayPanel {
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
-    // TODO: These should be populated from the model.possibleIsotopes or something https://github.com/phetsims/alpha-decay/issues/3
-    const polonium = NuclearDecayCommonConstants.POLONIUM_211;
-    const radioButtonItems: AquaRadioButtonGroupItem<ValidIsotopes>[] = [
-      {
-        value: 'polonium-211',
+    // Creating first the radio buttons for the normal isotopes and leaving custom for last
+    const nonCustomIsotopes = model.selectableIsotopes.filter( isotope => isotope !== 'custom' );
+    const radioButtonItems: AquaRadioButtonGroupItem<ValidIsotopes>[] = nonCustomIsotopes.map( isotope => {
+      const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
+      return {
+        value: isotope,
         createNode: () => new RichText( AtomNameUtils.getNameAndMass(
-          polonium.protonCount,
-          polonium.neutronCount
+          atomConfig.protonCount,
+          atomConfig.neutronCount
         ), {
           font: NuclearDecayCommonConstants.CONTROL_FONT,
           maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
         } )
-      },
+      };
+
+    } );
+
+    // Adding custom at the end of the options
+    radioButtonItems.push(
       {
         value: 'custom',
         createNode: () => new RichText( NuclearDecayCommonFluent.customStringProperty, {
@@ -62,7 +68,8 @@ export default class IsotopePanel extends NuclearDecayPanel {
           maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
         } )
       }
-    ];
+    );
+
     const isotopeSelectorRadioButtonGroup = new VerticalAquaRadioButtonGroup(
       model.selectedIsotopeProperty,
       radioButtonItems
