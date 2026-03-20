@@ -96,5 +96,3 @@ export default class NuclearDecayAtom {
     return 1 - Math.exp( -lambda * dt );
   }
 }
-
-nuclearDecayCommon.register( 'NuclearDecayAtom', NuclearDecayAtom );
