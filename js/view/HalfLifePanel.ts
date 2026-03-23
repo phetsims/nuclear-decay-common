@@ -122,7 +122,7 @@ export default class HalfLifePanel extends NuclearDecayPanel {
     const halfLifeLine = new Path(
       new Shape().moveTo( 0, 0 ).lineTo( 0, GRAPH_HEIGHT ),
       {
-        stroke: NuclearDecayCommonColors.greenProperty,
+        stroke: NuclearDecayCommonColors.halfLifeColorProperty,
         lineWidth: 2,
         lineDash: [ 5, 5 ],
         x: halfLifeLineX,
@@ -132,7 +132,7 @@ export default class HalfLifePanel extends NuclearDecayPanel {
 
     const halfLifeText = new Text( NuclearDecayCommonFluent.halfLifeStringProperty, {
       font: NuclearDecayCommonConstants.CONTROL_BOLD_FONT,
-      fill: NuclearDecayCommonColors.greenProperty,
+      fill: NuclearDecayCommonColors.halfLifeColorProperty,
       centerX: halfLifeLineX,
       bottom: -6,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH

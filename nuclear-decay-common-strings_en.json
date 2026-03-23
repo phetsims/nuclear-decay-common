@@ -79,5 +79,11 @@
   },
   "stopwatch": {
     "value": "Stopwatch"
+  },
+  "dataProbe": {
+    "value": "Data Probe"
+  },
+  "percentRemaining": {
+    "value": "Percent of Isotope<br>Remaining"
   }
 }
