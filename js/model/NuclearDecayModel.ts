@@ -24,14 +24,6 @@ export type ValidIsotopes = ( typeof ValidIsotopeValues )[ number ];
 export const SelectableIsotopesValues = [ 'custom', 'polonium-211', 'hydrogen-3', 'carbon-14' ] as const;
 export type SelectableIsotopes = ( typeof SelectableIsotopesValues )[ number ];
 
-// Selectable isotopes in alpha-decay
-export const ADSelectableIsotopesValues = [ 'custom', 'polonium-211' ] as const;
-export type ADSelectableIsotopes = ( typeof ADSelectableIsotopesValues )[ number ];
-
-// Selectable isotopes in beta-decay
-export const BDSelectableIsotopesValues = [ 'custom', 'hydrogen-3', 'carbon-14' ] as const;
-export type BDSelectableIsotopes = ( typeof BDSelectableIsotopesValues )[ number ];
-
 const ISOTOPE_TO_ATOM_CONFIG: Record<ValidIsotopes, AtomConfig> = {
   'polonium-211': NuclearDecayCommonConstants.POLONIUM_211,
   'lead-207': NuclearDecayCommonConstants.LEAD_207,
