@@ -12,7 +12,7 @@ import VBox from '../../../scenery/js/layout/nodes/VBox.js';
 import RichText from '../../../scenery/js/nodes/RichText.js';
 import Text from '../../../scenery/js/nodes/Text.js';
 import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
-import NuclearDecayModel, { ValidIsotopes } from '../model/NuclearDecayModel.js';
+import NuclearDecayModel, { SelectableIsotopes } from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
@@ -22,10 +22,10 @@ type SelfOptions = EmptySelfOptions;
 
 export type ParticleCountsAccordionBoxOptions = SelfOptions & NuclearDecayAccordionBoxOptions;
 
-export default class ParticleCountsAccordionBox<T extends ValidIsotopes> extends NuclearDecayAccordionBox {
-  public constructor( model: NuclearDecayModel<T>, providedOptions?: ParticleCountsAccordionBoxOptions ) {
+export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox {
+  public constructor( model: NuclearDecayModel, providedOptions?: ParticleCountsAccordionBoxOptions ) {
 
-    const currentIsotopeProtonCountProperty = model.selectedIsotopeProperty.derived( ( isotope: T ) => {
+    const currentIsotopeProtonCountProperty = model.selectedIsotopeProperty.derived( ( isotope: SelectableIsotopes ) => {
       if ( isotope === 'custom' ) {
         return 'p';
       }
@@ -35,7 +35,7 @@ export default class ParticleCountsAccordionBox<T extends ValidIsotopes> extends
       }
     } );
 
-    const currentIsotopeNeutronCountProperty = model.selectedIsotopeProperty.derived( ( isotope: T ) => {
+    const currentIsotopeNeutronCountProperty = model.selectedIsotopeProperty.derived( ( isotope: SelectableIsotopes ) => {
       if ( isotope === 'custom' ) {
         return 'n';
       }
@@ -49,7 +49,7 @@ export default class ParticleCountsAccordionBox<T extends ValidIsotopes> extends
       [
         model.selectedIsotopeProperty,
         NuclearDecayCommonFluent.isotopeInfoTitleStringProperty
-      ], ( selectedIsotope: T, pattern: string ) => {
+      ], ( selectedIsotope: SelectableIsotopes, pattern: string ) => {
         if ( selectedIsotope === 'custom' ) {
           return NuclearDecayCommonFluent.isotopeAStringProperty.value;
         }

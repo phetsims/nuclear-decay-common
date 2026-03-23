@@ -15,7 +15,7 @@ import Text from '../../../scenery/js/nodes/Text.js';
 import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
 import type { AquaRadioButtonGroupItem } from '../../../sun/js/AquaRadioButtonGroup.js';
 import VerticalAquaRadioButtonGroup from '../../../sun/js/VerticalAquaRadioButtonGroup.js';
-import NuclearDecayModel, { SelectableIsotopes, ValidIsotopes } from '../model/NuclearDecayModel.js';
+import NuclearDecayModel, { ValidIsotopes } from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
@@ -28,8 +28,8 @@ type SelfOptions = {
 
 export type IsotopePanelOptions = SelfOptions & NuclearDecayPanelOptions;
 
-export default class IsotopePanel<T extends SelectableIsotopes> extends NuclearDecayPanel {
-  public constructor( model: NuclearDecayModel<T>, providedOptions?: IsotopePanelOptions ) {
+export default class IsotopePanel extends NuclearDecayPanel {
+  public constructor( model: NuclearDecayModel, providedOptions?: IsotopePanelOptions ) {
     const options = optionize<IsotopePanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {
       minWidth: NuclearDecayCommonConstants.RIGHT_PANEL_WIDTH,
 

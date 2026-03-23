@@ -35,8 +35,8 @@ const HALF_LIFE_X = GRAPH_WIDTH * 0.35; // x position of the half-life dashed li
 const ISOTOPE_SYMBOL_X = 35; // x of the isotope symbol column
 const AXIS_LABEL_X = 10; // x center of the rotated "Isotope" label
 
-export default class HalfLifePanel<T extends SelectableIsotopes> extends NuclearDecayPanel {
-  public constructor( model: NuclearDecayModel<T>, providedOptions?: HalfLifePanelOptions ) {
+export default class HalfLifePanel extends NuclearDecayPanel {
+  public constructor( model: NuclearDecayModel, providedOptions?: HalfLifePanelOptions ) {
     const options = optionize<HalfLifePanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {
     }, providedOptions );
 
@@ -52,12 +52,12 @@ export default class HalfLifePanel<T extends SelectableIsotopes> extends Nuclear
 
     // Isotope symbols
 
-    const selectedIsotopeSymbolProperty = model.selectedIsotopeProperty.derived( ( isotope: T ) => {
+    const selectedIsotopeSymbolProperty = model.selectedIsotopeProperty.derived( ( isotope: SelectableIsotopes ) => {
       return NuclearDecayModel.getIsotopeMassAndSymbolString( isotope, 'A' );
 
     } );
 
-    const decayProductSymbolProperty = model.selectedIsotopeProperty.derived( ( isotope: T ) => {
+    const decayProductSymbolProperty = model.selectedIsotopeProperty.derived( ( isotope: SelectableIsotopes ) => {
       const decayProduct = NuclearDecayModel.getDecayProduct( isotope );
       return NuclearDecayModel.getIsotopeMassAndSymbolString( decayProduct, 'B' );
     } );

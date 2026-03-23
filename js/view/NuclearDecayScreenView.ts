@@ -13,7 +13,7 @@ import TimeControlNode from '../../../scenery-phet/js/TimeControlNode.js';
 import TimeSpeed from '../../../scenery-phet/js/TimeSpeed.js';
 import VBox from '../../../scenery/js/layout/nodes/VBox.js';
 import Node from '../../../scenery/js/nodes/Node.js';
-import NuclearDecayModel, { SelectableIsotopes } from '../model/NuclearDecayModel.js';
+import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import EquationAccordionBox from './EquationAccordionBox.js';
 import HalfLifePanel from './HalfLifePanel.js';
@@ -26,12 +26,12 @@ type SelfOptions = {
 
 export type NuclearDecayScreenViewOptions = SelfOptions & ScreenViewOptions;
 
-export default class NuclearDecayScreenView<T extends SelectableIsotopes> extends ScreenView {
+export default class NuclearDecayScreenView extends ScreenView {
 
   // Child classes will need to reference this panel for layout
-  protected readonly halfLifePanel: HalfLifePanel<T>;
+  protected readonly halfLifePanel: HalfLifePanel;
 
-  public constructor( model: NuclearDecayModel<T>, providedOptions?: NuclearDecayScreenViewOptions ) {
+  public constructor( model: NuclearDecayModel, providedOptions?: NuclearDecayScreenViewOptions ) {
 
     const options = optionize<NuclearDecayScreenViewOptions, SelfOptions, ScreenViewOptions>()( {
       // Self Options

@@ -37,14 +37,14 @@ const ISOTOPE_TO_ATOM_CONFIG: Record<ValidIsotopes, AtomConfig> = {
 
 export type NuclearDecayModelOptions = EmptySelfOptions;
 
-export default abstract class NuclearDecayModel<T extends ValidIsotopes> implements TModel {
+export default abstract class NuclearDecayModel implements TModel {
 
   // List of the selectable isotopes in the sim. Defined by subclasses.
-  public readonly abstract selectableIsotopes: ( T )[];
+  public readonly abstract selectableIsotopes: SelectableIsotopes[];
 
   // What isotope is currently selected in the sim. Defined by subclasses.
   // 'polonium-211' vs 'custom' in Alpha Decay, or 'carbon-14' vs 'hydrogen-3' vs 'custom' in Beta Decay.
-  public readonly abstract selectedIsotopeProperty: Property<T>;
+  public readonly abstract selectedIsotopeProperty: Property<SelectableIsotopes>;
 
   public readonly isPlayingProperty: BooleanProperty;
   public readonly timeSpeedProperty: EnumerationProperty<TimeSpeed>;
