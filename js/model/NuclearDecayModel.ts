@@ -24,16 +24,16 @@ export type ValidIsotopes = ( typeof ValidIsotopeValues )[ number ];
 export const SelectableIsotopesValues = [ 'custom', 'polonium-211', 'helium-3', 'carbon-14' ] as const;
 export type SelectableIsotopes = ( typeof SelectableIsotopesValues )[ number ];
 
-const ISOTOPE_TO_ATOM_CONFIG: Record<ValidIsotopes, AtomConfig> = {
-  'polonium-211': NuclearDecayCommonConstants.POLONIUM_211,
-  'lead-207': NuclearDecayCommonConstants.LEAD_207,
-  'carbon-14': NuclearDecayCommonConstants.CARBON_14,
-  'nitrogen-14': NuclearDecayCommonConstants.NITROGEN_14,
-  'hydrogen-3': NuclearDecayCommonConstants.HYDROGEN_3,
-  'helium-3': NuclearDecayCommonConstants.HELIUM_3,
-  'helium-2': NuclearDecayCommonConstants.ALPHA_PARTICLE,
-  custom: new AtomConfig( 1, 1, 1 )
-};
+const ISOTOPE_TO_ATOM_CONFIG = new Map<ValidIsotopes, AtomConfig>( [
+  [ 'polonium-211', NuclearDecayCommonConstants.POLONIUM_211 ],
+  [ 'lead-207', NuclearDecayCommonConstants.LEAD_207 ],
+  [ 'carbon-14', NuclearDecayCommonConstants.CARBON_14 ],
+  [ 'nitrogen-14', NuclearDecayCommonConstants.NITROGEN_14 ],
+  [ 'hydrogen-3', NuclearDecayCommonConstants.HYDROGEN_3 ],
+  [ 'helium-3', NuclearDecayCommonConstants.HELIUM_3 ],
+  [ 'helium-2', NuclearDecayCommonConstants.ALPHA_PARTICLE ],
+  [ 'custom', new AtomConfig( 1, 1, 1 ) ]
+] );
 
 export type NuclearDecayModelOptions = EmptySelfOptions;
 
@@ -79,14 +79,15 @@ export default class NuclearDecayModel implements TModel {
   public getSelectedIsotopeAtomConfig(): AtomConfig {
     const selectedIsotope = this.selectedIsotopeProperty.value;
     affirm( selectedIsotope !== 'custom', 'Should not be called when custom is selected' );
-    return ISOTOPE_TO_ATOM_CONFIG[ selectedIsotope ];
+    return NuclearDecayModel.getIsotopeAtomConfig( selectedIsotope );
   }
 
   /**
    * Get the atom config of an arbitrary isotope
    */
   public static getIsotopeAtomConfig( isotope: ValidIsotopes ): AtomConfig {
-    return ISOTOPE_TO_ATOM_CONFIG[ isotope ];
+    affirm( ISOTOPE_TO_ATOM_CONFIG.has( isotope ), `No AtomConfig found for selected isotope: ${isotope}` );
+    return ISOTOPE_TO_ATOM_CONFIG.get( isotope )!;
   }
 
   /**
@@ -94,7 +95,7 @@ export default class NuclearDecayModel implements TModel {
    */
   public static getIsotopeMassAndSymbolString( isotope: ValidIsotopes, customAnswer = '' ): string {
     if ( isotope === 'custom' ) { return customAnswer; }
-    const atomConfig = ISOTOPE_TO_ATOM_CONFIG[ isotope ];
+    const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
     return AtomNameUtils.getMassAndSymbol( atomConfig.protonCount, atomConfig.neutronCount );
   }
 
