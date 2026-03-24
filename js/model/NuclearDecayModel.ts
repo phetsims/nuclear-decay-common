@@ -21,7 +21,7 @@ import NuclearDecayAtom from './NuclearDecayAtom.js';
 export const ValidIsotopeValues = [ 'custom', 'polonium-211', 'lead-207', 'carbon-14', 'nitrogen-14', 'hydrogen-3', 'helium-3', 'helium-2' ] as const;
 export type ValidIsotopes = ( typeof ValidIsotopeValues )[ number ];
 
-export const SelectableIsotopesValues = [ 'custom', 'polonium-211', 'helium-3', 'carbon-14' ] as const;
+export const SelectableIsotopesValues = [ 'custom', 'polonium-211', 'hydrogen-3', 'carbon-14' ] as const;
 export type SelectableIsotopes = ( typeof SelectableIsotopesValues )[ number ];
 
 const ISOTOPE_TO_ATOM_CONFIG = new Map<ValidIsotopes, AtomConfig>( [
@@ -37,7 +37,14 @@ const ISOTOPE_TO_ATOM_CONFIG = new Map<ValidIsotopes, AtomConfig>( [
 
 export type NuclearDecayModelOptions = EmptySelfOptions;
 
-export default class NuclearDecayModel implements TModel {
+export default abstract class NuclearDecayModel implements TModel {
+
+  // List of the selectable isotopes in the sim. Defined by subclasses.
+  public readonly abstract selectableIsotopes: SelectableIsotopes[];
+
+  // What isotope is currently selected in the sim. Defined by subclasses.
+  // 'polonium-211' vs 'custom' in Alpha Decay, or 'carbon-14' vs 'hydrogen-3' vs 'custom' in Beta Decay.
+  public readonly abstract selectedIsotopeProperty: Property<SelectableIsotopes>;
 
   public readonly isPlayingProperty: BooleanProperty;
   public readonly timeSpeedProperty: EnumerationProperty<TimeSpeed>;
@@ -46,17 +53,14 @@ export default class NuclearDecayModel implements TModel {
   // Atoms currently in the play area
   public readonly activeAtoms: NuclearDecayAtom[];
 
-  // What isotope is currently selected in the sim.
-  // 'polonium-211' vs 'custom' in Alpha Decay, or 'carbon-14' vs 'hydrogen-3' vs 'custom' in Beta Decay.
-  public readonly selectedIsotopeProperty: Property<SelectableIsotopes>;
-
   public readonly isPlayAreaEmptyProperty: BooleanProperty;
 
-  public constructor( providedOptions?: NuclearDecayModelOptions ) {
+  public constructor( providedOptions: NuclearDecayModelOptions ) {
+
+    // const options = combineOptions<NuclearDecayModelOptions>( {
+    // }, providedOptions );
 
     this.activeAtoms = [];
-
-    this.selectedIsotopeProperty = new Property<SelectableIsotopes>( 'polonium-211' );
 
     this.isPlayAreaEmptyProperty = new BooleanProperty( true );
 
@@ -106,8 +110,8 @@ export default class NuclearDecayModel implements TModel {
     else if ( isotope === 'polonium-211' ) {
       return 'lead-207';
     }
-    else if ( isotope === 'helium-3' ) {
-      return 'helium-2';
+    else if ( isotope === 'hydrogen-3' ) {
+      return 'helium-3';
     }
     else if ( isotope === 'carbon-14' ) {
       return 'nitrogen-14';

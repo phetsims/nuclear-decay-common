@@ -42,19 +42,25 @@ export default class IsotopePanel extends NuclearDecayPanel {
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
-    // TODO: These should be populated from the model.possibleIsotopes or something https://github.com/phetsims/alpha-decay/issues/3
-    const polonium = NuclearDecayCommonConstants.POLONIUM_211;
-    const radioButtonItems: AquaRadioButtonGroupItem<ValidIsotopes>[] = [
-      {
-        value: 'polonium-211',
+    // Creating first the radio buttons for the normal isotopes and leaving custom for last
+    const nonCustomIsotopes = model.selectableIsotopes.filter( isotope => isotope !== 'custom' );
+    const radioButtonItems: AquaRadioButtonGroupItem<ValidIsotopes>[] = nonCustomIsotopes.map( isotope => {
+      const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
+      return {
+        value: isotope,
         createNode: () => new RichText( AtomNameUtils.getNameAndMass(
-          polonium.protonCount,
-          polonium.neutronCount
+          atomConfig.protonCount,
+          atomConfig.neutronCount
         ), {
           font: NuclearDecayCommonConstants.CONTROL_FONT,
           maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
         } )
-      },
+      };
+
+    } );
+
+    // Adding custom at the end of the options
+    radioButtonItems.push(
       {
         value: 'custom',
         createNode: () => new RichText( NuclearDecayCommonFluent.customStringProperty, {
@@ -62,7 +68,8 @@ export default class IsotopePanel extends NuclearDecayPanel {
           maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
         } )
       }
-    ];
+    );
+
     const isotopeSelectorRadioButtonGroup = new VerticalAquaRadioButtonGroup(
       model.selectedIsotopeProperty,
       radioButtonItems

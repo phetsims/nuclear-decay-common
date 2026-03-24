@@ -7,6 +7,7 @@
  */
 
 import dotRandom from '../../../dot/js/dotRandom.js';
+import Vector2 from '../../../dot/js/Vector2.js';
 import affirm from '../../../perennial-alias/js/browser-and-node/affirm.js';
 import { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import AtomInfoUtils from '../../../shred/js/AtomInfoUtils.js';
@@ -14,7 +15,7 @@ import AtomConfig from '../../../shred/js/model/AtomConfig.js';
 
 type SelfOptions = EmptySelfOptions;
 
-export type DecayingIsotopeOptions = SelfOptions;
+export type NuclearDecayAtomOptions = SelfOptions;
 
 export default class NuclearDecayAtom {
 
@@ -39,11 +40,12 @@ export default class NuclearDecayAtom {
   // Time it took to decay
   public decayTime: number | null = null;
 
+  public position: Vector2 = new Vector2( 0, 0 );
 
   public constructor(
     atomConfigBeforeDecay: AtomConfig,
     atomConfigAfterDecay: AtomConfig,
-    providedOptions?: DecayingIsotopeOptions
+    providedOptions?: NuclearDecayAtomOptions
   ) {
 
     // const options = optionize<SelfOptions, EmptySelfOptions, DecayingIsotopeOptions>()( {
