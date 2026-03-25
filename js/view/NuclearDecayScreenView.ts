@@ -7,6 +7,7 @@
 
 import ScreenView, { ScreenViewOptions } from '../../../joist/js/ScreenView.js';
 import optionize from '../../../phet-core/js/optionize.js';
+import WithRequired from '../../../phet-core/js/types/WithRequired.js';
 import ResetAllButton from '../../../scenery-phet/js/buttons/ResetAllButton.js';
 import RestartButton from '../../../scenery-phet/js/buttons/RestartButton.js';
 import TimeControlNode from '../../../scenery-phet/js/TimeControlNode.js';
@@ -24,7 +25,7 @@ type SelfOptions = {
   isotopePanelMiddleContent?: Node[] | null;
 };
 
-export type NuclearDecayScreenViewOptions = SelfOptions & ScreenViewOptions;
+export type NuclearDecayScreenViewOptions = SelfOptions & WithRequired<ScreenViewOptions, 'tandem'>;
 
 export default class NuclearDecayScreenView extends ScreenView {
 
@@ -50,17 +51,23 @@ export default class NuclearDecayScreenView extends ScreenView {
       minWidth: NuclearDecayCommonConstants.LONG_PANEL_WIDTH,
       left: this.layoutBounds.minX + MARGIN_X,
       top: this.layoutBounds.minY + MARGIN_Y,
-      fill: NuclearDecayCommonConstants.MAIN_PANEL_FILL
+      fill: NuclearDecayCommonConstants.MAIN_PANEL_FILL,
+      tandem: options.tandem.createTandem( 'halfLifePanel' )
     } );
     this.addChild( this.halfLifePanel );
 
     // Right column panels
 
     const isotopePanel = new IsotopePanel( model, {
-      middleContent: options.isotopePanelMiddleContent
+      middleContent: options.isotopePanelMiddleContent,
+      tandem: options.tandem.createTandem( 'isotopePanel' )
     } );
-    const particleCountsAccordionBox = new ParticleCountsAccordionBox( model );
-    const equationAccordionBox = new EquationAccordionBox( model.selectedIsotopeProperty );
+    const particleCountsAccordionBox = new ParticleCountsAccordionBox( model, {
+      tandem: options.tandem.createTandem( 'particleCountsAccordionBox' )
+    } );
+    const equationAccordionBox = new EquationAccordionBox( model.selectedIsotopeProperty, {
+      tandem: options.tandem.createTandem( 'equationAccordionBox' )
+    } );
 
     const rightColumnVBox = new VBox( {
       spacing: PANEL_SPACING,
@@ -78,8 +85,8 @@ export default class NuclearDecayScreenView extends ScreenView {
         this.reset();
       },
       right: this.layoutBounds.maxX - MARGIN_X,
-      bottom: this.layoutBounds.maxY - MARGIN_Y
-      // tandem: options.tandem.createTandem( 'resetAllButton' )
+      bottom: this.layoutBounds.maxY - MARGIN_Y,
+      tandem: options.tandem.createTandem( 'resetAllButton' )
     } );
     this.addChild( resetAllButton );
 
@@ -92,7 +99,8 @@ export default class NuclearDecayScreenView extends ScreenView {
         }
       },
       bottom: resetAllButton.top - PANEL_SPACING,
-      right: resetAllButton.right
+      right: resetAllButton.right,
+      tandem: options.tandem.createTandem( 'timeControlNode' )
     } );
 
     const restartButton = new RestartButton( {

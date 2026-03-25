@@ -7,11 +7,26 @@
  */
 
 import dotRandom from '../../../dot/js/dotRandom.js';
-import Vector2 from '../../../dot/js/Vector2.js';
+import Vector2, { Vector2StateObject } from '../../../dot/js/Vector2.js';
 import affirm from '../../../perennial-alias/js/browser-and-node/affirm.js';
 import { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import AtomInfoUtils from '../../../shred/js/AtomInfoUtils.js';
-import AtomConfig from '../../../shred/js/model/AtomConfig.js';
+import AtomConfig, { AtomConfigStateObject } from '../../../shred/js/model/AtomConfig.js';
+import BooleanIO from '../../../tandem/js/types/BooleanIO.js';
+import IOType from '../../../tandem/js/types/IOType.js';
+import NullableIO from '../../../tandem/js/types/NullableIO.js';
+import NumberIO from '../../../tandem/js/types/NumberIO.js';
+
+export type NuclearDecayAtomStateObject = {
+  atomConfigBeforeDecay: AtomConfigStateObject;
+  atomConfigAfterDecay: AtomConfigStateObject;
+  halfLife: number;
+  isActive: boolean;
+  hasDecayed: boolean;
+  time: number;
+  decayTime: number | null;
+  position: Vector2StateObject;
+};
 
 type SelfOptions = EmptySelfOptions;
 
@@ -96,4 +111,34 @@ export default class NuclearDecayAtom {
     const lambda = NuclearDecayAtom.decayConstantFromHalfLife( halfLife );
     return 1 - Math.exp( -lambda * dt );
   }
+
+  /**
+   * Data-type IOType for PhET-iO serialization. NuclearDecayAtom is not a PhetioObject itself — it is serialized
+   * by a parent model via aggregate state.
+   */
+  public static readonly NuclearDecayAtomIO = new IOType<NuclearDecayAtom, NuclearDecayAtomStateObject>( 'NuclearDecayAtomIO', {
+    valueType: NuclearDecayAtom,
+    stateSchema: {
+      atomConfigBeforeDecay: AtomConfig.AtomConfigIO,
+      atomConfigAfterDecay: AtomConfig.AtomConfigIO,
+      halfLife: NumberIO,
+      isActive: BooleanIO,
+      hasDecayed: BooleanIO,
+      time: NumberIO,
+      decayTime: NullableIO( NumberIO ),
+      position: Vector2.Vector2IO
+    },
+    fromStateObject: ( stateObject: NuclearDecayAtomStateObject ) => {
+      const atom = new NuclearDecayAtom(
+        new AtomConfig( stateObject.atomConfigBeforeDecay.protonCount, stateObject.atomConfigBeforeDecay.neutronCount, stateObject.atomConfigBeforeDecay.electronCount ),
+        new AtomConfig( stateObject.atomConfigAfterDecay.protonCount, stateObject.atomConfigAfterDecay.neutronCount, stateObject.atomConfigAfterDecay.electronCount )
+      );
+      atom.isActive = stateObject.isActive;
+      atom.hasDecayed = stateObject.hasDecayed;
+      atom.time = stateObject.time;
+      atom.decayTime = stateObject.decayTime;
+      atom.position = Vector2.Vector2IO.fromStateObject( stateObject.position );
+      return atom;
+    }
+  } );
 }

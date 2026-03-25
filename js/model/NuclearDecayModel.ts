@@ -12,9 +12,11 @@ import Property from '../../../axon/js/Property.js';
 import TModel from '../../../joist/js/TModel.js';
 import affirm from '../../../perennial-alias/js/browser-and-node/affirm.js';
 import { combineOptions } from '../../../phet-core/js/optionize.js';
+import WithRequired from '../../../phet-core/js/types/WithRequired.js';
 import TimeSpeed from '../../../scenery-phet/js/TimeSpeed.js';
 import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
 import AtomConfig from '../../../shred/js/model/AtomConfig.js';
+import { PhetioObjectOptions } from '../../../tandem/js/PhetioObject.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayAtom from './NuclearDecayAtom.js';
 
@@ -35,11 +37,13 @@ const ISOTOPE_TO_ATOM_CONFIG = new Map<ValidIsotopes, AtomConfig>( [
   [ 'custom', new AtomConfig( 1, 1, 1 ) ]
 ] );
 
-export type NuclearDecayModelOptions = {
+type SelfOptions = {
 
   // Whether the model is used for a single atom, used to enforce certain restrictions on the model behavior.
   singleAtomModel?: boolean;
 };
+
+export type NuclearDecayModelOptions = SelfOptions & WithRequired<PhetioObjectOptions, 'tandem'>;
 
 export default abstract class NuclearDecayModel implements TModel {
 
@@ -74,15 +78,15 @@ export default abstract class NuclearDecayModel implements TModel {
     this.isPlayAreaEmptyProperty = new BooleanProperty( true );
 
     this.timeProperty = new NumberProperty( 0, {
-      // tandem: ???
+      tandem: options.tandem.createTandem( 'timeProperty' )
     } );
 
     this.isPlayingProperty = new BooleanProperty( true, {
-      // tandem: ???
+      tandem: options.tandem.createTandem( 'isPlayingProperty' )
     } );
 
     this.timeSpeedProperty = new EnumerationProperty( TimeSpeed.NORMAL, {
-      // tandem: ???
+      tandem: options.tandem.createTandem( 'timeSpeedProperty' )
     } );
   }
 
