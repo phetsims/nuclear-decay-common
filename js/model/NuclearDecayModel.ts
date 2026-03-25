@@ -11,7 +11,7 @@ import NumberProperty from '../../../axon/js/NumberProperty.js';
 import Property from '../../../axon/js/Property.js';
 import TModel from '../../../joist/js/TModel.js';
 import affirm from '../../../perennial-alias/js/browser-and-node/affirm.js';
-import { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
+import { combineOptions } from '../../../phet-core/js/optionize.js';
 import TimeSpeed from '../../../scenery-phet/js/TimeSpeed.js';
 import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
 import AtomConfig from '../../../shred/js/model/AtomConfig.js';
@@ -35,7 +35,11 @@ const ISOTOPE_TO_ATOM_CONFIG = new Map<ValidIsotopes, AtomConfig>( [
   [ 'custom', new AtomConfig( 1, 1, 1 ) ]
 ] );
 
-export type NuclearDecayModelOptions = EmptySelfOptions;
+export type NuclearDecayModelOptions = {
+
+  // Whether the model is used for a single atom, used to enforce certain restrictions on the model behavior.
+  singleAtomModel?: boolean;
+};
 
 export default abstract class NuclearDecayModel implements TModel {
 
@@ -55,10 +59,15 @@ export default abstract class NuclearDecayModel implements TModel {
 
   public readonly isPlayAreaEmptyProperty: BooleanProperty;
 
-  public constructor( providedOptions: NuclearDecayModelOptions ) {
+  public readonly singleAtomModel: boolean;
 
-    // const options = combineOptions<NuclearDecayModelOptions>( {
-    // }, providedOptions );
+  public constructor( providedOptions?: NuclearDecayModelOptions ) {
+
+    const options = combineOptions<NuclearDecayModelOptions>( {
+      singleAtomModel: false
+    }, providedOptions );
+
+    this.singleAtomModel = options.singleAtomModel!;
 
     this.activeAtoms = [];
 

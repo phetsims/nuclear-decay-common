@@ -1,7 +1,7 @@
 // Copyright 2026, University of Colorado Boulder
 /**
  * Panel that displays the half-life timeline for the current isotope, including isotope symbols on
- * the Y axis, a green half-life label, a time label, and an eraser button.
+ * the Y axis, a half-life label, a time label, and an eraser button.
  *
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
