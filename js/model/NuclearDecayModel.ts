@@ -6,6 +6,7 @@
  */
 
 import BooleanProperty from '../../../axon/js/BooleanProperty.js';
+import Emitter from '../../../axon/js/Emitter.js';
 import EnumerationProperty from '../../../axon/js/EnumerationProperty.js';
 import NumberProperty from '../../../axon/js/NumberProperty.js';
 import Property from '../../../axon/js/Property.js';
@@ -65,6 +66,11 @@ export default abstract class NuclearDecayModel implements TModel {
 
   public readonly singleAtomModel: boolean;
 
+  public readonly maxNumberOfNucleons: number;
+
+  // TODO: Temporary update emitter while we decide how to wire up graph updates; https://github.com/phetsims/alpha-decay/issues/3
+  public readonly updateEmitter = new Emitter();
+
   public constructor( providedOptions?: NuclearDecayModelOptions ) {
 
     const options = combineOptions<NuclearDecayModelOptions>( {
@@ -72,6 +78,8 @@ export default abstract class NuclearDecayModel implements TModel {
     }, providedOptions );
 
     this.singleAtomModel = options.singleAtomModel!;
+
+    this.maxNumberOfNucleons = options.singleAtomModel ? 1 : NuclearDecayCommonConstants.MAX_NUCLEONS;
 
     this.activeAtoms = [];
 
@@ -133,6 +141,19 @@ export default abstract class NuclearDecayModel implements TModel {
   }
 
   /**
+   * Adds exactly one of the selected isotopes into the model, and starts the decay process.
+   */
+  public addAtom(): void {
+    if ( this.activeAtoms.length < NuclearDecayCommonConstants.MAX_NUCLEONS ) {
+      const selectedIsotope = this.selectedIsotopeProperty.value;
+      if ( selectedIsotope !== 'custom' ) {
+        const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( selectedIsotope );
+        this.activeAtoms.push( new NuclearDecayAtom( atomConfig, atomConfig ) );
+      }
+    }
+  }
+
+  /**
    * Resets the model.
    */
   public reset(): void {
@@ -160,12 +181,27 @@ export default abstract class NuclearDecayModel implements TModel {
    * @param dt - time step, in seconds
    */
   public step( dt: number ): void {
+
+    this.isPlayAreaEmptyProperty.value = this.activeAtoms.length === 0;
+
     if ( this.isPlayingProperty.value && !this.isPlayAreaEmptyProperty.value ) {
       const timeSpeedScale = this.timeSpeedProperty.value === TimeSpeed.NORMAL ?
                              NuclearDecayCommonConstants.NORMAL_SPEED_SCALE :
                              NuclearDecayCommonConstants.SLOW_SPEED_SCALE;
       this.stepModel( dt * timeSpeedScale );
+      this.activeAtoms.forEach( ( atom: NuclearDecayAtom, index: number ) => {
+        const hadDecayed = atom.hasDecayed;
+        atom.step( dt * timeSpeedScale );
+
+        if ( !hadDecayed && atom.hasDecayed ) {
+
+          // Do something when an atom decayed, maybe update datapoints or something
+        }
+      } );
     }
+
+    // TODO: Gross https://github.com/phetsims/alpha-decay/issues/3
+    this.updateEmitter.emit();
   }
 
   /**

@@ -32,7 +32,7 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
     }, providedOptions );
 
     // TODO: Wire to model property https://github.com/phetsims/alpha-decay/issues/3
-    const atomCountProperty = new NumberProperty( 1 );
+    const atomCountProperty = new NumberProperty( 10 );
 
     // Title showing the selected isotope name with a colored background
     // TODO: Dynamic strings https://github.com/phetsims/alpha-decay/issues/3
@@ -90,7 +90,9 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
       font: NuclearDecayCommonConstants.CONTROL_FONT,
       baseColor: 'orange',
       listener: () => {
-        // TODO: Add atoms to play area https://github.com/phetsims/alpha-decay/issues/3
+        _.times( atomCountProperty.value, () => {
+          model.addAtom();
+        } );
       }
     } );
 

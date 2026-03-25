@@ -86,9 +86,8 @@ export default class NuclearDecayAtom {
   }
 
   public step( dt: number ): void {
-    this.time += dt;
-
     if ( this.halfLife && !this.hasDecayed ) {
+      this.time += dt; // Only advance time if the atom has not decayed.
       const probabilityOfDecay = NuclearDecayAtom.decayProbabilityOverInterval( this.halfLife, dt );
       if ( dotRandom.nextDouble() < probabilityOfDecay ) {
         this.hasDecayed = true;

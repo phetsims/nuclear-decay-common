@@ -14,6 +14,9 @@ export default class NuclearDecayCommonConstants {
     // no-op
   }
 
+  // Max number of nucleons in the sim
+  public static readonly MAX_NUCLEONS = 100;
+
   // Isotopes
   public static readonly ALPHA_PARTICLE = new AtomConfig( 2, 2, 0 );
   public static readonly POLONIUM_211 = new AtomConfig( 84, 127, 84 );

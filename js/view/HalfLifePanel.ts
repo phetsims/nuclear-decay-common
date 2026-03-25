@@ -6,6 +6,7 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
+import { roundToInterval } from '../../../dot/js/util/roundToInterval.js';
 import Shape from '../../../kite/js/Shape.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import ArrowNode from '../../../scenery-phet/js/ArrowNode.js';
@@ -13,6 +14,7 @@ import EraserButton from '../../../scenery-phet/js/buttons/EraserButton.js';
 import VBox from '../../../scenery/js/layout/nodes/VBox.js';
 import Node from '../../../scenery/js/nodes/Node.js';
 import Path from '../../../scenery/js/nodes/Path.js';
+import Rectangle from '../../../scenery/js/nodes/Rectangle.js';
 import RichText from '../../../scenery/js/nodes/RichText.js';
 import Text from '../../../scenery/js/nodes/Text.js';
 import NuclearDecayModel, { SelectableIsotopes } from '../model/NuclearDecayModel.js';
@@ -35,10 +37,17 @@ const HALF_LIFE_X = GRAPH_WIDTH * 0.35; // x position of the half-life dashed li
 const ISOTOPE_SYMBOL_X = 35; // x of the isotope symbol column
 const AXIS_LABEL_X = 10; // x center of the rotated "Isotope" label
 
+const TICKS = 4;
+const TICK_WIDTH = 0.9 * GRAPH_WIDTH / ( TICKS - 1 );
+
 export default class HalfLifePanel extends NuclearDecayPanel {
+
+  private dataPointsLayer: Node;
+
+  private model: NuclearDecayModel;
+
   public constructor( model: NuclearDecayModel, providedOptions?: HalfLifePanelOptions ) {
-    const options = optionize<HalfLifePanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {
-    }, providedOptions );
+    const options = optionize<HalfLifePanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {}, providedOptions );
 
     // Y-axis rotated label: "Isotope"
 
@@ -94,9 +103,8 @@ export default class HalfLifePanel extends NuclearDecayPanel {
     } );
 
     // Time ticks
-    const TICKS = 4;
     _.times( TICKS, ( n: number ) => {
-      const tickX = GRAPH_X_OFFSET + ( n ) * 0.9 * GRAPH_WIDTH / ( TICKS - 1 );
+      const tickX = GRAPH_X_OFFSET + ( n ) * TICK_WIDTH;
       const tick = new Path(
         new Shape().moveTo( 0, 0 ).lineTo( 0, 10 ),
         {
@@ -156,6 +164,11 @@ export default class HalfLifePanel extends NuclearDecayPanel {
 
     // Assemble
 
+    const dataPointsLayer = new Node( {
+      left: GRAPH_X_OFFSET,
+      bottom: timeAxis.centerY
+    } );
+
     const contentsNode = new Node( {
       children: [
         isotopeAxisLabel,
@@ -164,10 +177,64 @@ export default class HalfLifePanel extends NuclearDecayPanel {
         timeAxis,
         timeText,
         halfLifeIndicator,
-        eraserButton
+        eraserButton,
+        dataPointsLayer
       ]
     } );
 
     super( contentsNode, options );
+
+    this.model = model;
+    this.dataPointsLayer = dataPointsLayer;
+
+    this.model.updateEmitter.addListener( () => {
+      this.update();
+    } );
+  }
+
+  /**
+   * Updates the half-life panel's display based on the current state of the model.
+   */
+  public update(): void {
+    // TODO: Check out the implementation of HistogramCanvasPainter https://github.com/phetsims/alpha-decay/issues/3
+    // TODO: Make sure this is not a memory leak https://github.com/phetsims/alpha-decay/issues/3
+    this.dataPointsLayer.removeAllChildren();
+
+    const BOX_SIZE = 10;
+
+    // Since the TICK_WIDTH equals 1s, this division gives us the number of seconds that each box represents
+    const BIN_SIZE_TIME = BOX_SIZE / TICK_WIDTH;
+
+    const binsMap = new Map<number, number>();
+    this.model.activeAtoms.forEach( ( atom, index ) => {
+      let x: number;
+      let y = GRAPH_HEIGHT;
+      if ( atom.hasDecayed ) {
+
+        // If the atom decayed, round it to bin it on the histogram, otherwise let it have any time value.
+        x = roundToInterval( atom.time, BIN_SIZE_TIME );
+        if ( binsMap.has( x ) ) {
+          binsMap.set( x, binsMap.get( x )! + 1 );
+          y -= BOX_SIZE * binsMap.get( x )!;
+        }
+        else {
+          binsMap.set( x, 1 );
+          y -= BOX_SIZE;
+        }
+      }
+      else {
+        x = atom.time;
+        y = 0;
+      }
+
+      this.dataPointsLayer.addChild( new Rectangle(
+        x * TICK_WIDTH + GRAPH_X_OFFSET, y, BOX_SIZE, BOX_SIZE, {
+          fill: atom.hasDecayed ? 'grey' : NuclearDecayCommonColors.pinkProperty,
+          stroke: 'black',
+          lineWidth: 1
+        }
+      ) );
+    } );
+
   }
 }
