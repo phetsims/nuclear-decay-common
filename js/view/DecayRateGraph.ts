@@ -30,11 +30,11 @@ import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel
 
 type SelfOptions = EmptySelfOptions;
 
-export type DecayRatesGraphOptions = SelfOptions & NuclearDecayPanelOptions;
+export type DecayRateGraphOptions = SelfOptions & NuclearDecayPanelOptions;
 
-export default class DecayRatesGraph extends NuclearDecayPanel {
-  public constructor( model: NuclearDecayModel, providedOptions?: DecayRatesGraphOptions ) {
-    const options = optionize<DecayRatesGraphOptions, SelfOptions, NuclearDecayPanelOptions>()( {
+export default class DecayRateGraph extends NuclearDecayPanel {
+  public constructor( model: NuclearDecayModel, providedOptions?: DecayRateGraphOptions ) {
+    const options = optionize<DecayRateGraphOptions, SelfOptions, NuclearDecayPanelOptions>()( {
       minWidth: NuclearDecayCommonConstants.LONG_PANEL_WIDTH
     }, providedOptions );
 
