@@ -32,7 +32,7 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
     }, providedOptions );
 
     // TODO: Wire to model property https://github.com/phetsims/alpha-decay/issues/3
-    const atomCountProperty = new NumberProperty( 10 );
+    const atomCountProperty = new NumberProperty( 100 );
 
     // Title showing the selected isotope name with a colored background
     // TODO: Dynamic strings https://github.com/phetsims/alpha-decay/issues/3

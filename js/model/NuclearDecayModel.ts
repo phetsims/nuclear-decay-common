@@ -66,7 +66,7 @@ export default abstract class NuclearDecayModel implements TModel {
   public readonly activeAtoms: ObservableArray<NuclearDecayAtom>;
 
   // Subset of activeAtoms, just the ones that have not decayed yet.
-  public readonly undecayedAtoms: ObservableArray<NuclearDecayAtom>;
+  public undecayedAtoms: NuclearDecayAtom[];
 
   // NOT a subset of activeAtoms, but rather a reference of all the atoms that have fallen.
   // Useful especially for graphing atoms that are no longer active in the play area.
@@ -94,6 +94,10 @@ export default abstract class NuclearDecayModel implements TModel {
     this.activeAtoms = createObservableArray();
     this.undecayedAtoms = createObservableArray();
     this.decayedAtoms = createObservableArray();
+
+    this.activeAtoms.lengthProperty.link( () => {
+      this.undecayedAtoms = this.activeAtoms.filter( atom => !atom.hasDecayed );
+    } );
 
     this.isPlayAreaEmptyProperty = new BooleanProperty( true );
 
@@ -176,7 +180,6 @@ export default abstract class NuclearDecayModel implements TModel {
         const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( selectedIsotope );
         const atom = new NuclearDecayAtom( atomConfig, atomConfig );
         this.activeAtoms.add( atom );
-        this.undecayedAtoms.add( atom );
       }
     }
   }
@@ -199,9 +202,8 @@ export default abstract class NuclearDecayModel implements TModel {
         atom.step( dt * timeSpeedScale );
 
         if ( !hadDecayed && atom.hasDecayed ) {
+          this.undecayedAtoms = this.activeAtoms.filter( atom => !atom.hasDecayed );
           this.decayedAtoms.add( atom );
-          this.undecayedAtoms.remove( atom );
-          // Do something when an atom decayed, maybe update datapoints or something
         }
       } );
     }
@@ -215,6 +217,7 @@ export default abstract class NuclearDecayModel implements TModel {
    */
   public reset(): void {
     this.activeAtoms.clear();
+    this.decayedAtoms.clear();
     this.isPlayingProperty.reset();
     this.timeSpeedProperty.reset();
     this.timeProperty.reset();

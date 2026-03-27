@@ -200,61 +200,75 @@ export default class HalfLifePanel extends NuclearDecayPanel {
     // TODO: Make sure this is not a memory leak https://github.com/phetsims/alpha-decay/issues/3
     this.dataPointsLayer.removeAllChildren();
 
-    const BOX_WIDTH = 9;
-    const BOX_HEIGHT = 6;
+    const MAX_HALF_LIFE = 3.25; // seconds
+
+    const BOX_WIDTH = 6;
 
     // Since the TICK_INTERVAL_WIDTH equals 1s, this division gives us the number of seconds that each box represents
-    const BIN_SIZE_TIME = BOX_WIDTH / TICK_INTERVAL_WIDTH;
+    // const BIN_SIZE_TIME = BOX_WIDTH / TICK_INTERVAL_WIDTH;
+    const BIN_SIZE_TIME = 0.05; // 20 bins per second
 
-    const binsMap = new Map<number, number>();
+    const decayedBinsMap = new Map<number, number>();
     let tallestBinCount = 0;
-    this.model.activeAtoms.forEach( ( atom, index ) => {
-      let x: number;
-      let y = GRAPH_HEIGHT;
-      if ( atom.hasDecayed ) {
+    this.model.decayedAtoms.forEach( ( atom, index ) => {
 
-        // If the atom decayed, round it to bin it on the histogram, otherwise let it have any time value.
-        x = roundToInterval( atom.time, BIN_SIZE_TIME );
-        if ( binsMap.has( x ) ) {
-          binsMap.set( x, binsMap.get( x )! + 1 );
-          y -= BOX_HEIGHT * binsMap.get( x )!;
-          if ( binsMap.get( x )! > tallestBinCount ) {
-            tallestBinCount = binsMap.get( x )!;
-          }
-        }
-        else {
-          binsMap.set( x, 1 );
-          y -= BOX_HEIGHT;
+      // If the atom decayed, round it to bin it on the histogram
+      const x = roundToInterval( atom.time, BIN_SIZE_TIME );
+
+      // Atoms with very high lives are not shown.
+      if ( x > MAX_HALF_LIFE ) { return; }
+
+      if ( decayedBinsMap.has( x ) ) {
+        decayedBinsMap.set( x, decayedBinsMap.get( x )! + 1 );
+        if ( decayedBinsMap.get( x )! > tallestBinCount ) {
+          tallestBinCount = decayedBinsMap.get( x )!;
         }
       }
       else {
-        x = atom.time;
-        y = 0;
+        decayedBinsMap.set( x, 1 );
       }
+    } );
 
-      if ( x > 3.25 ) { return; }
+    const BOX_HEIGHT = tallestBinCount * 9 < GRAPH_HEIGHT ? 9 :
+                       tallestBinCount * 6 < GRAPH_HEIGHT ? 6 : 3;
 
-      if ( atom.hasDecayed ) {
+    decayedBinsMap.forEach( ( value, bin ) => {
+      _.times( value, n => {
+        const y = GRAPH_HEIGHT - ( n + 1 ) * BOX_HEIGHT;
         this.dataPointsLayer.addChild( new Rectangle(
-          x * TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET, y, BOX_WIDTH, BOX_HEIGHT, {
+          bin * TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET, y, BOX_WIDTH, BOX_HEIGHT, {
             fill: 'grey',
             stroke: 'black',
             lineWidth: 1
           }
         ) );
-      }
-      else {
-        const UNDECAYED_WIDTH = 25;
-        const UNDECAYED_HEIGHT = 16;
-        this.dataPointsLayer.addChild( new Rectangle(
-          x * TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET, y, UNDECAYED_WIDTH, UNDECAYED_HEIGHT, {
-            fill: NuclearDecayCommonColors.pinkProperty,
-            stroke: 'black',
-            lineWidth: 1
-          }
-        ) );
-      }
+      } );
     } );
+
+    const numberOfUndecayedAtoms = this.model.undecayedAtoms.length;
+    if ( numberOfUndecayedAtoms > 0 ) {
+      const x = this.model.undecayedAtoms[ 0 ].time; // We only need the first one
+      if ( x > MAX_HALF_LIFE ) { return; }
+
+      const UNDECAYED_WIDTH = 25;
+      const UNDECAYED_HEIGHT = 16;
+
+      const undecayedRectangle = new Rectangle(
+        x * TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET, 0, UNDECAYED_WIDTH, UNDECAYED_HEIGHT, {
+          fill: NuclearDecayCommonColors.pinkProperty,
+          stroke: 'black',
+          lineWidth: 1
+        }
+      );
+      const undecayedCountLabel = new Text( numberOfUndecayedAtoms, {
+        font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
+        fill: 'black',
+        center: undecayedRectangle.center
+      } );
+      undecayedRectangle.addChild( undecayedCountLabel );
+
+      this.dataPointsLayer.addChild( undecayedRectangle );
+    }
 
   }
 

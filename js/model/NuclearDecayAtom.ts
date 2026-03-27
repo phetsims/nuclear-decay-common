@@ -85,6 +85,10 @@ export default class NuclearDecayAtom {
     this.hasDecayed = false;
   }
 
+  public copy(): NuclearDecayAtom {
+    return new NuclearDecayAtom( this.atomConfigBeforeDecay, this.atomConfigAfterDecay );
+  }
+
   public step( dt: number ): void {
     if ( this.halfLife && !this.hasDecayed ) {
       this.time += dt; // Only advance time if the atom has not decayed.
