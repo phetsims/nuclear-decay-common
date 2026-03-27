@@ -33,12 +33,13 @@ const GRAPH_HEIGHT = 80;
 
 // left margin: room for rotated label + isotope symbols
 const GRAPH_X_OFFSET = 90;
-const HALF_LIFE_X = GRAPH_WIDTH * 0.35; // x position of the half-life dashed line within the graph
 const ISOTOPE_SYMBOL_X = 35; // x of the isotope symbol column
 const AXIS_LABEL_X = 10; // x center of the rotated "Isotope" label
 
 const TICKS = 4;
-const TICK_WIDTH = 0.9 * GRAPH_WIDTH / ( TICKS - 1 );
+
+// Width of the tick interval. Also represents 1 second on the time axis.
+const TICK_INTERVAL_WIDTH = 0.9 * GRAPH_WIDTH / ( TICKS - 1 );
 
 export default class HalfLifePanel extends NuclearDecayPanel {
 
@@ -104,7 +105,7 @@ export default class HalfLifePanel extends NuclearDecayPanel {
 
     // Time ticks
     _.times( TICKS, ( n: number ) => {
-      const tickX = GRAPH_X_OFFSET + ( n ) * TICK_WIDTH;
+      const tickX = GRAPH_X_OFFSET + ( n ) * TICK_INTERVAL_WIDTH;
       const tick = new Path(
         new Shape().moveTo( 0, 0 ).lineTo( 0, 10 ),
         {
@@ -125,15 +126,12 @@ export default class HalfLifePanel extends NuclearDecayPanel {
 
     // Half-life dashed line and label
 
-    const halfLifeLineX = GRAPH_X_OFFSET + HALF_LIFE_X;
-
     const halfLifeLine = new Path(
       new Shape().moveTo( 0, 0 ).lineTo( 0, GRAPH_HEIGHT ),
       {
         stroke: NuclearDecayCommonColors.halfLifeColorProperty,
         lineWidth: 2,
         lineDash: [ 5, 5 ],
-        x: halfLifeLineX,
         y: 0
       }
     );
@@ -141,15 +139,17 @@ export default class HalfLifePanel extends NuclearDecayPanel {
     const halfLifeText = new Text( NuclearDecayCommonFluent.halfLifeStringProperty, {
       font: NuclearDecayCommonConstants.CONTROL_BOLD_FONT,
       fill: NuclearDecayCommonColors.halfLifeColorProperty,
-      centerX: halfLifeLineX,
       bottom: -6,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
     const halfLifeIndicator = new VBox( {
       children: [ halfLifeText, halfLifeLine ],
-      centerX: halfLifeLineX,
       bottom: GRAPH_HEIGHT
+    } );
+
+    model.selectedHalflifeProperty.link( halfLife => {
+      halfLifeIndicator.centerX = GRAPH_X_OFFSET + TICK_INTERVAL_WIDTH * halfLife;
     } );
 
     // Eraser button (top-right corner, aligned with half-life label)
@@ -200,12 +200,14 @@ export default class HalfLifePanel extends NuclearDecayPanel {
     // TODO: Make sure this is not a memory leak https://github.com/phetsims/alpha-decay/issues/3
     this.dataPointsLayer.removeAllChildren();
 
-    const BOX_SIZE = 10;
+    const BOX_WIDTH = 9;
+    const BOX_HEIGHT = 6;
 
-    // Since the TICK_WIDTH equals 1s, this division gives us the number of seconds that each box represents
-    const BIN_SIZE_TIME = BOX_SIZE / TICK_WIDTH;
+    // Since the TICK_INTERVAL_WIDTH equals 1s, this division gives us the number of seconds that each box represents
+    const BIN_SIZE_TIME = BOX_WIDTH / TICK_INTERVAL_WIDTH;
 
     const binsMap = new Map<number, number>();
+    let tallestBinCount = 0;
     this.model.activeAtoms.forEach( ( atom, index ) => {
       let x: number;
       let y = GRAPH_HEIGHT;
@@ -215,11 +217,14 @@ export default class HalfLifePanel extends NuclearDecayPanel {
         x = roundToInterval( atom.time, BIN_SIZE_TIME );
         if ( binsMap.has( x ) ) {
           binsMap.set( x, binsMap.get( x )! + 1 );
-          y -= BOX_SIZE * binsMap.get( x )!;
+          y -= BOX_HEIGHT * binsMap.get( x )!;
+          if ( binsMap.get( x )! > tallestBinCount ) {
+            tallestBinCount = binsMap.get( x )!;
+          }
         }
         else {
           binsMap.set( x, 1 );
-          y -= BOX_SIZE;
+          y -= BOX_HEIGHT;
         }
       }
       else {
@@ -227,14 +232,30 @@ export default class HalfLifePanel extends NuclearDecayPanel {
         y = 0;
       }
 
-      this.dataPointsLayer.addChild( new Rectangle(
-        x * TICK_WIDTH + GRAPH_X_OFFSET, y, BOX_SIZE, BOX_SIZE, {
-          fill: atom.hasDecayed ? 'grey' : NuclearDecayCommonColors.pinkProperty,
-          stroke: 'black',
-          lineWidth: 1
-        }
-      ) );
+      if ( x > 3.25 ) { return; }
+
+      if ( atom.hasDecayed ) {
+        this.dataPointsLayer.addChild( new Rectangle(
+          x * TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET, y, BOX_WIDTH, BOX_HEIGHT, {
+            fill: 'grey',
+            stroke: 'black',
+            lineWidth: 1
+          }
+        ) );
+      }
+      else {
+        const UNDECAYED_WIDTH = 25;
+        const UNDECAYED_HEIGHT = 16;
+        this.dataPointsLayer.addChild( new Rectangle(
+          x * TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET, y, UNDECAYED_WIDTH, UNDECAYED_HEIGHT, {
+            fill: NuclearDecayCommonColors.pinkProperty,
+            stroke: 'black',
+            lineWidth: 1
+          }
+        ) );
+      }
     } );
 
   }
+
 }

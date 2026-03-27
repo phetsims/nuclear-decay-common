@@ -15,7 +15,7 @@ export default class NuclearDecayCommonConstants {
   }
 
   // Max number of nucleons in the sim
-  public static readonly MAX_NUCLEONS = 100;
+  public static readonly MAX_ATOMS = 100;
 
   // Isotopes
   public static readonly ALPHA_PARTICLE = new AtomConfig( 2, 2, 0 );
@@ -53,6 +53,6 @@ export default class NuclearDecayCommonConstants {
 
   // Time control constants
   public static readonly MANUAL_STEP_DT = 1 / 60; // seconds, one frame
-  public static readonly NORMAL_SPEED_SCALE = 1;
+  public static readonly NORMAL_SPEED_SCALE = 0.5;
   public static readonly SLOW_SPEED_SCALE = 0.25;
 }

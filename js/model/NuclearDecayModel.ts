@@ -6,6 +6,7 @@
  */
 
 import BooleanProperty from '../../../axon/js/BooleanProperty.js';
+import createObservableArray, { ObservableArray } from '../../../axon/js/createObservableArray.js';
 import Emitter from '../../../axon/js/Emitter.js';
 import EnumerationProperty from '../../../axon/js/EnumerationProperty.js';
 import NumberProperty from '../../../axon/js/NumberProperty.js';
@@ -40,8 +41,7 @@ const ISOTOPE_TO_ATOM_CONFIG = new Map<ValidIsotopes, AtomConfig>( [
 
 type SelfOptions = {
 
-  // Whether the model is used for a single atom, used to enforce certain restrictions on the model behavior.
-  singleAtomModel?: boolean;
+  maxNumberOfAtoms?: number;
 };
 
 export type NuclearDecayModelOptions = SelfOptions & WithRequired<PhetioObjectOptions, 'tandem'>;
@@ -55,18 +55,26 @@ export default abstract class NuclearDecayModel implements TModel {
   // 'polonium-211' vs 'custom' in Alpha Decay, or 'carbon-14' vs 'hydrogen-3' vs 'custom' in Beta Decay.
   public readonly abstract selectedIsotopeProperty: Property<SelectableIsotopes>;
 
+  // Set by default to the halflife of the selected isotope, but can be changed by the user if 'custom' is selected.
+  public readonly selectedHalflifeProperty: NumberProperty;
+
   public readonly isPlayingProperty: BooleanProperty;
   public readonly timeSpeedProperty: EnumerationProperty<TimeSpeed>;
   public readonly timeProperty: NumberProperty;
 
   // Atoms currently in the play area
-  public readonly activeAtoms: NuclearDecayAtom[];
+  public readonly activeAtoms: ObservableArray<NuclearDecayAtom>;
+
+  // Subset of activeAtoms, just the ones that have not decayed yet.
+  public readonly undecayedAtoms: ObservableArray<NuclearDecayAtom>;
+
+  // NOT a subset of activeAtoms, but rather a reference of all the atoms that have fallen.
+  // Useful especially for graphing atoms that are no longer active in the play area.
+  public readonly decayedAtoms: ObservableArray<NuclearDecayAtom>;
 
   public readonly isPlayAreaEmptyProperty: BooleanProperty;
 
-  public readonly singleAtomModel: boolean;
-
-  public readonly maxNumberOfNucleons: number;
+  public readonly maxNumberOfAtoms: number;
 
   // TODO: Temporary update emitter while we decide how to wire up graph updates; https://github.com/phetsims/alpha-decay/issues/3
   public readonly updateEmitter = new Emitter();
@@ -74,14 +82,18 @@ export default abstract class NuclearDecayModel implements TModel {
   public constructor( providedOptions?: NuclearDecayModelOptions ) {
 
     const options = combineOptions<NuclearDecayModelOptions>( {
-      singleAtomModel: false
+      maxNumberOfAtoms: NuclearDecayCommonConstants.MAX_ATOMS
     }, providedOptions );
 
-    this.singleAtomModel = options.singleAtomModel!;
+    this.selectedHalflifeProperty = new NumberProperty( 1, {
+      tandem: options.tandem.createTandem( 'selectedHalflifeProperty' )
+    } );
 
-    this.maxNumberOfNucleons = options.singleAtomModel ? 1 : NuclearDecayCommonConstants.MAX_NUCLEONS;
+    this.maxNumberOfAtoms = options.maxNumberOfAtoms!;
 
-    this.activeAtoms = [];
+    this.activeAtoms = createObservableArray();
+    this.undecayedAtoms = createObservableArray();
+    this.decayedAtoms = createObservableArray();
 
     this.isPlayAreaEmptyProperty = new BooleanProperty( true );
 
@@ -140,40 +152,33 @@ export default abstract class NuclearDecayModel implements TModel {
     return 'custom';
   }
 
+  // TODO: Implement proper half-lives for each isotope https://github.com/phetsims/alpha-decay/issues/3
+  public static getHalfLife( isotope: SelectableIsotopes ): number {
+    if ( isotope === 'polonium-211' ) {
+      return 0.52;
+    }
+    else if ( isotope === 'hydrogen-3' ) {
+      return 1.5;
+    }
+    else if ( isotope === 'carbon-14' ) {
+      return 2.0;
+    }
+    return 1.0;
+  }
+
   /**
    * Adds exactly one of the selected isotopes into the model, and starts the decay process.
    */
   public addAtom(): void {
-    if ( this.activeAtoms.length < NuclearDecayCommonConstants.MAX_NUCLEONS ) {
+    if ( this.activeAtoms.length < this.maxNumberOfAtoms ) {
       const selectedIsotope = this.selectedIsotopeProperty.value;
       if ( selectedIsotope !== 'custom' ) {
         const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( selectedIsotope );
-        this.activeAtoms.push( new NuclearDecayAtom( atomConfig, atomConfig ) );
+        const atom = new NuclearDecayAtom( atomConfig, atomConfig );
+        this.activeAtoms.add( atom );
+        this.undecayedAtoms.add( atom );
       }
     }
-  }
-
-  /**
-   * Resets the model.
-   */
-  public reset(): void {
-    this.isPlayingProperty.reset();
-    this.timeSpeedProperty.reset();
-    this.timeProperty.reset();
-  }
-
-  /**
-   * Steps the model forward by a single manual step (when paused).
-   */
-  public manualStep(): void {
-    this.stepModel( NuclearDecayCommonConstants.MANUAL_STEP_DT );
-  }
-
-  /**
-   * Restarts the simulation to its initial state. Override in subclasses to implement specific restart behavior.
-   */
-  public restart(): void {
-    // no-op in base class, but can be overridden in subclasses to implement specific restart behavior
   }
 
   /**
@@ -194,7 +199,8 @@ export default abstract class NuclearDecayModel implements TModel {
         atom.step( dt * timeSpeedScale );
 
         if ( !hadDecayed && atom.hasDecayed ) {
-
+          this.decayedAtoms.add( atom );
+          this.undecayedAtoms.remove( atom );
           // Do something when an atom decayed, maybe update datapoints or something
         }
       } );
@@ -202,6 +208,30 @@ export default abstract class NuclearDecayModel implements TModel {
 
     // TODO: Gross https://github.com/phetsims/alpha-decay/issues/3
     this.updateEmitter.emit();
+  }
+
+  /**
+   * Resets the model.
+   */
+  public reset(): void {
+    this.activeAtoms.clear();
+    this.isPlayingProperty.reset();
+    this.timeSpeedProperty.reset();
+    this.timeProperty.reset();
+  }
+
+  /**
+   * Steps the model forward by a single manual step (when paused).
+   */
+  public manualStep(): void {
+    this.stepModel( NuclearDecayCommonConstants.MANUAL_STEP_DT );
+  }
+
+  /**
+   * Restarts the simulation to its initial state. Override in subclasses to implement specific restart behavior.
+   */
+  public restart(): void {
+    // no-op in base class, but can be overridden in subclasses to implement specific restart behavior
   }
 
   /**
