@@ -9,7 +9,6 @@ import optionize from '../../../phet-core/js/optionize.js';
 import ShadedSphereNode from '../../../scenery-phet/js/ShadedSphereNode.js';
 import Node, { NodeOptions } from '../../../scenery/js/nodes/Node.js';
 import ShredColors from '../../../shred/js/ShredColors.js';
-import { DecayingAtomNodeOptions } from './DecayingAtomNode.js';
 
 type SelfOptions = {
   nucleonDiameter?: number;
@@ -19,9 +18,9 @@ type SelfOptions = {
 export type AlphaParticleNodeOptions = SelfOptions & NodeOptions;
 
 export default class AlphaParticleNode extends Node {
-  public constructor( providedOptions: AlphaParticleNodeOptions ) {
+  public constructor( providedOptions?: AlphaParticleNodeOptions ) {
 
-    const options = optionize<DecayingAtomNodeOptions, SelfOptions, NodeOptions>()( {
+    const options = optionize<AlphaParticleNodeOptions, SelfOptions, NodeOptions>()( {
       nucleonDiameter: 20,
       particleOffsetRate: 0.7
     }, providedOptions );

@@ -82,7 +82,7 @@ export default abstract class NuclearDecayModel implements TModel {
   public constructor( providedOptions?: NuclearDecayModelOptions ) {
 
     const options = combineOptions<NuclearDecayModelOptions>( {
-      maxNumberOfAtoms: NuclearDecayCommonConstants.MAX_ATOMS
+      maxNumberOfAtoms: 1000 // NuclearDecayCommonConstants.MAX_ATOMS
     }, providedOptions );
 
     this.selectedHalflifeProperty = new NumberProperty( 1, {

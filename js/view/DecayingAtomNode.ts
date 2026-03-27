@@ -1,48 +1,56 @@
 // Copyright 2026, University of Colorado Boulder
+
 /**
- * DecayingAtomNode is the portrayal of the decaying atom, with its protons and neutrons sometimes jumping around.
+ * DecayingAtomNode is the portrayal of the decaying atom, with its protons and neutrons arranged in a nucleus
+ * using ParticleAtomNode from shred. It creates a ParticleAtom from the NuclearDecayAtom's config and renders
+ * the individual nucleons with proper z-layering.
  *
- * @author Agustín Vallejo
+ * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
+import Vector2 from '../../../dot/js/Vector2.js';
 import optionize from '../../../phet-core/js/optionize.js';
-import ShadedSphereNode from '../../../scenery-phet/js/ShadedSphereNode.js';
+import ModelViewTransform2 from '../../../phetcommon/js/view/ModelViewTransform2.js';
 import Node, { NodeOptions } from '../../../scenery/js/nodes/Node.js';
-import ShredColors from '../../../shred/js/ShredColors.js';
+import ParticleAtomNode from '../../../shred/js/view/ParticleAtomNode.js';
+import ParticleView from '../../../shred/js/view/ParticleView.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
+import createParticleAtomFromConfig from './createParticleAtomFromConfig.js';
 
 type SelfOptions = {
-
-  nucleonDiameter?: number;
-
-  // Sometimes we want to hard-code the number of visible protons and neutrons
-  // instead of using the actual number in the atom
-  protonNumber?: number;
-  neutronNumber?: number;
+  showElectronCloud?: boolean;
 };
 
 export type DecayingAtomNodeOptions = SelfOptions & NodeOptions;
 
 export default class DecayingAtomNode extends Node {
-  public constructor( decayingAtom: NuclearDecayAtom, providedOptions: DecayingAtomNodeOptions ) {
+  public constructor( decayingAtom: NuclearDecayAtom, providedOptions?: DecayingAtomNodeOptions ) {
     const options = optionize<DecayingAtomNodeOptions, SelfOptions, NodeOptions>()( {
-      protonNumber: 10,
-      neutronNumber: 10,
-
-      nucleonDiameter: 20
+      showElectronCloud: false
     }, providedOptions );
 
-    // This will go away when we populate properly the atomNode
-    const PARTICLE_OFFSET = 0.7 * 20; // how far apart the particles are in the icon
+    // Create a ParticleAtom populated with the correct number of protons and neutrons.
+    const { particleAtom, particles } = createParticleAtomFromConfig( decayingAtom.atomConfigBeforeDecay );
 
-    options.children = [
-      new ShadedSphereNode( options.nucleonDiameter, { mainColor: ShredColors.protonColorProperty, x: 0, y: 0 } ),
-      new ShadedSphereNode( options.nucleonDiameter, { mainColor: ShredColors.neutronColorProperty, x: PARTICLE_OFFSET, y: 0 } ),
-      new ShadedSphereNode( options.nucleonDiameter, { mainColor: ShredColors.neutronColorProperty, x: 0, y: PARTICLE_OFFSET } ),
-      new ShadedSphereNode( options.nucleonDiameter, { mainColor: ShredColors.protonColorProperty, x: PARTICLE_OFFSET, y: PARTICLE_OFFSET } )
-    ];
+    // Create the ParticleAtomNode to render the nucleus.
+    const particleAtomNode = new ParticleAtomNode( particleAtom, new Vector2( 0, 0 ), {
+      showElectronCloud: options.showElectronCloud
+    } );
+
+    // Identity MVT since ParticleAtom and the view share the same coordinate frame.
+    const modelViewTransform = ModelViewTransform2.createIdentity();
+
+    // Create a ParticleView for each particle and add it to the correct nucleon layer.
+    particles.forEach( particle => {
+      const particleView = new ParticleView( particle, modelViewTransform, {
+        inputEnabled: false
+      } );
+      particleAtomNode.addParticleView( particle, particleView );
+    } );
+
+    options.children = [ particleAtomNode ];
 
     super( options );
-    //nop
+
   }
 }

@@ -72,7 +72,9 @@ export default class IsotopePanel extends NuclearDecayPanel {
 
     const isotopeSelectorRadioButtonGroup = new VerticalAquaRadioButtonGroup(
       model.selectedIsotopeProperty,
-      radioButtonItems
+      radioButtonItems, {
+        spacing: 10
+      }
     );
 
     let children: Node[];
