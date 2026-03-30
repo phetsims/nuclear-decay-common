@@ -5,6 +5,8 @@
  * @author Agustín Vallejo
  */
 
+import Multilink from '../../../axon/js/Multilink.js';
+import Property from '../../../axon/js/Property.js';
 import ScreenView, { ScreenViewOptions } from '../../../joist/js/ScreenView.js';
 import optionize from '../../../phet-core/js/optionize.js';
 import WithRequired from '../../../phet-core/js/types/WithRequired.js';
@@ -26,29 +28,34 @@ import ParticleCountsAccordionBox from './ParticleCountsAccordionBox.js';
 
 type SelfOptions = {
   isotopePanelMiddleContent?: Node[] | null;
-
-  // The transform used to translate model coordinates to view coordinates.
-  modelViewTransform?: ModelViewTransform2;
 };
 
 export type NuclearDecayScreenViewOptions = SelfOptions & WithRequired<ScreenViewOptions, 'tandem'>;
 
 export default class NuclearDecayScreenView extends ScreenView {
 
+  // The model-view transform used for translating model coordinates into view coordinates. Subclasses can and should
+  // set this directly to control the position of the play area.
+  protected modelViewTransformProperty: Property<ModelViewTransform2>;
+
   // Child classes will need to reference this panel for layout
   protected readonly halfLifePanel: HalfLifePanel;
+
+  // Controls on the right side of the view.
+  protected readonly rightColumnControls: Node;
 
   public constructor( model: NuclearDecayModel, providedOptions?: NuclearDecayScreenViewOptions ) {
 
     const options = optionize<NuclearDecayScreenViewOptions, SelfOptions, ScreenViewOptions>()( {
-      // Self Options
-      isotopePanelMiddleContent: null,
 
-      // Use a simple identity transform if none is provided.
-      modelViewTransform: ModelViewTransform2.createIdentity()
+      // Self Options
+      isotopePanelMiddleContent: null
     }, providedOptions );
 
     super( options );
+
+    // Default to an identity transform.
+    this.modelViewTransformProperty = new Property( ModelViewTransform2.createIdentity() );
 
     const MARGIN_X = NuclearDecayCommonConstants.SCREEN_VIEW_X_MARGIN;
     const MARGIN_Y = NuclearDecayCommonConstants.SCREEN_VIEW_Y_MARGIN;
@@ -78,13 +85,13 @@ export default class NuclearDecayScreenView extends ScreenView {
       tandem: options.tandem.createTandem( 'equationAccordionBox' )
     } );
 
-    const rightColumnVBox = new VBox( {
+    this.rightColumnControls = new VBox( {
       spacing: PANEL_SPACING,
       right: this.layoutBounds.maxX - MARGIN_X,
       top: this.layoutBounds.minY + MARGIN_Y,
       children: [ isotopePanel, particleCountsAccordionBox, equationAccordionBox ]
     } );
-    this.addChild( rightColumnVBox );
+    this.addChild( this.rightColumnControls );
 
     // Bottom-right controls
 
@@ -122,11 +129,17 @@ export default class NuclearDecayScreenView extends ScreenView {
 
     // Show the area where the atoms can be placed if the 'dev' query parameter is present.
     if ( QueryStringMachine.containsKey( 'dev' ) ) {
-      const atomAreaNode = new Path( options.modelViewTransform.modelToViewShape( model.atomPlacementArea ), {
+      const atomAreaNode = new Path( null, {
         stroke: Color.RED,
         fill: new Color( 255, 0, 0, 0.5 )
       } );
       this.addChild( atomAreaNode );
+      Multilink.multilink(
+        [ this.modelViewTransformProperty, model.atomPlacementAreaProperty ],
+        ( mvt, atomPlacementArea ) => {
+          atomAreaNode.setShape( mvt.modelToViewShape( atomPlacementArea ) );
+        }
+      );
     }
   }
 

@@ -23,6 +23,7 @@ import AtomInfoUtils from '../../../shred/js/AtomInfoUtils.js';
 import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
 import AtomConfig from '../../../shred/js/model/AtomConfig.js';
 import { PhetioObjectOptions } from '../../../tandem/js/PhetioObject.js';
+import Tandem from '../../../tandem/js/Tandem.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayAtom from './NuclearDecayAtom.js';
 
@@ -43,8 +44,9 @@ const ISOTOPE_TO_ATOM_CONFIG = new Map<ValidIsotopes, AtomConfig>( [
   [ 'custom', new AtomConfig( 1, 1, 1 ) ]
 ] );
 
-// Bounds where the atoms can be placed, in model coordinates.
-const ATOM_AREA_BOUNDS = new Bounds2( -375, -100, 375, 100 );
+// Bounds where the atoms can be placed, in model coordinates.  Decay products are allowed to move outside of these
+// bounds.
+const DEFAULT_ATOM_AREA_BOUNDS = new Bounds2( -100, -100, 100, 100 );
 
 type SelfOptions = {
   maxNumberOfAtoms?: number;
@@ -81,8 +83,9 @@ export default abstract class NuclearDecayModel implements TModel {
   // Useful especially for graphing atoms that are no longer active in the play area.
   public readonly decayedAtoms: ObservableArray<NuclearDecayAtom>;
 
-  // The area in which atoms can be placed.  This is in model coordinates.
-  public readonly atomPlacementArea: Shape = Shape.bounds( ATOM_AREA_BOUNDS );
+  // The area in which atoms can be placed.  This is in model coordinates and can (and should) be updated by the view
+  // once the view is constructed and therefore knows what space is available in the screen view.
+  public readonly atomPlacementAreaProperty: Property<Shape>;
 
   public readonly isPlayAreaEmptyProperty: BooleanProperty;
 
@@ -99,6 +102,10 @@ export default abstract class NuclearDecayModel implements TModel {
 
     this.selectedHalfLifeProperty = new NumberProperty( 1, {
       tandem: options.tandem.createTandem( 'selectedHalfLifeProperty' )
+    } );
+
+    this.atomPlacementAreaProperty = new Property<Shape>( Shape.bounds( DEFAULT_ATOM_AREA_BOUNDS ), {
+      tandem: Tandem.OPT_OUT
     } );
 
     this.maxNumberOfAtoms = options.maxNumberOfAtoms!;
