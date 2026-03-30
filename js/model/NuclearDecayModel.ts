@@ -11,6 +11,7 @@ import Emitter from '../../../axon/js/Emitter.js';
 import EnumerationProperty from '../../../axon/js/EnumerationProperty.js';
 import NumberProperty from '../../../axon/js/NumberProperty.js';
 import Property from '../../../axon/js/Property.js';
+import Range from '../../../dot/js/Range.js';
 import TModel from '../../../joist/js/TModel.js';
 import affirm from '../../../perennial-alias/js/browser-and-node/affirm.js';
 import { combineOptions } from '../../../phet-core/js/optionize.js';
@@ -66,6 +67,9 @@ export default abstract class NuclearDecayModel implements TModel {
   // Atoms currently in the play area
   public readonly activeAtoms: ObservableArray<NuclearDecayAtom>;
 
+  // How many atoms we'll add to play area when pressing the 'Add Atoms' button
+  public readonly atomsToAddProperty: NumberProperty;
+
   // Subset of activeAtoms, just the ones that have not decayed yet.
   public undecayedAtoms: NuclearDecayAtom[];
 
@@ -91,6 +95,14 @@ export default abstract class NuclearDecayModel implements TModel {
     } );
 
     this.maxNumberOfAtoms = options.maxNumberOfAtoms!;
+
+    // For second and third screens we'll start with this many. Using min to handle first screen.
+    const DEFAULT_ATOMS_TO_ADD = 100;
+    this.atomsToAddProperty = new NumberProperty(
+      Math.min( this.maxNumberOfAtoms, DEFAULT_ATOMS_TO_ADD ), {
+        range: new Range( 1, this.maxNumberOfAtoms ),
+        tandem: options.tandem.createTandem( 'atomsToAddProperty' )
+      } );
 
     this.activeAtoms = createObservableArray();
     this.undecayedAtoms = createObservableArray();
@@ -179,6 +191,14 @@ export default abstract class NuclearDecayModel implements TModel {
         this.activeAtoms.add( atom );
       }
     }
+  }
+
+  /**
+   * When adding many atoms, reset everything and then add them.
+   */
+  public addNAtoms( n: number ): void {
+    this.reset();
+    _.times( n, () => this.addAtom() );
   }
 
   /**
