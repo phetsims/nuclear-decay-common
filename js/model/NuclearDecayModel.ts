@@ -11,8 +11,10 @@ import Emitter from '../../../axon/js/Emitter.js';
 import EnumerationProperty from '../../../axon/js/EnumerationProperty.js';
 import NumberProperty from '../../../axon/js/NumberProperty.js';
 import Property from '../../../axon/js/Property.js';
+import Bounds2 from '../../../dot/js/Bounds2.js';
 import Range from '../../../dot/js/Range.js';
 import TModel from '../../../joist/js/TModel.js';
+import Shape from '../../../kite/js/Shape.js';
 import affirm from '../../../perennial-alias/js/browser-and-node/affirm.js';
 import { combineOptions } from '../../../phet-core/js/optionize.js';
 import WithRequired from '../../../phet-core/js/types/WithRequired.js';
@@ -41,8 +43,10 @@ const ISOTOPE_TO_ATOM_CONFIG = new Map<ValidIsotopes, AtomConfig>( [
   [ 'custom', new AtomConfig( 1, 1, 1 ) ]
 ] );
 
-type SelfOptions = {
+// Bounds where the atoms can be placed, in model coordinates.
+const ATOM_AREA_BOUNDS = new Bounds2( -375, -100, 375, 100 );
 
+type SelfOptions = {
   maxNumberOfAtoms?: number;
 };
 
@@ -76,6 +80,9 @@ export default abstract class NuclearDecayModel implements TModel {
   // NOT a subset of activeAtoms, but rather a reference of all the atoms that have fallen.
   // Useful especially for graphing atoms that are no longer active in the play area.
   public readonly decayedAtoms: ObservableArray<NuclearDecayAtom>;
+
+  // The area in which atoms can be placed.  This is in model coordinates.
+  public readonly atomPlacementArea: Shape = Shape.bounds( ATOM_AREA_BOUNDS );
 
   public readonly isPlayAreaEmptyProperty: BooleanProperty;
 
@@ -153,20 +160,27 @@ export default abstract class NuclearDecayModel implements TModel {
     return AtomNameUtils.getMassAndSymbol( atomConfig.protonCount, atomConfig.neutronCount );
   }
 
+  /**
+   * Get the decay product for the provided isotope. The provided product is a single isotope, and is the decay that is
+   * modeled in this simulation. It may not be generally true for all isotopes in physical reality, since different
+   * decay paths are sometimes possible.
+   */
   public static getDecayProduct( isotope: SelectableIsotopes ): ValidIsotopes {
+    let decayProduct: ValidIsotopes | null = null;
     if ( isotope === 'custom' ) {
-      return 'custom';
+      decayProduct = 'custom';
     }
     else if ( isotope === 'polonium-211' ) {
-      return 'lead-207';
+      decayProduct = 'lead-207';
     }
     else if ( isotope === 'hydrogen-3' ) {
-      return 'helium-3';
+      decayProduct = 'helium-3';
     }
     else if ( isotope === 'carbon-14' ) {
-      return 'nitrogen-14';
+      decayProduct = 'nitrogen-14';
     }
-    return 'custom';
+    affirm( decayProduct !== null, 'Unhandled isotope type' );
+    return decayProduct;
   }
 
   public getHalfLife( isotope: SelectableIsotopes ): number {
@@ -180,16 +194,20 @@ export default abstract class NuclearDecayModel implements TModel {
   }
 
   /**
-   * Adds exactly one of the selected isotopes into the model, and starts the decay process.
+   * Adds exactly one instance of the selected isotope into the model.
    */
   public addAtom(): void {
-    if ( this.activeAtoms.length < this.maxNumberOfAtoms ) {
-      const selectedIsotope = this.selectedIsotopeProperty.value;
-      if ( selectedIsotope !== 'custom' ) {
-        const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( selectedIsotope );
-        const atom = new NuclearDecayAtom( atomConfig, atomConfig );
-        this.activeAtoms.add( atom );
-      }
+    affirm( this.activeAtoms.length < this.maxNumberOfAtoms, 'Cannot add more atoms, max number of atoms reached' );
+    const selectedIsotope = this.selectedIsotopeProperty.value;
+    if ( selectedIsotope !== 'custom' ) {
+      const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( selectedIsotope );
+      const postDecayAtomConfig = NuclearDecayModel.getIsotopeAtomConfig( NuclearDecayModel.getDecayProduct( selectedIsotope ) );
+      const atom = new NuclearDecayAtom( atomConfig, postDecayAtomConfig );
+      atom.isActive = true;
+      this.activeAtoms.add( atom );
+    }
+    else {
+      console.warn( 'Custom atoms not yet supported.' );
     }
   }
 
@@ -214,7 +232,7 @@ export default abstract class NuclearDecayModel implements TModel {
                              NuclearDecayCommonConstants.NORMAL_SPEED_SCALE :
                              NuclearDecayCommonConstants.SLOW_SPEED_SCALE;
       this.stepModel( dt * timeSpeedScale );
-      this.activeAtoms.forEach( ( atom: NuclearDecayAtom, index: number ) => {
+      this.activeAtoms.forEach( ( atom: NuclearDecayAtom ) => {
         const hadDecayed = atom.hasDecayed;
         atom.step( dt * timeSpeedScale );
 

@@ -8,12 +8,15 @@
 import ScreenView, { ScreenViewOptions } from '../../../joist/js/ScreenView.js';
 import optionize from '../../../phet-core/js/optionize.js';
 import WithRequired from '../../../phet-core/js/types/WithRequired.js';
+import ModelViewTransform2 from '../../../phetcommon/js/view/ModelViewTransform2.js';
 import ResetAllButton from '../../../scenery-phet/js/buttons/ResetAllButton.js';
 import RestartButton from '../../../scenery-phet/js/buttons/RestartButton.js';
 import TimeControlNode from '../../../scenery-phet/js/TimeControlNode.js';
 import TimeSpeed from '../../../scenery-phet/js/TimeSpeed.js';
 import VBox from '../../../scenery/js/layout/nodes/VBox.js';
 import Node from '../../../scenery/js/nodes/Node.js';
+import Path from '../../../scenery/js/nodes/Path.js';
+import Color from '../../../scenery/js/util/Color.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import EquationAccordionBox from './EquationAccordionBox.js';
@@ -23,6 +26,9 @@ import ParticleCountsAccordionBox from './ParticleCountsAccordionBox.js';
 
 type SelfOptions = {
   isotopePanelMiddleContent?: Node[] | null;
+
+  // The transform used to translate model coordinates to view coordinates.
+  modelViewTransform?: ModelViewTransform2;
 };
 
 export type NuclearDecayScreenViewOptions = SelfOptions & WithRequired<ScreenViewOptions, 'tandem'>;
@@ -36,7 +42,10 @@ export default class NuclearDecayScreenView extends ScreenView {
 
     const options = optionize<NuclearDecayScreenViewOptions, SelfOptions, ScreenViewOptions>()( {
       // Self Options
-      isotopePanelMiddleContent: null
+      isotopePanelMiddleContent: null,
+
+      // Use a simple identity transform if none is provided.
+      modelViewTransform: ModelViewTransform2.createIdentity()
     }, providedOptions );
 
     super( options );
@@ -110,6 +119,15 @@ export default class NuclearDecayScreenView extends ScreenView {
     timeControlNode.addPushButton( restartButton, 0 );
 
     this.addChild( timeControlNode );
+
+    // Show the area where the atoms can be placed if the 'dev' query parameter is present.
+    if ( QueryStringMachine.containsKey( 'dev' ) ) {
+      const atomAreaNode = new Path( options.modelViewTransform.modelToViewShape( model.atomPlacementArea ), {
+        stroke: Color.RED,
+        fill: new Color( 255, 0, 0, 0.5 )
+      } );
+      this.addChild( atomAreaNode );
+    }
   }
 
   public reset(): void {
