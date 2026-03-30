@@ -68,11 +68,11 @@ export default abstract class NuclearDecayModel implements TModel {
   public readonly timeSpeedProperty: EnumerationProperty<TimeSpeed>;
   public readonly timeProperty: NumberProperty;
 
-  // Atoms currently in the play area
-  public readonly activeAtoms: ObservableArray<NuclearDecayAtom>;
-
   // How many atoms we'll add to play area when pressing the 'Add Atoms' button
   public readonly atomsToAddProperty: NumberProperty;
+
+  // Atoms currently in the play area
+  public readonly activeAtoms: ObservableArray<NuclearDecayAtom>;
 
   // Subset of activeAtoms, just the ones that have not decayed yet.
   public undecayedAtoms: NuclearDecayAtom[];

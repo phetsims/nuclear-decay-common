@@ -1,7 +1,7 @@
 // Copyright 2026, University of Colorado Boulder
 
 /**
- * DecayingAtomNode is the portrayal of the decaying atom, with its protons and neutrons arranged in a nucleus
+ * NuclearDecayAtomNode is the portrayal of the decaying atom, with its protons and neutrons arranged in a nucleus
  * using ParticleAtomNode from shred. It creates a ParticleAtom from the NuclearDecayAtom's config and renders
  * the individual nucleons with proper z-layering.
  *
@@ -21,11 +21,11 @@ type SelfOptions = {
   showElectronCloud?: boolean;
 };
 
-export type DecayingAtomNodeOptions = SelfOptions & NodeOptions;
+export type NuclearDecayAtomNodeOptions = SelfOptions & NodeOptions;
 
-export default class DecayingAtomNode extends Node {
-  public constructor( decayingAtom: NuclearDecayAtom, providedOptions?: DecayingAtomNodeOptions ) {
-    const options = optionize<DecayingAtomNodeOptions, SelfOptions, NodeOptions>()( {
+export default class NuclearDecayAtomNode extends Node {
+  public constructor( decayingAtom: NuclearDecayAtom, providedOptions?: NuclearDecayAtomNodeOptions ) {
+    const options = optionize<NuclearDecayAtomNodeOptions, SelfOptions, NodeOptions>()( {
       showElectronCloud: false
     }, providedOptions );
 
