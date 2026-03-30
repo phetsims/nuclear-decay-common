@@ -148,7 +148,7 @@ export default class HalfLifePanel extends NuclearDecayPanel {
       bottom: GRAPH_HEIGHT
     } );
 
-    model.selectedHalflifeProperty.link( halfLife => {
+    model.selectedHalfLifeProperty.link( halfLife => {
       halfLifeIndicator.centerX = GRAPH_X_OFFSET + TICK_INTERVAL_WIDTH * halfLife;
     } );
 

@@ -57,8 +57,8 @@ export default abstract class NuclearDecayModel implements TModel {
   // 'polonium-211' vs 'custom' in Alpha Decay, or 'carbon-14' vs 'hydrogen-3' vs 'custom' in Beta Decay.
   public readonly abstract selectedIsotopeProperty: Property<SelectableIsotopes>;
 
-  // Set by default to the halflife of the selected isotope, but can be changed by the user if 'custom' is selected.
-  public readonly selectedHalflifeProperty: NumberProperty;
+  // Set by default to the half-life of the selected isotope, but can be changed by the user if 'custom' is selected.
+  public readonly selectedHalfLifeProperty: NumberProperty;
 
   public readonly isPlayingProperty: BooleanProperty;
   public readonly timeSpeedProperty: EnumerationProperty<TimeSpeed>;
@@ -84,14 +84,14 @@ export default abstract class NuclearDecayModel implements TModel {
   // TODO: Temporary update emitter while we decide how to wire up graph updates; https://github.com/phetsims/alpha-decay/issues/3
   public readonly updateEmitter = new Emitter();
 
-  public constructor( providedOptions?: NuclearDecayModelOptions ) {
+  protected constructor( providedOptions?: NuclearDecayModelOptions ) {
 
     const options = combineOptions<NuclearDecayModelOptions>( {
       maxNumberOfAtoms: 1000 // NuclearDecayCommonConstants.MAX_ATOMS
     }, providedOptions );
 
-    this.selectedHalflifeProperty = new NumberProperty( 1, {
-      tandem: options.tandem.createTandem( 'selectedHalflifeProperty' )
+    this.selectedHalfLifeProperty = new NumberProperty( 1, {
+      tandem: options.tandem.createTandem( 'selectedHalfLifeProperty' )
     } );
 
     this.maxNumberOfAtoms = options.maxNumberOfAtoms!;
@@ -171,7 +171,7 @@ export default abstract class NuclearDecayModel implements TModel {
 
   public getHalfLife( isotope: SelectableIsotopes ): number {
     if ( isotope === 'custom' ) {
-      return this.selectedHalflifeProperty.value;
+      return this.selectedHalfLifeProperty.value;
     }
     const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
     const halfLife = AtomInfoUtils.getNuclideHalfLife( atomConfig.protonCount, atomConfig.neutronCount );
