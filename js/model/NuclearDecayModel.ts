@@ -16,6 +16,7 @@ import affirm from '../../../perennial-alias/js/browser-and-node/affirm.js';
 import { combineOptions } from '../../../phet-core/js/optionize.js';
 import WithRequired from '../../../phet-core/js/types/WithRequired.js';
 import TimeSpeed from '../../../scenery-phet/js/TimeSpeed.js';
+import AtomInfoUtils from '../../../shred/js/AtomInfoUtils.js';
 import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
 import AtomConfig from '../../../shred/js/model/AtomConfig.js';
 import { PhetioObjectOptions } from '../../../tandem/js/PhetioObject.js';
@@ -156,18 +157,14 @@ export default abstract class NuclearDecayModel implements TModel {
     return 'custom';
   }
 
-  // TODO: Implement proper half-lives for each isotope https://github.com/phetsims/alpha-decay/issues/3
-  public static getHalfLife( isotope: SelectableIsotopes ): number {
-    if ( isotope === 'polonium-211' ) {
-      return 0.52;
+  public getHalfLife( isotope: SelectableIsotopes ): number {
+    if ( isotope === 'custom' ) {
+      return this.selectedHalflifeProperty.value;
     }
-    else if ( isotope === 'hydrogen-3' ) {
-      return 1.5;
-    }
-    else if ( isotope === 'carbon-14' ) {
-      return 2.0;
-    }
-    return 1.0;
+    const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
+    const halfLife = AtomInfoUtils.getNuclideHalfLife( atomConfig.protonCount, atomConfig.neutronCount );
+    affirm( halfLife !== null, 'Should provide a valid isotope with a known half-life' );
+    return halfLife;
   }
 
   /**
