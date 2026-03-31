@@ -111,7 +111,7 @@ export default abstract class NuclearDecayModel implements TModel {
     this.maxNumberOfAtoms = options.maxNumberOfAtoms!;
 
     // For second and third screens we'll start with this many. Using min to handle first screen.
-    const DEFAULT_ATOMS_TO_ADD = 100;
+    const DEFAULT_ATOMS_TO_ADD = 1;
     this.atomsToAddProperty = new NumberProperty(
       Math.min( this.maxNumberOfAtoms, DEFAULT_ATOMS_TO_ADD ), {
         range: new Range( 1, this.maxNumberOfAtoms ),
@@ -221,7 +221,7 @@ export default abstract class NuclearDecayModel implements TModel {
   /**
    * When adding many atoms, reset everything and then add them.
    */
-  public addNAtoms( n: number ): void {
+  public addMultipleAtoms( n: number ): void {
     this.reset();
     _.times( n, () => this.addAtom() );
   }

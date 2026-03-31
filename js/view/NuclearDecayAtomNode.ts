@@ -54,7 +54,7 @@ export default class NuclearDecayAtomNode extends ParticleAtomNode {
     modelViewTransformProperty.link( mvt => {
       const desiredAtomWidth = mvt.modelToViewDeltaX( 2 * NuclearDecayCommonConstants.ATOM_RADIUS );
       this.setScaleMagnitude( desiredAtomWidth / originalAtomWidth );
-      this.center = mvt.modelToViewPosition( Vector2.ZERO );
+      this.center = mvt.modelToViewPosition( decayingAtom.position );
     } );
 
   }
