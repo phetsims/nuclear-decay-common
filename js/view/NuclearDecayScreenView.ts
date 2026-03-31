@@ -28,6 +28,7 @@ import IsotopePanel from './IsotopePanel.js';
 import ParticleCountsAccordionBox from './ParticleCountsAccordionBox.js';
 
 type SelfOptions = {
+  // Additional content to add to the isotope panel
   isotopePanelMiddleContent?: Node[] | null;
 
   // How many atoms will fit visually within the width of the play area
@@ -48,6 +49,7 @@ export default class NuclearDecayScreenView extends ScreenView {
   // Controls on the right side of the view.
   protected readonly rightColumnControls: Node;
 
+  // How many atoms will fit visually within the width of the play area
   private readonly numberOfAtomsInPlayAreaWidth: number;
 
   public constructor( model: NuclearDecayModel, providedOptions?: NuclearDecayScreenViewOptions ) {
@@ -56,12 +58,14 @@ export default class NuclearDecayScreenView extends ScreenView {
 
       // Self Options
       isotopePanelMiddleContent: null,
+
       numberOfAtomsInPlayAreaWidth: 10
     }, providedOptions );
 
     super( options );
 
     this.numberOfAtomsInPlayAreaWidth = options.numberOfAtomsInPlayAreaWidth;
+
 
     // Default to an identity transform.
     this.modelViewTransformProperty = new Property( ModelViewTransform2.createIdentity() );

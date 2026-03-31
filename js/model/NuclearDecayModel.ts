@@ -12,7 +12,6 @@ import EnumerationProperty from '../../../axon/js/EnumerationProperty.js';
 import NumberProperty from '../../../axon/js/NumberProperty.js';
 import Property from '../../../axon/js/Property.js';
 import Bounds2 from '../../../dot/js/Bounds2.js';
-import Range from '../../../dot/js/Range.js';
 import TModel from '../../../joist/js/TModel.js';
 import Shape from '../../../kite/js/Shape.js';
 import affirm from '../../../perennial-alias/js/browser-and-node/affirm.js';
@@ -70,9 +69,6 @@ export default abstract class NuclearDecayModel implements TModel {
   public readonly timeSpeedProperty: EnumerationProperty<TimeSpeed>;
   public readonly timeProperty: NumberProperty;
 
-  // How many atoms we'll add to play area when pressing the 'Add Atoms' button
-  public readonly atomsToAddProperty: NumberProperty;
-
   // Atoms currently in the play area
   public readonly activeAtoms: ObservableArray<NuclearDecayAtom>;
 
@@ -109,14 +105,6 @@ export default abstract class NuclearDecayModel implements TModel {
     } );
 
     this.maxNumberOfAtoms = options.maxNumberOfAtoms!;
-
-    // For second and third screens we'll start with this many. Using min to handle first screen.
-    const DEFAULT_ATOMS_TO_ADD = 1;
-    this.atomsToAddProperty = new NumberProperty(
-      Math.min( this.maxNumberOfAtoms, DEFAULT_ATOMS_TO_ADD ), {
-        range: new Range( 1, this.maxNumberOfAtoms ),
-        tandem: options.tandem.createTandem( 'atomsToAddProperty' )
-      } );
 
     this.activeAtoms = createObservableArray();
     this.undecayedAtoms = createObservableArray();
