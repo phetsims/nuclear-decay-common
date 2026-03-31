@@ -37,6 +37,8 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
       // Default options
     }, providedOptions );
 
+    const maxAtoms = atomsToAddProperty.rangeProperty.value.max;
+
     // Title showing the selected isotope name with a colored background
     // TODO: Dynamic strings https://github.com/phetsims/alpha-decay/issues/3
     const isotopeNameProperty = selectedIsotopeProperty.derived( isotope => {
@@ -78,11 +80,11 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
     }, ARROW_BUTTON_OPTIONS );
 
     const singleRightArrowButton = new ArrowButton( 'right', () => {
-      atomsToAddProperty.value = Math.min( 100, atomsToAddProperty.value + 1 );
+      atomsToAddProperty.value = Math.min( maxAtoms, atomsToAddProperty.value + 1 );
     }, ARROW_BUTTON_OPTIONS );
 
     const doubleRightArrowButton = new ArrowButton( 'right', () => {
-      atomsToAddProperty.value = Math.min( 100, atomsToAddProperty.value + 10 );
+      atomsToAddProperty.value = Math.min( maxAtoms, atomsToAddProperty.value + 10 );
     }, DOUBLE_ARROW_BUTTON_OPTIONS );
 
     // Number display showing atom count

@@ -156,7 +156,7 @@ export default class HalfLifePanel extends NuclearDecayPanel {
 
     const eraserButton = new EraserButton( {
       listener: () => {
-        // TO BE IMPLEMENTED
+        model.decayedAtoms.clear();
       }
     } );
     eraserButton.right = 2 * GRAPH_X_OFFSET + GRAPH_WIDTH;

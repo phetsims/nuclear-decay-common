@@ -12,6 +12,9 @@ import EnumerationProperty from '../../../axon/js/EnumerationProperty.js';
 import NumberProperty from '../../../axon/js/NumberProperty.js';
 import Property from '../../../axon/js/Property.js';
 import Bounds2 from '../../../dot/js/Bounds2.js';
+import dotRandom from '../../../dot/js/dotRandom.js';
+import Range from '../../../dot/js/Range.js';
+import Vector2 from '../../../dot/js/Vector2.js';
 import TModel from '../../../joist/js/TModel.js';
 import Shape from '../../../kite/js/Shape.js';
 import affirm from '../../../perennial-alias/js/browser-and-node/affirm.js';
@@ -23,6 +26,7 @@ import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
 import AtomConfig from '../../../shred/js/model/AtomConfig.js';
 import { PhetioObjectOptions } from '../../../tandem/js/PhetioObject.js';
 import Tandem from '../../../tandem/js/Tandem.js';
+import StringUnionIO from '../../../tandem/js/types/StringUnionIO.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayAtom from './NuclearDecayAtom.js';
 
@@ -60,7 +64,7 @@ export default abstract class NuclearDecayModel implements TModel {
 
   // What isotope is currently selected in the sim. Defined by subclasses.
   // 'polonium-211' vs 'custom' in Alpha Decay, or 'carbon-14' vs 'hydrogen-3' vs 'custom' in Beta Decay.
-  public readonly abstract selectedIsotopeProperty: Property<SelectableIsotopes>;
+  public readonly selectedIsotopeProperty: Property<SelectableIsotopes>;
 
   // Set by default to the half-life of the selected isotope, but can be changed by the user if 'custom' is selected.
   public readonly selectedHalfLifeProperty: NumberProperty;
@@ -69,8 +73,11 @@ export default abstract class NuclearDecayModel implements TModel {
   public readonly timeSpeedProperty: EnumerationProperty<TimeSpeed>;
   public readonly timeProperty: NumberProperty;
 
+  // Pool of all existing atoms originally set to inactive
+  public readonly atomPool: NuclearDecayAtom[] = [];
+
   // Atoms currently in the play area
-  public readonly activeAtoms: ObservableArray<NuclearDecayAtom>;
+  public activeAtoms: ObservableArray<NuclearDecayAtom>;
 
   // Subset of activeAtoms, just the ones that have not decayed yet.
   public undecayedAtoms: NuclearDecayAtom[];
@@ -93,8 +100,13 @@ export default abstract class NuclearDecayModel implements TModel {
   protected constructor( providedOptions?: NuclearDecayModelOptions ) {
 
     const options = optionize<NuclearDecayModelOptions, SelfOptions, NuclearDecayModelOptions>()( {
-      maxNumberOfAtoms: 1000 // NuclearDecayCommonConstants.MAX_ATOMS
+      maxNumberOfAtoms: NuclearDecayCommonConstants.MAX_ATOMS
     }, providedOptions );
+
+    this.selectedIsotopeProperty = new Property<SelectableIsotopes>( 'polonium-211', {
+      tandem: options.tandem.createTandem( 'selectedIsotopeProperty' ),
+      phetioValueType: StringUnionIO( SelectableIsotopesValues )
+    } );
 
     this.selectedHalfLifeProperty = new NumberProperty( 1, {
       tandem: options.tandem.createTandem( 'selectedHalfLifeProperty' )
@@ -106,11 +118,26 @@ export default abstract class NuclearDecayModel implements TModel {
 
     this.maxNumberOfAtoms = options.maxNumberOfAtoms!;
 
+    const selectedIsotope = this.selectedIsotopeProperty.value;
+    const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( selectedIsotope );
+    const postDecayAtomConfig = NuclearDecayModel.getIsotopeAtomConfig( NuclearDecayModel.getDecayProduct( selectedIsotope ) );
+
+    // Prepopulate all the atoms
+    _.times( this.maxNumberOfAtoms, () => {
+      const atom = new NuclearDecayAtom( atomConfig, postDecayAtomConfig );
+      this.atomPool.push( atom );
+    } );
+
+
+    this.selectedIsotopeProperty.lazyLink( selectedIsotope => {
+      this.changeIsotopes( selectedIsotope );
+    } );
+
     this.activeAtoms = createObservableArray();
     this.undecayedAtoms = createObservableArray();
     this.decayedAtoms = createObservableArray();
 
-    this.activeAtoms.lengthProperty.link( () => {
+    this.activeAtoms.lengthProperty.link( length => {
       this.undecayedAtoms = this.activeAtoms.filter( atom => !atom.hasDecayed );
     } );
 
@@ -189,15 +216,22 @@ export default abstract class NuclearDecayModel implements TModel {
   }
 
   /**
+   * When adding many atoms, reset everything and then add them.
+   */
+  public activateMultipleAtoms( n: number ): void {
+    this.reset();
+    _.times( n, () => this.activateAtom() );
+  }
+
+  /**
    * Adds exactly one instance of the selected isotope into the model.
    */
-  public addAtom(): void {
+  public activateAtom(): void {
     affirm( this.activeAtoms.length < this.maxNumberOfAtoms, 'Cannot add more atoms, max number of atoms reached' );
     const selectedIsotope = this.selectedIsotopeProperty.value;
     if ( selectedIsotope !== 'custom' ) {
-      const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( selectedIsotope );
-      const postDecayAtomConfig = NuclearDecayModel.getIsotopeAtomConfig( NuclearDecayModel.getDecayProduct( selectedIsotope ) );
-      const atom = new NuclearDecayAtom( atomConfig, postDecayAtomConfig );
+      const atom = this.atomPool.find( atom => !atom.isActive );
+      affirm( atom, 'No available atoms to activate!' );
       atom.isActive = true;
       this.activeAtoms.add( atom );
     }
@@ -206,12 +240,46 @@ export default abstract class NuclearDecayModel implements TModel {
     }
   }
 
+  public changeIsotopes( newIsotope: SelectableIsotopes ): void {
+
+    this.selectedHalfLifeProperty.value = this.getHalfLife( newIsotope );
+
+    const newDecayProduct = NuclearDecayModel.getDecayProduct( newIsotope );
+    const newAtomConfig = NuclearDecayModel.getIsotopeAtomConfig( newIsotope );
+    const newPostDecayAtomConfig = NuclearDecayModel.getIsotopeAtomConfig( newDecayProduct );
+
+    this.atomPool.forEach( atom => {
+      atom.reset();
+      atom.atomConfigBeforeDecay = newAtomConfig;
+      atom.atomConfigAfterDecay = newPostDecayAtomConfig;
+      atom.halfLife = this.getHalfLife( newIsotope );
+    } );
+  }
+
   /**
-   * When adding many atoms, reset everything and then add them.
+   * Clears all the atom lists, including decayAtoms.
    */
-  public addMultipleAtoms( n: number ): void {
-    this.reset();
-    _.times( n, () => this.addAtom() );
+  public clearAtomLists(): void {
+    this.resetAtoms();
+    this.activeAtoms.clear();
+    this.decayedAtoms.clear();
+  }
+
+  public resetAtoms(): void {
+    this.atomPool.forEach( atom => atom.reset() );
+    this.activeAtoms.clear();
+  }
+
+  /**
+   * Returns a random position within the atom placement area bounds in model coordinates.
+   */
+  public getRandomPositionWithinBounds(): Vector2 {
+    const modelBounds = this.atomPlacementAreaProperty.value.bounds;
+
+    return new Vector2(
+      dotRandom.nextDoubleInRange( new Range( modelBounds.minX, modelBounds.maxX ) ),
+      dotRandom.nextDoubleInRange( new Range( modelBounds.minY, modelBounds.maxY ) )
+    );
   }
 
   /**
@@ -233,7 +301,7 @@ export default abstract class NuclearDecayModel implements TModel {
 
         if ( !hadDecayed && atom.hasDecayed ) {
           this.undecayedAtoms = this.activeAtoms.filter( atom => !atom.hasDecayed );
-          this.decayedAtoms.add( atom );
+          this.decayedAtoms.add( atom.copy() );
         }
       } );
     }
@@ -246,7 +314,7 @@ export default abstract class NuclearDecayModel implements TModel {
    * Resets the model.
    */
   public reset(): void {
-    this.activeAtoms.clear();
+    this.clearAtomLists();
     this.decayedAtoms.clear();
     this.isPlayingProperty.reset();
     this.timeSpeedProperty.reset();

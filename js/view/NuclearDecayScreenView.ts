@@ -9,6 +9,7 @@ import Property from '../../../axon/js/Property.js';
 import Bounds2 from '../../../dot/js/Bounds2.js';
 import Vector2 from '../../../dot/js/Vector2.js';
 import ScreenView, { ScreenViewOptions } from '../../../joist/js/ScreenView.js';
+import Shape from '../../../kite/js/Shape.js';
 import optionize from '../../../phet-core/js/optionize.js';
 import WithRequired from '../../../phet-core/js/types/WithRequired.js';
 import ModelViewTransform2 from '../../../phetcommon/js/view/ModelViewTransform2.js';
@@ -20,11 +21,13 @@ import VBox from '../../../scenery/js/layout/nodes/VBox.js';
 import Node from '../../../scenery/js/nodes/Node.js';
 import Rectangle from '../../../scenery/js/nodes/Rectangle.js';
 import Color from '../../../scenery/js/util/Color.js';
+import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import EquationAccordionBox from './EquationAccordionBox.js';
 import HalfLifePanel from './HalfLifePanel.js';
 import IsotopePanel from './IsotopePanel.js';
+import MinimalAtomNode from './MinimalAtomNode.js';
 import ParticleCountsAccordionBox from './ParticleCountsAccordionBox.js';
 
 type SelfOptions = {
@@ -52,7 +55,12 @@ export default class NuclearDecayScreenView extends ScreenView {
   // How many atoms will fit visually within the width of the play area
   private readonly numberOfAtomsInPlayAreaWidth: number;
 
-  public constructor( model: NuclearDecayModel, providedOptions?: NuclearDecayScreenViewOptions ) {
+  protected readonly atomNodesMap: Map<NuclearDecayAtom, MinimalAtomNode>;
+
+  public constructor(
+    public readonly model: NuclearDecayModel,
+    providedOptions?: NuclearDecayScreenViewOptions
+  ) {
 
     const options = optionize<NuclearDecayScreenViewOptions, SelfOptions, ScreenViewOptions>()( {
 
@@ -66,9 +74,16 @@ export default class NuclearDecayScreenView extends ScreenView {
 
     this.numberOfAtomsInPlayAreaWidth = options.numberOfAtomsInPlayAreaWidth;
 
-
     // Default to an identity transform.
     this.modelViewTransformProperty = new Property( ModelViewTransform2.createIdentity() );
+
+    // Prepopulating all atom nodes and pairing them with their respective model atoms.
+    this.atomNodesMap = new Map<NuclearDecayAtom, MinimalAtomNode>();
+    model.atomPool.forEach( atom => {
+      const atomNode = new MinimalAtomNode( atom, this.modelViewTransformProperty );
+      this.atomNodesMap.set( atom, atomNode );
+      this.addChild( atomNode );
+    } );
 
     const MARGIN_X = NuclearDecayCommonConstants.SCREEN_VIEW_X_MARGIN;
     const MARGIN_Y = NuclearDecayCommonConstants.SCREEN_VIEW_Y_MARGIN;
@@ -163,9 +178,20 @@ export default class NuclearDecayScreenView extends ScreenView {
       playAreaBounds.center,
       scale
     );
+
+    this.model.atomPlacementAreaProperty.value = Shape.bounds(
+      this.modelViewTransformProperty.value.viewToModelBounds( playAreaBounds )
+    );
   }
 
   public reset(): void {
-    // TO BE IMPLEMENTED
+    this.model.reset();
+    this.resetAtomNodes();
+  }
+
+  public resetAtomNodes(): void {
+    this.atomNodesMap.forEach( atomNode => {
+      atomNode.visible = false;
+    } );
   }
 }

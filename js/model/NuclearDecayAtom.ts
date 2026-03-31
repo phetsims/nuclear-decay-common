@@ -35,13 +35,13 @@ export type NuclearDecayAtomOptions = SelfOptions;
 export default class NuclearDecayAtom {
 
   // Number of protons, neutrons and electrons before the decay.
-  public readonly atomConfigBeforeDecay: AtomConfig;
+  public atomConfigBeforeDecay: AtomConfig;
 
   // Number of protons, neutrons and electrons after the decay (if it decays at all!)
-  public readonly atomConfigAfterDecay: AtomConfig;
+  public atomConfigAfterDecay: AtomConfig;
 
   // Half-life of the isotope, in seconds.
-  public readonly halfLife: number;
+  public halfLife: number;
 
   // Whether the atom is in the play area or not
   public isActive = false;
@@ -77,6 +77,18 @@ export default class NuclearDecayAtom {
   }
 
   /**
+   * Resets all fields.
+   * AtomConfigs and half-life don't need resetting.
+   */
+  public reset(): void {
+    this.isActive = false;
+    this.hasDecayed = false;
+    this.time = 0;
+    this.decayTime = null;
+    this.position = new Vector2( 0, 0 );
+  }
+
+  /**
    * Resets the decay process, which resets the time experienced by the atom back to zero and, if the atom has decayed,
    * resets the atom back to its original state.
    */
@@ -86,7 +98,13 @@ export default class NuclearDecayAtom {
   }
 
   public copy(): NuclearDecayAtom {
-    return new NuclearDecayAtom( this.atomConfigBeforeDecay, this.atomConfigAfterDecay );
+    const newAtom = new NuclearDecayAtom( this.atomConfigBeforeDecay, this.atomConfigAfterDecay );
+    newAtom.isActive = this.isActive;
+    newAtom.hasDecayed = this.hasDecayed;
+    newAtom.time = this.time;
+    newAtom.decayTime = this.decayTime;
+    newAtom.position = this.position.copy();
+    return newAtom;
   }
 
   public step( dt: number ): void {

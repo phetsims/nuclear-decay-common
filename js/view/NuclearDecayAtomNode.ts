@@ -27,10 +27,11 @@ export type NuclearDecayAtomNodeOptions = SelfOptions & ParticleAtomNodeOptions;
 export default class NuclearDecayAtomNode extends ParticleAtomNode {
   public constructor(
     decayingAtom: NuclearDecayAtom,
-    modelViewTransformProperty: TReadOnlyProperty<ModelViewTransform2>,
+    private readonly modelViewTransformProperty: TReadOnlyProperty<ModelViewTransform2>,
     providedOptions?: NuclearDecayAtomNodeOptions ) {
     const options = optionize<NuclearDecayAtomNodeOptions, SelfOptions, ParticleAtomNodeOptions>()( {
-      showElectronCloud: false
+      showElectronCloud: false,
+      visible: decayingAtom.isActive
     }, providedOptions );
 
     // Create a ParticleAtom populated with the correct number of protons and neutrons.
@@ -39,12 +40,9 @@ export default class NuclearDecayAtomNode extends ParticleAtomNode {
     // Create the ParticleAtomNode to render the nucleus.
     super( particleAtom, new Vector2( 0, 0 ), options );
 
-    // Identity MVT since ParticleAtom and the view share the same coordinate frame.
-    const modelViewTransform = ModelViewTransform2.createIdentity();
-
     // Create a ParticleView for each particle and add it to the correct nucleon layer.
-    particles.forEach( particle => {
-      const particleView = new ParticleView( particle, modelViewTransform, {
+    particles.forEach( ( particle, number ) => {
+      const particleView = new ParticleView( particle, this.modelViewTransformProperty.value, {
         inputEnabled: false
       } );
       this.addParticleView( particle, particleView );
@@ -58,4 +56,9 @@ export default class NuclearDecayAtomNode extends ParticleAtomNode {
     } );
 
   }
+
+  public setPosition( position: Vector2 ): void {
+    this.center = this.modelViewTransformProperty.value.modelToViewPosition( position );
+  }
+
 }
