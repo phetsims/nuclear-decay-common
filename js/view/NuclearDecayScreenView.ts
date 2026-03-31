@@ -5,8 +5,9 @@
  * @author Agustín Vallejo
  */
 
-import Multilink from '../../../axon/js/Multilink.js';
 import Property from '../../../axon/js/Property.js';
+import Bounds2 from '../../../dot/js/Bounds2.js';
+import Vector2 from '../../../dot/js/Vector2.js';
 import ScreenView, { ScreenViewOptions } from '../../../joist/js/ScreenView.js';
 import optionize from '../../../phet-core/js/optionize.js';
 import WithRequired from '../../../phet-core/js/types/WithRequired.js';
@@ -17,7 +18,7 @@ import TimeControlNode from '../../../scenery-phet/js/TimeControlNode.js';
 import TimeSpeed from '../../../scenery-phet/js/TimeSpeed.js';
 import VBox from '../../../scenery/js/layout/nodes/VBox.js';
 import Node from '../../../scenery/js/nodes/Node.js';
-import Path from '../../../scenery/js/nodes/Path.js';
+import Rectangle from '../../../scenery/js/nodes/Rectangle.js';
 import Color from '../../../scenery/js/util/Color.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
@@ -28,6 +29,9 @@ import ParticleCountsAccordionBox from './ParticleCountsAccordionBox.js';
 
 type SelfOptions = {
   isotopePanelMiddleContent?: Node[] | null;
+
+  // How many atoms will fit visually within the width of the play area
+  numberOfAtomsInPlayAreaWidth?: number;
 };
 
 export type NuclearDecayScreenViewOptions = SelfOptions & WithRequired<ScreenViewOptions, 'tandem'>;
@@ -44,15 +48,20 @@ export default class NuclearDecayScreenView extends ScreenView {
   // Controls on the right side of the view.
   protected readonly rightColumnControls: Node;
 
+  private readonly numberOfAtomsInPlayAreaWidth: number;
+
   public constructor( model: NuclearDecayModel, providedOptions?: NuclearDecayScreenViewOptions ) {
 
     const options = optionize<NuclearDecayScreenViewOptions, SelfOptions, ScreenViewOptions>()( {
 
       // Self Options
-      isotopePanelMiddleContent: null
+      isotopePanelMiddleContent: null,
+      numberOfAtomsInPlayAreaWidth: 10
     }, providedOptions );
 
     super( options );
+
+    this.numberOfAtomsInPlayAreaWidth = options.numberOfAtomsInPlayAreaWidth;
 
     // Default to an identity transform.
     this.modelViewTransformProperty = new Property( ModelViewTransform2.createIdentity() );
@@ -126,21 +135,30 @@ export default class NuclearDecayScreenView extends ScreenView {
     timeControlNode.addPushButton( restartButton, 0 );
 
     this.addChild( timeControlNode );
+  }
+
+  /**
+   * Once a specific screen view has information about the available play area
+   *  it should invoke this method to adjust the model view property accordingly.
+   */
+  public setPlayAreaBounds( playAreaBounds: Bounds2 ): void {
 
     // Show the area where the atoms can be placed if the 'dev' query parameter is present.
-    if ( QueryStringMachine.containsKey( 'dev' ) ) {
-      const atomAreaNode = new Path( null, {
-        stroke: Color.RED,
-        fill: new Color( 255, 0, 0, 0.5 )
-      } );
-      this.addChild( atomAreaNode );
-      Multilink.multilink(
-        [ this.modelViewTransformProperty, model.atomPlacementAreaProperty ],
-        ( mvt, atomPlacementArea ) => {
-          atomAreaNode.setShape( mvt.modelToViewShape( atomPlacementArea ) );
-        }
-      );
+    if ( phet.chipper.queryParameters.dev ) {
+      // Green area bounds
+      this.addChild( new Rectangle( playAreaBounds, {
+        fill: new Color( 0, 255, 0, 0.5 ),
+        stroke: new Color( 0, 255, 0, 0.5 )
+      } ) );
     }
+
+    const atomAreaModelWidth = 2 * NuclearDecayCommonConstants.ATOM_RADIUS * this.numberOfAtomsInPlayAreaWidth;
+    const scale = playAreaBounds.width / atomAreaModelWidth;
+    this.modelViewTransformProperty.value = ModelViewTransform2.createSinglePointScaleInvertedYMapping(
+      Vector2.ZERO,
+      playAreaBounds.center,
+      scale
+    );
   }
 
   public reset(): void {

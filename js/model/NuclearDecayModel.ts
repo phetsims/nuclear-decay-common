@@ -16,7 +16,7 @@ import Range from '../../../dot/js/Range.js';
 import TModel from '../../../joist/js/TModel.js';
 import Shape from '../../../kite/js/Shape.js';
 import affirm from '../../../perennial-alias/js/browser-and-node/affirm.js';
-import { combineOptions } from '../../../phet-core/js/optionize.js';
+import optionize from '../../../phet-core/js/optionize.js';
 import WithRequired from '../../../phet-core/js/types/WithRequired.js';
 import TimeSpeed from '../../../scenery-phet/js/TimeSpeed.js';
 import AtomInfoUtils from '../../../shred/js/AtomInfoUtils.js';
@@ -96,7 +96,7 @@ export default abstract class NuclearDecayModel implements TModel {
 
   protected constructor( providedOptions?: NuclearDecayModelOptions ) {
 
-    const options = combineOptions<NuclearDecayModelOptions>( {
+    const options = optionize<NuclearDecayModelOptions, SelfOptions, NuclearDecayModelOptions>()( {
       maxNumberOfAtoms: 1000 // NuclearDecayCommonConstants.MAX_ATOMS
     }, providedOptions );
 

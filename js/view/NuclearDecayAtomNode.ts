@@ -8,24 +8,28 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
+import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
 import Vector2 from '../../../dot/js/Vector2.js';
 import optionize from '../../../phet-core/js/optionize.js';
 import ModelViewTransform2 from '../../../phetcommon/js/view/ModelViewTransform2.js';
-import Node, { NodeOptions } from '../../../scenery/js/nodes/Node.js';
-import ParticleAtomNode from '../../../shred/js/view/ParticleAtomNode.js';
+import ParticleAtomNode, { ParticleAtomNodeOptions } from '../../../shred/js/view/ParticleAtomNode.js';
 import ParticleView from '../../../shred/js/view/ParticleView.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
+import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import createParticleAtomFromConfig from './createParticleAtomFromConfig.js';
 
 type SelfOptions = {
   showElectronCloud?: boolean;
 };
 
-export type NuclearDecayAtomNodeOptions = SelfOptions & NodeOptions;
+export type NuclearDecayAtomNodeOptions = SelfOptions & ParticleAtomNodeOptions;
 
-export default class NuclearDecayAtomNode extends Node {
-  public constructor( decayingAtom: NuclearDecayAtom, providedOptions?: NuclearDecayAtomNodeOptions ) {
-    const options = optionize<NuclearDecayAtomNodeOptions, SelfOptions, NodeOptions>()( {
+export default class NuclearDecayAtomNode extends ParticleAtomNode {
+  public constructor(
+    decayingAtom: NuclearDecayAtom,
+    modelViewTransformProperty: TReadOnlyProperty<ModelViewTransform2>,
+    providedOptions?: NuclearDecayAtomNodeOptions ) {
+    const options = optionize<NuclearDecayAtomNodeOptions, SelfOptions, ParticleAtomNodeOptions>()( {
       showElectronCloud: false
     }, providedOptions );
 
@@ -33,9 +37,7 @@ export default class NuclearDecayAtomNode extends Node {
     const { particleAtom, particles } = createParticleAtomFromConfig( decayingAtom.atomConfigBeforeDecay );
 
     // Create the ParticleAtomNode to render the nucleus.
-    const particleAtomNode = new ParticleAtomNode( particleAtom, new Vector2( 0, 0 ), {
-      showElectronCloud: options.showElectronCloud
-    } );
+    super( particleAtom, new Vector2( 0, 0 ), options );
 
     // Identity MVT since ParticleAtom and the view share the same coordinate frame.
     const modelViewTransform = ModelViewTransform2.createIdentity();
@@ -45,12 +47,15 @@ export default class NuclearDecayAtomNode extends Node {
       const particleView = new ParticleView( particle, modelViewTransform, {
         inputEnabled: false
       } );
-      particleAtomNode.addParticleView( particle, particleView );
+      this.addParticleView( particle, particleView );
     } );
 
-    options.children = [ particleAtomNode ];
-
-    super( options );
+    const originalAtomWidth = this.width;
+    modelViewTransformProperty.link( mvt => {
+      const desiredAtomWidth = mvt.modelToViewDeltaX( 2 * NuclearDecayCommonConstants.ATOM_RADIUS );
+      this.setScaleMagnitude( desiredAtomWidth / originalAtomWidth );
+      this.center = mvt.modelToViewPosition( Vector2.ZERO );
+    } );
 
   }
 }
