@@ -8,7 +8,6 @@
 
 import dotRandom from '../../../dot/js/dotRandom.js';
 import Vector2, { Vector2StateObject } from '../../../dot/js/Vector2.js';
-import affirm from '../../../perennial-alias/js/browser-and-node/affirm.js';
 import { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import AtomInfoUtils from '../../../shred/js/AtomInfoUtils.js';
 import AtomConfig, { AtomConfigStateObject } from '../../../shred/js/model/AtomConfig.js';
@@ -71,8 +70,7 @@ export default class NuclearDecayAtom {
     this.atomConfigAfterDecay = atomConfigAfterDecay;
 
     const halfLife = AtomInfoUtils.getNuclideHalfLife( atomConfigBeforeDecay.protonCount, atomConfigBeforeDecay.neutronCount );
-    affirm( halfLife !== null, 'Should provide a valid isotope with a known half-life' );
-    this.halfLife = halfLife;
+    this.halfLife = halfLife ? halfLife : Infinity; // Default to a half-life of INFINITY if the nuclide is not found in the data, which means it will decay immediately upon activation.
 
   }
 

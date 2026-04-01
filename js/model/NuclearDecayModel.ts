@@ -243,6 +243,8 @@ export default abstract class NuclearDecayModel implements TModel {
 
   private setNewIsotope( newIsotope: SelectableIsotopes ): void {
 
+    this.clearAtomLists();
+
     this.selectedHalfLifeProperty.value = this.getHalfLife( newIsotope );
 
     const newDecayProduct = NuclearDecayModel.getDecayProduct( newIsotope );
