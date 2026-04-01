@@ -6,7 +6,6 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
-import { roundToInterval } from '../../../dot/js/util/roundToInterval.js';
 import Shape from '../../../kite/js/Shape.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import ArrowNode from '../../../scenery-phet/js/ArrowNode.js';
@@ -17,6 +16,7 @@ import Path from '../../../scenery/js/nodes/Path.js';
 import Rectangle from '../../../scenery/js/nodes/Rectangle.js';
 import RichText from '../../../scenery/js/nodes/RichText.js';
 import Text from '../../../scenery/js/nodes/Text.js';
+import HistogramData from '../model/HistogramData.js';
 import NuclearDecayModel, { SelectableIsotopes } from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
@@ -186,53 +186,23 @@ export default class HalfLifePanel extends NuclearDecayPanel {
 
     this.model = model;
     this.dataPointsLayer = dataPointsLayer;
-
-    this.model.updateEmitter.addListener( () => {
-      this.update();
-    } );
   }
 
   /**
-   * Updates the half-life panel's display based on the current state of the model.
+   * Updates the half-life panel's display based on pre-computed histogram data.
    */
-  public update(): void {
+  public update( histogramData: HistogramData ): void {
+
     // TODO: Check out the implementation of HistogramCanvasPainter https://github.com/phetsims/alpha-decay/issues/3
     // TODO: Make sure this is not a memory leak https://github.com/phetsims/alpha-decay/issues/3
     this.dataPointsLayer.removeAllChildren();
 
-    const MAX_HALF_LIFE = 3.25; // seconds
-
     const BOX_WIDTH = 6;
 
-    // Since the TICK_INTERVAL_WIDTH equals 1s, this division gives us the number of seconds that each box represents
-    // const BIN_SIZE_TIME = BOX_WIDTH / TICK_INTERVAL_WIDTH;
-    const BIN_SIZE_TIME = 0.05; // 20 bins per second
+    const BOX_HEIGHT = histogramData.tallestBinCount * 9 < GRAPH_HEIGHT ? 9 :
+                       histogramData.tallestBinCount * 6 < GRAPH_HEIGHT ? 6 : 3;
 
-    const decayedBinsMap = new Map<number, number>();
-    let tallestBinCount = 0;
-    this.model.decayedAtoms.forEach( ( atom, index ) => {
-
-      // If the atom decayed, round it to bin it on the histogram
-      const x = roundToInterval( atom.time, BIN_SIZE_TIME );
-
-      // Atoms with very high lives are not shown.
-      if ( x > MAX_HALF_LIFE ) { return; }
-
-      if ( decayedBinsMap.has( x ) ) {
-        decayedBinsMap.set( x, decayedBinsMap.get( x )! + 1 );
-        if ( decayedBinsMap.get( x )! > tallestBinCount ) {
-          tallestBinCount = decayedBinsMap.get( x )!;
-        }
-      }
-      else {
-        decayedBinsMap.set( x, 1 );
-      }
-    } );
-
-    const BOX_HEIGHT = tallestBinCount * 9 < GRAPH_HEIGHT ? 9 :
-                       tallestBinCount * 6 < GRAPH_HEIGHT ? 6 : 3;
-
-    decayedBinsMap.forEach( ( value, bin ) => {
+    histogramData.decayedBinsMap.forEach( ( value, bin ) => {
       _.times( value, n => {
         const y = GRAPH_HEIGHT - ( n + 1 ) * BOX_HEIGHT;
         this.dataPointsLayer.addChild( new Rectangle(
@@ -245,22 +215,18 @@ export default class HalfLifePanel extends NuclearDecayPanel {
       } );
     } );
 
-    const numberOfUndecayedAtoms = this.model.undecayedAtoms.length;
-    if ( numberOfUndecayedAtoms > 0 ) {
-      const x = this.model.undecayedAtoms[ 0 ].time; // We only need the first one
-      if ( x > MAX_HALF_LIFE ) { return; }
-
+    if ( histogramData.showUndecayed() ) {
       const UNDECAYED_WIDTH = 25;
       const UNDECAYED_HEIGHT = 16;
 
       const undecayedRectangle = new Rectangle(
-        x * TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET, 0, UNDECAYED_WIDTH, UNDECAYED_HEIGHT, {
+        histogramData.undecayedTime * TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET, 0, UNDECAYED_WIDTH, UNDECAYED_HEIGHT, {
           fill: NuclearDecayCommonColors.pinkProperty,
           stroke: 'black',
           lineWidth: 1
         }
       );
-      const undecayedCountLabel = new Text( numberOfUndecayedAtoms, {
+      const undecayedCountLabel = new Text( histogramData.numberOfUndecayedAtoms, {
         font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
         fill: 'black',
         center: undecayedRectangle.center
@@ -269,7 +235,6 @@ export default class HalfLifePanel extends NuclearDecayPanel {
 
       this.dataPointsLayer.addChild( undecayedRectangle );
     }
-
   }
 
 }

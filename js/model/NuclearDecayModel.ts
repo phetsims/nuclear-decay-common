@@ -7,7 +7,6 @@
 
 import BooleanProperty from '../../../axon/js/BooleanProperty.js';
 import createObservableArray, { ObservableArray } from '../../../axon/js/createObservableArray.js';
-import Emitter from '../../../axon/js/Emitter.js';
 import EnumerationProperty from '../../../axon/js/EnumerationProperty.js';
 import NumberProperty from '../../../axon/js/NumberProperty.js';
 import Property from '../../../axon/js/Property.js';
@@ -28,6 +27,7 @@ import { PhetioObjectOptions } from '../../../tandem/js/PhetioObject.js';
 import Tandem from '../../../tandem/js/Tandem.js';
 import StringUnionIO from '../../../tandem/js/types/StringUnionIO.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
+import HistogramData from './HistogramData.js';
 import NuclearDecayAtom from './NuclearDecayAtom.js';
 
 export const ValidIsotopeValues = [ 'custom', 'polonium-211', 'lead-207', 'carbon-14', 'nitrogen-14', 'hydrogen-3', 'helium-3', 'helium-2' ] as const;
@@ -94,8 +94,7 @@ export default abstract class NuclearDecayModel implements TModel {
 
   public readonly maxNumberOfAtoms: number;
 
-  // TODO: Temporary update emitter while we decide how to wire up graph updates; https://github.com/phetsims/alpha-decay/issues/3
-  public readonly updateEmitter = new Emitter();
+  public readonly histogramData: HistogramData;
 
   protected constructor( providedOptions?: NuclearDecayModelOptions ) {
 
@@ -136,6 +135,8 @@ export default abstract class NuclearDecayModel implements TModel {
     this.activeAtoms = createObservableArray();
     this.undecayedAtoms = createObservableArray();
     this.decayedAtoms = createObservableArray();
+
+    this.histogramData = new HistogramData( this );
 
     this.activeAtoms.lengthProperty.link( length => {
       this.undecayedAtoms = this.activeAtoms.filter( atom => !atom.hasDecayed );
@@ -306,8 +307,7 @@ export default abstract class NuclearDecayModel implements TModel {
       } );
     }
 
-    // TODO: Gross https://github.com/phetsims/alpha-decay/issues/3
-    this.updateEmitter.emit();
+    this.histogramData.step();
   }
 
   /**
