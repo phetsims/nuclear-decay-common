@@ -28,45 +28,67 @@ import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
 
+// The maximum time displayed on the x-axis (seconds).
+const MAX_TIME = 3;
+
 type SelfOptions = EmptySelfOptions;
 
 export type DecayRateGraphOptions = SelfOptions & NuclearDecayPanelOptions;
 
-export default class DecayRateGraph extends NuclearDecayPanel {
+export default class DecayRateGraphPanel extends NuclearDecayPanel {
+
+  private readonly showUndecayedProperty: BooleanProperty;
+  private readonly showDecayedProperty: BooleanProperty;
+  private readonly showHalfLivesProperty: BooleanProperty;
+  private readonly showDataProbeProperty: BooleanProperty;
+
+  private readonly undecayedLinePath: Path;
+  private readonly decayedLinePath: Path;
+  private readonly graphWidth: number;
+  private readonly graphHeight: number;
+
   public constructor( model: NuclearDecayModel, providedOptions?: DecayRateGraphOptions ) {
     const options = optionize<DecayRateGraphOptions, SelfOptions, NuclearDecayPanelOptions>()( {
       minWidth: NuclearDecayCommonConstants.LONG_PANEL_WIDTH
     }, providedOptions );
 
-    const mainIsotope = model.selectedIsotopeProperty.value;
-    const productIsotope = NuclearDecayModel.getDecayProduct( mainIsotope );
+    const undecayedIsotope = model.selectedIsotopeProperty.value;
+    const decayedIsotope = NuclearDecayModel.getDecayProduct( undecayedIsotope );
 
-    const mainIsotopeConfig = NuclearDecayModel.getIsotopeAtomConfig( mainIsotope );
-    const productIsotopeConfig = NuclearDecayModel.getIsotopeAtomConfig( productIsotope );
+    const undecayedAtomConfig = NuclearDecayModel.getIsotopeAtomConfig( undecayedIsotope );
+    const decayedAtomConfig = NuclearDecayModel.getIsotopeAtomConfig( decayedIsotope );
 
     // Get isotope display strings
-    const mainSymbol = AtomNameUtils.getMassAndSymbol( mainIsotopeConfig.protonCount, mainIsotopeConfig.neutronCount );
-    const productSymbol = AtomNameUtils.getMassAndSymbol( productIsotopeConfig.protonCount, productIsotopeConfig.neutronCount );
+    const undecayedSymbol = AtomNameUtils.getMassAndSymbol( undecayedAtomConfig.protonCount, undecayedAtomConfig.neutronCount );
+    const decayedSymbol = AtomNameUtils.getMassAndSymbol( decayedAtomConfig.protonCount, decayedAtomConfig.neutronCount );
 
     // Isotope count labels at the top
-    const mainCountLabel = new RichText( mainSymbol, {
+    const undecayedCountLabel = new RichText( undecayedSymbol, {
       font: NuclearDecayCommonConstants.CONTROL_FONT,
       fill: NuclearDecayCommonColors.pinkProperty
     } );
-    const productCountLabel = new RichText( productSymbol, {
+    const decayedCountLabel = new RichText( decayedSymbol, {
       font: NuclearDecayCommonConstants.CONTROL_FONT
     } );
     const countLabels = new VBox( {
       spacing: 4,
       align: 'left',
-      children: [ mainCountLabel, productCountLabel ]
+      children: [ undecayedCountLabel, decayedCountLabel ]
     } );
 
     // Checkboxes
-    const showMainProperty = new BooleanProperty( true );
-    const showProductProperty = new BooleanProperty( true );
-    const showHalfLivesProperty = new BooleanProperty( false );
-    const showDataProbeProperty = new BooleanProperty( false );
+    const showUndecayedProperty = new BooleanProperty( true, {
+      // tandem: options.tandem.createTandem( 'showUndecayedProperty' )
+    } );
+    const showDecayedProperty = new BooleanProperty( true, {
+      // tandem: options.tandem.createTandem( 'showDecayedProperty' )
+    } );
+    const showHalfLivesProperty = new BooleanProperty( false, {
+      // tandem: options.tandem.createTandem( 'showHalfLivesProperty' )
+    } );
+    const showDataProbeProperty = new BooleanProperty( false, {
+      // tandem: options.tandem.createTandem( 'showDataProbeProperty' )
+    } );
 
     const CHECKBOX_LABEL_FONT = NuclearDecayCommonConstants.CONTROL_FONT;
     const LINE_SAMPLE_LENGTH = 24;
@@ -86,11 +108,11 @@ export default class DecayRateGraph extends NuclearDecayPanel {
     const mainCheckboxContent = new HBox( {
       spacing: 6,
       children: [
-        new RichText( mainSymbol, { font: CHECKBOX_LABEL_FONT } ),
+        new RichText( undecayedSymbol, { font: CHECKBOX_LABEL_FONT } ),
         mainIcon
       ]
     } );
-    const mainCheckbox = new Checkbox( showMainProperty, mainCheckboxContent );
+    const mainCheckbox = new Checkbox( showUndecayedProperty, mainCheckboxContent );
 
     // Growth curve icon: filled area under a growth quad curve (bottom-left to top-right)
     const growthShape = new Shape()
@@ -105,11 +127,11 @@ export default class DecayRateGraph extends NuclearDecayPanel {
     const productCheckboxContent = new HBox( {
       spacing: 6,
       children: [
-        new RichText( productSymbol, { font: CHECKBOX_LABEL_FONT } ),
+        new RichText( decayedSymbol, { font: CHECKBOX_LABEL_FONT } ),
         productIcon
       ]
     } );
-    const productCheckbox = new Checkbox( showProductProperty, productCheckboxContent );
+    const productCheckbox = new Checkbox( showUndecayedProperty, productCheckboxContent );
 
     // Half-Lives checkbox: label + dotted line sample
     const halfLifeLineSample = new Line( 0, 0, LINE_SAMPLE_LENGTH, 0, {
@@ -126,7 +148,7 @@ export default class DecayRateGraph extends NuclearDecayPanel {
     } );
     const halfLifeCheckbox = new Checkbox( showHalfLivesProperty, halfLifeCheckboxContent );
 
-    // Data Probe checkbox (no line sample)
+    // Data Probe checkbox
     const dataProbeCheckboxContent = new Text( NuclearDecayCommonFluent.dataProbeStringProperty, {
       font: CHECKBOX_LABEL_FONT,
       maxWidth: 100
@@ -184,7 +206,7 @@ export default class DecayRateGraph extends NuclearDecayPanel {
       } ) );
     } );
 
-    // Axis labels
+    // Axis labels. Y axis is rotated sideways
     const yAxisLabel = new RichText( NuclearDecayCommonFluent.percentRemainingStringProperty, {
       font: AXIS_LABEL_FONT,
       rotation: -Math.PI / 2,
@@ -196,9 +218,52 @@ export default class DecayRateGraph extends NuclearDecayPanel {
       maxWidth: 100
     } );
 
+    // Half-life dashed vertical line and label
+    const halfLifeLine = new Path(
+      new Shape().moveTo( 0, 0 ).lineTo( 0, GRAPH_HEIGHT ),
+      {
+        stroke: NuclearDecayCommonColors.halfLifeColorProperty,
+        lineWidth: 2,
+        lineDash: [ 5, 5 ]
+      }
+    );
+
+    const halfLifeLabel = new Text( NuclearDecayCommonFluent.halfLifeStringProperty, {
+      font: NuclearDecayCommonConstants.CONTROL_BOLD_FONT,
+      fill: NuclearDecayCommonColors.halfLifeColorProperty,
+      bottom: -6,
+      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
+    } );
+
+    const halfLifeIndicator = new VBox( {
+      children: [ halfLifeLabel, halfLifeLine ],
+      bottom: GRAPH_HEIGHT
+    } );
+
+    model.selectedHalfLifeProperty.link( halfLife => {
+      halfLifeIndicator.centerX = ( halfLife / MAX_TIME ) * GRAPH_WIDTH;
+    } );
+
+    showHalfLivesProperty.link( visible => { halfLifeIndicator.visible = visible; } );
+
+    // Line paths for the decay curves, clipped to the graph area.
+    const undecayedLinePath = new Path( null, {
+      stroke: NuclearDecayCommonColors.pinkProperty,
+      lineWidth: 2,
+      clipArea: Shape.rect( 0, 0, GRAPH_WIDTH, GRAPH_HEIGHT )
+    } );
+    const decayedLinePath = new Path( null, {
+      stroke: 'black',
+      lineWidth: 2,
+      clipArea: Shape.rect( 0, 0, GRAPH_WIDTH, GRAPH_HEIGHT )
+    } );
+
+    showUndecayedProperty.link( visible => { undecayedLinePath.visible = visible; } );
+    showUndecayedProperty.link( visible => { decayedLinePath.visible = visible; } );
+
     // Assemble graph with axes
     const graphArea = new Node( {
-      children: [ graphBackground, gridLines, yTickContainer, xTickContainer ]
+      children: [ graphBackground, gridLines, halfLifeIndicator, undecayedLinePath, decayedLinePath, yTickContainer, xTickContainer ]
     } );
 
     // Position x-axis label below the graph
@@ -231,5 +296,51 @@ export default class DecayRateGraph extends NuclearDecayPanel {
     } );
 
     super( contentNode, options );
+
+    this.showUndecayedProperty = showUndecayedProperty;
+    this.showDecayedProperty = showDecayedProperty;
+    this.showHalfLivesProperty = showHalfLivesProperty;
+    this.showDataProbeProperty = showDataProbeProperty;
+
+    this.undecayedLinePath = undecayedLinePath;
+    this.decayedLinePath = decayedLinePath;
+    this.graphWidth = GRAPH_WIDTH;
+    this.graphHeight = GRAPH_HEIGHT;
+
+  }
+
+  /**
+   * Updates the decay rate lines from the given time series data.
+   * Each data point is a Vector2 where x = time (seconds) and y = percentage (0-1).
+   */
+  public update( undecayedDataPoints: Vector2[], decayedDataPoints: Vector2[] ): void {
+    this.undecayedLinePath.shape = DecayRateGraphPanel.dataPointsToShape(
+      undecayedDataPoints, this.graphWidth, this.graphHeight
+    );
+    this.decayedLinePath.shape = DecayRateGraphPanel.dataPointsToShape(
+      decayedDataPoints, this.graphWidth, this.graphHeight
+    );
+  }
+
+  /**
+   * Converts an array of (time, percentage) data points into a Shape for rendering as a line.
+   */
+  private static dataPointsToShape( dataPoints: Vector2[], graphWidth: number, graphHeight: number ): Shape | null {
+    if ( dataPoints.length < 2 ) {
+      return null;
+    }
+
+    const shape = new Shape();
+    for ( let i = 0; i < dataPoints.length; i++ ) {
+      const x = ( dataPoints[ i ].x / MAX_TIME ) * graphWidth;
+      const y = ( 1 - dataPoints[ i ].y ) * graphHeight;
+      if ( i === 0 ) {
+        shape.moveTo( x, y );
+      }
+      else {
+        shape.lineTo( x, y );
+      }
+    }
+    return shape;
   }
 }
