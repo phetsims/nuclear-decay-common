@@ -105,14 +105,14 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
         new Path( decayShape, { stroke: NuclearDecayCommonColors.pinkProperty, lineWidth: 1.5 } )
       ]
     } );
-    const mainCheckboxContent = new HBox( {
+    const undecayedCheckboxContent = new HBox( {
       spacing: 6,
       children: [
         new RichText( undecayedSymbol, { font: CHECKBOX_LABEL_FONT } ),
         mainIcon
       ]
     } );
-    const mainCheckbox = new Checkbox( showUndecayedProperty, mainCheckboxContent );
+    const undecayedCheckbox = new Checkbox( showUndecayedProperty, undecayedCheckboxContent );
 
     // Growth curve icon: filled area under a growth quad curve (bottom-left to top-right)
     const growthShape = new Shape()
@@ -124,14 +124,14 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
         new Path( growthShape, { stroke: 'black', lineWidth: 1.5 } )
       ]
     } );
-    const productCheckboxContent = new HBox( {
+    const decayedCheckboxContent = new HBox( {
       spacing: 6,
       children: [
         new RichText( decayedSymbol, { font: CHECKBOX_LABEL_FONT } ),
         productIcon
       ]
     } );
-    const productCheckbox = new Checkbox( showUndecayedProperty, productCheckboxContent );
+    const decayedCheckbox = new Checkbox( showDecayedProperty, decayedCheckboxContent );
 
     // Half-Lives checkbox: label + dotted line sample
     const halfLifeLineSample = new Line( 0, 0, LINE_SAMPLE_LENGTH, 0, {
@@ -158,7 +158,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     const checkboxGroup = new VBox( {
       spacing: 10,
       align: 'left',
-      children: [ mainCheckbox, productCheckbox, halfLifeCheckbox, dataProbeCheckbox ]
+      children: [ undecayedCheckbox, decayedCheckbox, halfLifeCheckbox, dataProbeCheckbox ]
     } );
 
     // Graph placeholder area
@@ -259,7 +259,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     } );
 
     showUndecayedProperty.link( visible => { undecayedLinePath.visible = visible; } );
-    showUndecayedProperty.link( visible => { decayedLinePath.visible = visible; } );
+    showDecayedProperty.link( visible => { decayedLinePath.visible = visible; } );
 
     // Assemble graph with axes
     const graphArea = new Node( {
@@ -320,6 +320,13 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     this.decayedLinePath.shape = DecayRateGraphPanel.dataPointsToShape(
       decayedDataPoints, this.graphWidth, this.graphHeight
     );
+  }
+
+  public reset(): void {
+    this.showUndecayedProperty.reset();
+    this.showDecayedProperty.reset();
+    this.showHalfLivesProperty.reset();
+    this.showDataProbeProperty.reset();
   }
 
   /**

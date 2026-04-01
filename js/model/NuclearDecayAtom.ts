@@ -113,7 +113,6 @@ export default class NuclearDecayAtom {
       const probabilityOfDecay = NuclearDecayAtom.decayProbabilityOverInterval( this.halfLife, dt );
       if ( dotRandom.nextDouble() < probabilityOfDecay ) {
         this.hasDecayed = true;
-        console.log( `decay occurred at ${this.time}` );
       }
     }
   }
