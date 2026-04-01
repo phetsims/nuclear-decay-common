@@ -140,7 +140,7 @@ export default class DecayRateGraph extends NuclearDecayPanel {
     } );
 
     // Graph placeholder area
-    const GRAPH_WIDTH = 380;
+    const GRAPH_WIDTH = 750;
     const GRAPH_HEIGHT = 180;
 
     const graphBackground = new Rectangle( 0, 0, GRAPH_WIDTH, GRAPH_HEIGHT, {

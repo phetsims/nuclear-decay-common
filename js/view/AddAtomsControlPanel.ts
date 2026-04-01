@@ -9,7 +9,7 @@
 
 import NumberProperty from '../../../axon/js/NumberProperty.js';
 import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
-import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
+import optionize from '../../../phet-core/js/optionize.js';
 import NumberDisplay from '../../../scenery-phet/js/NumberDisplay.js';
 import HBox from '../../../scenery/js/layout/nodes/HBox.js';
 import VBox from '../../../scenery/js/layout/nodes/VBox.js';
@@ -22,7 +22,9 @@ import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
 
-type SelfOptions = EmptySelfOptions;
+type SelfOptions = {
+  stepSize?: number;
+};
 
 export type AddAtomsControlPanelOptions = SelfOptions & NuclearDecayPanelOptions;
 
@@ -34,7 +36,7 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
     providedOptions?: AddAtomsControlPanelOptions
   ) {
     const options = optionize<AddAtomsControlPanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {
-      // Default options
+      stepSize: 10
     }, providedOptions );
 
     const maxAtoms = atomsToAddProperty.rangeProperty.value.max;
@@ -72,7 +74,7 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
       arrowSpacing: -7
     };
     const doubleLeftArrowButton = new ArrowButton( 'left', () => {
-      atomsToAddProperty.value = Math.max( 1, atomsToAddProperty.value - 10 );
+      atomsToAddProperty.value = Math.max( 1, atomsToAddProperty.value - options.stepSize );
     }, DOUBLE_ARROW_BUTTON_OPTIONS );
 
     const singleLeftArrowButton = new ArrowButton( 'left', () => {
@@ -84,7 +86,7 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
     }, ARROW_BUTTON_OPTIONS );
 
     const doubleRightArrowButton = new ArrowButton( 'right', () => {
-      atomsToAddProperty.value = Math.min( maxAtoms, atomsToAddProperty.value + 10 );
+      atomsToAddProperty.value = Math.min( maxAtoms, atomsToAddProperty.value + options.stepSize );
     }, DOUBLE_ARROW_BUTTON_OPTIONS );
 
     // Number display showing atom count
