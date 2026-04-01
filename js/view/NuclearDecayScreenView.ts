@@ -187,6 +187,9 @@ export default class NuclearDecayScreenView extends ScreenView {
   public override step( dt: number ): void {
     super.step( dt );
     this.halfLifePanel.update( this.model.histogramData );
+    this.atomNodesMap.forEach( atomNode => {
+      atomNode.update();
+    } );
   }
 
   public reset(): void {

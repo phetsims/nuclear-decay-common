@@ -23,7 +23,7 @@ export type MinimalAtomNodeOptions = SelfOptions & CircleOptions;
 
 export default class MinimalAtomNode extends Circle {
   public constructor(
-    decayingAtom: NuclearDecayAtom,
+    private readonly decayingAtom: NuclearDecayAtom,
     private readonly modelViewTransformProperty: TReadOnlyProperty<ModelViewTransform2>,
     providedOptions?: MinimalAtomNodeOptions ) {
     const options = optionize<MinimalAtomNodeOptions, SelfOptions, MinimalAtomNodeOptions>()( {
@@ -47,5 +47,10 @@ export default class MinimalAtomNode extends Circle {
 
   public setPosition( position: Vector2 ): void {
     this.center = this.modelViewTransformProperty.value.modelToViewPosition( position );
+  }
+
+  public update(): void {
+    this.visible = this.decayingAtom.isActive;
+    this.fill = this.decayingAtom.hasDecayed ? 'grey' : 'magenta';
   }
 }
