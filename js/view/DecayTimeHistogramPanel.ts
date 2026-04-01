@@ -25,7 +25,7 @@ import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel
 
 type SelfOptions = EmptySelfOptions;
 
-export type HalfLifePanelOptions = SelfOptions & NuclearDecayPanelOptions;
+export type DecayTimeHistogramPanelOptions = SelfOptions & NuclearDecayPanelOptions;
 
 // Graph dimensions (adjust these to tune the layout)
 const GRAPH_WIDTH = 530;
@@ -41,14 +41,14 @@ const TICKS = 4;
 // Width of the tick interval. Also represents 1 second on the time axis.
 const TICK_INTERVAL_WIDTH = 0.9 * GRAPH_WIDTH / ( TICKS - 1 );
 
-export default class HalfLifePanel extends NuclearDecayPanel {
+export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
   private dataPointsLayer: Node;
 
   private model: NuclearDecayModel;
 
-  public constructor( model: NuclearDecayModel, providedOptions?: HalfLifePanelOptions ) {
-    const options = optionize<HalfLifePanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {}, providedOptions );
+  public constructor( model: NuclearDecayModel, providedOptions?: DecayTimeHistogramPanelOptions ) {
+    const options = optionize<DecayTimeHistogramPanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {}, providedOptions );
 
     // Y-axis rotated label: "Isotope"
 

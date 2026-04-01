@@ -1,7 +1,7 @@
 // Copyright 2026, University of Colorado Boulder
 /**
  * Manages histogram binning and data segmentation for the nuclear decay simulation suite.
- * Tracks decayed atom counts per time bin and undecayed atom info for display by HalfLifePanel.
+ * Tracks decayed atom counts per time bin and undecayed atom info for display by DecayTimeHistogramPanel.
  *
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */

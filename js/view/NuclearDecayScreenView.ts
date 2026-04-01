@@ -24,8 +24,8 @@ import Color from '../../../scenery/js/util/Color.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
+import DecayTimeHistogramPanel from './DecayTimeHistogramPanel.js';
 import EquationAccordionBox from './EquationAccordionBox.js';
-import HalfLifePanel from './HalfLifePanel.js';
 import IsotopePanel from './IsotopePanel.js';
 import MinimalAtomNode from './MinimalAtomNode.js';
 import ParticleCountsAccordionBox from './ParticleCountsAccordionBox.js';
@@ -47,7 +47,7 @@ export default class NuclearDecayScreenView extends ScreenView {
   protected modelViewTransformProperty: Property<ModelViewTransform2>;
 
   // Child classes will need to reference this panel for layout
-  protected readonly halfLifePanel: HalfLifePanel;
+  protected readonly decayTimeHistogramPanel: DecayTimeHistogramPanel;
 
   // Controls on the right side of the view.
   protected readonly rightColumnControls: Node;
@@ -91,14 +91,14 @@ export default class NuclearDecayScreenView extends ScreenView {
 
     // Top-left panel
 
-    this.halfLifePanel = new HalfLifePanel( model, {
+    this.decayTimeHistogramPanel = new DecayTimeHistogramPanel( model, {
       minWidth: NuclearDecayCommonConstants.LONG_PANEL_WIDTH,
       left: this.layoutBounds.minX + MARGIN_X,
       top: this.layoutBounds.minY + MARGIN_Y,
       fill: NuclearDecayCommonConstants.MAIN_PANEL_FILL,
-      tandem: options.tandem.createTandem( 'halfLifePanel' )
+      tandem: options.tandem.createTandem( 'decayTimeHistogramPanel' )
     } );
-    this.addChild( this.halfLifePanel );
+    this.addChild( this.decayTimeHistogramPanel );
 
     // Right column panels
 
@@ -186,7 +186,7 @@ export default class NuclearDecayScreenView extends ScreenView {
 
   public override step( dt: number ): void {
     super.step( dt );
-    this.halfLifePanel.update( this.model.histogramData );
+    this.decayTimeHistogramPanel.update( this.model.histogramData );
     this.atomNodesMap.forEach( atomNode => {
       atomNode.update();
     } );

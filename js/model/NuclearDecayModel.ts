@@ -126,10 +126,10 @@ export default abstract class NuclearDecayModel implements TModel {
       const atom = new NuclearDecayAtom( atomConfig, postDecayAtomConfig );
       this.atomPool.push( atom );
     } );
-
+    this.selectedHalfLifeProperty.value = this.getHalfLife( selectedIsotope );
 
     this.selectedIsotopeProperty.lazyLink( selectedIsotope => {
-      this.changeIsotopes( selectedIsotope );
+      this.setNewIsotope( selectedIsotope );
     } );
 
     this.activeAtoms = createObservableArray();
@@ -241,7 +241,7 @@ export default abstract class NuclearDecayModel implements TModel {
     }
   }
 
-  public changeIsotopes( newIsotope: SelectableIsotopes ): void {
+  private setNewIsotope( newIsotope: SelectableIsotopes ): void {
 
     this.selectedHalfLifeProperty.value = this.getHalfLife( newIsotope );
 
