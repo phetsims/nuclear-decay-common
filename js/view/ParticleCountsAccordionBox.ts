@@ -12,7 +12,7 @@ import VBox from '../../../scenery/js/layout/nodes/VBox.js';
 import RichText from '../../../scenery/js/nodes/RichText.js';
 import Text from '../../../scenery/js/nodes/Text.js';
 import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
-import NuclearDecayModel, { SelectableIsotopes } from '../model/NuclearDecayModel.js';
+import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
@@ -25,35 +25,21 @@ export type ParticleCountsAccordionBoxOptions = SelfOptions & NuclearDecayAccord
 export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox {
   public constructor( model: NuclearDecayModel, providedOptions?: ParticleCountsAccordionBoxOptions ) {
 
-    const currentIsotopeProtonCountProperty = model.selectedIsotopeProperty.derived( ( isotope: SelectableIsotopes ) => {
-      if ( isotope === 'custom' ) {
-        return 'p';
-      }
-      else {
-        const atomConfig = model.getSelectedIsotopeAtomConfig();
-        return atomConfig.protonCount;
-      }
-    } );
-
-    const currentIsotopeNeutronCountProperty = model.selectedIsotopeProperty.derived( ( isotope: SelectableIsotopes ) => {
-      if ( isotope === 'custom' ) {
-        return 'n';
-      }
-      else {
-        const atomConfig = model.getSelectedIsotopeAtomConfig();
-        return atomConfig.neutronCount;
-      }
-    } );
-
     const isotopeInfoTitleStringProperty = new DerivedStringProperty(
       [
         model.selectedIsotopeProperty,
+        model.isPlayAreaEmptyProperty,
+        model.hasDecayOccurredProperty,
         NuclearDecayCommonFluent.isotopeInfoTitleStringProperty
-      ], ( selectedIsotope: SelectableIsotopes, pattern: string ) => {
-        if ( selectedIsotope === 'custom' ) {
+      ], ( selectedIsotope, isPlayAreaEmpty, hasDecayOccurred, pattern ) => {
+        if ( isPlayAreaEmpty ) {
+          return '--';
+        }
+        else if ( selectedIsotope === 'custom' ) {
           return NuclearDecayCommonFluent.isotopeAStringProperty.value;
         }
-        const atomConfig = model.getSelectedIsotopeAtomConfig();
+        const isotope = hasDecayOccurred ? NuclearDecayModel.getDecayProduct( selectedIsotope ) : selectedIsotope;
+        const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
         return StringUtils.fillIn( pattern, {
           nameAndNumber: AtomNameUtils.getName( atomConfig.protonCount ),
           numberSymbol: AtomNameUtils.getMassAndSymbol( atomConfig.protonCount, atomConfig.neutronCount )
@@ -62,24 +48,46 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
 
     const titleNode = new RichText( isotopeInfoTitleStringProperty, {
       font: NuclearDecayCommonConstants.TITLE_BOLD_FONT,
-      fill: NuclearDecayCommonColors.pinkProperty,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
+    } );
+    model.hasDecayOccurredProperty.link( hasDecayed => {
+      titleNode.fill = hasDecayed ? 'black' : NuclearDecayCommonColors.pinkProperty;
     } );
 
     const protonsStringProperty = new DerivedStringProperty(
       [
-        currentIsotopeProtonCountProperty,
+        model.selectedIsotopeProperty,
+        model.isPlayAreaEmptyProperty,
+        model.hasDecayOccurredProperty,
         NuclearDecayCommonFluent.protonsPatternStringProperty
-      ], ( protons, pattern ) => {
-        return StringUtils.fillIn( pattern, { protons: protons } );
+      ], ( selectedIsotope, isPlayAreaEmpty, hasDecayOccurred, pattern ) => {
+        if ( isPlayAreaEmpty ) {
+          return StringUtils.fillIn( pattern, { protons: '--' } );
+        }
+        else if ( selectedIsotope === 'custom' ) {
+          return StringUtils.fillIn( pattern, { protons: 'p' } );
+        }
+        const isotope = hasDecayOccurred ? NuclearDecayModel.getDecayProduct( selectedIsotope ) : selectedIsotope;
+        const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
+        return StringUtils.fillIn( pattern, { protons: atomConfig.protonCount } );
       } );
 
     const neutronsStringProperty = new DerivedStringProperty(
       [
-        currentIsotopeNeutronCountProperty,
+        model.selectedIsotopeProperty,
+        model.isPlayAreaEmptyProperty,
+        model.hasDecayOccurredProperty,
         NuclearDecayCommonFluent.neutronsPatternStringProperty
-      ], ( neutrons, pattern ) => {
-        return StringUtils.fillIn( pattern, { neutrons: neutrons } );
+      ], ( selectedIsotope, isPlayAreaEmpty, hasDecayOccurred, pattern ) => {
+        if ( isPlayAreaEmpty ) {
+          return StringUtils.fillIn( pattern, { neutrons: '--' } );
+        }
+        else if ( selectedIsotope === 'custom' ) {
+          return StringUtils.fillIn( pattern, { neutrons: 'n' } );
+        }
+        const isotope = hasDecayOccurred ? NuclearDecayModel.getDecayProduct( selectedIsotope ) : selectedIsotope;
+        const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
+        return StringUtils.fillIn( pattern, { neutrons: atomConfig.neutronCount } );
       } );
 
     const options = optionize<ParticleCountsAccordionBoxOptions, SelfOptions, NuclearDecayAccordionBoxOptions>()( {
@@ -93,11 +101,11 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
       children: [
         new Text( protonsStringProperty, {
           font: NuclearDecayCommonConstants.CONTROL_FONT,
-      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
+          maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
         } ),
         new Text( neutronsStringProperty, {
           font: NuclearDecayCommonConstants.CONTROL_FONT,
-      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
+          maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
         } )
       ]
     } );
