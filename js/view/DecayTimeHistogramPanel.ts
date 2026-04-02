@@ -156,7 +156,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
     const eraserButton = new EraserButton( {
       listener: () => {
-        model.decayedAtoms.clear();
+        model.decayedAtoms.length = 0;
       }
     } );
     eraserButton.right = 2 * GRAPH_X_OFFSET + GRAPH_WIDTH;

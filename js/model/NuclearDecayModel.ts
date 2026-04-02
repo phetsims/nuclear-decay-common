@@ -6,7 +6,6 @@
  */
 
 import BooleanProperty from '../../../axon/js/BooleanProperty.js';
-import createObservableArray, { ObservableArray } from '../../../axon/js/createObservableArray.js';
 import EnumerationProperty from '../../../axon/js/EnumerationProperty.js';
 import NumberProperty from '../../../axon/js/NumberProperty.js';
 import Property from '../../../axon/js/Property.js';
@@ -77,14 +76,14 @@ export default abstract class NuclearDecayModel implements TModel {
   public readonly atomPool: NuclearDecayAtom[] = [];
 
   // Atoms currently in the play area
-  public activeAtoms: ObservableArray<NuclearDecayAtom>;
+  public activeAtoms: NuclearDecayAtom[];
 
   // Subset of activeAtoms, just the ones that have not decayed yet.
   public undecayedAtoms: NuclearDecayAtom[];
 
   // NOT a subset of activeAtoms, but rather a reference of all the atoms that have fallen.
   // Useful especially for graphing atoms that are no longer active in the play area.
-  public readonly decayedAtoms: ObservableArray<NuclearDecayAtom>;
+  public readonly decayedAtoms: NuclearDecayAtom[];
 
   // The area in which atoms can be placed.  This is in model coordinates and can (and should) be updated by the view
   // once the view is constructed and therefore knows what space is available in the screen view.
@@ -132,15 +131,11 @@ export default abstract class NuclearDecayModel implements TModel {
       this.setNewIsotope( selectedIsotope );
     } );
 
-    this.activeAtoms = createObservableArray();
-    this.undecayedAtoms = createObservableArray();
-    this.decayedAtoms = createObservableArray();
+    this.activeAtoms = [];
+    this.undecayedAtoms = [];
+    this.decayedAtoms = [];
 
     this.histogramData = new HistogramData( this );
-
-    this.activeAtoms.lengthProperty.link( length => {
-      this.undecayedAtoms = this.activeAtoms.filter( atom => !atom.hasDecayed );
-    } );
 
     this.isPlayAreaEmptyProperty = new BooleanProperty( true );
 
@@ -234,7 +229,7 @@ export default abstract class NuclearDecayModel implements TModel {
       const atom = this.atomPool.find( atom => !atom.isActive );
       affirm( atom, 'No available atoms to activate!' );
       atom.isActive = true;
-      this.activeAtoms.add( atom );
+      this.activeAtoms.push( atom );
     }
     else {
       console.warn( 'Custom atoms not yet supported.' );
@@ -264,13 +259,13 @@ export default abstract class NuclearDecayModel implements TModel {
    */
   public clearAtomLists(): void {
     this.resetAtoms();
-    this.activeAtoms.clear();
-    this.decayedAtoms.clear();
+    this.activeAtoms.length = 0;
+    this.decayedAtoms.length = 0;
   }
 
   public resetAtoms(): void {
     this.atomPool.forEach( atom => atom.reset() );
-    this.activeAtoms.clear();
+    this.activeAtoms.length = 0;
   }
 
   /**
@@ -291,6 +286,8 @@ export default abstract class NuclearDecayModel implements TModel {
    */
   public step( dt: number ): void {
 
+    this.undecayedAtoms = this.activeAtoms.filter( atom => !atom.hasDecayed );
+
     this.isPlayAreaEmptyProperty.value = this.activeAtoms.length === 0;
 
     if ( this.isPlayingProperty.value && !this.isPlayAreaEmptyProperty.value ) {
@@ -304,7 +301,7 @@ export default abstract class NuclearDecayModel implements TModel {
 
         if ( !hadDecayed && atom.hasDecayed ) {
           this.undecayedAtoms = this.activeAtoms.filter( atom => !atom.hasDecayed );
-          this.decayedAtoms.add( atom.copy() );
+          this.decayedAtoms.push( atom.copy() );
         }
       } );
     }
@@ -317,7 +314,7 @@ export default abstract class NuclearDecayModel implements TModel {
    */
   public reset(): void {
     this.clearAtomLists();
-    this.decayedAtoms.clear();
+    this.decayedAtoms.push();
     this.isPlayingProperty.reset();
     this.timeSpeedProperty.reset();
     this.timeProperty.reset();

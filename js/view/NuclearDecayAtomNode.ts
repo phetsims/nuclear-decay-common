@@ -30,8 +30,7 @@ export default class NuclearDecayAtomNode extends ParticleAtomNode {
     private readonly modelViewTransformProperty: TReadOnlyProperty<ModelViewTransform2>,
     providedOptions?: NuclearDecayAtomNodeOptions ) {
     const options = optionize<NuclearDecayAtomNodeOptions, SelfOptions, ParticleAtomNodeOptions>()( {
-      showElectronCloud: false,
-      visible: decayingAtom.isActive
+      showElectronCloud: false
     }, providedOptions );
 
     // Create a ParticleAtom populated with the correct number of protons and neutrons.
