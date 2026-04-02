@@ -5,6 +5,7 @@
  * @author Agustín Vallejo
  */
 
+import BooleanProperty from '../../../axon/js/BooleanProperty.js';
 import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import PhetFont from '../../../scenery-phet/js/PhetFont.js';
@@ -17,6 +18,7 @@ import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 
 type SelfOptions = {
   fill?: TPaint;
+  isActiveProperty?: TReadOnlyProperty<boolean>;
 };
 
 export type EquationElementNodeOptions = SelfOptions & NodeOptions;
@@ -34,27 +36,42 @@ export default class EquationElementNode extends Node {
     subscriptStringProperty: TReadOnlyProperty<string> | string,
     providedOptions: EquationElementNodeOptions ) {
     const options = optionize<SelfOptions, EmptySelfOptions, EquationElementNodeOptions>()( {
-      // Default options go here
+      isActiveProperty: new BooleanProperty( true )
     }, providedOptions );
 
-    const symbolText = new RichText( symbolStringProperty, { font: TEXT_FONT, fill: options.fill } );
+    const symbolText = new RichText( symbolStringProperty, {
+      font: TEXT_FONT,
+      fill: options.fill,
+      visibleProperty: options.isActiveProperty
+    } );
     const superscriptText = new RichText( superscriptStringProperty, {
       font: SMALL_TEXT_FONT,
       fill: options.fill,
       right: symbolText.left - SMALL_TEXT_OFFSET,
-      bottom: symbolText.top + SMALL_TEXT_OFFSET
+      bottom: symbolText.top + SMALL_TEXT_OFFSET,
+      visibleProperty: options.isActiveProperty
     } );
     const subscriptText = new RichText( subscriptStringProperty, {
       font: SMALL_TEXT_FONT,
       fill: options.fill,
       right: symbolText.left - SMALL_TEXT_OFFSET,
-      bottom: symbolText.bottom + SMALL_TEXT_OFFSET
+      bottom: symbolText.bottom + SMALL_TEXT_OFFSET,
+      visibleProperty: options.isActiveProperty
+    } );
+
+    // Show a question mark when the element is not active
+    const questionMarkNode = new RichText( '?', {
+      font: NuclearDecayCommonConstants.CONTROL_FONT,
+      fill: options.fill,
+      center: symbolText.center,
+      visibleProperty: options.isActiveProperty.derived( isActive => !isActive )
     } );
 
     options.children = [
       symbolText,
       superscriptText,
-      subscriptText
+      subscriptText,
+      questionMarkNode
     ];
 
     super( options );

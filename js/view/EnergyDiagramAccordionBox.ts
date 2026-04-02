@@ -5,12 +5,15 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
+import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
 import Shape from '../../../kite/js/Shape.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
+import ModelViewTransform2 from '../../../phetcommon/js/view/ModelViewTransform2.js';
 import ArrowNode from '../../../scenery-phet/js/ArrowNode.js';
 import Node from '../../../scenery/js/nodes/Node.js';
 import Path from '../../../scenery/js/nodes/Path.js';
 import Text from '../../../scenery/js/nodes/Text.js';
+import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
@@ -46,7 +49,11 @@ const POINTINESS_FACTOR = 25; // sharpness of the quadratic curve at the barrier
 const CURVINESS_FACTOR = 0; // how curvy the potential energy curve is at the barrier peak. 0 = very curvy, rapid falloff, 1 = closer to a straight line.
 
 export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox {
-  public constructor( providedOptions?: EnergyDiagramAccordionBoxOptions ) {
+  public constructor(
+    private readonly model: NuclearDecayModel,
+    private readonly modelViewTransformProperty: TReadOnlyProperty<ModelViewTransform2>,
+    providedOptions?: EnergyDiagramAccordionBoxOptions
+  ) {
     const options = optionize<EnergyDiagramAccordionBoxOptions, SelfOptions, NuclearDecayAccordionBoxOptions>()( {
       contentAlign: 'left',
       contentVerticalAlign: 'top',
@@ -102,7 +109,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
 
     // Legend lines and labels
 
-    const initialEnergyLine = new Path(
+    const initialEnergyLegendLine = new Path(
       new Shape().moveTo( 0, 0 ).lineTo( LEGEND_LINE_LENGTH, 0 ),
       {
         stroke: NuclearDecayCommonColors.initialEnergyColorProperty,
@@ -115,24 +122,24 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     const initialEnergyLabel = new Text( NuclearDecayCommonFluent.initialEnergyStringProperty, {
       font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
       left: LEGEND_X + LEGEND_TEXT_OFFSET,
-      centerY: initialEnergyLine.centerY,
+      centerY: initialEnergyLegendLine.centerY,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
-    const potentialEnergyLine = new Path(
+    const potentialEnergyLegendLine = new Path(
       new Shape().moveTo( 0, 0 ).lineTo( LEGEND_LINE_LENGTH, 0 ),
       {
         stroke: NuclearDecayCommonColors.finalEnergyColorProperty,
         lineWidth: 4,
         left: LEGEND_X,
-        centerY: initialEnergyLine.centerY + LEGEND_LINE_SPACING
+        centerY: initialEnergyLegendLine.centerY + LEGEND_LINE_SPACING
       }
     );
 
     const potentialEnergyLabel = new Text( NuclearDecayCommonFluent.potentialEnergyStringProperty, {
       font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
       left: LEGEND_X + LEGEND_TEXT_OFFSET,
-      centerY: potentialEnergyLine.centerY,
+      centerY: potentialEnergyLegendLine.centerY,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
@@ -156,7 +163,8 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         ),
       {
         stroke: NuclearDecayCommonColors.finalEnergyColorProperty,
-        lineWidth: 4
+        lineWidth: 4,
+        visibleProperty: model.isPlayAreaEmptyProperty.derived( isEmpty => !isEmpty )
       }
     );
 
@@ -164,7 +172,8 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       new Shape().moveTo( -GRAPH_X_OFFSET, INITIAL_ENERGY_HEIGHT ).lineTo( GRAPH_X_OFFSET + GRAPH_WIDTH, INITIAL_ENERGY_HEIGHT ),
       {
         stroke: NuclearDecayCommonColors.initialEnergyColorProperty,
-        lineWidth: 2
+        lineWidth: 2,
+        visibleProperty: model.isPlayAreaEmptyProperty.derived( isEmpty => !isEmpty )
       }
     );
 
@@ -177,9 +186,9 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         energyAxisLabel,
         distanceAxisLabel,
         subtitleText,
-        initialEnergyLine,
+        initialEnergyLegendLine,
         initialEnergyLabel,
-        potentialEnergyLine,
+        potentialEnergyLegendLine,
         potentialEnergyLabel,
         potentialEnergyGraphCurve,
         initialEnergyGraphLine

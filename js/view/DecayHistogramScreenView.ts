@@ -17,10 +17,8 @@ import Node from '../../../scenery/js/nodes/Node.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import DecayTimeHistogramPanel from './DecayTimeHistogramPanel.js';
-import EquationAccordionBox from './EquationAccordionBox.js';
 import IsotopePanel from './IsotopePanel.js';
 import NuclearDecayScreenView, { NuclearDecayScreenViewOptions } from './NuclearDecayScreenView.js';
-import ParticleCountsAccordionBox from './ParticleCountsAccordionBox.js';
 
 type SelfOptions = {
   // Additional content to add to the isotope panel
@@ -76,18 +74,12 @@ export default class DecayHistogramScreenView extends NuclearDecayScreenView {
       middleContent: options.isotopePanelMiddleContent,
       tandem: options.tandem.createTandem( 'isotopePanel' )
     } );
-    const particleCountsAccordionBox = new ParticleCountsAccordionBox( model, {
-      tandem: options.tandem.createTandem( 'particleCountsAccordionBox' )
-    } );
-    const equationAccordionBox = new EquationAccordionBox( model.selectedIsotopeProperty, {
-      tandem: options.tandem.createTandem( 'equationAccordionBox' )
-    } );
 
     this.rightColumnControls = new VBox( {
       spacing: PANEL_SPACING,
       right: this.layoutBounds.maxX - MARGIN_X,
       top: this.layoutBounds.minY + MARGIN_Y,
-      children: [ isotopePanel, particleCountsAccordionBox, equationAccordionBox ]
+      children: [ isotopePanel ]
     } );
     this.addChild( this.rightColumnControls );
 

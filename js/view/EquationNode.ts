@@ -5,13 +5,14 @@
  * @author Agustín Vallejo
  */
 
+import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
 import Dimension2 from '../../../dot/js/Dimension2.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import ArrowNode from '../../../scenery-phet/js/ArrowNode.js';
 import PlusNode from '../../../scenery-phet/js/PlusNode.js';
 import HBox, { HBoxOptions } from '../../../scenery/js/layout/nodes/HBox.js';
 import Node from '../../../scenery/js/nodes/Node.js';
-import { ValidIsotopes } from '../model/NuclearDecayModel.js';
+import NuclearDecayModel, { SelectableIsotopes } from '../model/NuclearDecayModel.js';
 import EquationElementNode from './EquationElementNode.js';
 
 type SelfOptions = EmptySelfOptions;
@@ -26,6 +27,7 @@ export default class EquationNode extends HBox {
     providedOptions: EquationNodeOptions
   ) {
     const options = optionize<SelfOptions, EmptySelfOptions, EquationNodeOptions>()( {
+      spacing: 0
     }, providedOptions );
 
     const arrowNode = new ArrowNode( 0, 0, 70, 0, {
@@ -44,10 +46,23 @@ export default class EquationNode extends HBox {
     super( options );
   }
 
-  public static createFromIsotope( isotope: ValidIsotopes ): EquationNode {
-    const firstTerm = EquationElementNode.createFromIsotope( isotope, {} );
-    const secondTerm = EquationElementNode.createFromIsotope( isotope, {} );
-    const thirdTerm = EquationElementNode.createFromIsotope( 'helium-2', {} );
+  public static createEquation(
+    isotopeProperty: TReadOnlyProperty<SelectableIsotopes>,
+    isPlayAreaEmptyProperty: TReadOnlyProperty<boolean>,
+    hasDecayOcurredProperty: TReadOnlyProperty<boolean>
+  ): EquationNode {
+    const undecayedIsotope = isotopeProperty.value;
+    const decayedIsotope = NuclearDecayModel.getDecayProduct( undecayedIsotope );
+    const firstTerm = EquationElementNode.createFromIsotope( undecayedIsotope, {
+      isActiveProperty: isPlayAreaEmptyProperty.derived( isEmpty => !isEmpty )
+    } );
+    const secondTerm = EquationElementNode.createFromIsotope( decayedIsotope, {
+      isActiveProperty: hasDecayOcurredProperty
+    } );
+    const thirdTerm = EquationElementNode.createFromIsotope( 'helium-2', {
+      isActiveProperty: hasDecayOcurredProperty
+
+    } );
 
     return new EquationNode( firstTerm, secondTerm, thirdTerm, {} );
   }

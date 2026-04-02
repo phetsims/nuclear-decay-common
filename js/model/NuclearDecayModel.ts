@@ -91,6 +91,10 @@ export default abstract class NuclearDecayModel implements TModel {
 
   public readonly isPlayAreaEmptyProperty: BooleanProperty;
 
+  // TODO: Move to a SingleAtomModel or something https://github.com/phetsims/alpha-decay/issues/3
+  // Whether at least one atom has decayed.
+  public readonly hasDecayOccurredProperty: BooleanProperty;
+
   public readonly maxNumberOfAtoms: number;
 
   public readonly histogramData: HistogramData;
@@ -112,6 +116,10 @@ export default abstract class NuclearDecayModel implements TModel {
 
     this.atomPlacementAreaProperty = new Property<Shape>( Shape.bounds( DEFAULT_ATOM_AREA_BOUNDS ), {
       tandem: Tandem.OPT_OUT
+    } );
+
+    this.hasDecayOccurredProperty = new BooleanProperty( false, {
+      tandem: options.tandem.createTandem( 'hasDecayOccurredProperty' )
     } );
 
     this.maxNumberOfAtoms = options.maxNumberOfAtoms!;
@@ -150,6 +158,36 @@ export default abstract class NuclearDecayModel implements TModel {
     this.timeSpeedProperty = new EnumerationProperty( TimeSpeed.NORMAL, {
       tandem: options.tandem.createTandem( 'timeSpeedProperty' )
     } );
+  }
+
+  /**
+   * Steps the model.
+   * @param dt - time step, in seconds
+   */
+  public step( dt: number ): void {
+
+    this.undecayedAtoms = this.activeAtoms.filter( atom => !atom.hasDecayed );
+
+    this.isPlayAreaEmptyProperty.value = this.activeAtoms.length === 0;
+
+    if ( this.isPlayingProperty.value && !this.isPlayAreaEmptyProperty.value ) {
+      this.hasDecayOccurredProperty.value = this.activeAtoms.some( atom => atom.hasDecayed );
+      const timeSpeedScale = this.timeSpeedProperty.value === TimeSpeed.NORMAL ?
+                             NuclearDecayCommonConstants.NORMAL_SPEED_SCALE :
+                             NuclearDecayCommonConstants.SLOW_SPEED_SCALE;
+      this.stepModel( dt * timeSpeedScale );
+      this.activeAtoms.forEach( ( atom: NuclearDecayAtom ) => {
+        const hadDecayed = atom.hasDecayed;
+        atom.step( dt * timeSpeedScale );
+
+        if ( !hadDecayed && atom.hasDecayed ) {
+          this.undecayedAtoms = this.activeAtoms.filter( atom => !atom.hasDecayed );
+          this.decayedAtoms.push( atom.copy() );
+        }
+      } );
+    }
+
+    this.histogramData.step();
   }
 
   /**
@@ -278,35 +316,6 @@ export default abstract class NuclearDecayModel implements TModel {
       dotRandom.nextDoubleInRange( new Range( modelBounds.minX, modelBounds.maxX ) ),
       dotRandom.nextDoubleInRange( new Range( modelBounds.minY, modelBounds.maxY ) )
     );
-  }
-
-  /**
-   * Steps the model.
-   * @param dt - time step, in seconds
-   */
-  public step( dt: number ): void {
-
-    this.undecayedAtoms = this.activeAtoms.filter( atom => !atom.hasDecayed );
-
-    this.isPlayAreaEmptyProperty.value = this.activeAtoms.length === 0;
-
-    if ( this.isPlayingProperty.value && !this.isPlayAreaEmptyProperty.value ) {
-      const timeSpeedScale = this.timeSpeedProperty.value === TimeSpeed.NORMAL ?
-                             NuclearDecayCommonConstants.NORMAL_SPEED_SCALE :
-                             NuclearDecayCommonConstants.SLOW_SPEED_SCALE;
-      this.stepModel( dt * timeSpeedScale );
-      this.activeAtoms.forEach( ( atom: NuclearDecayAtom ) => {
-        const hadDecayed = atom.hasDecayed;
-        atom.step( dt * timeSpeedScale );
-
-        if ( !hadDecayed && atom.hasDecayed ) {
-          this.undecayedAtoms = this.activeAtoms.filter( atom => !atom.hasDecayed );
-          this.decayedAtoms.push( atom.copy() );
-        }
-      } );
-    }
-
-    this.histogramData.step();
   }
 
   /**

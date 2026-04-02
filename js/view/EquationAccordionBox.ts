@@ -8,7 +8,7 @@
 import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import Text from '../../../scenery/js/nodes/Text.js';
-import { ValidIsotopes } from '../model/NuclearDecayModel.js';
+import { SelectableIsotopes } from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import EquationNode from './EquationNode.js';
@@ -20,7 +20,12 @@ export type EquationAccordionBoxOptions = SelfOptions & NuclearDecayAccordionBox
 
 export default class EquationAccordionBox extends NuclearDecayAccordionBox {
 
-  public constructor( isotopeProperty: TReadOnlyProperty<ValidIsotopes>, providedOptions?: EquationAccordionBoxOptions ) {
+  public constructor(
+    isotopeProperty: TReadOnlyProperty<SelectableIsotopes>,
+    isPlayAreaEmptyProperty: TReadOnlyProperty<boolean>,
+    hasDecayOcurredProperty: TReadOnlyProperty<boolean>,
+    providedOptions?: EquationAccordionBoxOptions
+  ) {
 
     const titleNode = new Text( NuclearDecayCommonFluent.equationStringProperty, {
       font: NuclearDecayCommonConstants.TITLE_BOLD_FONT,
@@ -32,8 +37,11 @@ export default class EquationAccordionBox extends NuclearDecayAccordionBox {
       minWidth: NuclearDecayCommonConstants.RIGHT_PANEL_WIDTH
     }, providedOptions );
 
-    // TODO handle change of isotope and update the equation accordingly https://github.com/phetsims/alpha-decay/issues/3
-    const equationNode = EquationNode.createFromIsotope( isotopeProperty.value );
+    const equationNode = EquationNode.createEquation(
+      isotopeProperty,
+      isPlayAreaEmptyProperty,
+      hasDecayOcurredProperty
+    );
 
     super( equationNode, options );
   }
