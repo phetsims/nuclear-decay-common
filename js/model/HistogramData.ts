@@ -7,6 +7,7 @@
  */
 
 import { roundToInterval } from '../../../dot/js/util/roundToInterval.js';
+import affirm from '../../../perennial-alias/js/browser-and-node/affirm.js';
 import NuclearDecayModel from './NuclearDecayModel.js';
 
 const BINS_PER_SECOND = 20;
@@ -39,7 +40,10 @@ export default class HistogramData {
     this.tallestBinCount = 0;
 
     this.model.decayedAtoms.forEach( atom => {
-      const bin = roundToInterval( atom.time, BIN_SIZE_TIME );
+
+      affirm( atom.decayTime, 'Decayed atoms should have a decay time' );
+
+      const bin = roundToInterval( atom.decayTime, BIN_SIZE_TIME );
 
       // Atoms with very high decay times are not shown.
       if ( bin > MAX_DISPLAY_TIME ) { return; }

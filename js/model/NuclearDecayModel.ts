@@ -181,6 +181,7 @@ export default abstract class NuclearDecayModel implements TModel {
         atom.step( dt * timeSpeedScale );
 
         if ( !hadDecayed && atom.hasDecayed ) {
+          atom.decayTime = this.timeProperty.value;
           this.undecayedAtoms = this.activeAtoms.filter( atom => !atom.hasDecayed );
           this.decayedAtoms.push( atom.copy() );
         }
