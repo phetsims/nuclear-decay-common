@@ -262,7 +262,10 @@ export default abstract class NuclearDecayModel implements TModel {
    * Adds exactly one instance of the selected isotope into the model.
    */
   public activateAtom(): void {
-    affirm( this.activeAtoms.length < this.maxNumberOfAtoms, 'Cannot add more atoms, max number of atoms reached' );
+    if ( this.activeAtoms.length === this.maxNumberOfAtoms ) {
+      // Max number of atoms already active, do not add more.
+      return;
+    }
     const selectedIsotope = this.selectedIsotopeProperty.value;
     if ( selectedIsotope !== 'custom' ) {
       const atom = this.atomPool.find( atom => !atom.isActive );
