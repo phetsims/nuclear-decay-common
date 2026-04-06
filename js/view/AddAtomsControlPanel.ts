@@ -7,7 +7,9 @@
  * @author Agustín Vallejo
  */
 
+import DynamicProperty from '../../../axon/js/DynamicProperty.js';
 import NumberProperty from '../../../axon/js/NumberProperty.js';
+import Property from '../../../axon/js/Property.js';
 import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
 import optionize from '../../../phet-core/js/optionize.js';
 import NumberDisplay from '../../../scenery-phet/js/NumberDisplay.js';
@@ -42,17 +44,22 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
     const maxAtoms = atomsToAddProperty.rangeProperty.value.max;
 
     // Title showing the selected isotope name with a colored background
-    // TODO: Dynamic strings https://github.com/phetsims/alpha-decay/issues/3
-    const isotopeNameProperty = selectedIsotopeProperty.derived( isotope => {
+
+    const currentElementStringProperty = new Property<TReadOnlyProperty<string>>( NuclearDecayCommonFluent.customStringProperty );
+    const isotopeDynamicNameProperty = new DynamicProperty<string, number, TReadOnlyProperty<string>>( currentElementStringProperty );
+
+    // Update the element name based on the proton count.
+    selectedIsotopeProperty.link( isotope => {
       if ( isotope === 'custom' ) {
-        return NuclearDecayCommonFluent.customStringProperty.value;
+        currentElementStringProperty.value = NuclearDecayCommonFluent.customStringProperty;
       }
       else {
         const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
-        return AtomNameUtils.getNameAndMass( atomConfig.protonCount, atomConfig.neutronCount ).value;
+        currentElementStringProperty.value = AtomNameUtils.getNameAndMass( atomConfig.protonCount, atomConfig.neutronCount );
       }
     } );
-    const titleText = new RichText( isotopeNameProperty, {
+
+    const titleText = new RichText( isotopeDynamicNameProperty, {
       font: NuclearDecayCommonConstants.CONTROL_FONT,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
