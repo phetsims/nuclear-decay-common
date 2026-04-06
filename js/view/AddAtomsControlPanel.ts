@@ -44,11 +44,12 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
     const maxAtoms = atomsToAddProperty.rangeProperty.value.max;
 
     // Title showing the selected isotope name with a colored background
-
+    // Similar to AtomNameUtils.createDynamicNameProperty but taylored for this sim
+    // It sets a property that will listen to the current translation value of either 'Custom' or the element name
     const currentElementStringProperty = new Property<TReadOnlyProperty<string>>( NuclearDecayCommonFluent.customStringProperty );
     const isotopeDynamicNameProperty = new DynamicProperty<string, number, TReadOnlyProperty<string>>( currentElementStringProperty );
 
-    // Update the element name based on the proton count.
+    // Update the element name based on the selected isotope
     selectedIsotopeProperty.link( isotope => {
       if ( isotope === 'custom' ) {
         currentElementStringProperty.value = NuclearDecayCommonFluent.customStringProperty;
