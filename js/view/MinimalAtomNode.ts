@@ -13,6 +13,7 @@ import optionize from '../../../phet-core/js/optionize.js';
 import ModelViewTransform2 from '../../../phetcommon/js/view/ModelViewTransform2.js';
 import Circle, { CircleOptions } from '../../../scenery/js/nodes/Circle.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
+import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 
 type SelfOptions = {
@@ -30,7 +31,7 @@ export default class MinimalAtomNode extends Circle {
       showElectronCloud: false,
       visible: decayingAtom.isActive,
 
-      fill: 'magenta'
+      fill: NuclearDecayCommonColors.undecayedProperty
     }, providedOptions );
 
     // Create the ParticleAtomNode to render the nucleus.
