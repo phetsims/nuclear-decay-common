@@ -51,7 +51,7 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
     model.hasDecayOccurredProperty.link( hasDecayed => {
-      titleNode.fill = hasDecayed ? 'black' : NuclearDecayCommonColors.pinkProperty;
+      titleNode.fill = hasDecayed ? 'black' : NuclearDecayCommonColors.undecayedProperty;
     } );
 
     const protonsStringProperty = new DerivedStringProperty(

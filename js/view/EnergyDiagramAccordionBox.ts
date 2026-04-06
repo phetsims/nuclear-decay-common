@@ -129,7 +129,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     const potentialEnergyLegendLine = new Path(
       new Shape().moveTo( 0, 0 ).lineTo( LEGEND_LINE_LENGTH, 0 ),
       {
-        stroke: NuclearDecayCommonColors.finalEnergyColorProperty,
+        stroke: NuclearDecayCommonColors.potentialEnergyProperty,
         lineWidth: 4,
         left: LEGEND_X,
         centerY: initialEnergyLegendLine.centerY + LEGEND_LINE_SPACING
@@ -162,7 +162,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
           GRAPH_X_OFFSET + GRAPH_WIDTH, COULOMB_MIN_Y
         ),
       {
-        stroke: NuclearDecayCommonColors.finalEnergyColorProperty,
+        stroke: NuclearDecayCommonColors.potentialEnergyProperty,
         lineWidth: 4,
         visibleProperty: model.isPlayAreaEmptyProperty.derived( isEmpty => !isEmpty )
       }

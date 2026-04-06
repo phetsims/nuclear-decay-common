@@ -74,7 +74,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
     const initialIsotopeSymbol = new RichText( selectedIsotopeSymbolProperty, {
       font: NuclearDecayCommonConstants.CONTROL_BOLD_FONT,
-      fill: NuclearDecayCommonColors.pinkProperty,
+      fill: NuclearDecayCommonColors.undecayedProperty,
       left: ISOTOPE_SYMBOL_X,
       centerY: 0,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
@@ -221,7 +221,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
       const undecayedRectangle = new Rectangle(
         histogramData.undecayedTime * TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET, 0, UNDECAYED_WIDTH, UNDECAYED_HEIGHT, {
-          fill: NuclearDecayCommonColors.pinkProperty,
+          fill: NuclearDecayCommonColors.undecayedProperty,
           stroke: 'black',
           lineWidth: 1
         }

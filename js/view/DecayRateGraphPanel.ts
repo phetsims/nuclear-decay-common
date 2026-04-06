@@ -65,7 +65,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     // Isotope count labels at the top
     const undecayedCountLabel = new RichText( undecayedSymbol, {
       font: NuclearDecayCommonConstants.CONTROL_FONT,
-      fill: NuclearDecayCommonColors.pinkProperty
+      fill: NuclearDecayCommonColors.undecayedProperty
     } );
     const decayedCountLabel = new RichText( decayedSymbol, {
       font: NuclearDecayCommonConstants.CONTROL_FONT
@@ -102,7 +102,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     const mainIcon = new Node( {
       children: [
         new Rectangle( 0, 0, ICON_WIDTH, ICON_HEIGHT, { stroke: 'black', lineWidth: 0.5 } ),
-        new Path( decayShape, { stroke: NuclearDecayCommonColors.pinkProperty, lineWidth: 1.5 } )
+        new Path( decayShape, { stroke: NuclearDecayCommonColors.undecayedProperty, lineWidth: 1.5 } )
       ]
     } );
     const undecayedCheckboxContent = new HBox( {
@@ -248,7 +248,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
 
     // Line paths for the decay curves, clipped to the graph area.
     const undecayedLinePath = new Path( null, {
-      stroke: NuclearDecayCommonColors.pinkProperty,
+      stroke: NuclearDecayCommonColors.undecayedProperty,
       lineWidth: 2,
       clipArea: Shape.rect( 0, 0, GRAPH_WIDTH, GRAPH_HEIGHT )
     } );

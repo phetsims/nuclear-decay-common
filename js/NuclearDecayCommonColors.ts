@@ -22,25 +22,23 @@ const NuclearDecayCommonColors = {
     projector: 'white'
   } ),
 
-  // TODO are these the proper names? Surely not https://github.com/phetsims/alpha-decay/issues/3
-  //  Don't call me Shirley!
-  pinkProperty: new ProfileColorProperty( nuclearDecayCommon, 'pink', {
+  undecayedProperty: new ProfileColorProperty( nuclearDecayCommon, 'undecayed', {
     default: '#ff00ff'
   } ),
 
-  blueProperty: new ProfileColorProperty( nuclearDecayCommon, 'blue', {
+  potentialEnergyProperty: new ProfileColorProperty( nuclearDecayCommon, 'potentialEnergy', {
     default: '#5555ff'
   } ),
 
-  initialEnergyColorProperty: new ProfileColorProperty( nuclearDecayCommon, 'initialEnergyColor', {
+  initialEnergyColorProperty: new ProfileColorProperty( nuclearDecayCommon, 'initialEnergy', {
     default: '#36ac0d'
   } ),
 
-  finalEnergyColorProperty: new ProfileColorProperty( nuclearDecayCommon, 'finalEnergyColor', {
+  finalEnergyColorProperty: new ProfileColorProperty( nuclearDecayCommon, 'finalEnergy', {
     default: '#5f00ff'
   } ),
 
-  halfLifeColorProperty: new ProfileColorProperty( nuclearDecayCommon, 'halfLifeColor', {
+  halfLifeColorProperty: new ProfileColorProperty( nuclearDecayCommon, 'halfLife', {
     default: '#ec4123'
   } ),
 
