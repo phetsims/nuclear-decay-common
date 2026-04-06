@@ -26,11 +26,11 @@ type SelfOptions = {
   middleContent?: Node[] | null;
 };
 
-export type IsotopePanelOptions = SelfOptions & NuclearDecayPanelOptions;
+export type IsotopeControlPanelOptions = SelfOptions & NuclearDecayPanelOptions;
 
-export default class IsotopePanel extends NuclearDecayPanel {
-  public constructor( model: NuclearDecayModel, providedOptions?: IsotopePanelOptions ) {
-    const options = optionize<IsotopePanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {
+export default class IsotopeControlPanel extends NuclearDecayPanel {
+  public constructor( model: NuclearDecayModel, providedOptions?: IsotopeControlPanelOptions ) {
+    const options = optionize<IsotopeControlPanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {
       minWidth: NuclearDecayCommonConstants.RIGHT_PANEL_WIDTH,
 
       // Self Options

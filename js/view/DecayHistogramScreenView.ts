@@ -17,7 +17,7 @@ import Node from '../../../scenery/js/nodes/Node.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import DecayTimeHistogramPanel from './DecayTimeHistogramPanel.js';
-import IsotopePanel from './IsotopePanel.js';
+import IsotopeControlPanel from './IsotopeControlPanel.js';
 import NuclearDecayScreenView, { NuclearDecayScreenViewOptions } from './NuclearDecayScreenView.js';
 
 type SelfOptions = {
@@ -70,7 +70,7 @@ export default class DecayHistogramScreenView extends NuclearDecayScreenView {
 
     // Right column panels
 
-    const isotopePanel = new IsotopePanel( model, {
+    const isotopePanel = new IsotopeControlPanel( model, {
       middleContent: options.isotopePanelMiddleContent,
       tandem: options.tandem.createTandem( 'isotopePanel' )
     } );
