@@ -27,6 +27,7 @@ import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
+import Tandem from '../../../tandem/js/Tandem.js';
 
 type SelfOptions = EmptySelfOptions;
 
@@ -181,7 +182,8 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
         visibleProperty: new DerivedProperty(
           [ model.selectedIsotopeProperty ],
           selectedIsotope => selectedIsotope === 'custom'
-        )
+        ),
+        tandem: Tandem.OPT_OUT
       }
     );
 
