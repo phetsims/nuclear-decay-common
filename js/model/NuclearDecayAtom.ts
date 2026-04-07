@@ -105,6 +105,17 @@ export default class NuclearDecayAtom {
     return newAtom;
   }
 
+  /**
+   * Sets values for this atom based on a reference atom, used for serialization
+   */
+  public set( referenceAtom: NuclearDecayAtom ): void {
+    this.isActive = referenceAtom.isActive;
+    this.hasDecayed = referenceAtom.hasDecayed;
+    this.time = referenceAtom.time;
+    this.decayTime = referenceAtom.decayTime;
+    this.position = referenceAtom.position.copy();
+  }
+
   public step( dt: number ): void {
     if ( this.halfLife && !this.hasDecayed ) {
       this.time += dt; // Only advance time if the atom has not decayed.

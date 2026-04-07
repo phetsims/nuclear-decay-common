@@ -17,13 +17,16 @@ import TModel from '../../../joist/js/TModel.js';
 import Shape from '../../../kite/js/Shape.js';
 import affirm from '../../../perennial-alias/js/browser-and-node/affirm.js';
 import optionize from '../../../phet-core/js/optionize.js';
+import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 import WithRequired from '../../../phet-core/js/types/WithRequired.js';
 import TimeSpeed from '../../../scenery-phet/js/TimeSpeed.js';
 import AtomInfoUtils from '../../../shred/js/AtomInfoUtils.js';
 import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
 import AtomConfig from '../../../shred/js/model/AtomConfig.js';
-import { PhetioObjectOptions } from '../../../tandem/js/PhetioObject.js';
+import PhetioObject, { PhetioObjectOptions } from '../../../tandem/js/PhetioObject.js';
 import Tandem from '../../../tandem/js/Tandem.js';
+import IOType from '../../../tandem/js/types/IOType.js';
+import ReferenceArrayIO from '../../../tandem/js/types/ReferenceArrayIO.js';
 import StringUnionIO from '../../../tandem/js/types/StringUnionIO.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import HistogramData from './HistogramData.js';
@@ -56,7 +59,7 @@ type SelfOptions = {
 
 export type NuclearDecayModelOptions = SelfOptions & WithRequired<PhetioObjectOptions, 'tandem'>;
 
-export default abstract class NuclearDecayModel implements TModel {
+export default abstract class NuclearDecayModel extends PhetioObject implements TModel {
 
   // List of the selectable isotopes in the sim. Defined by subclasses.
   public readonly abstract selectableIsotopes: SelectableIsotopes[];
@@ -101,9 +104,13 @@ export default abstract class NuclearDecayModel implements TModel {
 
   protected constructor( providedOptions?: NuclearDecayModelOptions ) {
 
-    const options = optionize<NuclearDecayModelOptions, SelfOptions, NuclearDecayModelOptions>()( {
-      maxNumberOfAtoms: NuclearDecayCommonConstants.MAX_ATOMS
+    const options = optionize<NuclearDecayModelOptions, SelfOptions, PhetioObjectOptions>()( {
+      maxNumberOfAtoms: NuclearDecayCommonConstants.MAX_ATOMS,
+      phetioType: NuclearDecayModel.NuclearDecayModelIO,
+      phetioState: true
     }, providedOptions );
+
+    super( options );
 
     this.selectedIsotopeProperty = new Property<SelectableIsotopes>( 'polonium-211', {
       tandem: options.tandem.createTandem( 'selectedIsotopeProperty' ),
@@ -259,13 +266,14 @@ export default abstract class NuclearDecayModel implements TModel {
    */
   public activateMultipleAtoms( n: number ): void {
     this.reset();
-    _.times( n, () => this.activateAtom() );
+    // Activate multiple atoms with random positions
+    _.times( n, () => this.activateAtom( true ) );
   }
 
   /**
    * Adds exactly one instance of the selected isotope into the model.
    */
-  public activateAtom(): void {
+  public activateAtom( randomizePosition = false ): void {
     if ( this.activeAtoms.length === this.maxNumberOfAtoms ) {
       // Max number of atoms already active, do not add more.
       return;
@@ -275,6 +283,9 @@ export default abstract class NuclearDecayModel implements TModel {
       const atom = this.atomPool.find( atom => !atom.isActive );
       affirm( atom, 'No available atoms to activate!' );
       atom.isActive = true;
+      if ( randomizePosition ) {
+        atom.position = this.getRandomPositionWithinBounds();
+      }
       this.activeAtoms.push( atom );
     }
     else {
@@ -317,7 +328,7 @@ export default abstract class NuclearDecayModel implements TModel {
   /**
    * Returns a random position within the atom placement area bounds in model coordinates.
    */
-  public getRandomPositionWithinBounds(): Vector2 {
+  private getRandomPositionWithinBounds(): Vector2 {
     const modelBounds = this.atomPlacementAreaProperty.value.bounds;
 
     return new Vector2(
@@ -358,4 +369,37 @@ export default abstract class NuclearDecayModel implements TModel {
   protected stepModel( dt: number ): void {
     this.timeProperty.value += dt;
   }
+
+  /**
+   * Reference-type IOType for PhET-iO serialization. The model persists for the lifetime of the sim;
+   * its mutable atom arrays are serialized as composites of NuclearDecayAtomIO data-type elements.
+   */
+  public static readonly NuclearDecayModelIO = new IOType<NuclearDecayModel, IntentionalAny>( 'NuclearDecayModelIO', {
+    valueType: NuclearDecayModel,
+    documentation: 'The model for nuclear decay, containing pools and lists of atoms.',
+    stateSchema: {
+      atomPool: ReferenceArrayIO( NuclearDecayAtom.NuclearDecayAtomIO ),
+      decayedAtoms: ReferenceArrayIO( NuclearDecayAtom.NuclearDecayAtomIO )
+    },
+    applyState: ( model, stateObject ) => {
+
+      // Restore atomPool state from the serialized data.
+      const atomPoolIO = ReferenceArrayIO( NuclearDecayAtom.NuclearDecayAtomIO );
+      atomPoolIO.fromStateObject( stateObject.atomPool ).forEach( ( atom, i ) => {
+        model.atomPool[ i ].set( atom );
+      } );
+
+      // Rebuild activeAtoms and undecayedAtoms from the restored pool.
+      model.activeAtoms = model.atomPool.filter( atom => atom.isActive );
+      model.undecayedAtoms = model.activeAtoms.filter( atom => !atom.hasDecayed );
+
+      // Restore decayedAtoms (these are independent copies, not pool references).
+      const decayedAtomsIO = ReferenceArrayIO( NuclearDecayAtom.NuclearDecayAtomIO );
+      model.decayedAtoms.length = 0;
+      model.decayedAtoms.push( ...decayedAtomsIO.fromStateObject( stateObject.decayedAtoms ) );
+
+      model.isPlayAreaEmptyProperty.value = model.activeAtoms.length === 0;
+      model.hasDecayOccurredProperty.value = model.activeAtoms.some( atom => atom.hasDecayed );
+    }
+  } );
 }

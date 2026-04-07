@@ -8,7 +8,6 @@
  */
 
 import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
-import Vector2 from '../../../dot/js/Vector2.js';
 import optionize from '../../../phet-core/js/optionize.js';
 import ModelViewTransform2 from '../../../phetcommon/js/view/ModelViewTransform2.js';
 import Circle, { CircleOptions } from '../../../scenery/js/nodes/Circle.js';
@@ -46,11 +45,12 @@ export default class MinimalAtomNode extends Circle {
 
   }
 
-  public setPosition( position: Vector2 ): void {
-    this.center = this.modelViewTransformProperty.value.modelToViewPosition( position );
+  public updatePosition(): void {
+    this.center = this.modelViewTransformProperty.value.modelToViewPosition( this.decayingAtom.position );
   }
 
   public update(): void {
+    this.updatePosition();
     this.visible = this.decayingAtom.isActive;
     this.fill = this.decayingAtom.hasDecayed ? 'grey' : 'magenta';
   }

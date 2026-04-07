@@ -17,6 +17,7 @@ import ModelViewTransform2 from '../../../phetcommon/js/view/ModelViewTransform2
 import Node from '../../../scenery/js/nodes/Node.js';
 import Rectangle from '../../../scenery/js/nodes/Rectangle.js';
 import Color from '../../../scenery/js/util/Color.js';
+import phetioStateSetEmitter from '../../../tandem/js/phetioStateSetEmitter.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
@@ -41,7 +42,7 @@ export default class NuclearDecayScreenView extends ScreenView {
   // How many atoms will fit visually within the width of the play area
   private readonly numberOfAtomsInPlayAreaWidth: number;
 
-  protected readonly atomNodesMap: Map<NuclearDecayAtom, MinimalAtomNode>;
+  protected atomNodesMap: Map<NuclearDecayAtom, MinimalAtomNode>;
 
   public constructor(
     public readonly model: NuclearDecayModel,
@@ -71,6 +72,9 @@ export default class NuclearDecayScreenView extends ScreenView {
       this.addChild( atomNode );
     } );
 
+    phetioStateSetEmitter.addListener( () => {
+      this.updateAtomNodes();
+    } );
   }
 
   /**
@@ -119,14 +123,20 @@ export default class NuclearDecayScreenView extends ScreenView {
     } );
   }
 
-  public activateMultipleAtomNodes( n: number ): void {
-    this.resetAtomNodes();
-    this.model.activateMultipleAtoms( n );
+  /**
+   * Update atom nodes that are related to active atoms
+   */
+  public updateAtomNodes(): void {
     this.model.activeAtoms.forEach( atom => {
       const atomNode = this.atomNodesMap.get( atom );
       affirm( atomNode, 'Atom Node should exist for active atom' );
-      atomNode.setPosition( this.model.getRandomPositionWithinBounds() );
-      atomNode.visible = true;
+      atomNode.update();
     } );
+  }
+
+  public activateMultipleAtomNodes( n: number ): void {
+    this.resetAtomNodes();
+    this.model.activateMultipleAtoms( n );
+    this.updateAtomNodes();
   }
 }
