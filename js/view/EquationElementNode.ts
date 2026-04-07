@@ -7,7 +7,7 @@
 
 import BooleanProperty from '../../../axon/js/BooleanProperty.js';
 import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
-import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
+import optionize from '../../../phet-core/js/optionize.js';
 import PhetFont from '../../../scenery-phet/js/PhetFont.js';
 import Node, { NodeOptions } from '../../../scenery/js/nodes/Node.js';
 import RichText from '../../../scenery/js/nodes/RichText.js';
@@ -35,8 +35,9 @@ export default class EquationElementNode extends Node {
     superscriptStringProperty: TReadOnlyProperty<string> | string,
     subscriptStringProperty: TReadOnlyProperty<string> | string,
     providedOptions: EquationElementNodeOptions ) {
-    const options = optionize<SelfOptions, EmptySelfOptions, EquationElementNodeOptions>()( {
-      isActiveProperty: new BooleanProperty( true )
+    const options = optionize<EquationElementNodeOptions, SelfOptions, NodeOptions>()( {
+      isActiveProperty: new BooleanProperty( true ),
+      fill: 'black'
     }, providedOptions );
 
     const symbolText = new RichText( symbolStringProperty, {

@@ -11,6 +11,7 @@ import BooleanProperty from '../../../axon/js/BooleanProperty.js';
 import Vector2 from '../../../dot/js/Vector2.js';
 import Shape from '../../../kite/js/Shape.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
+import WithRequired from '../../../phet-core/js/types/WithRequired.js';
 import PhetFont from '../../../scenery-phet/js/PhetFont.js';
 import HBox from '../../../scenery/js/layout/nodes/HBox.js';
 import VBox from '../../../scenery/js/layout/nodes/VBox.js';
@@ -33,7 +34,7 @@ const MAX_TIME = 3;
 
 type SelfOptions = EmptySelfOptions;
 
-export type DecayRateGraphOptions = SelfOptions & NuclearDecayPanelOptions;
+export type DecayRateGraphOptions = SelfOptions & WithRequired<NuclearDecayPanelOptions, 'tandem'>;
 
 export default class DecayRateGraphPanel extends NuclearDecayPanel {
 
@@ -77,17 +78,22 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     } );
 
     // Checkboxes
+    // TODO: Should also live in the VisibleProperties https://github.com/phetsims/alpha-decay/issues/4
     const showUndecayedProperty = new BooleanProperty( true, {
-      // tandem: options.tandem.createTandem( 'showUndecayedProperty' )
+      tandem: options.tandem.createTandem( 'showUndecayedProperty' ),
+      phetioFeatured: true
     } );
     const showDecayedProperty = new BooleanProperty( true, {
-      // tandem: options.tandem.createTandem( 'showDecayedProperty' )
+      tandem: options.tandem.createTandem( 'showDecayedProperty' ),
+      phetioFeatured: true
     } );
     const showHalfLivesProperty = new BooleanProperty( false, {
-      // tandem: options.tandem.createTandem( 'showHalfLivesProperty' )
+      tandem: options.tandem.createTandem( 'showHalfLivesProperty' ),
+      phetioFeatured: true
     } );
     const showDataProbeProperty = new BooleanProperty( false, {
-      // tandem: options.tandem.createTandem( 'showDataProbeProperty' )
+      tandem: options.tandem.createTandem( 'showDataProbeProperty' ),
+      phetioFeatured: true
     } );
 
     const CHECKBOX_LABEL_FONT = NuclearDecayCommonConstants.CONTROL_FONT;
@@ -112,7 +118,9 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
         mainIcon
       ]
     } );
-    const undecayedCheckbox = new Checkbox( showUndecayedProperty, undecayedCheckboxContent );
+    const undecayedCheckbox = new Checkbox( showUndecayedProperty, undecayedCheckboxContent, {
+      tandem: options.tandem.createTandem( 'undecayedCheckbox' )
+    } );
 
     // Growth curve icon: filled area under a growth quad curve (bottom-left to top-right)
     const growthShape = new Shape()
@@ -131,7 +139,9 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
         productIcon
       ]
     } );
-    const decayedCheckbox = new Checkbox( showDecayedProperty, decayedCheckboxContent );
+    const decayedCheckbox = new Checkbox( showDecayedProperty, decayedCheckboxContent, {
+      tandem: options.tandem.createTandem( 'decayedCheckbox' )
+    } );
 
     // Half-Lives checkbox: label + dotted line sample
     const halfLifeLineSample = new Line( 0, 0, LINE_SAMPLE_LENGTH, 0, {
@@ -146,14 +156,18 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
         halfLifeLineSample
       ]
     } );
-    const halfLifeCheckbox = new Checkbox( showHalfLivesProperty, halfLifeCheckboxContent );
+    const halfLifeCheckbox = new Checkbox( showHalfLivesProperty, halfLifeCheckboxContent, {
+      tandem: options.tandem.createTandem( 'halfLifeCheckbox' )
+    } );
 
     // Data Probe checkbox
     const dataProbeCheckboxContent = new Text( NuclearDecayCommonFluent.dataProbeStringProperty, {
       font: CHECKBOX_LABEL_FONT,
       maxWidth: 100
     } );
-    const dataProbeCheckbox = new Checkbox( showDataProbeProperty, dataProbeCheckboxContent );
+    const dataProbeCheckbox = new Checkbox( showDataProbeProperty, dataProbeCheckboxContent, {
+      tandem: options.tandem.createTandem( 'dataProbeCheckbox' )
+    } );
 
     const checkboxGroup = new VBox( {
       spacing: 10,

@@ -26,7 +26,7 @@ export default class EquationNode extends HBox {
     thirdTerm: Node,
     providedOptions: EquationNodeOptions
   ) {
-    const options = optionize<SelfOptions, EmptySelfOptions, EquationNodeOptions>()( {
+    const options = optionize<EquationNodeOptions, SelfOptions, HBoxOptions>()( {
       spacing: 0
     }, providedOptions );
 

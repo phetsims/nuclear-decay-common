@@ -7,6 +7,7 @@
  */
 
 import optionize from '../../../phet-core/js/optionize.js';
+import WithRequired from '../../../phet-core/js/types/WithRequired.js';
 import HSeparator from '../../../scenery/js/layout/nodes/HSeparator.js';
 import VBox from '../../../scenery/js/layout/nodes/VBox.js';
 import Node from '../../../scenery/js/nodes/Node.js';
@@ -26,7 +27,7 @@ type SelfOptions = {
   middleContent?: Node[] | null;
 };
 
-export type IsotopeControlPanelOptions = SelfOptions & NuclearDecayPanelOptions;
+export type IsotopeControlPanelOptions = SelfOptions & WithRequired<NuclearDecayPanelOptions, 'tandem'>;
 
 export default class IsotopeControlPanel extends NuclearDecayPanel {
   public constructor( model: NuclearDecayModel, providedOptions?: IsotopeControlPanelOptions ) {
@@ -48,6 +49,7 @@ export default class IsotopeControlPanel extends NuclearDecayPanel {
       const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
       return {
         value: isotope,
+        tandemName: AtomNameUtils.getNonLocalizedName( atomConfig.protonCount ) + 'RadioButton',
         createNode: () => new RichText( AtomNameUtils.getNameAndMass(
           atomConfig.protonCount,
           atomConfig.neutronCount
@@ -63,6 +65,7 @@ export default class IsotopeControlPanel extends NuclearDecayPanel {
     radioButtonItems.push(
       {
         value: 'custom',
+        tandemName: 'customRadioButton',
         createNode: () => new RichText( NuclearDecayCommonFluent.customStringProperty, {
           font: NuclearDecayCommonConstants.CONTROL_FONT,
           maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
@@ -73,7 +76,8 @@ export default class IsotopeControlPanel extends NuclearDecayPanel {
     const isotopeSelectorRadioButtonGroup = new VerticalAquaRadioButtonGroup(
       model.selectedIsotopeProperty,
       radioButtonItems, {
-        spacing: 10
+        spacing: 10,
+        tandem: options.tandem.createTandem( 'isotopeSelectorRadioButtonGroup' )
       }
     );
 

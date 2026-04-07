@@ -62,7 +62,7 @@ export default class NuclearDecayAtom {
     providedOptions?: NuclearDecayAtomOptions
   ) {
 
-    // const options = optionize<SelfOptions, EmptySelfOptions, DecayingIsotopeOptions>()( {
+    // const options = optionize<NuclearDecayAtomOptions, EmptySelfOptions, NuclearDecayAtomOptions>()( {
     //   // no-op
     // }, providedOptions );
 

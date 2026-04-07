@@ -8,6 +8,7 @@
 
 import Shape from '../../../kite/js/Shape.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
+import WithRequired from '../../../phet-core/js/types/WithRequired.js';
 import ArrowNode from '../../../scenery-phet/js/ArrowNode.js';
 import EraserButton from '../../../scenery-phet/js/buttons/EraserButton.js';
 import VBox from '../../../scenery/js/layout/nodes/VBox.js';
@@ -25,7 +26,7 @@ import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel
 
 type SelfOptions = EmptySelfOptions;
 
-export type DecayTimeHistogramPanelOptions = SelfOptions & NuclearDecayPanelOptions;
+export type DecayTimeHistogramPanelOptions = SelfOptions & WithRequired<NuclearDecayPanelOptions, 'tandem'>;
 
 // Graph dimensions (adjust these to tune the layout)
 const GRAPH_WIDTH = 530;
@@ -157,7 +158,8 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     const eraserButton = new EraserButton( {
       listener: () => {
         model.decayedAtoms.length = 0;
-      }
+      },
+      tandem: options.tandem.createTandem( 'eraserButton' )
     } );
     eraserButton.right = 2 * GRAPH_X_OFFSET + GRAPH_WIDTH;
     eraserButton.bottom = GRAPH_HEIGHT;

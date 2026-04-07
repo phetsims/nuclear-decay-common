@@ -14,6 +14,7 @@ import optionize from '../../../phet-core/js/optionize.js';
 import ModelViewTransform2 from '../../../phetcommon/js/view/ModelViewTransform2.js';
 import ParticleAtomNode, { ParticleAtomNodeOptions } from '../../../shred/js/view/ParticleAtomNode.js';
 import ParticleView from '../../../shred/js/view/ParticleView.js';
+import Tandem from '../../../tandem/js/Tandem.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import createParticleAtomFromConfig from './createParticleAtomFromConfig.js';
@@ -42,7 +43,8 @@ export default class NuclearDecayAtomNode extends ParticleAtomNode {
     // Create a ParticleView for each particle and add it to the correct nucleon layer.
     particles.forEach( ( particle, number ) => {
       const particleView = new ParticleView( particle, this.modelViewTransformProperty.value, {
-        inputEnabled: false
+        inputEnabled: false,
+        tandem: Tandem.OPT_OUT
       } );
       this.addParticleView( particle, particleView );
     } );

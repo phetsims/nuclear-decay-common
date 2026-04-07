@@ -6,13 +6,14 @@
  */
 
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
-import AccordionBox, { AccordionBoxOptions } from '../../../sun/js/AccordionBox.js';
+import WithRequired from '../../../phet-core/js/types/WithRequired.js';
 import Node from '../../../scenery/js/nodes/Node.js';
+import AccordionBox, { AccordionBoxOptions } from '../../../sun/js/AccordionBox.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 
 type SelfOptions = EmptySelfOptions;
 
-export type NuclearDecayAccordionBoxOptions = SelfOptions & AccordionBoxOptions;
+export type NuclearDecayAccordionBoxOptions = SelfOptions & WithRequired<AccordionBoxOptions, 'tandem'>;
 
 export default class NuclearDecayAccordionBox extends AccordionBox {
   public constructor( contentNode: Node, providedOptions?: NuclearDecayAccordionBoxOptions ) {

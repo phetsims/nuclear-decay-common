@@ -10,7 +10,7 @@ import DerivedProperty from '../../../axon/js/DerivedProperty.js';
 import NumberProperty from '../../../axon/js/NumberProperty.js';
 import Property from '../../../axon/js/Property.js';
 import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
-import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
+import optionize from '../../../phet-core/js/optionize.js';
 import AtomInfoUtils from '../../../shred/js/AtomInfoUtils.js';
 
 type SelfOptions = {
@@ -30,7 +30,7 @@ export default class Isotope {
   public readonly halfLifeProperty: TReadOnlyProperty<number | null>;
 
   public constructor( protons: number, neutrons: number, providedOptions?: IsotopeOptions ) {
-    const options = optionize<SelfOptions, EmptySelfOptions, IsotopeOptions>()( {
+    const options = optionize<IsotopeOptions, SelfOptions, IsotopeOptions>()( {
       decaysInto: null
     }, providedOptions );
 

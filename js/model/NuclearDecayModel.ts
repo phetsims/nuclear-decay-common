@@ -107,7 +107,8 @@ export default abstract class NuclearDecayModel implements TModel {
 
     this.selectedIsotopeProperty = new Property<SelectableIsotopes>( 'polonium-211', {
       tandem: options.tandem.createTandem( 'selectedIsotopeProperty' ),
-      phetioValueType: StringUnionIO( SelectableIsotopesValues )
+      phetioValueType: StringUnionIO( SelectableIsotopesValues ),
+      phetioFeatured: true
     } );
 
     this.selectedHalfLifeProperty = new NumberProperty( 1, {
@@ -148,15 +149,18 @@ export default abstract class NuclearDecayModel implements TModel {
     this.isPlayAreaEmptyProperty = new BooleanProperty( true );
 
     this.timeProperty = new NumberProperty( 0, {
-      tandem: options.tandem.createTandem( 'timeProperty' )
+      tandem: options.tandem.createTandem( 'timeProperty' ),
+      phetioFeatured: true
     } );
 
     this.isPlayingProperty = new BooleanProperty( true, {
-      tandem: options.tandem.createTandem( 'isPlayingProperty' )
+      tandem: options.tandem.createTandem( 'isPlayingProperty' ),
+      phetioFeatured: true
     } );
 
     this.timeSpeedProperty = new EnumerationProperty( TimeSpeed.NORMAL, {
-      tandem: options.tandem.createTandem( 'timeSpeedProperty' )
+      tandem: options.tandem.createTandem( 'timeSpeedProperty' ),
+      phetioFeatured: true
     } );
   }
 

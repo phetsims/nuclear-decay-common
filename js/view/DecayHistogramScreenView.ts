@@ -8,6 +8,7 @@
 
 import { ScreenViewOptions } from '../../../joist/js/ScreenView.js';
 import optionize from '../../../phet-core/js/optionize.js';
+import WithRequired from '../../../phet-core/js/types/WithRequired.js';
 import ResetAllButton from '../../../scenery-phet/js/buttons/ResetAllButton.js';
 import RestartButton from '../../../scenery-phet/js/buttons/RestartButton.js';
 import TimeControlNode from '../../../scenery-phet/js/TimeControlNode.js';
@@ -28,7 +29,7 @@ type SelfOptions = {
   numberOfAtomsInPlayAreaWidth?: number;
 };
 
-export type DecayHistogramScreenViewOptions = SelfOptions & NuclearDecayScreenViewOptions;
+export type DecayHistogramScreenViewOptions = SelfOptions & WithRequired<NuclearDecayScreenViewOptions, 'tandem'>;
 
 export default class DecayHistogramScreenView extends NuclearDecayScreenView {
 
@@ -111,7 +112,8 @@ export default class DecayHistogramScreenView extends NuclearDecayScreenView {
 
     const restartButton = new RestartButton( {
       listener: () => model.restart(),
-      enabledProperty: model.timeProperty.derived( time => time > 0 )
+      enabledProperty: model.timeProperty.derived( time => time > 0 ),
+      tandem: options.tandem.createTandem( 'restartButton' )
     } );
     timeControlNode.addPushButton( restartButton, 0 );
 
