@@ -61,13 +61,21 @@ export type NuclearDecayModelOptions = SelfOptions & WithRequired<PhetioObjectOp
 
 export default abstract class NuclearDecayModel extends PhetioObject implements TModel {
 
+  //JPB-REVIEW - Why defined by subclasses?  Seems like a good thing to pass in with options.
   // List of the selectable isotopes in the sim. Defined by subclasses.
   public readonly abstract selectableIsotopes: SelectableIsotopes[];
 
+  //JPB-REVIEW - Again, why defined by subclasses?  That info seems unnecessary and brittle here.
   // What isotope is currently selected in the sim. Defined by subclasses.
   // 'polonium-211' vs 'custom' in Alpha Decay, or 'carbon-14' vs 'hydrogen-3' vs 'custom' in Beta Decay.
   public readonly selectedIsotopeProperty: Property<SelectableIsotopes>;
 
+  //JPB-REVIEW - The half life isn't selected the way the isotope (or nuclide) is.  Can we call it simply
+  //             "halfLifeProperty"?  Or isotopeHalfLifeProperty?
+  //JPB-REVIEW - Do we have any enforcement of the disallowing of change when not custom?
+  //JPB-REVIEW - It seems a little odd to me to have this for all isotopes.  Why not have it be customHalfLifeProperty
+  //             and have the non-custom atoms figure out their own half lives.
+  //JPB-REVIEW - Also, shouldn't we retain the custom half life when switching back and forth between custom and non-custom?
   // Set by default to the half-life of the selected isotope, but can be changed by the user if 'custom' is selected.
   public readonly selectedHalfLifeProperty: NumberProperty;
 
@@ -168,6 +176,10 @@ export default abstract class NuclearDecayModel extends PhetioObject implements 
     this.timeSpeedProperty = new EnumerationProperty( TimeSpeed.NORMAL, {
       tandem: options.tandem.createTandem( 'timeSpeedProperty' ),
       phetioFeatured: true
+    } );
+
+    this.selectedHalfLifeProperty.lazyLink( halfLife => {
+      console.log( `halfLife = ${halfLife}` );
     } );
   }
 

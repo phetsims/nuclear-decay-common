@@ -6,6 +6,9 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
+import DerivedProperty from '../../../axon/js/DerivedProperty.js';
+import Range from '../../../dot/js/Range.js';
+import Dimension2 from '../../../dot/js/Dimension2.js';
 import Shape from '../../../kite/js/Shape.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import WithRequired from '../../../phet-core/js/types/WithRequired.js';
@@ -17,6 +20,7 @@ import Path from '../../../scenery/js/nodes/Path.js';
 import Rectangle from '../../../scenery/js/nodes/Rectangle.js';
 import RichText from '../../../scenery/js/nodes/RichText.js';
 import Text from '../../../scenery/js/nodes/Text.js';
+import HSlider from '../../../sun/js/HSlider.js';
 import HistogramData from '../model/HistogramData.js';
 import NuclearDecayModel, { SelectableIsotopes } from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
@@ -153,8 +157,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       halfLifeIndicator.centerX = GRAPH_X_OFFSET + TICK_INTERVAL_WIDTH * halfLife;
     } );
 
-    // Eraser button (top-right corner, aligned with half-life label)
-
+    // eraser button (top-right corner, aligned with half-life label)
     const eraserButton = new EraserButton( {
       listener: () => {
         model.decayedAtoms.length = 0;
@@ -163,6 +166,24 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     } );
     eraserButton.right = 2 * GRAPH_X_OFFSET + GRAPH_WIDTH;
     eraserButton.bottom = GRAPH_HEIGHT;
+
+    // TODO: See https://github.com/phetsims/alpha-decay/issues/3.  This slider is temporary, for debugging purposes,
+    //  and should be removed once full support for custom half life is added to this control.
+    // half-life slider, visible only for the custom isotope
+    const halfLifeSlider = new HSlider(
+      model.selectedHalfLifeProperty,
+      new Range( 0.1, 4 ), // limit to roughly the graph range for polonium for now.
+      {
+        trackSize: new Dimension2( 80, 2 ),
+        thumbSize: new Dimension2( 10, 18 ),
+        right: 2 * GRAPH_X_OFFSET + GRAPH_WIDTH,
+        top: 0,
+        visibleProperty: new DerivedProperty(
+          [ model.selectedIsotopeProperty ],
+          selectedIsotope => selectedIsotope === 'custom'
+        )
+      }
+    );
 
     // Assemble
 
@@ -180,6 +201,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
         timeText,
         halfLifeIndicator,
         eraserButton,
+        halfLifeSlider,
         dataPointsLayer
       ]
     } );
