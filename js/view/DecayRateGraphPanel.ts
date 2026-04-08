@@ -254,7 +254,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       bottom: GRAPH_HEIGHT
     } );
 
-    model.selectedHalfLifeProperty.link( halfLife => {
+    model.halfLifeProperty.link( halfLife => {
       halfLifeIndicator.centerX = ( halfLife / MAX_TIME ) * GRAPH_WIDTH;
     } );
 

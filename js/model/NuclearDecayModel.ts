@@ -32,12 +32,18 @@ import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import HistogramData from './HistogramData.js';
 import NuclearDecayAtom from './NuclearDecayAtom.js';
 
-//JPB-REVIEW - these two types have some overlap, should we combine to avoid potential maintenance problems?
-export const ValidIsotopeValues = [ 'custom', 'polonium-211', 'lead-207', 'carbon-14', 'nitrogen-14', 'hydrogen-3', 'helium-3', 'helium-2' ] as const;
-export type ValidIsotopes = ( typeof ValidIsotopeValues )[ number ];
-
+// Isotopes that could be selected in the alpha decay or beta decay sim
 export const SelectableIsotopesValues = [ 'custom', 'polonium-211', 'hydrogen-3', 'carbon-14' ] as const;
 export type SelectableIsotopes = ( typeof SelectableIsotopesValues )[ number ];
+
+// Decay products that could be produced in the alpha decay or beta decay sim.
+// These are not selectable by the user, but are used for internal logic and for display purposes.
+export const DecayProductValues = [ 'lead-207', 'nitrogen-14', 'helium-3' ];
+export type DecayProducts = ( typeof DecayProductValues )[ number ];
+
+// All isotopes that are valid in the sim, whether selectable or decay products.
+export const ValidIsotopeValues = [ ...SelectableIsotopesValues, ...DecayProductValues ] as const;
+export type ValidIsotopes = ( typeof ValidIsotopeValues )[ number ];
 
 const ISOTOPE_TO_ATOM_CONFIG = new Map<ValidIsotopes, AtomConfig>( [
   [ 'polonium-211', NuclearDecayCommonConstants.POLONIUM_211 ],
@@ -71,14 +77,12 @@ export default abstract class NuclearDecayModel extends PhetioObject implements 
   // 'polonium-211' vs 'custom' in Alpha Decay, or 'carbon-14' vs 'hydrogen-3' vs 'custom' in Beta Decay.
   public readonly selectedIsotopeProperty: Property<SelectableIsotopes>;
 
-  //JPB-REVIEW - The half life isn't selected the way the isotope (or nuclide) is.  Can we call it simply
-  //             "halfLifeProperty"?  Or isotopeHalfLifeProperty?
   //JPB-REVIEW - Do we have any enforcement of the disallowing of change when not custom?
   //JPB-REVIEW - It seems a little odd to me to have this for all isotopes.  Why not have it be customHalfLifeProperty
   //             and have the non-custom atoms figure out their own half lives.
   //JPB-REVIEW - Also, shouldn't we retain the custom half life when switching back and forth between custom and non-custom?
   // Set by default to the half-life of the selected isotope, but can be changed by the user if 'custom' is selected.
-  public readonly selectedHalfLifeProperty: NumberProperty;
+  public readonly halfLifeProperty: NumberProperty;
 
   public readonly isPlayingProperty: BooleanProperty;
   public readonly timeSpeedProperty: EnumerationProperty<TimeSpeed>;
@@ -127,8 +131,8 @@ export default abstract class NuclearDecayModel extends PhetioObject implements 
       phetioFeatured: true
     } );
 
-    this.selectedHalfLifeProperty = new NumberProperty( 1, {
-      tandem: options.tandem.createTandem( 'selectedHalfLifeProperty' )
+    this.halfLifeProperty = new NumberProperty( 1, {
+      tandem: options.tandem.createTandem( 'halfLifeProperty' )
     } );
 
     this.atomPlacementAreaProperty = new Property<Shape>( Shape.bounds( DEFAULT_ATOM_AREA_BOUNDS ), {
@@ -150,7 +154,7 @@ export default abstract class NuclearDecayModel extends PhetioObject implements 
       const atom = new NuclearDecayAtom( atomConfig, postDecayAtomConfig );
       this.atomPool.push( atom );
     } );
-    this.selectedHalfLifeProperty.value = this.getHalfLife( selectedIsotope );
+    this.halfLifeProperty.value = this.getHalfLife( selectedIsotope );
 
     this.selectedIsotopeProperty.lazyLink( selectedIsotope => {
       this.setNewIsotope( selectedIsotope );
@@ -179,7 +183,7 @@ export default abstract class NuclearDecayModel extends PhetioObject implements 
       phetioFeatured: true
     } );
 
-    this.selectedHalfLifeProperty.lazyLink( halfLife => {
+    this.halfLifeProperty.lazyLink( halfLife => {
       console.log( `halfLife = ${halfLife}` );
     } );
   }
@@ -266,7 +270,7 @@ export default abstract class NuclearDecayModel extends PhetioObject implements 
 
   public getHalfLife( isotope: SelectableIsotopes ): number {
     if ( isotope === 'custom' ) {
-      return this.selectedHalfLifeProperty.value;
+      return this.halfLifeProperty.value;
     }
     const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
     const halfLife = AtomInfoUtils.getNuclideHalfLife( atomConfig.protonCount, atomConfig.neutronCount );
@@ -310,7 +314,7 @@ export default abstract class NuclearDecayModel extends PhetioObject implements 
 
     this.clearAtomLists();
 
-    this.selectedHalfLifeProperty.value = this.getHalfLife( newIsotope );
+    this.halfLifeProperty.value = this.getHalfLife( newIsotope );
 
     const newDecayProduct = NuclearDecayModel.getDecayProduct( newIsotope );
     const newAtomConfig = NuclearDecayModel.getIsotopeAtomConfig( newIsotope );

@@ -7,8 +7,8 @@
  */
 
 import DerivedProperty from '../../../axon/js/DerivedProperty.js';
-import Range from '../../../dot/js/Range.js';
 import Dimension2 from '../../../dot/js/Dimension2.js';
+import Range from '../../../dot/js/Range.js';
 import Shape from '../../../kite/js/Shape.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import WithRequired from '../../../phet-core/js/types/WithRequired.js';
@@ -21,13 +21,13 @@ import Rectangle from '../../../scenery/js/nodes/Rectangle.js';
 import RichText from '../../../scenery/js/nodes/RichText.js';
 import Text from '../../../scenery/js/nodes/Text.js';
 import HSlider from '../../../sun/js/HSlider.js';
+import Tandem from '../../../tandem/js/Tandem.js';
 import HistogramData from '../model/HistogramData.js';
 import NuclearDecayModel, { SelectableIsotopes } from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
-import Tandem from '../../../tandem/js/Tandem.js';
 
 type SelfOptions = EmptySelfOptions;
 
@@ -154,7 +154,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       bottom: GRAPH_HEIGHT
     } );
 
-    model.selectedHalfLifeProperty.link( halfLife => {
+    model.halfLifeProperty.link( halfLife => {
       halfLifeIndicator.centerX = GRAPH_X_OFFSET + TICK_INTERVAL_WIDTH * halfLife;
     } );
 
@@ -172,7 +172,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     //  and should be removed once full support for custom half life is added to this control.
     // half-life slider, visible only for the custom isotope
     const halfLifeSlider = new HSlider(
-      model.selectedHalfLifeProperty,
+      model.halfLifeProperty,
       new Range( 0.1, 4 ), // limit to roughly the graph range for polonium for now.
       {
         trackSize: new Dimension2( 80, 2 ),
