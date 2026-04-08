@@ -6,9 +6,11 @@
  */
 
 import BooleanProperty from '../../../axon/js/BooleanProperty.js';
+import DerivedProperty from '../../../axon/js/DerivedProperty.js';
 import EnumerationProperty from '../../../axon/js/EnumerationProperty.js';
 import NumberProperty from '../../../axon/js/NumberProperty.js';
 import Property from '../../../axon/js/Property.js';
+import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../dot/js/Bounds2.js';
 import dotRandom from '../../../dot/js/dotRandom.js';
 import Range from '../../../dot/js/Range.js';
@@ -26,6 +28,7 @@ import AtomConfig from '../../../shred/js/model/AtomConfig.js';
 import PhetioObject, { PhetioObjectOptions } from '../../../tandem/js/PhetioObject.js';
 import Tandem from '../../../tandem/js/Tandem.js';
 import IOType from '../../../tandem/js/types/IOType.js';
+import NumberIO from '../../../tandem/js/types/NumberIO.js';
 import ReferenceArrayIO from '../../../tandem/js/types/ReferenceArrayIO.js';
 import StringUnionIO from '../../../tandem/js/types/StringUnionIO.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
@@ -33,12 +36,12 @@ import HistogramData from './HistogramData.js';
 import NuclearDecayAtom from './NuclearDecayAtom.js';
 
 // Isotopes that could be selected in the alpha decay or beta decay sim
-export const SelectableIsotopesValues = [ 'custom', 'polonium-211', 'hydrogen-3', 'carbon-14' ] as const;
+export const SelectableIsotopesValues = [ 'polonium-211', 'hydrogen-3', 'carbon-14', 'custom' ] as const;
 export type SelectableIsotopes = ( typeof SelectableIsotopesValues )[ number ];
 
 // Decay products that could be produced in the alpha decay or beta decay sim.
 // These are not selectable by the user, but are used for internal logic and for display purposes.
-export const DecayProductValues = [ 'lead-207', 'nitrogen-14', 'helium-3' ];
+export const DecayProductValues = [ 'lead-207', 'nitrogen-14', 'helium-3', 'custom-decayed' ];
 export type DecayProducts = ( typeof DecayProductValues )[ number ];
 
 // All isotopes that are valid in the sim, whether selectable or decay products.
@@ -53,7 +56,8 @@ const ISOTOPE_TO_ATOM_CONFIG = new Map<ValidIsotopes, AtomConfig>( [
   [ 'hydrogen-3', NuclearDecayCommonConstants.HYDROGEN_3 ],
   [ 'helium-3', NuclearDecayCommonConstants.HELIUM_3 ],
   [ 'helium-2', NuclearDecayCommonConstants.ALPHA_PARTICLE ],
-  [ 'custom', new AtomConfig( 1, 1, 1 ) ]
+  [ 'custom', NuclearDecayCommonConstants.CUSTOM_UNDECAYED ],
+  [ 'custom-decayed', NuclearDecayCommonConstants.CUSTOM_DECAYED ]
 ] );
 
 // Bounds where the atoms can be placed, in model coordinates.  Decay products are allowed to move outside of these
@@ -77,12 +81,12 @@ export default abstract class NuclearDecayModel extends PhetioObject implements 
   // 'polonium-211' vs 'custom' in Alpha Decay, or 'carbon-14' vs 'hydrogen-3' vs 'custom' in Beta Decay.
   public readonly selectedIsotopeProperty: Property<SelectableIsotopes>;
 
-  //JPB-REVIEW - Do we have any enforcement of the disallowing of change when not custom?
-  //JPB-REVIEW - It seems a little odd to me to have this for all isotopes.  Why not have it be customHalfLifeProperty
-  //             and have the non-custom atoms figure out their own half lives.
-  //JPB-REVIEW - Also, shouldn't we retain the custom half life when switching back and forth between custom and non-custom?
-  // Set by default to the half-life of the selected isotope, but can be changed by the user if 'custom' is selected.
-  public readonly halfLifeProperty: NumberProperty;
+  // The user-editable half-life for custom isotopes, in seconds.
+  public readonly customHalfLifeProperty: NumberProperty;
+
+  // The effective half-life for the currently selected isotope. For non-custom isotopes this is derived from the
+  // nuclide database; for custom isotopes it reflects the user-controlled customHalfLifeProperty.
+  public readonly halfLifeProperty: TReadOnlyProperty<number>;
 
   public readonly isPlayingProperty: BooleanProperty;
   public readonly timeSpeedProperty: EnumerationProperty<TimeSpeed>;
@@ -131,9 +135,29 @@ export default abstract class NuclearDecayModel extends PhetioObject implements 
       phetioFeatured: true
     } );
 
-    this.halfLifeProperty = new NumberProperty( 1, {
-      tandem: options.tandem.createTandem( 'halfLifeProperty' )
+    this.customHalfLifeProperty = new NumberProperty( 2, {
+      tandem: options.tandem.createTandem( 'customHalfLifeProperty' )
     } );
+
+    // The effective half-life for the selected isotope. For real isotopes (e.g. polonium-211), this looks up the
+    // known half-life from the nuclide database via AtomInfoUtils. For the 'custom' isotope, it reflects the
+    // user-controlled customHalfLifeProperty, allowing the half-life to be set via a slider. Because this is a
+    // DerivedProperty, it automatically updates when the user switches isotopes or adjusts the custom half-life.
+    this.halfLifeProperty = new DerivedProperty(
+      [ this.selectedIsotopeProperty, this.customHalfLifeProperty ],
+      ( selectedIsotope, customHalfLife ) => {
+        if ( selectedIsotope === 'custom' ) {
+          return customHalfLife;
+        }
+        const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( selectedIsotope );
+        const halfLife = AtomInfoUtils.getNuclideHalfLife( atomConfig.protonCount, atomConfig.neutronCount );
+        affirm( halfLife !== null, 'Should provide a valid isotope with a known half-life' );
+        return halfLife;
+      }, {
+        tandem: options.tandem.createTandem( 'halfLifeProperty' ),
+        phetioValueType: NumberIO
+      }
+    );
 
     this.atomPlacementAreaProperty = new Property<Shape>( Shape.bounds( DEFAULT_ATOM_AREA_BOUNDS ), {
       tandem: Tandem.OPT_OUT
@@ -154,10 +178,18 @@ export default abstract class NuclearDecayModel extends PhetioObject implements 
       const atom = new NuclearDecayAtom( atomConfig, postDecayAtomConfig );
       this.atomPool.push( atom );
     } );
-    this.halfLifeProperty.value = this.getHalfLife( selectedIsotope );
 
     this.selectedIsotopeProperty.lazyLink( selectedIsotope => {
       this.setNewIsotope( selectedIsotope );
+    } );
+
+    // When the custom half-life changes, push the new value to all atoms in the pool.
+    this.customHalfLifeProperty.lazyLink( customHalfLife => {
+      if ( this.selectedIsotopeProperty.value === 'custom' ) {
+        this.atomPool.forEach( atom => {
+          atom.halfLife = customHalfLife;
+        } );
+      }
     } );
 
     this.activeAtoms = [];
@@ -181,10 +213,6 @@ export default abstract class NuclearDecayModel extends PhetioObject implements 
     this.timeSpeedProperty = new EnumerationProperty( TimeSpeed.NORMAL, {
       tandem: options.tandem.createTandem( 'timeSpeedProperty' ),
       phetioFeatured: true
-    } );
-
-    this.halfLifeProperty.lazyLink( halfLife => {
-      console.log( `halfLife = ${halfLife}` );
     } );
   }
 
@@ -240,7 +268,7 @@ export default abstract class NuclearDecayModel extends PhetioObject implements 
    * Get a string with the mass and symbol of an isotope (211-Pb) for example, or a custom string if 'custom' is selected.
    */
   public static getIsotopeMassAndSymbolString( isotope: ValidIsotopes, customAnswer = '' ): string {
-    if ( isotope === 'custom' ) { return customAnswer; }
+    if ( isotope === 'custom' || isotope === 'custom-decayed' ) { return customAnswer; }
     const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
     return AtomNameUtils.getMassAndSymbol( atomConfig.protonCount, atomConfig.neutronCount );
   }
@@ -253,7 +281,7 @@ export default abstract class NuclearDecayModel extends PhetioObject implements 
   public static getDecayProduct( isotope: SelectableIsotopes ): ValidIsotopes {
     let decayProduct: ValidIsotopes | null = null;
     if ( isotope === 'custom' ) {
-      decayProduct = 'custom';
+      decayProduct = 'custom-decayed';
     }
     else if ( isotope === 'polonium-211' ) {
       decayProduct = 'lead-207';
@@ -270,7 +298,7 @@ export default abstract class NuclearDecayModel extends PhetioObject implements 
 
   public getHalfLife( isotope: SelectableIsotopes ): number {
     if ( isotope === 'custom' ) {
-      return this.halfLifeProperty.value;
+      return this.customHalfLifeProperty.value;
     }
     const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
     const halfLife = AtomInfoUtils.getNuclideHalfLife( atomConfig.protonCount, atomConfig.neutronCount );
@@ -279,10 +307,11 @@ export default abstract class NuclearDecayModel extends PhetioObject implements 
   }
 
   /**
-   * When adding many atoms, reset everything and then add them.
+   * When adding many atoms, clear the existing atoms and then add new ones.
    */
   public activateMultipleAtoms( n: number ): void {
-    this.reset();
+    this.clearAtomLists();
+    this.timeProperty.reset();
     // Activate multiple atoms with random positions
     _.times( n, () => this.activateAtom( true ) );
   }
@@ -295,26 +324,23 @@ export default abstract class NuclearDecayModel extends PhetioObject implements 
       // Max number of atoms already active, do not add more.
       return;
     }
-    const selectedIsotope = this.selectedIsotopeProperty.value;
-    if ( selectedIsotope !== 'custom' ) {
-      const atom = this.atomPool.find( atom => !atom.isActive );
-      affirm( atom, 'No available atoms to activate!' );
-      atom.isActive = true;
-      if ( randomizePosition ) {
-        atom.position = this.getRandomPositionWithinBounds();
-      }
-      this.activeAtoms.push( atom );
+    const atom = this.atomPool.find( atom => !atom.isActive );
+    affirm( atom, 'No available atoms to activate!' );
+
+    // Activate the atom.
+    atom.isActive = true;
+
+    // TODO: We probably need to make sure the config is correct here, see https://github.com/phetsims/alpha-decay/issues/3.
+
+    if ( randomizePosition ) {
+      atom.position = this.getRandomPositionWithinBounds();
     }
-    else {
-      console.warn( 'Custom atoms not yet supported.' );
-    }
+    this.activeAtoms.push( atom );
   }
 
   private setNewIsotope( newIsotope: SelectableIsotopes ): void {
 
     this.clearAtomLists();
-
-    this.halfLifeProperty.value = this.getHalfLife( newIsotope );
 
     const newDecayProduct = NuclearDecayModel.getDecayProduct( newIsotope );
     const newAtomConfig = NuclearDecayModel.getIsotopeAtomConfig( newIsotope );
@@ -324,7 +350,13 @@ export default abstract class NuclearDecayModel extends PhetioObject implements 
       atom.reset();
       atom.atomConfigBeforeDecay = newAtomConfig;
       atom.atomConfigAfterDecay = newPostDecayAtomConfig;
-      atom.halfLife = this.getHalfLife( newIsotope );
+
+      if ( newIsotope === 'custom' ) {
+        atom.halfLife = this.getHalfLife( newIsotope );
+      }
+      else {
+        atom.deriveHalfLife();
+      }
     } );
   }
 
@@ -359,6 +391,8 @@ export default abstract class NuclearDecayModel extends PhetioObject implements 
    */
   public reset(): void {
     this.clearAtomLists();
+    this.selectedIsotopeProperty.reset();
+    this.customHalfLifeProperty.reset();
     this.decayedAtoms.push();
     this.isPlayingProperty.reset();
     this.timeSpeedProperty.reset();

@@ -70,7 +70,6 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
     const selectedIsotopeSymbolProperty = model.selectedIsotopeProperty.derived( ( isotope: SelectableIsotopes ) => {
       return NuclearDecayModel.getIsotopeMassAndSymbolString( isotope, 'A' );
-
     } );
 
     const decayProductSymbolProperty = model.selectedIsotopeProperty.derived( ( isotope: SelectableIsotopes ) => {
@@ -172,7 +171,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     //  and should be removed once full support for custom half life is added to this control.
     // half-life slider, visible only for the custom isotope
     const halfLifeSlider = new HSlider(
-      model.halfLifeProperty,
+      model.customHalfLifeProperty,
       new Range( 0.1, 4 ), // limit to roughly the graph range for polonium for now.
       {
         trackSize: new Dimension2( 80, 2 ),

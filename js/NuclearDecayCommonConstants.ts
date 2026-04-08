@@ -29,6 +29,13 @@ export default class NuclearDecayCommonConstants {
   public static readonly HYDROGEN_3 = new AtomConfig( 1, 2, 1 );
   public static readonly HELIUM_3 = new AtomConfig( 2, 1, 2 );
 
+  // Custom atom configurations for user-defined half-lives. These use proton/neutron counts (200, 180) that are well
+  // above the heaviest known real element (Oganesson, Z=118), so they will never collide with real isotope data in
+  // AtomInfoUtils lookups. This allows custom atoms to flow through the same AtomConfig-based infrastructure without
+  // being mistaken for a real nuclide.
+  public static readonly CUSTOM_UNDECAYED = new AtomConfig( 200, 200, 200 );
+  public static readonly CUSTOM_DECAYED = new AtomConfig( 180, 180, 180 );
+
   // Screen view margins
   public static readonly SCREEN_VIEW_X_MARGIN = 15;
   public static readonly SCREEN_VIEW_Y_MARGIN = 15;

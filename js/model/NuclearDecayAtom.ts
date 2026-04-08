@@ -9,12 +9,14 @@
 import dotRandom from '../../../dot/js/dotRandom.js';
 import Vector2, { Vector2StateObject } from '../../../dot/js/Vector2.js';
 import { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
+import affirm from '../../../perennial-alias/js/browser-and-node/affirm.js';
 import AtomInfoUtils from '../../../shred/js/AtomInfoUtils.js';
 import AtomConfig, { AtomConfigStateObject } from '../../../shred/js/model/AtomConfig.js';
 import BooleanIO from '../../../tandem/js/types/BooleanIO.js';
 import IOType from '../../../tandem/js/types/IOType.js';
 import NullableIO from '../../../tandem/js/types/NullableIO.js';
 import NumberIO from '../../../tandem/js/types/NumberIO.js';
+import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 
 export type NuclearDecayAtomStateObject = {
   atomConfigBeforeDecay: AtomConfigStateObject;
@@ -40,7 +42,7 @@ export default class NuclearDecayAtom {
   public atomConfigAfterDecay: AtomConfig;
 
   // Half-life of the isotope, in seconds.
-  public halfLife: number;
+  private _halfLife: number;
 
   // Whether the atom is in the play area or not
   public isActive = false;
@@ -69,9 +71,11 @@ export default class NuclearDecayAtom {
     this.atomConfigBeforeDecay = atomConfigBeforeDecay;
     this.atomConfigAfterDecay = atomConfigAfterDecay;
 
-    const halfLife = AtomInfoUtils.getNuclideHalfLife( atomConfigBeforeDecay.protonCount, atomConfigBeforeDecay.neutronCount );
-    this.halfLife = halfLife ? halfLife : Infinity; // Default to a half-life of INFINITY if the nuclide is not found in the data, which means it will decay immediately upon activation.
-
+    const halfLife = AtomInfoUtils.getNuclideHalfLife(
+      atomConfigBeforeDecay.protonCount,
+      atomConfigBeforeDecay.neutronCount
+    );
+    this._halfLife = halfLife ? halfLife : Infinity; // Default to a half-life of INFINITY if the nuclide is not found in the data, which means it will decay immediately upon activation.
   }
 
   /**
@@ -97,6 +101,7 @@ export default class NuclearDecayAtom {
 
   public copy(): NuclearDecayAtom {
     const newAtom = new NuclearDecayAtom( this.atomConfigBeforeDecay, this.atomConfigAfterDecay );
+    newAtom._halfLife = this._halfLife;
     newAtom.isActive = this.isActive;
     newAtom.hasDecayed = this.hasDecayed;
     newAtom.time = this.time;
@@ -116,10 +121,29 @@ export default class NuclearDecayAtom {
     this.position = referenceAtom.position.copy();
   }
 
+  /**
+   * Derives the half-life from the current atomConfigBeforeDecay using the nuclide database. Used when switching
+   * to a non-custom isotope whose half-life is a known physical constant.
+   */
+  public deriveHalfLife(): void {
+    const halfLife = AtomInfoUtils.getNuclideHalfLife( this.atomConfigBeforeDecay.protonCount, this.atomConfigBeforeDecay.neutronCount );
+    this._halfLife = halfLife ? halfLife : Infinity;
+  }
+
+  public get halfLife(): number {
+    return this._halfLife;
+  }
+
+  public set halfLife( value: number ) {
+    affirm( this.atomConfigBeforeDecay.equals( NuclearDecayCommonConstants.CUSTOM_UNDECAYED ),
+      'halfLife can only be set directly on custom atoms' );
+    this._halfLife = value;
+  }
+
   public step( dt: number ): void {
-    if ( this.halfLife && !this.hasDecayed ) {
+    if ( this._halfLife && !this.hasDecayed ) {
       this.time += dt; // Only advance time if the atom has not decayed.
-      const probabilityOfDecay = NuclearDecayAtom.decayProbabilityOverInterval( this.halfLife, dt );
+      const probabilityOfDecay = NuclearDecayAtom.decayProbabilityOverInterval( this._halfLife, dt );
       if ( dotRandom.nextDouble() < probabilityOfDecay ) {
         this.hasDecayed = true;
       }
@@ -164,6 +188,7 @@ export default class NuclearDecayAtom {
       );
       atom.isActive = stateObject.isActive;
       atom.hasDecayed = stateObject.hasDecayed;
+      atom._halfLife = stateObject.halfLife;
       atom.time = stateObject.time;
       atom.decayTime = stateObject.decayTime;
       atom.position = Vector2.Vector2IO.fromStateObject( stateObject.position );
