@@ -32,6 +32,7 @@ import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import HistogramData from './HistogramData.js';
 import NuclearDecayAtom from './NuclearDecayAtom.js';
 
+//JPB-REVIEW - these two types have some overlap, should we combine to avoid potential maintenance problems?
 export const ValidIsotopeValues = [ 'custom', 'polonium-211', 'lead-207', 'carbon-14', 'nitrogen-14', 'hydrogen-3', 'helium-3', 'helium-2' ] as const;
 export type ValidIsotopes = ( typeof ValidIsotopeValues )[ number ];
 
