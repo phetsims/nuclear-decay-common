@@ -28,6 +28,7 @@ import AtomConfig from '../../../shred/js/model/AtomConfig.js';
 import PhetioObject, { PhetioObjectOptions } from '../../../tandem/js/PhetioObject.js';
 import Tandem from '../../../tandem/js/Tandem.js';
 import IOType from '../../../tandem/js/types/IOType.js';
+import NullableIO from '../../../tandem/js/types/NullableIO.js';
 import NumberIO from '../../../tandem/js/types/NumberIO.js';
 import ReferenceArrayIO from '../../../tandem/js/types/ReferenceArrayIO.js';
 import StringUnionIO from '../../../tandem/js/types/StringUnionIO.js';
@@ -90,6 +91,9 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   public readonly timeSpeedProperty: EnumerationProperty<TimeSpeed>;
   public readonly timeProperty: NumberProperty;
 
+  // The time at which the last atom decayed, or null if it hasn't decayed yet.
+  public readonly lastDecayTimeProperty: Property<number | null>;
+
   // Pool of all existing atoms originally set to inactive
   public readonly atomPool: NuclearDecayAtom[] = [];
 
@@ -103,15 +107,23 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   // Useful especially for graphing atoms that are no longer active in the play area.
   public readonly decayedAtoms: NuclearDecayAtom[];
 
+  // Number of undecayed atoms remaining.
+  public readonly undecayedCountProperty: NumberProperty;
+
+  // Number of decayed atoms.
+  public readonly decayedCountProperty: NumberProperty;
+
+  // Current percentage of undecayed atoms (0-1).
+  public readonly percentageOfUndecayedProperty: TReadOnlyProperty<number>;
+
+  // Current percentage of decayed atoms (0-1).
+  public readonly percentageOfDecayedProperty: TReadOnlyProperty<number>;
+
   // The area in which atoms can be placed.  This is in model coordinates and can (and should) be updated by the view
   // once the view is constructed and therefore knows what space is available in the screen view.
   public readonly atomPlacementAreaProperty: Property<Shape>;
 
   public readonly isPlayAreaEmptyProperty: BooleanProperty;
-
-  // TODO: Move to a SingleAtomModel or something https://github.com/phetsims/alpha-decay/issues/3
-  // Whether at least one atom has decayed.
-  public readonly hasDecayOccurredProperty: BooleanProperty;
 
   public readonly maxNumberOfAtoms: number;
 
@@ -139,7 +151,9 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     } );
 
     this.customHalfLifeProperty = new NumberProperty( 2, {
-      tandem: options.tandem.createTandem( 'customHalfLifeProperty' )
+      tandem: options.tandem.createTandem( 'customHalfLifeProperty' ),
+      range: new Range( 0, Number.POSITIVE_INFINITY ),
+      phetioFeatured: true
     } );
 
     // The effective half-life for the selected isotope. For real isotopes (e.g. polonium-211), this looks up the
@@ -164,10 +178,6 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
     this.atomPlacementAreaProperty = new Property<Shape>( Shape.bounds( DEFAULT_ATOM_AREA_BOUNDS ), {
       tandem: Tandem.OPT_OUT
-    } );
-
-    this.hasDecayOccurredProperty = new BooleanProperty( false, {
-      tandem: options.tandem.createTandem( 'hasDecayOccurredProperty' )
     } );
 
     this.maxNumberOfAtoms = options.maxNumberOfAtoms!;
@@ -199,12 +209,54 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     this.undecayedAtoms = [];
     this.decayedAtoms = [];
 
+    this.undecayedCountProperty = new NumberProperty( 0, {
+      tandem: options.tandem.createTandem( 'undecayedCountProperty' ),
+      phetioReadOnly: true,
+      phetioFeatured: true
+    } );
+
+    this.decayedCountProperty = new NumberProperty( 0, {
+      tandem: options.tandem.createTandem( 'decayedCountProperty' ),
+      phetioReadOnly: true,
+      phetioFeatured: true
+    } );
+
+    this.percentageOfUndecayedProperty = new DerivedProperty(
+      [ this.undecayedCountProperty, this.decayedCountProperty ],
+      ( undecayed, decayed ) => {
+        const total = undecayed + decayed;
+        return total > 0 ? undecayed / total : 1;
+      }, {
+        phetioValueType: NumberIO,
+        tandem: options.tandem.createTandem( 'percentageOfUndecayedProperty' )
+      }
+    );
+
+    this.percentageOfDecayedProperty = new DerivedProperty(
+      [ this.undecayedCountProperty, this.decayedCountProperty ],
+      ( undecayed, decayed ) => {
+        const total = undecayed + decayed;
+        return total > 0 ? decayed / total : 1;
+      }, {
+        phetioValueType: NumberIO,
+        tandem: options.tandem.createTandem( 'percentageOfDecayedProperty' )
+      }
+    );
+
     this.histogramData = new HistogramData( this );
 
     this.isPlayAreaEmptyProperty = new BooleanProperty( true );
 
     this.timeProperty = new NumberProperty( 0, {
       tandem: options.tandem.createTandem( 'timeProperty' ),
+      phetioReadOnly: true,
+      phetioFeatured: true
+    } );
+
+    this.lastDecayTimeProperty = new Property<number | null>( null, {
+      tandem: options.tandem.createTandem( 'lastDecayTimeProperty' ),
+      phetioValueType: NullableIO( NumberIO ),
+      phetioReadOnly: true,
       phetioFeatured: true
     } );
 
@@ -230,7 +282,6 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     this.isPlayAreaEmptyProperty.value = this.activeAtoms.length === 0;
 
     if ( this.isPlayingProperty.value && !this.isPlayAreaEmptyProperty.value ) {
-      this.hasDecayOccurredProperty.value = this.activeAtoms.some( atom => atom.hasDecayed );
       const timeSpeedScale = this.timeSpeedProperty.value === TimeSpeed.NORMAL ?
                              NuclearDecayCommonConstants.NORMAL_SPEED_SCALE :
                              NuclearDecayCommonConstants.SLOW_SPEED_SCALE;
@@ -240,6 +291,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
         atom.step( dt * timeSpeedScale );
 
         if ( !hadDecayed && atom.hasDecayed ) {
+          this.lastDecayTimeProperty.value = this.timeProperty.value;
           atom.decayTime = this.timeProperty.value;
           this.undecayedAtoms = this.activeAtoms.filter( atom => !atom.hasDecayed );
           this.decayedAtoms.push( atom.copy() );
@@ -248,6 +300,8 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     }
 
     this.histogramData.step();
+    this.undecayedCountProperty.value = this.undecayedAtoms.length;
+    this.decayedCountProperty.value = this.decayedAtoms.length;
   }
 
   /**
@@ -400,6 +454,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     this.isPlayingProperty.reset();
     this.timeSpeedProperty.reset();
     this.timeProperty.reset();
+    this.lastDecayTimeProperty.reset();
   }
 
   /**
@@ -453,7 +508,6 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       model.decayedAtoms.push( ...decayedAtomsIO.fromStateObject( stateObject.decayedAtoms ) );
 
       model.isPlayAreaEmptyProperty.value = model.activeAtoms.length === 0;
-      model.hasDecayOccurredProperty.value = model.activeAtoms.some( atom => atom.hasDecayed );
     }
   } );
 }

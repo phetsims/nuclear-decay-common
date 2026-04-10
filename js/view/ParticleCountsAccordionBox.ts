@@ -13,6 +13,7 @@ import RichText from '../../../scenery/js/nodes/RichText.js';
 import Text from '../../../scenery/js/nodes/Text.js';
 import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
+import SingleAtomDecayModel from '../model/SingleAtomDecayModel.js';
 import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
@@ -23,7 +24,7 @@ type SelfOptions = EmptySelfOptions;
 export type ParticleCountsAccordionBoxOptions = SelfOptions & NuclearDecayAccordionBoxOptions;
 
 export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox {
-  public constructor( model: NuclearDecayModel, providedOptions?: ParticleCountsAccordionBoxOptions ) {
+  public constructor( model: SingleAtomDecayModel, providedOptions?: ParticleCountsAccordionBoxOptions ) {
 
     const isotopeInfoTitleStringProperty = new DerivedStringProperty(
       [
