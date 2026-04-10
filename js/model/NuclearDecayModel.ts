@@ -70,14 +70,12 @@ type SelfOptions = {
 
 export type NuclearDecayModelOptions = SelfOptions & WithRequired<PhetioObjectOptions, 'tandem'>;
 
-export default abstract class NuclearDecayModel extends PhetioObject implements TModel {
+export default class NuclearDecayModel extends PhetioObject implements TModel {
 
-  //JPB-REVIEW - Why defined by subclasses?  Seems like a good thing to pass in with options.
-  // List of the selectable isotopes in the sim. Defined by subclasses.
-  public readonly abstract selectableIsotopes: SelectableIsotopes[];
+  // List of the selectable isotopes in the sim. Provided by subclasses
+  public readonly selectableIsotopes: SelectableIsotopes[];
 
-  //JPB-REVIEW - Again, why defined by subclasses?  That info seems unnecessary and brittle here.
-  // What isotope is currently selected in the sim. Defined by subclasses.
+  // What isotope is currently selected in the sim.
   // 'polonium-211' vs 'custom' in Alpha Decay, or 'carbon-14' vs 'hydrogen-3' vs 'custom' in Beta Decay.
   public readonly selectedIsotopeProperty: Property<SelectableIsotopes>;
 
@@ -119,7 +117,10 @@ export default abstract class NuclearDecayModel extends PhetioObject implements 
 
   public readonly histogramData: HistogramData;
 
-  protected constructor( providedOptions?: NuclearDecayModelOptions ) {
+  protected constructor(
+    selectableIsotopes: SelectableIsotopes[],
+    providedOptions?: NuclearDecayModelOptions
+  ) {
 
     const options = optionize<NuclearDecayModelOptions, SelfOptions, PhetioObjectOptions>()( {
       maxNumberOfAtoms: NuclearDecayCommonConstants.MAX_ATOMS,
@@ -128,6 +129,8 @@ export default abstract class NuclearDecayModel extends PhetioObject implements 
     }, providedOptions );
 
     super( options );
+
+    this.selectableIsotopes = selectableIsotopes;
 
     this.selectedIsotopeProperty = new Property<SelectableIsotopes>( 'polonium-211', {
       tandem: options.tandem.createTandem( 'selectedIsotopeProperty' ),
