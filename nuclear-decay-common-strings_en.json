@@ -5,8 +5,8 @@
   "resetNucleus": {
     "value": "Reset Nucleus"
   },
-  "equation": {
-    "value": "Equation"
+  "nuclearEquation": {
+    "value": "Nuclear Equation"
   },
   "halfLife": {
     "value": "Half-life"

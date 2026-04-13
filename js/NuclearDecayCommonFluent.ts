@@ -25,7 +25,7 @@ const addToMapIfDefined = ( key: string, path: string ) => {
 
 addToMapIfDefined( 'nuclear_decay_common_title', 'nuclear-decay-common.titleStringProperty' );
 addToMapIfDefined( 'resetNucleus', 'resetNucleusStringProperty' );
-addToMapIfDefined( 'equation', 'equationStringProperty' );
+addToMapIfDefined( 'nuclearEquation', 'nuclearEquationStringProperty' );
 addToMapIfDefined( 'halfLife', 'halfLifeStringProperty' );
 addToMapIfDefined( 'isotope', 'isotopeStringProperty' );
 addToMapIfDefined( 'time', 'timeStringProperty' );
@@ -63,7 +63,7 @@ const NuclearDecayCommonFluent = {
     titleStringProperty: _.get( NuclearDecayCommonStrings, 'nuclear-decay-common.titleStringProperty' )
   },
   resetNucleusStringProperty: _.get( NuclearDecayCommonStrings, 'resetNucleusStringProperty' ),
-  equationStringProperty: _.get( NuclearDecayCommonStrings, 'equationStringProperty' ),
+  nuclearEquationStringProperty: _.get( NuclearDecayCommonStrings, 'nuclearEquationStringProperty' ),
   halfLifeStringProperty: _.get( NuclearDecayCommonStrings, 'halfLifeStringProperty' ),
   isotopeStringProperty: _.get( NuclearDecayCommonStrings, 'isotopeStringProperty' ),
   timeStringProperty: _.get( NuclearDecayCommonStrings, 'timeStringProperty' ),

@@ -18,8 +18,8 @@ type StringsType = {
   };
   'resetNucleus': string;
   'resetNucleusStringProperty': LocalizedStringProperty;
-  'equation': string;
-  'equationStringProperty': LocalizedStringProperty;
+  'nuclearEquation': string;
+  'nuclearEquationStringProperty': LocalizedStringProperty;
   'halfLife': string;
   'halfLifeStringProperty': LocalizedStringProperty;
   'isotope': string;

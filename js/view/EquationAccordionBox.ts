@@ -27,7 +27,7 @@ export default class EquationAccordionBox extends NuclearDecayAccordionBox {
     providedOptions?: EquationAccordionBoxOptions
   ) {
 
-    const titleNode = new Text( NuclearDecayCommonFluent.equationStringProperty, {
+    const titleNode = new Text( NuclearDecayCommonFluent.nuclearEquationStringProperty, {
       font: NuclearDecayCommonConstants.TITLE_BOLD_FONT,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );

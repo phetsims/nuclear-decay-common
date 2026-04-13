@@ -232,8 +232,8 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
         const y = GRAPH_HEIGHT - ( n + 1 ) * BOX_HEIGHT;
         this.dataPointsLayer.addChild( new Rectangle(
           bin * TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET, y, BOX_WIDTH, BOX_HEIGHT, {
-            fill: 'grey',
-            stroke: 'black',
+            fill: 'black',
+            stroke: 'grey',
             lineWidth: 1
           }
         ) );

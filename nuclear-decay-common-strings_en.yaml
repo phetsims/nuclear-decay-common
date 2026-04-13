@@ -1,6 +1,6 @@
 nuclear-decay-common.title: 'Nuclear Decay Common'
 resetNucleus: 'Reset Nucleus'
-equation: 'Equation'
+nuclearEquation: 'Nuclear Equation'
 halfLife: 'Half-life'
 isotope: 'Isotope'
 time: 'Time (s)'
