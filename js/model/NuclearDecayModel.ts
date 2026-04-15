@@ -107,6 +107,9 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   // Useful especially for graphing atoms that are no longer active in the play area.
   public readonly decayedAtoms: NuclearDecayAtom[];
 
+  // Number of active atoms
+  public readonly activeAtomsCountProperty: TReadOnlyProperty<number>;
+
   // Number of undecayed atoms remaining.
   public readonly undecayedCountProperty: NumberProperty;
 
@@ -147,6 +150,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     this.selectedIsotopeProperty = new Property<SelectableIsotopes>( 'polonium-211', {
       tandem: options.tandem.createTandem( 'selectedIsotopeProperty' ),
       phetioValueType: StringUnionIO( SelectableIsotopesValues ),
+      validValues: SelectableIsotopesValues,
       phetioFeatured: true
     } );
 
@@ -220,6 +224,15 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       phetioReadOnly: true,
       phetioFeatured: true
     } );
+
+    this.activeAtomsCountProperty = new DerivedProperty(
+      [ this.undecayedCountProperty, this.decayedCountProperty ],
+      ( undecayed, decayed ) => undecayed + decayed, {
+        tandem: options.tandem.createTandem( 'activeAtomsCountProperty' ),
+        phetioFeatured: true,
+        phetioValueType: NumberIO
+      }
+    );
 
     this.percentageOfUndecayedProperty = new DerivedProperty(
       [ this.undecayedCountProperty, this.decayedCountProperty ],

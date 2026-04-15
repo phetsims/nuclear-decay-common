@@ -6,6 +6,7 @@
  */
 
 import BooleanProperty from '../../../axon/js/BooleanProperty.js';
+import Multilink from '../../../axon/js/Multilink.js';
 import NumberProperty from '../../../axon/js/NumberProperty.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import NuclearDecayModel, { NuclearDecayModelOptions, SelectableIsotopes } from './NuclearDecayModel.js';
@@ -24,6 +25,10 @@ export default class SingleAtomDecayModel extends NuclearDecayModel {
 
   // Whether at least one atom has decayed.
   public readonly hasDecayOccurredProperty: BooleanProperty;
+
+  public readonly protonCountProperty: NumberProperty;
+
+  public readonly neutronCountProperty: NumberProperty;
 
   public constructor(
     selectableIsotopes: SelectableIsotopes[],
@@ -47,6 +52,28 @@ export default class SingleAtomDecayModel extends NuclearDecayModel {
     this.initialEnergyProperty = new NumberProperty( 0, {
       tandem: options.tandem.createTandem( 'initialEnergyProperty' )
     } );
+
+    const particleCountsTandem = options.tandem.createTandem( 'particleCounts' );
+    this.protonCountProperty = new NumberProperty( 0, {
+      tandem: particleCountsTandem.createTandem( 'protonCountProperty' )
+    } );
+
+    this.neutronCountProperty = new NumberProperty( 0, {
+      tandem: particleCountsTandem.createTandem( 'neutronCountProperty' )
+    } );
+
+    Multilink.multilink(
+      [
+        this.selectedIsotopeProperty,
+        this.hasDecayOccurredProperty
+      ], ( isotope, hasDecayOcurred ) => {
+        const decayProduct = NuclearDecayModel.getDecayProduct( isotope );
+        const isotopeAtomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
+        const decayAtomConfig = NuclearDecayModel.getIsotopeAtomConfig( decayProduct );
+        this.protonCountProperty.value = hasDecayOcurred ? decayAtomConfig.protonCount : isotopeAtomConfig.protonCount;
+        this.neutronCountProperty.value = hasDecayOcurred ? decayAtomConfig.neutronCount : isotopeAtomConfig.neutronCount;
+      }
+    );
   }
 
   public override step( dt: number ): void {
