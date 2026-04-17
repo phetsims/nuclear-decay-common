@@ -200,7 +200,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
 
     // Distribute y-tick labels evenly along graph height
     const yTickContainer = new Node();
-    const yLabels = [ '100%', '75%', '50%', '25%', '0' ];
+    const yLabels = [ '100', '75', '50', '25', '0' ];
     yLabels.forEach( ( label, index ) => {
       const y = ( index / ( yLabels.length - 1 ) ) * GRAPH_HEIGHT;
       yTickContainer.addChild( new Text( label, {
@@ -285,7 +285,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     graphArea.addChild( xAxisLabel );
 
     // Position y-axis label to the left
-    yAxisLabel.rightCenter = new Vector2( -40, GRAPH_HEIGHT / 2 );
+    yAxisLabel.rightCenter = new Vector2( -30, GRAPH_HEIGHT / 2 );
     graphArea.addChild( yAxisLabel );
 
     // Assemble the full layout
