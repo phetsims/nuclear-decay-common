@@ -46,6 +46,7 @@ addToMapIfDefined( 'electronCloud', 'electronCloudStringProperty' );
 addToMapIfDefined( 'stopwatch', 'stopwatchStringProperty' );
 addToMapIfDefined( 'dataProbe', 'dataProbeStringProperty' );
 addToMapIfDefined( 'percentRemaining', 'percentRemainingStringProperty' );
+addToMapIfDefined( 'timeScale', 'timeScaleStringProperty' );
 
 // A function that creates contents for a new Fluent file, which will be needed if any string changes.
 const createFluentFile = (): string => {
@@ -89,7 +90,8 @@ const NuclearDecayCommonFluent = {
   electronCloudStringProperty: _.get( NuclearDecayCommonStrings, 'electronCloudStringProperty' ),
   stopwatchStringProperty: _.get( NuclearDecayCommonStrings, 'stopwatchStringProperty' ),
   dataProbeStringProperty: _.get( NuclearDecayCommonStrings, 'dataProbeStringProperty' ),
-  percentRemainingStringProperty: _.get( NuclearDecayCommonStrings, 'percentRemainingStringProperty' )
+  percentRemainingStringProperty: _.get( NuclearDecayCommonStrings, 'percentRemainingStringProperty' ),
+  timeScaleStringProperty: _.get( NuclearDecayCommonStrings, 'timeScaleStringProperty' )
 };
 
 export default NuclearDecayCommonFluent;

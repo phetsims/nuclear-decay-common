@@ -39,6 +39,9 @@ export default class DecayHistogramScreenView extends NuclearDecayScreenView {
   // Controls on the right side of the view.
   protected readonly rightColumnControls: Node;
 
+  // Time controls in the bottom-right corner; exposed so subclasses can lay out relative to it.
+  protected readonly timeControlNode: TimeControlNode;
+
   public constructor(
     model: NuclearDecayModel,
     providedOptions?: DecayHistogramScreenViewOptions
@@ -97,7 +100,7 @@ export default class DecayHistogramScreenView extends NuclearDecayScreenView {
     } );
     this.addChild( resetAllButton );
 
-    const timeControlNode = new TimeControlNode( model.isPlayingProperty, {
+    this.timeControlNode = new TimeControlNode( model.isPlayingProperty, {
       timeSpeedProperty: model.timeSpeedProperty,
       timeSpeeds: [ TimeSpeed.NORMAL, TimeSpeed.SLOW ],
       playPauseStepButtonOptions: {
@@ -115,9 +118,9 @@ export default class DecayHistogramScreenView extends NuclearDecayScreenView {
       enabledProperty: model.timeProperty.derived( time => time > 0 ),
       tandem: options.tandem.createTandem( 'restartButton' )
     } );
-    timeControlNode.addPushButton( restartButton, 0 );
+    this.timeControlNode.addPushButton( restartButton, 0 );
 
-    this.addChild( timeControlNode );
+    this.addChild( this.timeControlNode );
   }
 
   public override step( dt: number ): void {

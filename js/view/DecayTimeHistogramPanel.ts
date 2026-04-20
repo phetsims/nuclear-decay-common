@@ -6,6 +6,7 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
+import BooleanProperty from '../../../axon/js/BooleanProperty.js';
 import DerivedProperty from '../../../axon/js/DerivedProperty.js';
 import Dimension2 from '../../../dot/js/Dimension2.js';
 import Range from '../../../dot/js/Range.js';
@@ -20,6 +21,7 @@ import Path from '../../../scenery/js/nodes/Path.js';
 import Rectangle from '../../../scenery/js/nodes/Rectangle.js';
 import RichText from '../../../scenery/js/nodes/RichText.js';
 import Text from '../../../scenery/js/nodes/Text.js';
+import Checkbox from '../../../sun/js/Checkbox.js';
 import HSlider from '../../../sun/js/HSlider.js';
 import Tandem from '../../../tandem/js/Tandem.js';
 import HistogramData from '../model/HistogramData.js';
@@ -186,6 +188,23 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       }
     );
 
+    const timeScaleVisibleProperty = new BooleanProperty( false, {
+      tandem: options.tandem.createTandem( 'timeScaleVisibleProperty' )
+    } );
+
+    const timeScaleCheckbox = new Checkbox(
+      timeScaleVisibleProperty,
+      new Text( NuclearDecayCommonFluent.timeScaleStringProperty, {
+        font: NuclearDecayCommonConstants.CONTROL_FONT,
+        maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
+      } ), {
+        right: 2 * GRAPH_X_OFFSET + GRAPH_WIDTH,
+        bottom: eraserButton.top - 6,
+        tandem: options.tandem.createTandem( 'timeScaleCheckbox' ),
+        visibleProperty: model.selectedIsotopeProperty.derived( isotope => isotope === 'custom' )
+      }
+    );
+
     // Assemble
 
     const dataPointsLayer = new Node( {
@@ -203,7 +222,8 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
         halfLifeIndicator,
         eraserButton,
         halfLifeSlider,
-        dataPointsLayer
+        dataPointsLayer,
+        timeScaleCheckbox
       ]
     } );
 

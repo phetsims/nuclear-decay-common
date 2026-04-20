@@ -8,6 +8,7 @@
 import BooleanProperty from '../../../axon/js/BooleanProperty.js';
 import Multilink from '../../../axon/js/Multilink.js';
 import NumberProperty from '../../../axon/js/NumberProperty.js';
+import Range from '../../../dot/js/Range.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import NuclearDecayModel, { NuclearDecayModelOptions, SelectableIsotopes } from './NuclearDecayModel.js';
 
@@ -45,12 +46,16 @@ export default class SingleAtomDecayModel extends NuclearDecayModel {
       phetioReadOnly: true
     } );
 
-    this.potentialEnergyProperty = new NumberProperty( 0, {
-      tandem: options.tandem.createTandem( 'potentialEnergyProperty' )
+    this.potentialEnergyProperty = new NumberProperty( 0.3, {
+      range: new Range( 0, 1 ),
+      tandem: options.tandem.createTandem( 'potentialEnergyProperty' ),
+      phetioFeatured: true
     } );
 
     this.initialEnergyProperty = new NumberProperty( 0, {
-      tandem: options.tandem.createTandem( 'initialEnergyProperty' )
+      range: new Range( -1, 1 ),
+      tandem: options.tandem.createTandem( 'initialEnergyProperty' ),
+      phetioFeatured: true
     } );
 
     const particleCountsTandem = options.tandem.createTandem( 'particleCounts' );
@@ -83,5 +88,7 @@ export default class SingleAtomDecayModel extends NuclearDecayModel {
 
   public override reset(): void {
     super.reset();
+    this.potentialEnergyProperty.reset();
+    this.initialEnergyProperty.reset();
   }
 }

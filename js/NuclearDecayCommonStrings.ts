@@ -72,6 +72,8 @@ type StringsType = {
   'dataProbeStringProperty': LocalizedStringProperty;
   'percentRemaining': string;
   'percentRemainingStringProperty': LocalizedStringProperty;
+  'timeScale': string;
+  'timeScaleStringProperty': LocalizedStringProperty;
 };
 
 const NuclearDecayCommonStrings = getStringModule( 'NUCLEAR_DECAY_COMMON' ) as StringsType;

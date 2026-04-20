@@ -297,16 +297,10 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     } );
 
     // Bottom section: checkboxes on the left, graph on the right
-    const bottomRow = new HBox( {
+    const contentNode = new HBox( {
       spacing: 12,
       align: 'top',
       children: [ leftColumn, graphArea ]
-    } );
-
-    const contentNode = new VBox( {
-      spacing: 8,
-      align: 'left',
-      children: [ bottomRow ]
     } );
 
     super( contentNode, options );

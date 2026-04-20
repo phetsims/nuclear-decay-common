@@ -85,5 +85,8 @@
   },
   "percentRemaining": {
     "value": "Percent of Isotope<br>Remaining (%)"
+  },
+  "timeScale": {
+    "value": "Time Scale"
   }
 }
