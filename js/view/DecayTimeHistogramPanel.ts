@@ -196,8 +196,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     );
 
     const timeScaleVisibleProperty = new BooleanProperty( false, {
-      tandem: options.tandem.createTandem( 'timeScaleVisibleProperty' ),
-      phetioFeatured: true
+      tandem: options.tandem.createTandem( 'timeScaleVisibleProperty' )
     } );
 
     const timeScaleCheckbox = new Checkbox(
