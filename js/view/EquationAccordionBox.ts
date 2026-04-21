@@ -5,10 +5,14 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
+import DerivedStringProperty from '../../../axon/js/DerivedStringProperty.js';
 import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
+import StringUtils from '../../../phetcommon/js/util/StringUtils.js';
+import Node from '../../../scenery/js/nodes/Node.js';
 import Text from '../../../scenery/js/nodes/Text.js';
-import { SelectableIsotopes } from '../model/NuclearDecayModel.js';
+import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
+import NuclearDecayModel, { SelectableIsotopes } from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import EquationNode from './EquationNode.js';
@@ -34,7 +38,8 @@ export default class EquationAccordionBox extends NuclearDecayAccordionBox {
 
     const options = optionize<EquationAccordionBoxOptions, SelfOptions, NuclearDecayAccordionBoxOptions>()( {
       titleNode: titleNode,
-      minWidth: NuclearDecayCommonConstants.RIGHT_PANEL_WIDTH
+      minWidth: NuclearDecayCommonConstants.RIGHT_PANEL_WIDTH,
+      accessibleHelpTextCollapsed: NuclearDecayCommonFluent.a11y.nuclearEquation.accessibleHelpTextCollapsedStringProperty
     }, providedOptions );
 
     const equationNode = EquationNode.createEquation(
@@ -43,6 +48,49 @@ export default class EquationAccordionBox extends NuclearDecayAccordionBox {
       hasDecayOcurredProperty
     );
 
-    super( equationNode, options );
+    const equationParagraphStringProperty = new DerivedStringProperty(
+      [
+        isotopeProperty,
+        isPlayAreaEmptyProperty,
+        hasDecayOcurredProperty,
+        NuclearDecayCommonFluent.a11y.nuclearEquation.noEquationStringProperty,
+        NuclearDecayCommonFluent.a11y.nuclearEquation.beforeDecayStringProperty,
+        NuclearDecayCommonFluent.a11y.nuclearEquation.afterDecayStringProperty,
+        NuclearDecayCommonFluent.isotopeAStringProperty,
+        NuclearDecayCommonFluent.isotopeBStringProperty
+      ], ( isotope, isPlayAreaEmpty, hasDecayOccurred, noEquation, beforeDecayPattern, afterDecayPattern, isotopeAName, isotopeBName ) => {
+        if ( isPlayAreaEmpty ) {
+          return noEquation;
+        }
+        const decayProduct = NuclearDecayModel.getDecayProduct( isotope );
+        const parentConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
+        const daughterConfig = NuclearDecayModel.getIsotopeAtomConfig( decayProduct );
+        const parentIsotopeName = isotope === 'custom' ? isotopeAName :
+          AtomNameUtils.getNameAndMass( parentConfig.protonCount, parentConfig.neutronCount ).value;
+
+        if ( !hasDecayOccurred ) {
+          return StringUtils.fillIn( beforeDecayPattern, { parentIsotope: parentIsotopeName } );
+        }
+
+        const daughterIsotopeName = isotope === 'custom' ? isotopeBName :
+          AtomNameUtils.getNameAndMass( daughterConfig.protonCount, daughterConfig.neutronCount ).value;
+        return StringUtils.fillIn( afterDecayPattern, {
+          parentIsotope: parentIsotopeName,
+          daughterIsotope: daughterIsotopeName,
+          parentMass: parentConfig.protonCount + parentConfig.neutronCount,
+          daughterMass: daughterConfig.protonCount + daughterConfig.neutronCount,
+          parentCharge: parentConfig.protonCount,
+          daughterCharge: daughterConfig.protonCount
+        } );
+      } );
+
+    const contentNode = new Node( {
+      children: [
+        equationNode,
+        new Node( { accessibleParagraph: equationParagraphStringProperty } )
+      ]
+    } );
+
+    super( contentNode, options );
   }
 }

@@ -71,7 +71,9 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       allowContentToOverlapTitle: true,
       left: bounds.left,
       bottom: bounds.bottom,
-      resize: false
+      resize: false,
+      accessibleName: NuclearDecayCommonFluent.a11y.energyDiagram.accessibleNameStringProperty,
+      accessibleHelpTextCollapsed: NuclearDecayCommonFluent.a11y.energyDiagram.accessibleHelpTextCollapsedStringProperty
     }, providedOptions );
 
     // Sliders to the right of the graph that drive the vertical position of each energy line.
@@ -86,7 +88,8 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       thumbSize: sliderThumbSize,
       enabledProperty: slidersEnabledProperty,
       tandem: options.tandem.createTandem( 'initialEnergySlider' ),
-      accessibleName: NuclearDecayCommonFluent.initialEnergyStringProperty
+      accessibleName: NuclearDecayCommonFluent.initialEnergyStringProperty,
+      accessibleHelpText: NuclearDecayCommonFluent.a11y.initialEnergySlider.accessibleHelpTextStringProperty
     } );
 
     const potentialEnergySlider = new VSlider( model.potentialEnergyProperty, model.potentialEnergyProperty.range, {
@@ -94,7 +97,8 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       thumbSize: sliderThumbSize,
       enabledProperty: slidersEnabledProperty,
       tandem: options.tandem.createTandem( 'potentialEnergySlider' ),
-      accessibleName: NuclearDecayCommonFluent.potentialEnergyStringProperty
+      accessibleName: NuclearDecayCommonFluent.a11y.potentialEnergyBarrierHeightStringProperty,
+      accessibleHelpText: NuclearDecayCommonFluent.a11y.potentialEnergySlider.accessibleHelpTextStringProperty
     } );
 
     const initialEnergySliderControl = new VBox( {
@@ -273,10 +277,16 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     // Higher initial-energy value raises the line (screen-Y is inverted).
     model.initialEnergyProperty.link( value => { initialEnergyGraphLine.y = -value * MAX_INITIAL_ENERGY_HEIGHT; } );
 
+    // Static accessible description, always visible when the accordion box is expanded.
+    const staticDescriptionNode = new Node( {
+      accessibleParagraph: NuclearDecayCommonFluent.a11y.energyDiagram.staticDescriptionStringProperty
+    } );
+
     // Assemble
 
     const contentsNode = new Node( {
       children: [
+        staticDescriptionNode,
         yAxis,
         xAxis,
         energyAxisLabel,

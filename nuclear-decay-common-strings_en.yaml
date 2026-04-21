@@ -28,3 +28,48 @@ stopwatch: 'Stopwatch'
 dataProbe: 'Data Probe'
 percentRemaining: 'Percent of Isotope<br>Remaining (%)'
 timeScale: 'Time Scale'
+
+a11y:
+  energyDiagram:
+    accessibleName: Energy Diagram
+    accessibleHelpTextCollapsed: Show changes to alpha particle energy.
+    staticDescription: >-
+      An energy versus distance graph shows alpha particles in a nuclear potential well and indicates their
+      energy before and after decay.
+    beforeDecay: 'Before decay: Initial energy is {{position}} potential energy barrier height. Alpha particle escape distance is {{distance}}.'
+    afterDecay: 'After decay: Final energy lower. Alpha particle escape distance is {{distance}}. Potential well deeper.'
+  potentialEnergyBarrierHeight: Potential Energy Barrier Height
+  potentialEnergySlider:
+    accessibleHelpText: Adjust well height.
+  initialEnergySlider:
+    accessibleHelpText: Adjust initial energy for alpha particles in nucleus.
+  decayTimeHistogram:
+    accessibleParagraph: 'Timeline in seconds shows when each {{isotope}} atom decayed relative to the half-life, {{hLifeTime}}.'
+  halfLifeSlider:
+    accessibleHelpText: Adjust time for isotope A to undergo one half-life.
+  timeScaleCheckbox:
+    accessibleHelpText: Show or hide time scale ranging from milliseconds to billions of years.
+  eraserButton:
+    accessibleName: Erase Data
+  isotopePanel:
+    accessibleHelpText: Choose an isotope to explore its decay.
+  particleCounts:
+    accessibleName: Particle Counts
+    accessibleHelpTextCollapsed: View numbers of protons and neutrons in current isotope.
+    accessibleParagraph: '{{isotope}} contains {{protons}} protons and {{neutrons}} neutrons.'
+    noData: No data to display.
+  nuclearEquation:
+    accessibleHelpTextCollapsed: Explore how mass number and charge are conserved in decay.
+    noEquation: No equation yet.
+    beforeDecay: '{{parentIsotope}} decays to a product and another product.'
+    afterDecay: >-
+      {{parentIsotope}} decays to {{daughterIsotope}} and an alpha particle. Original mass, {{parentMass}} and
+      product masses, {{daughterMass}} and 4. Original charge, {{parentCharge}} and product charges,
+      {{daughterCharge}} and 2.
+  timeControls:
+    accessibleHeading: Time Controls
+  replayDecay:
+    accessibleName: Replay Decay
+    accessibleHelpText: Restart time just before last decay.
+  speedControls:
+    accessibleHelpText: For closer observations play sim on slower speed.

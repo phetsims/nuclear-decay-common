@@ -88,5 +88,108 @@
   },
   "timeScale": {
     "value": "Time Scale"
+  },
+  "a11y": {
+    "energyDiagram": {
+      "accessibleName": {
+        "value": "Energy Diagram"
+      },
+      "accessibleHelpTextCollapsed": {
+        "value": "Show changes to alpha particle energy."
+      },
+      "staticDescription": {
+        "value": "An energy versus distance graph shows alpha particles in a nuclear potential well and indicates their energy before and after decay."
+      },
+      "beforeDecay": {
+        "value": "Before decay: Initial energy is {{position}} potential energy barrier height. Alpha particle escape distance is {{distance}}."
+      },
+      "afterDecay": {
+        "value": "After decay: Final energy lower. Alpha particle escape distance is {{distance}}. Potential well deeper."
+      }
+    },
+    "potentialEnergyBarrierHeight": {
+      "value": "Potential Energy Barrier Height"
+    },
+    "potentialEnergySlider": {
+      "accessibleHelpText": {
+        "value": "Adjust well height."
+      }
+    },
+    "initialEnergySlider": {
+      "accessibleHelpText": {
+        "value": "Adjust initial energy for alpha particles in nucleus."
+      }
+    },
+    "decayTimeHistogram": {
+      "accessibleParagraph": {
+        "value": "Timeline in seconds shows when each {{isotope}} atom decayed relative to the half-life, {{hLifeTime}}."
+      }
+    },
+    "halfLifeSlider": {
+      "accessibleHelpText": {
+        "value": "Adjust time for isotope A to undergo one half-life."
+      }
+    },
+    "timeScaleCheckbox": {
+      "accessibleHelpText": {
+        "value": "Show or hide time scale ranging from milliseconds to billions of years."
+      }
+    },
+    "eraserButton": {
+      "accessibleName": {
+        "value": "Erase Data"
+      }
+    },
+    "isotopePanel": {
+      "accessibleHelpText": {
+        "value": "Choose an isotope to explore its decay."
+      }
+    },
+    "particleCounts": {
+      "accessibleName": {
+        "value": "Particle Counts"
+      },
+      "accessibleHelpTextCollapsed": {
+        "value": "View numbers of protons and neutrons in current isotope."
+      },
+      "accessibleParagraph": {
+        "value": "{{isotope}} contains {{protons}} protons and {{neutrons}} neutrons."
+      },
+      "noData": {
+        "value": "No data to display."
+      }
+    },
+    "nuclearEquation": {
+      "accessibleHelpTextCollapsed": {
+        "value": "Explore how mass number and charge are conserved in decay."
+      },
+      "noEquation": {
+        "value": "No equation yet."
+      },
+      "beforeDecay": {
+        "value": "{{parentIsotope}} decays to a product and another product."
+      },
+      "afterDecay": {
+        "value": "{{parentIsotope}} decays to {{daughterIsotope}} and an alpha particle. Original mass, {{parentMass}} and product masses, {{daughterMass}} and 4. Original charge, {{parentCharge}} and product charges, {{daughterCharge}} and 2."
+      }
+    },
+    "timeControls": {
+      "accessibleHeading": {
+        "value": "Time Controls"
+      }
+    },
+    "replayDecay": {
+      "accessibleName": {
+        "value": "Replay Decay"
+      },
+      "accessibleHelpText": {
+        "value": "Restart time just before last decay."
+      }
+    },
+    "speedControls": {
+      "accessibleHelpText": {
+        "value": "For closer observations play sim on slower speed."
+      }
+    }
   }
 }

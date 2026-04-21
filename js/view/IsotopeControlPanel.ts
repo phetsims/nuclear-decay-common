@@ -77,6 +77,8 @@ export default class IsotopeControlPanel extends NuclearDecayPanel {
       model.selectedIsotopeProperty,
       radioButtonItems, {
         spacing: 10,
+        accessibleHeading: NuclearDecayCommonFluent.isotopeStringProperty,
+        accessibleHelpText: NuclearDecayCommonFluent.a11y.isotopePanel.accessibleHelpTextStringProperty,
         tandem: options.tandem.createTandem( 'isotopeSelectorRadioButtonGroup' )
       }
     );

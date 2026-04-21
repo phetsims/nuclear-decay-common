@@ -74,6 +74,84 @@ type StringsType = {
   'percentRemainingStringProperty': LocalizedStringProperty;
   'timeScale': string;
   'timeScaleStringProperty': LocalizedStringProperty;
+  'a11y': {
+    'energyDiagram': {
+      'accessibleName': string;
+      'accessibleNameStringProperty': LocalizedStringProperty;
+      'accessibleHelpTextCollapsed': string;
+      'accessibleHelpTextCollapsedStringProperty': LocalizedStringProperty;
+      'staticDescription': string;
+      'staticDescriptionStringProperty': LocalizedStringProperty;
+      'beforeDecay': string;
+      'beforeDecayStringProperty': LocalizedStringProperty;
+      'afterDecay': string;
+      'afterDecayStringProperty': LocalizedStringProperty;
+    };
+    'potentialEnergyBarrierHeight': string;
+    'potentialEnergyBarrierHeightStringProperty': LocalizedStringProperty;
+    'potentialEnergySlider': {
+      'accessibleHelpText': string;
+      'accessibleHelpTextStringProperty': LocalizedStringProperty;
+    };
+    'initialEnergySlider': {
+      'accessibleHelpText': string;
+      'accessibleHelpTextStringProperty': LocalizedStringProperty;
+    };
+    'decayTimeHistogram': {
+      'accessibleParagraph': string;
+      'accessibleParagraphStringProperty': LocalizedStringProperty;
+    };
+    'halfLifeSlider': {
+      'accessibleHelpText': string;
+      'accessibleHelpTextStringProperty': LocalizedStringProperty;
+    };
+    'timeScaleCheckbox': {
+      'accessibleHelpText': string;
+      'accessibleHelpTextStringProperty': LocalizedStringProperty;
+    };
+    'eraserButton': {
+      'accessibleName': string;
+      'accessibleNameStringProperty': LocalizedStringProperty;
+    };
+    'isotopePanel': {
+      'accessibleHelpText': string;
+      'accessibleHelpTextStringProperty': LocalizedStringProperty;
+    };
+    'particleCounts': {
+      'accessibleName': string;
+      'accessibleNameStringProperty': LocalizedStringProperty;
+      'accessibleHelpTextCollapsed': string;
+      'accessibleHelpTextCollapsedStringProperty': LocalizedStringProperty;
+      'accessibleParagraph': string;
+      'accessibleParagraphStringProperty': LocalizedStringProperty;
+      'noData': string;
+      'noDataStringProperty': LocalizedStringProperty;
+    };
+    'nuclearEquation': {
+      'accessibleHelpTextCollapsed': string;
+      'accessibleHelpTextCollapsedStringProperty': LocalizedStringProperty;
+      'noEquation': string;
+      'noEquationStringProperty': LocalizedStringProperty;
+      'beforeDecay': string;
+      'beforeDecayStringProperty': LocalizedStringProperty;
+      'afterDecay': string;
+      'afterDecayStringProperty': LocalizedStringProperty;
+    };
+    'timeControls': {
+      'accessibleHeading': string;
+      'accessibleHeadingStringProperty': LocalizedStringProperty;
+    };
+    'replayDecay': {
+      'accessibleName': string;
+      'accessibleNameStringProperty': LocalizedStringProperty;
+      'accessibleHelpText': string;
+      'accessibleHelpTextStringProperty': LocalizedStringProperty;
+    };
+    'speedControls': {
+      'accessibleHelpText': string;
+      'accessibleHelpTextStringProperty': LocalizedStringProperty;
+    }
+  }
 };
 
 const NuclearDecayCommonStrings = getStringModule( 'NUCLEAR_DECAY_COMMON' ) as StringsType;

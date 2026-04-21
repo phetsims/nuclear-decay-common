@@ -27,7 +27,7 @@ export default class EquationNode extends HBox {
     providedOptions: EquationNodeOptions
   ) {
     const options = optionize<EquationNodeOptions, SelfOptions, HBoxOptions>()( {
-      spacing: 0
+      spacing: 5
     }, providedOptions );
 
     const arrowNode = new ArrowNode( 0, 0, 70, 0, {

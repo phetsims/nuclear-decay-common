@@ -44,7 +44,8 @@ export default class NuclearDecayAtomNode extends ParticleAtomNode {
     particles.forEach( ( particle, number ) => {
       const particleView = new ParticleView( particle, this.modelViewTransformProperty.value, {
         inputEnabled: false,
-        tandem: Tandem.OPT_OUT
+        tandem: Tandem.OPT_OUT,
+        tagName: null // Using null for tag name so particles don't show up in PDOM
       } );
       this.addParticleView( particle, particleView );
     } );

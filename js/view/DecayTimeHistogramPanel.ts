@@ -8,11 +8,14 @@
 
 import BooleanProperty from '../../../axon/js/BooleanProperty.js';
 import DerivedProperty from '../../../axon/js/DerivedProperty.js';
+import DerivedStringProperty from '../../../axon/js/DerivedStringProperty.js';
 import Dimension2 from '../../../dot/js/Dimension2.js';
 import Range from '../../../dot/js/Range.js';
+import { toFixed } from '../../../dot/js/util/toFixed.js';
 import Shape from '../../../kite/js/Shape.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import WithRequired from '../../../phet-core/js/types/WithRequired.js';
+import StringUtils from '../../../phetcommon/js/util/StringUtils.js';
 import ArrowNode from '../../../scenery-phet/js/ArrowNode.js';
 import EraserButton from '../../../scenery-phet/js/buttons/EraserButton.js';
 import VBox from '../../../scenery/js/layout/nodes/VBox.js';
@@ -21,6 +24,7 @@ import Path from '../../../scenery/js/nodes/Path.js';
 import Rectangle from '../../../scenery/js/nodes/Rectangle.js';
 import RichText from '../../../scenery/js/nodes/RichText.js';
 import Text from '../../../scenery/js/nodes/Text.js';
+import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
 import Checkbox from '../../../sun/js/Checkbox.js';
 import HSlider from '../../../sun/js/HSlider.js';
 import Tandem from '../../../tandem/js/Tandem.js';
@@ -164,6 +168,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       listener: () => {
         model.decayedAtoms.length = 0;
       },
+      accessibleName: NuclearDecayCommonFluent.a11y.eraserButton.accessibleNameStringProperty,
       tandem: options.tandem.createTandem( 'eraserButton' )
     } );
     eraserButton.right = 2 * GRAPH_X_OFFSET + GRAPH_WIDTH;
@@ -184,12 +189,15 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
           [ model.selectedIsotopeProperty ],
           selectedIsotope => selectedIsotope === 'custom'
         ),
+        accessibleName: NuclearDecayCommonFluent.halfLifeStringProperty,
+        accessibleHelpText: NuclearDecayCommonFluent.a11y.halfLifeSlider.accessibleHelpTextStringProperty,
         tandem: Tandem.OPT_OUT
       }
     );
 
     const timeScaleVisibleProperty = new BooleanProperty( false, {
-      tandem: options.tandem.createTandem( 'timeScaleVisibleProperty' )
+      tandem: options.tandem.createTandem( 'timeScaleVisibleProperty' ),
+      phetioFeatured: true
     } );
 
     const timeScaleCheckbox = new Checkbox(
@@ -200,10 +208,35 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       } ), {
         right: 2 * GRAPH_X_OFFSET + GRAPH_WIDTH,
         bottom: eraserButton.top - 6,
+        accessibleHelpText: NuclearDecayCommonFluent.a11y.timeScaleCheckbox.accessibleHelpTextStringProperty,
         tandem: options.tandem.createTandem( 'timeScaleCheckbox' ),
         visibleProperty: model.selectedIsotopeProperty.derived( isotope => isotope === 'custom' )
       }
     );
+
+    // Accessible paragraph describing the timeline, for screen readers.
+    const poloniumNameProperty = AtomNameUtils.getNameAndMass( 84, 127 );
+
+    const timelineParagraphStringProperty = new DerivedStringProperty(
+      [
+        model.selectedIsotopeProperty,
+        model.halfLifeProperty,
+        NuclearDecayCommonFluent.isotopeAStringProperty,
+        poloniumNameProperty,
+        NuclearDecayCommonFluent.a11y.decayTimeHistogram.accessibleParagraphStringProperty
+      ],
+      ( selectedIsotope, halfLife, isotopeAName, poloniumName, pattern ) => {
+        const isotopeName = selectedIsotope === 'custom' ? isotopeAName : poloniumName;
+        return StringUtils.fillIn( pattern, {
+          isotope: isotopeName,
+          hLifeTime: toFixed( halfLife, 2 )
+        } );
+      }
+    );
+
+    const timelineParagraphNode = new Node( {
+      accessibleParagraph: timelineParagraphStringProperty
+    } );
 
     // Assemble
 
@@ -214,6 +247,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
     const contentsNode = new Node( {
       children: [
+        timelineParagraphNode,
         isotopeAxisLabel,
         initialIsotopeSymbol,
         decayProductSymbol,

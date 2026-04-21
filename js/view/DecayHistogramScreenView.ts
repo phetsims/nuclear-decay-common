@@ -17,6 +17,7 @@ import VBox from '../../../scenery/js/layout/nodes/VBox.js';
 import Node from '../../../scenery/js/nodes/Node.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import DecayTimeHistogramPanel from './DecayTimeHistogramPanel.js';
 import IsotopeControlPanel from './IsotopeControlPanel.js';
 import NuclearDecayScreenView, { NuclearDecayScreenViewOptions } from './NuclearDecayScreenView.js';
@@ -41,6 +42,12 @@ export default class DecayHistogramScreenView extends NuclearDecayScreenView {
 
   // Time controls in the bottom-right corner; exposed so subclasses can lay out relative to it.
   protected readonly timeControlNode: TimeControlNode;
+
+  // Reset All button; exposed for pdomOrder use in subclasses.
+  protected readonly resetAllButton: ResetAllButton;
+
+  // Isotope selector panel; exposed for pdomOrder use in subclasses.
+  protected readonly isotopePanel: IsotopeControlPanel;
 
   public constructor(
     model: NuclearDecayModel,
@@ -74,7 +81,7 @@ export default class DecayHistogramScreenView extends NuclearDecayScreenView {
 
     // Right column panels
 
-    const isotopePanel = new IsotopeControlPanel( model, {
+    this.isotopePanel = new IsotopeControlPanel( model, {
       middleContent: options.isotopePanelMiddleContent,
       tandem: options.tandem.createTandem( 'isotopePanel' )
     } );
@@ -83,13 +90,13 @@ export default class DecayHistogramScreenView extends NuclearDecayScreenView {
       spacing: PANEL_SPACING,
       right: this.layoutBounds.maxX - MARGIN_X,
       top: this.layoutBounds.minY + MARGIN_Y,
-      children: [ isotopePanel ]
+      children: [ this.isotopePanel ]
     } );
     this.addChild( this.rightColumnControls );
 
     // Bottom-right controls
 
-    const resetAllButton = new ResetAllButton( {
+    this.resetAllButton = new ResetAllButton( {
       listener: () => {
         model.reset();
         this.reset();
@@ -98,7 +105,7 @@ export default class DecayHistogramScreenView extends NuclearDecayScreenView {
       bottom: this.layoutBounds.maxY - MARGIN_Y,
       tandem: options.tandem.createTandem( 'resetAllButton' )
     } );
-    this.addChild( resetAllButton );
+    this.addChild( this.resetAllButton );
 
     this.timeControlNode = new TimeControlNode( model.isPlayingProperty, {
       timeSpeedProperty: model.timeSpeedProperty,
@@ -108,14 +115,20 @@ export default class DecayHistogramScreenView extends NuclearDecayScreenView {
           listener: () => model.manualStep()
         }
       },
-      bottom: resetAllButton.top - PANEL_SPACING,
-      right: resetAllButton.right,
+      speedRadioButtonGroupOptions: {
+        accessibleHelpText: NuclearDecayCommonFluent.a11y.speedControls.accessibleHelpTextStringProperty
+      },
+      accessibleHeading: NuclearDecayCommonFluent.a11y.timeControls.accessibleHeadingStringProperty,
+      bottom: this.resetAllButton.top - PANEL_SPACING,
+      right: this.resetAllButton.right,
       tandem: options.tandem.createTandem( 'timeControlNode' )
     } );
 
     const restartButton = new RestartButton( {
       listener: () => model.restart(),
       enabledProperty: model.timeProperty.derived( time => time > 0 ),
+      accessibleName: NuclearDecayCommonFluent.a11y.replayDecay.accessibleNameStringProperty,
+      accessibleHelpText: NuclearDecayCommonFluent.a11y.replayDecay.accessibleHelpTextStringProperty,
       tandem: options.tandem.createTandem( 'restartButton' )
     } );
     this.timeControlNode.addPushButton( restartButton, 0 );
