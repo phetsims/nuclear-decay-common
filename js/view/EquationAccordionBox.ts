@@ -54,11 +54,10 @@ export default class EquationAccordionBox extends NuclearDecayAccordionBox {
         isPlayAreaEmptyProperty,
         hasDecayOcurredProperty,
         NuclearDecayCommonFluent.a11y.nuclearEquation.noEquationStringProperty,
-        NuclearDecayCommonFluent.a11y.nuclearEquation.beforeDecayStringProperty,
         NuclearDecayCommonFluent.a11y.nuclearEquation.afterDecayStringProperty,
         NuclearDecayCommonFluent.isotopeAStringProperty,
         NuclearDecayCommonFluent.isotopeBStringProperty
-      ], ( isotope, isPlayAreaEmpty, hasDecayOccurred, noEquation, beforeDecayPattern, afterDecayPattern, isotopeAName, isotopeBName ) => {
+      ], ( isotope, isPlayAreaEmpty, hasDecayOccurred, noEquation, afterDecayPattern, isotopeAName, isotopeBName ) => {
         if ( isPlayAreaEmpty ) {
           return noEquation;
         }
@@ -69,7 +68,7 @@ export default class EquationAccordionBox extends NuclearDecayAccordionBox {
           AtomNameUtils.getNameAndMass( parentConfig.protonCount, parentConfig.neutronCount ).value;
 
         if ( !hasDecayOccurred ) {
-          return StringUtils.fillIn( beforeDecayPattern, { parentIsotope: parentIsotopeName } );
+          return NuclearDecayCommonFluent.a11y.nuclearEquation.beforeDecay.format( { parentIsotope: parentIsotopeName } );
         }
 
         const daughterIsotopeName = isotope === 'custom' ? isotopeBName :

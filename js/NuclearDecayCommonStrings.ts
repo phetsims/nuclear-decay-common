@@ -75,6 +75,40 @@ type StringsType = {
   'timeScale': string;
   'timeScaleStringProperty': LocalizedStringProperty;
   'a11y': {
+    'qualitative': {
+      'positionAbove': string;
+      'positionAboveStringProperty': LocalizedStringProperty;
+      'positionBelow': string;
+      'positionBelowStringProperty': LocalizedStringProperty;
+      'positionEqualTo': string;
+      'positionEqualToStringProperty': LocalizedStringProperty;
+      'distanceSmall': string;
+      'distanceSmallStringProperty': LocalizedStringProperty;
+      'distanceMedium': string;
+      'distanceMediumStringProperty': LocalizedStringProperty;
+      'distanceLarge': string;
+      'distanceLargeStringProperty': LocalizedStringProperty;
+      'distanceInfinite': string;
+      'distanceInfiniteStringProperty': LocalizedStringProperty;
+      'progressSmaller': string;
+      'progressSmallerStringProperty': LocalizedStringProperty;
+      'progressLarger': string;
+      'progressLargerStringProperty': LocalizedStringProperty;
+      'progressShorter': string;
+      'progressShorterStringProperty': LocalizedStringProperty;
+      'progressLonger': string;
+      'progressLongerStringProperty': LocalizedStringProperty;
+      'progressLower': string;
+      'progressLowerStringProperty': LocalizedStringProperty;
+      'progressHigher': string;
+      'progressHigherStringProperty': LocalizedStringProperty;
+      'valueLow': string;
+      'valueLowStringProperty': LocalizedStringProperty;
+      'valueMedium': string;
+      'valueMediumStringProperty': LocalizedStringProperty;
+      'valueHigh': string;
+      'valueHighStringProperty': LocalizedStringProperty;
+    };
     'energyDiagram': {
       'accessibleName': string;
       'accessibleNameStringProperty': LocalizedStringProperty;
@@ -86,6 +120,10 @@ type StringsType = {
       'beforeDecayStringProperty': LocalizedStringProperty;
       'afterDecay': string;
       'afterDecayStringProperty': LocalizedStringProperty;
+    };
+    'energyDiagramSliders': {
+      'accessibleContextResponse': string;
+      'accessibleContextResponseStringProperty': LocalizedStringProperty;
     };
     'potentialEnergyBarrierHeight': string;
     'potentialEnergyBarrierHeightStringProperty': LocalizedStringProperty;
@@ -104,14 +142,22 @@ type StringsType = {
     'halfLifeSlider': {
       'accessibleHelpText': string;
       'accessibleHelpTextStringProperty': LocalizedStringProperty;
+      'accessibleContextResponse': string;
+      'accessibleContextResponseStringProperty': LocalizedStringProperty;
     };
     'timeScaleCheckbox': {
       'accessibleHelpText': string;
       'accessibleHelpTextStringProperty': LocalizedStringProperty;
+      'accessibleContextResponseChecked': string;
+      'accessibleContextResponseCheckedStringProperty': LocalizedStringProperty;
+      'accessibleContextResponseUnchecked': string;
+      'accessibleContextResponseUncheckedStringProperty': LocalizedStringProperty;
     };
     'eraserButton': {
       'accessibleName': string;
       'accessibleNameStringProperty': LocalizedStringProperty;
+      'accessibleContextResponse': string;
+      'accessibleContextResponseStringProperty': LocalizedStringProperty;
     };
     'isotopePanel': {
       'accessibleHelpText': string;

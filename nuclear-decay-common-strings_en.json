@@ -90,6 +90,56 @@
     "value": "Time Scale"
   },
   "a11y": {
+    "qualitative": {
+      "positionAbove": {
+        "value": "above"
+      },
+      "positionBelow": {
+        "value": "below"
+      },
+      "positionEqualTo": {
+        "value": "equal to"
+      },
+      "distanceSmall": {
+        "value": "small"
+      },
+      "distanceMedium": {
+        "value": "medium"
+      },
+      "distanceLarge": {
+        "value": "large"
+      },
+      "distanceInfinite": {
+        "value": "infinite"
+      },
+      "progressSmaller": {
+        "value": "smaller"
+      },
+      "progressLarger": {
+        "value": "larger"
+      },
+      "progressShorter": {
+        "value": "shorter"
+      },
+      "progressLonger": {
+        "value": "longer"
+      },
+      "progressLower": {
+        "value": "lower"
+      },
+      "progressHigher": {
+        "value": "higher"
+      },
+      "valueLow": {
+        "value": "Low"
+      },
+      "valueMedium": {
+        "value": "Medium"
+      },
+      "valueHigh": {
+        "value": "High"
+      }
+    },
     "energyDiagram": {
       "accessibleName": {
         "value": "Energy Diagram"
@@ -101,10 +151,15 @@
         "value": "An energy versus distance graph shows alpha particles in a nuclear potential well and indicates their energy before and after decay."
       },
       "beforeDecay": {
-        "value": "Before decay: Initial energy is {{position}} potential energy barrier height. Alpha particle escape distance is {{distance}}."
+        "value": "Initial energy is { $position } potential energy barrier height. Alpha particle escape distance is { $distance }."
       },
       "afterDecay": {
-        "value": "After decay: Final energy lower. Alpha particle escape distance is {{distance}}. Potential well deeper."
+        "value": "Final energy lower. Alpha particle escape distance is { $distance }. Potential well deeper."
+      }
+    },
+    "energyDiagramSliders": {
+      "accessibleContextResponse": {
+        "value": "Alpha particle escape distance { $distanceProgress }, half-life { $hLifeProgress }."
       }
     },
     "potentialEnergyBarrierHeight": {
@@ -122,22 +177,34 @@
     },
     "decayTimeHistogram": {
       "accessibleParagraph": {
-        "value": "Timeline in seconds shows when each {{isotope}} atom decayed relative to the half-life, {{hLifeTime}}."
+        "value": "Timeline in seconds shows when each { $isotope } atom decayed relative to the half-life, { $hLifeTime } seconds."
       }
     },
     "halfLifeSlider": {
       "accessibleHelpText": {
         "value": "Adjust time for isotope A to undergo one half-life."
+      },
+      "accessibleContextResponse": {
+        "value": "Initial energy { $initialEProgress }, alpha particle escape distance { $distanceProgress }."
       }
     },
     "timeScaleCheckbox": {
       "accessibleHelpText": {
         "value": "Show or hide time scale ranging from milliseconds to billions of years."
+      },
+      "accessibleContextResponseChecked": {
+        "value": "Time scale shown."
+      },
+      "accessibleContextResponseUnchecked": {
+        "value": "Time scale hidden."
       }
     },
     "eraserButton": {
       "accessibleName": {
         "value": "Erase Data"
+      },
+      "accessibleContextResponse": {
+        "value": "Data points removed."
       }
     },
     "isotopePanel": {
@@ -153,7 +220,7 @@
         "value": "View numbers of protons and neutrons in current isotope."
       },
       "accessibleParagraph": {
-        "value": "{{isotope}} contains {{protons}} protons and {{neutrons}} neutrons."
+        "value": "{ $isotope } contains { $protons } protons and { $neutrons } neutrons."
       },
       "noData": {
         "value": "No data to display."
@@ -167,10 +234,10 @@
         "value": "No equation yet."
       },
       "beforeDecay": {
-        "value": "{{parentIsotope}} decays to a product and another product."
+        "value": "{ $parentIsotope } decays to a product and another product."
       },
       "afterDecay": {
-        "value": "{{parentIsotope}} decays to {{daughterIsotope}} and an alpha particle. Original mass, {{parentMass}} and product masses, {{daughterMass}} and 4. Original charge, {{parentCharge}} and product charges, {{daughterCharge}} and 2."
+        "value": "{ $parentIsotope } decays to { $daughterIsotope } and an alpha particle. Original mass, { $parentMass } and product masses, { $daughterMass } and 4. Original charge, { $parentCharge } and product charges, {{daughterCharge}} and 2."
       }
     },
     "timeControls": {

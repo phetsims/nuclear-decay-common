@@ -169,6 +169,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
         model.decayedAtoms.length = 0;
       },
       accessibleName: NuclearDecayCommonFluent.a11y.eraserButton.accessibleNameStringProperty,
+      accessibleContextResponse: NuclearDecayCommonFluent.a11y.eraserButton.accessibleContextResponseStringProperty,
       tandem: options.tandem.createTandem( 'eraserButton' )
     } );
     eraserButton.right = 2 * GRAPH_X_OFFSET + GRAPH_WIDTH;
@@ -191,6 +192,21 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
         ),
         accessibleName: NuclearDecayCommonFluent.halfLifeStringProperty,
         accessibleHelpText: NuclearDecayCommonFluent.a11y.halfLifeSlider.accessibleHelpTextStringProperty,
+        createAriaValueText: ( _formattedValue, value ) => {
+          return StringUtils.fillIn( NuclearDecayCommonFluent.timeSecondsStringProperty.value, { time: toFixed( value, 2 ) } );
+        },
+        createContextResponseAlert: ( newValue, oldValue ) => {
+          const increased = oldValue !== null && newValue > oldValue;
+          const initialEProgress = increased
+            ? NuclearDecayCommonFluent.a11y.qualitative.progressLowerStringProperty.value
+            : NuclearDecayCommonFluent.a11y.qualitative.progressHigherStringProperty.value;
+          const distanceProgress = increased
+            ? NuclearDecayCommonFluent.a11y.qualitative.progressSmallerStringProperty.value
+            : NuclearDecayCommonFluent.a11y.qualitative.progressLargerStringProperty.value;
+          return NuclearDecayCommonFluent.a11y.halfLifeSlider.accessibleContextResponse.format( {
+            initialEProgress: initialEProgress, distanceProgress: distanceProgress
+          } );
+        },
         tandem: Tandem.OPT_OUT
       }
     );
@@ -209,6 +225,8 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
         right: 2 * GRAPH_X_OFFSET + GRAPH_WIDTH,
         bottom: eraserButton.top - 6,
         accessibleHelpText: NuclearDecayCommonFluent.a11y.timeScaleCheckbox.accessibleHelpTextStringProperty,
+        accessibleContextResponseChecked: NuclearDecayCommonFluent.a11y.timeScaleCheckbox.accessibleContextResponseCheckedStringProperty,
+        accessibleContextResponseUnchecked: NuclearDecayCommonFluent.a11y.timeScaleCheckbox.accessibleContextResponseUncheckedStringProperty,
         tandem: options.tandem.createTandem( 'timeScaleCheckbox' ),
         visibleProperty: model.selectedIsotopeProperty.derived( isotope => isotope === 'custom' )
       }
@@ -222,12 +240,11 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
         model.selectedIsotopeProperty,
         model.halfLifeProperty,
         NuclearDecayCommonFluent.isotopeAStringProperty,
-        poloniumNameProperty,
-        NuclearDecayCommonFluent.a11y.decayTimeHistogram.accessibleParagraphStringProperty
+        poloniumNameProperty
       ],
-      ( selectedIsotope, halfLife, isotopeAName, poloniumName, pattern ) => {
+      ( selectedIsotope, halfLife, isotopeAName, poloniumName ) => {
         const isotopeName = selectedIsotope === 'custom' ? isotopeAName : poloniumName;
-        return StringUtils.fillIn( pattern, {
+        return NuclearDecayCommonFluent.a11y.decayTimeHistogram.accessibleParagraph.format( {
           isotope: isotopeName,
           hLifeTime: toFixed( halfLife, 2 )
         } );

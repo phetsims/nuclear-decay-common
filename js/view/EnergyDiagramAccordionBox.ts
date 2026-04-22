@@ -9,6 +9,7 @@ import Multilink from '../../../axon/js/Multilink.js';
 import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../dot/js/Bounds2.js';
 import Dimension2 from '../../../dot/js/Dimension2.js';
+import Range from '../../../dot/js/Range.js';
 import { clamp } from '../../../dot/js/util/clamp.js';
 import Shape from '../../../kite/js/Shape.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
@@ -83,13 +84,36 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     const sliderIconShape = new Shape().moveTo( 0, 0 ).lineTo( LEGEND_LINE_LENGTH, 0 );
     const slidersEnabledProperty = model.isPlayAreaEmptyProperty.derived( isEmpty => !isEmpty );
 
+    const sliderAriaValueText = ( value: number, range: Range ) => {
+      const normalized = ( value - range.min ) / ( range.max - range.min );
+      if ( normalized < 0.33 ) {return NuclearDecayCommonFluent.a11y.qualitative.valueLowStringProperty.value;}
+      if ( normalized < 0.67 ) {return NuclearDecayCommonFluent.a11y.qualitative.valueMediumStringProperty.value;}
+      return NuclearDecayCommonFluent.a11y.qualitative.valueHighStringProperty.value;
+    };
+
     const initialEnergySlider = new VSlider( model.initialEnergyProperty, model.initialEnergyProperty.range, {
       trackSize: sliderTrackSize,
       thumbSize: sliderThumbSize,
       enabledProperty: slidersEnabledProperty,
       tandem: options.tandem.createTandem( 'initialEnergySlider' ),
       accessibleName: NuclearDecayCommonFluent.initialEnergyStringProperty,
-      accessibleHelpText: NuclearDecayCommonFluent.a11y.initialEnergySlider.accessibleHelpTextStringProperty
+      accessibleHelpText: NuclearDecayCommonFluent.a11y.initialEnergySlider.accessibleHelpTextStringProperty,
+      createAriaValueText: ( _formattedValue, value ) => {
+        const range = model.initialEnergyProperty.range;
+        return sliderAriaValueText( value, range );
+      },
+      createContextResponseAlert: ( newValue, oldValue ) => {
+        const increased = oldValue !== null && newValue > oldValue;
+        const distanceProgress = increased
+                                 ? NuclearDecayCommonFluent.a11y.qualitative.progressLargerStringProperty.value
+                                 : NuclearDecayCommonFluent.a11y.qualitative.progressSmallerStringProperty.value;
+        const hLifeProgress = increased
+                              ? NuclearDecayCommonFluent.a11y.qualitative.progressShorterStringProperty.value
+                              : NuclearDecayCommonFluent.a11y.qualitative.progressLongerStringProperty.value;
+        return NuclearDecayCommonFluent.a11y.energyDiagramSliders.accessibleContextResponse.format( {
+          distanceProgress: distanceProgress, hLifeProgress: hLifeProgress
+        } );
+      }
     } );
 
     const potentialEnergySlider = new VSlider( model.potentialEnergyProperty, model.potentialEnergyProperty.range, {
@@ -98,7 +122,23 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       enabledProperty: slidersEnabledProperty,
       tandem: options.tandem.createTandem( 'potentialEnergySlider' ),
       accessibleName: NuclearDecayCommonFluent.a11y.potentialEnergyBarrierHeightStringProperty,
-      accessibleHelpText: NuclearDecayCommonFluent.a11y.potentialEnergySlider.accessibleHelpTextStringProperty
+      accessibleHelpText: NuclearDecayCommonFluent.a11y.potentialEnergySlider.accessibleHelpTextStringProperty,
+      createAriaValueText: ( _formattedValue, value ) => {
+        const range = model.potentialEnergyProperty.range;
+        return sliderAriaValueText( value, range );
+      },
+      createContextResponseAlert: ( newValue, oldValue ) => {
+        const increased = oldValue !== null && newValue > oldValue;
+        const distanceProgress = increased
+                                 ? NuclearDecayCommonFluent.a11y.qualitative.progressSmallerStringProperty.value
+                                 : NuclearDecayCommonFluent.a11y.qualitative.progressLargerStringProperty.value;
+        const hLifeProgress = increased
+                              ? NuclearDecayCommonFluent.a11y.qualitative.progressLongerStringProperty.value
+                              : NuclearDecayCommonFluent.a11y.qualitative.progressShorterStringProperty.value;
+        return NuclearDecayCommonFluent.a11y.energyDiagramSliders.accessibleContextResponse.format( {
+          distanceProgress: distanceProgress, hLifeProgress: hLifeProgress
+        } );
+      }
     } );
 
     const initialEnergySliderControl = new VBox( {
@@ -119,7 +159,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
 
     const slidersBox = new HBox( {
       spacing: 15,
-      children: [ initialEnergySliderControl, potentialEnergySliderControl ],
+      children: [ potentialEnergySliderControl, initialEnergySliderControl ],
       right: bounds.right - CONTENT_X_MARGIN,
       centerY: 0,
       visibleProperty: model.selectedIsotopeProperty.derived( isotope => isotope === 'custom' )

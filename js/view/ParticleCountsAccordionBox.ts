@@ -105,10 +105,9 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
         model.isPlayAreaEmptyProperty,
         model.hasDecayOccurredProperty,
         NuclearDecayCommonFluent.a11y.particleCounts.noDataStringProperty,
-        NuclearDecayCommonFluent.a11y.particleCounts.accessibleParagraphStringProperty,
         NuclearDecayCommonFluent.isotopeAStringProperty,
         NuclearDecayCommonFluent.isotopeBStringProperty
-      ], ( selectedIsotope, isPlayAreaEmpty, hasDecayOccurred, noDataString, paragraphPattern, isotopeAName, isotopeBName ) => {
+      ], ( selectedIsotope, isPlayAreaEmpty, hasDecayOccurred, noDataString, isotopeAName, isotopeBName ) => {
         if ( isPlayAreaEmpty ) {
           return noDataString;
         }
@@ -117,7 +116,7 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
         const isotopeName = selectedIsotope === 'custom'
           ? ( hasDecayOccurred ? isotopeBName : isotopeAName )
           : AtomNameUtils.getNameAndMass( atomConfig.protonCount, atomConfig.neutronCount ).value;
-        return StringUtils.fillIn( paragraphPattern, {
+        return NuclearDecayCommonFluent.a11y.particleCounts.accessibleParagraph.format( {
           isotope: isotopeName,
           protons: atomConfig.protonCount,
           neutrons: atomConfig.neutronCount
