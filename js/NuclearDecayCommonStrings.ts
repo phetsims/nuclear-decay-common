@@ -116,10 +116,20 @@ type StringsType = {
       'accessibleHelpTextCollapsedStringProperty': LocalizedStringProperty;
       'staticDescription': string;
       'staticDescriptionStringProperty': LocalizedStringProperty;
-      'beforeDecay': string;
-      'beforeDecayStringProperty': LocalizedStringProperty;
-      'afterDecay': string;
-      'afterDecayStringProperty': LocalizedStringProperty;
+      'beforeDecay': {
+        'initialEnergy': string;
+        'initialEnergyStringProperty': LocalizedStringProperty;
+        'escapeDistance': string;
+        'escapeDistanceStringProperty': LocalizedStringProperty;
+      };
+      'afterDecay': {
+        'finalEnergy': string;
+        'finalEnergyStringProperty': LocalizedStringProperty;
+        'escapeDistance': string;
+        'escapeDistanceStringProperty': LocalizedStringProperty;
+        'potentialWell': string;
+        'potentialWellStringProperty': LocalizedStringProperty;
+      }
     };
     'energyDiagramSliders': {
       'accessibleContextResponse': string;

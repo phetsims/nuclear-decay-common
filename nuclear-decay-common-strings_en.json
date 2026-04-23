@@ -151,10 +151,23 @@
         "value": "An energy versus distance graph shows alpha particles in a nuclear potential well and indicates their energy before and after decay."
       },
       "beforeDecay": {
-        "value": "Initial energy is { $position } potential energy barrier height. Alpha particle escape distance is { $distance }."
+        "initialEnergy": {
+          "value": "Initial energy is { $position } potential energy barrier height."
+        },
+        "escapeDistance": {
+          "value": "Alpha particle escape distance is { $distance }."
+        }
       },
       "afterDecay": {
-        "value": "Final energy lower. Alpha particle escape distance is { $distance }. Potential well deeper."
+        "finalEnergy": {
+          "value": "Final energy lower."
+        },
+        "escapeDistance": {
+          "value": "Alpha particle escape distance is { $distance }."
+        },
+        "potentialWell": {
+          "value": "Potential well deeper."
+        }
       }
     },
     "energyDiagramSliders": {

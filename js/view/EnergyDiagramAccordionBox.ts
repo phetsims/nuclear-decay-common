@@ -5,6 +5,7 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
+import DerivedProperty from '../../../axon/js/DerivedProperty.js';
 import Multilink from '../../../axon/js/Multilink.js';
 import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../dot/js/Bounds2.js';
@@ -14,6 +15,7 @@ import { clamp } from '../../../dot/js/util/clamp.js';
 import Shape from '../../../kite/js/Shape.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import ModelViewTransform2 from '../../../phetcommon/js/view/ModelViewTransform2.js';
+import AccessibleList from '../../../scenery-phet/js/accessibility/AccessibleList.js';
 import ArrowNode from '../../../scenery-phet/js/ArrowNode.js';
 import HBox from '../../../scenery/js/layout/nodes/HBox.js';
 import VBox from '../../../scenery/js/layout/nodes/VBox.js';
@@ -323,6 +325,18 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     } );
 
     // Assemble
+    const beforeDecayDescriptionVisibleProperty = new DerivedProperty(
+      [ model.hasDecayOccurredProperty, model.isPlayAreaEmptyProperty, model.selectedIsotopeProperty ],
+      ( hasDecayOccurred, isPlayAreaEmpty, selectedIsotope ) => {
+        return !hasDecayOccurred && !isPlayAreaEmpty && selectedIsotope !== 'custom';
+      }
+    );
+    const afterDecayDescriptionVisibleProperty = new DerivedProperty(
+      [ model.hasDecayOccurredProperty, model.isPlayAreaEmptyProperty ],
+      ( hasDecayOccurred, isPlayAreaEmpty ) => {
+        return hasDecayOccurred && !isPlayAreaEmpty;
+      }
+    );
 
     const contentsNode = new Node( {
       children: [
@@ -339,7 +353,33 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         potentialEnergyGraphCurve,
         initialEnergyGraphLine,
         slidersBox
-      ]
+      ],
+      accessibleTemplate: AccessibleList.createTemplateProperty( {
+        listItems: [
+
+          // BEFORE DECAY
+          // Initial energy is ... potential energy barrier height
+          { stringProperty: NuclearDecayCommonFluent.a11y.energyDiagram.beforeDecay.initialEnergy.createProperty( {
+              position: model.initialEnergyProperty
+            } ), visibleProperty: beforeDecayDescriptionVisibleProperty },
+          // Alpha particle escape distance is ...
+          { stringProperty: NuclearDecayCommonFluent.a11y.energyDiagram.beforeDecay.escapeDistance.createProperty( {
+              distance: model.escapeDistanceProperty
+            } ), visibleProperty: beforeDecayDescriptionVisibleProperty },
+
+          // AFTER DECAY
+          // Final energy lower
+          { stringProperty: NuclearDecayCommonFluent.a11y.energyDiagram.afterDecay.finalEnergyStringProperty,
+            visibleProperty: afterDecayDescriptionVisibleProperty },
+          // Alpha particle escape distance is ...
+          { stringProperty: NuclearDecayCommonFluent.a11y.energyDiagram.afterDecay.escapeDistance.createProperty( {
+              distance: model.escapeDistanceProperty
+            } ), visibleProperty: afterDecayDescriptionVisibleProperty },
+          // Potential well is deeper
+          { stringProperty: NuclearDecayCommonFluent.a11y.energyDiagram.afterDecay.potentialWellStringProperty,
+            visibleProperty: afterDecayDescriptionVisibleProperty }
+        ]
+      } )
     } );
 
     super( contentsNode, options );
