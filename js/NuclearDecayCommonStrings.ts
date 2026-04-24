@@ -74,6 +74,20 @@ type StringsType = {
   'percentRemainingStringProperty': LocalizedStringProperty;
   'timeScale': string;
   'timeScaleStringProperty': LocalizedStringProperty;
+  'timesMap': {
+    'ms': string;
+    'msStringProperty': LocalizedStringProperty;
+    's': string;
+    'sStringProperty': LocalizedStringProperty;
+    'min': string;
+    'minStringProperty': LocalizedStringProperty;
+    'hr': string;
+    'hrStringProperty': LocalizedStringProperty;
+    'day': string;
+    'dayStringProperty': LocalizedStringProperty;
+    'yr': string;
+    'yrStringProperty': LocalizedStringProperty;
+  };
   'a11y': {
     'qualitative': {
       'positionAbove': string;

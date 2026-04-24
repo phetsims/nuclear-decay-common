@@ -51,6 +51,12 @@ addToMapIfDefined( 'stopwatch', 'stopwatchStringProperty' );
 addToMapIfDefined( 'dataProbe', 'dataProbeStringProperty' );
 addToMapIfDefined( 'percentRemaining', 'percentRemainingStringProperty' );
 addToMapIfDefined( 'timeScale', 'timeScaleStringProperty' );
+addToMapIfDefined( 'timesMap_ms', 'timesMap.msStringProperty' );
+addToMapIfDefined( 'timesMap_s', 'timesMap.sStringProperty' );
+addToMapIfDefined( 'timesMap_min', 'timesMap.minStringProperty' );
+addToMapIfDefined( 'timesMap_hr', 'timesMap.hrStringProperty' );
+addToMapIfDefined( 'timesMap_day', 'timesMap.dayStringProperty' );
+addToMapIfDefined( 'timesMap_yr', 'timesMap.yrStringProperty' );
 addToMapIfDefined( 'a11y_qualitative_positionAbove', 'a11y.qualitative.positionAboveStringProperty' );
 addToMapIfDefined( 'a11y_qualitative_positionBelow', 'a11y.qualitative.positionBelowStringProperty' );
 addToMapIfDefined( 'a11y_qualitative_positionEqualTo', 'a11y.qualitative.positionEqualToStringProperty' );
@@ -145,6 +151,14 @@ const NuclearDecayCommonFluent = {
   dataProbeStringProperty: _.get( NuclearDecayCommonStrings, 'dataProbeStringProperty' ),
   percentRemainingStringProperty: _.get( NuclearDecayCommonStrings, 'percentRemainingStringProperty' ),
   timeScaleStringProperty: _.get( NuclearDecayCommonStrings, 'timeScaleStringProperty' ),
+  timesMap: {
+    msStringProperty: _.get( NuclearDecayCommonStrings, 'timesMap.msStringProperty' ),
+    sStringProperty: _.get( NuclearDecayCommonStrings, 'timesMap.sStringProperty' ),
+    minStringProperty: _.get( NuclearDecayCommonStrings, 'timesMap.minStringProperty' ),
+    hrStringProperty: _.get( NuclearDecayCommonStrings, 'timesMap.hrStringProperty' ),
+    dayStringProperty: _.get( NuclearDecayCommonStrings, 'timesMap.dayStringProperty' ),
+    yrStringProperty: _.get( NuclearDecayCommonStrings, 'timesMap.yrStringProperty' )
+  },
   a11y: {
     qualitative: {
       positionAboveStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_qualitative_positionAbove', _.get( NuclearDecayCommonStrings, 'a11y.qualitative.positionAboveStringProperty' ) ),

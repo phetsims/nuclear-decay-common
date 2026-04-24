@@ -9,11 +9,13 @@
 import BooleanProperty from '../../../axon/js/BooleanProperty.js';
 import DerivedProperty from '../../../axon/js/DerivedProperty.js';
 import DynamicProperty from '../../../axon/js/DynamicProperty.js';
+import Multilink from '../../../axon/js/Multilink.js';
+import Property from '../../../axon/js/Property.js';
 import Dimension2 from '../../../dot/js/Dimension2.js';
 import Range from '../../../dot/js/Range.js';
 import { toFixed } from '../../../dot/js/util/toFixed.js';
 import Shape from '../../../kite/js/Shape.js';
-import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
+import optionize from '../../../phet-core/js/optionize.js';
 import WithRequired from '../../../phet-core/js/types/WithRequired.js';
 import StringUtils from '../../../phetcommon/js/util/StringUtils.js';
 import ArrowNode from '../../../scenery-phet/js/ArrowNode.js';
@@ -28,6 +30,7 @@ import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
 import Checkbox from '../../../sun/js/Checkbox.js';
 import HSlider from '../../../sun/js/HSlider.js';
 import Tandem from '../../../tandem/js/Tandem.js';
+import StringUnionIO from '../../../tandem/js/types/StringUnionIO.js';
 import HistogramData from '../model/HistogramData.js';
 import NuclearDecayModel, { SelectableIsotopes } from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
@@ -35,7 +38,11 @@ import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
 
-type SelfOptions = EmptySelfOptions;
+type Timescale = 'linear' | 'logarithmic';
+
+type SelfOptions = {
+  timescale?: Timescale;
+};
 
 export type DecayTimeHistogramPanelOptions = SelfOptions & WithRequired<NuclearDecayPanelOptions, 'tandem'>;
 
@@ -48,10 +55,14 @@ const GRAPH_X_OFFSET = 90;
 const ISOTOPE_SYMBOL_X = 35; // x of the isotope symbol column
 const AXIS_LABEL_X = 10; // x center of the rotated "Isotope" label
 
-const TICKS = 4;
+const LINEAR_TICKS = 4;
+const LINEAR_TICK_INTERVAL_WIDTH = 0.9 * GRAPH_WIDTH / ( LINEAR_TICKS - 1 );
 
-// Width of the tick interval. Also represents 1 second on the time axis.
-const TICK_INTERVAL_WIDTH = 0.9 * GRAPH_WIDTH / ( TICKS - 1 );
+// Logarithmic scale: 8 ticks at 10^-3, 10^0, 10^3, ..., 10^18
+const LOG_TICKS = 8;
+const LOG_MIN_POWER = -3; // leftmost tick exponent
+const LOG_POWER_INTERVAL = 3; // orders of magnitude between each log tick
+const LOG_TICK_INTERVAL_WIDTH = 0.9 * GRAPH_WIDTH / ( LOG_TICKS - 1 );
 
 export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
@@ -59,8 +70,26 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
   private model: NuclearDecayModel;
 
-  public constructor( model: NuclearDecayModel, providedOptions?: DecayTimeHistogramPanelOptions ) {
-    const options = optionize<DecayTimeHistogramPanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {}, providedOptions );
+  private readonly timescaleProperty: Property<Timescale>;
+
+  public constructor( model: NuclearDecayModel, providedOptions: DecayTimeHistogramPanelOptions ) {
+
+    const timescaleProperty = new Property<Timescale>( providedOptions.timescale ?? 'linear', {
+      tandem: providedOptions.tandem.createTandem( 'timescaleProperty' ),
+      phetioFeatured: true,
+      phetioValueType: StringUnionIO( [ 'linear', 'logarithmic' ] )
+    } );
+
+    // If a timescale is not provided, link isotope to switch to logarithmic time scale for custom.
+    if ( !providedOptions.timescale ) {
+      model.selectedIsotopeProperty.link( selectedIsotope => {
+        timescaleProperty.value = selectedIsotope === 'custom' ? 'logarithmic' : 'linear';
+      } );
+    }
+
+    const options = optionize<DecayTimeHistogramPanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {
+      timescale: 'linear'
+    }, providedOptions );
 
     // Y-axis rotated label: "Isotope"
 
@@ -114,26 +143,42 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
-    // Time ticks
-    _.times( TICKS, ( n: number ) => {
-      const tickX = GRAPH_X_OFFSET + ( n ) * TICK_INTERVAL_WIDTH;
-      const tick = new Path(
+    // Linear ticks (0, 1, 2, 3 seconds)
+    const linearTicksNode = new Node( {
+      visibleProperty: timescaleProperty.derived( timescale => timescale === 'linear' )
+    } );
+    _.times( LINEAR_TICKS, ( n: number ) => {
+      const tickX = GRAPH_X_OFFSET + n * LINEAR_TICK_INTERVAL_WIDTH;
+      linearTicksNode.addChild( new Path(
         new Shape().moveTo( 0, 0 ).lineTo( 0, 10 ),
-        {
-          stroke: 'black',
-          lineWidth: 1,
-          x: tickX,
-          y: GRAPH_HEIGHT
-        }
-      );
-      const tickLabel = new Text( n, {
+        { stroke: 'black', lineWidth: 1, x: tickX, y: GRAPH_HEIGHT }
+      ) );
+      linearTicksNode.addChild( new Text( n, {
         font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
         centerX: tickX,
         top: GRAPH_HEIGHT + 12
-      } );
-      timeAxis.addChild( tick );
-      timeAxis.addChild( tickLabel );
+      } ) );
     } );
+
+    // Logarithmic ticks (10^-3, 10^0, 10^3, ..., 10^18)
+    const logTicksNode = new Node( {
+      visibleProperty: timescaleProperty.derived( timescale => timescale === 'logarithmic' )
+    } );
+    _.times( LOG_TICKS, ( n: number ) => {
+      const tickX = GRAPH_X_OFFSET + n * LOG_TICK_INTERVAL_WIDTH;
+      logTicksNode.addChild( new Path(
+        new Shape().moveTo( 0, 0 ).lineTo( 0, 10 ),
+        { stroke: 'black', lineWidth: 1, x: tickX, y: GRAPH_HEIGHT }
+      ) );
+      logTicksNode.addChild( new RichText( `10<sup>${LOG_MIN_POWER + n * LOG_POWER_INTERVAL}</sup>`, {
+        font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
+        centerX: tickX,
+        top: GRAPH_HEIGHT + 12
+      } ) );
+    } );
+
+    timeAxis.addChild( linearTicksNode );
+    timeAxis.addChild( logTicksNode );
 
     // Half-life dashed line and label
 
@@ -159,8 +204,10 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       bottom: GRAPH_HEIGHT
     } );
 
-    model.halfLifeProperty.link( halfLife => {
-      halfLifeIndicator.centerX = GRAPH_X_OFFSET + TICK_INTERVAL_WIDTH * halfLife;
+    Multilink.multilink( [ model.halfLifeProperty, timescaleProperty ], ( halfLife, timescale ) => {
+      halfLifeIndicator.centerX = timescale === 'logarithmic' && halfLife > 0
+        ? GRAPH_X_OFFSET + ( Math.log10( halfLife ) - LOG_MIN_POWER ) / LOG_POWER_INTERVAL * LOG_TICK_INTERVAL_WIDTH
+        : GRAPH_X_OFFSET + LINEAR_TICK_INTERVAL_WIDTH * halfLife;
     } );
 
     // eraser button (top-right corner, aligned with half-life label)
@@ -211,13 +258,14 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       }
     );
 
-    const timeScaleVisibleProperty = new BooleanProperty( false, {
-      tandem: options.tandem.createTandem( 'timeScaleVisibleProperty' ),
+    // TODO Move somewhere else to VisibleProperties https://github.com/phetsims/alpha-decay/issues/3
+    const timescaleVisibleProperty = new BooleanProperty( false, {
+      tandem: options.tandem.createTandem( 'timescaleVisibleProperty' ),
       phetioFeatured: true
     } );
 
-    const timeScaleCheckbox = new Checkbox(
-      timeScaleVisibleProperty,
+    const timescaleCheckbox = new Checkbox(
+      timescaleVisibleProperty,
       new Text( NuclearDecayCommonFluent.timeScaleStringProperty, {
         font: NuclearDecayCommonConstants.CONTROL_FONT,
         maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
@@ -227,7 +275,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
         accessibleHelpText: NuclearDecayCommonFluent.a11y.timeScaleCheckbox.accessibleHelpTextStringProperty,
         accessibleContextResponseChecked: NuclearDecayCommonFluent.a11y.timeScaleCheckbox.accessibleContextResponseCheckedStringProperty,
         accessibleContextResponseUnchecked: NuclearDecayCommonFluent.a11y.timeScaleCheckbox.accessibleContextResponseUncheckedStringProperty,
-        tandem: options.tandem.createTandem( 'timeScaleCheckbox' ),
+        tandem: options.tandem.createTandem( 'timescaleCheckbox' ),
         visibleProperty: model.selectedIsotopeProperty.derived( isotope => isotope === 'custom' )
       }
     );
@@ -274,7 +322,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
         eraserButton,
         halfLifeSlider,
         dataPointsLayer,
-        timeScaleCheckbox
+        timescaleCheckbox
       ]
     } );
 
@@ -282,6 +330,14 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
     this.model = model;
     this.dataPointsLayer = dataPointsLayer;
+    this.timescaleProperty = timescaleProperty;
+  }
+
+  private getXForTime( time: number ): number {
+    if ( this.timescaleProperty.value === 'logarithmic' && time > 0 ) {
+      return ( Math.log10( time ) - LOG_MIN_POWER ) / LOG_POWER_INTERVAL * LOG_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET;
+    }
+    return time * LINEAR_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET;
   }
 
   /**
@@ -302,7 +358,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       _.times( value, n => {
         const y = GRAPH_HEIGHT - ( n + 1 ) * BOX_HEIGHT;
         this.dataPointsLayer.addChild( new Rectangle(
-          bin * TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET, y, BOX_WIDTH, BOX_HEIGHT, {
+          this.getXForTime( bin ), y, BOX_WIDTH, BOX_HEIGHT, {
             fill: 'black',
             stroke: 'grey',
             lineWidth: 1
@@ -316,7 +372,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       const UNDECAYED_HEIGHT = 16;
 
       const undecayedRectangle = new Rectangle(
-        histogramData.undecayedTime * TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET, 0, UNDECAYED_WIDTH, UNDECAYED_HEIGHT, {
+        this.getXForTime( histogramData.undecayedTime ), 0, UNDECAYED_WIDTH, UNDECAYED_HEIGHT, {
           fill: NuclearDecayCommonColors.undecayedProperty,
           stroke: 'black',
           lineWidth: 1

@@ -89,6 +89,26 @@
   "timeScale": {
     "value": "Time Scale"
   },
+  "timesMap": {
+    "ms": {
+      "value": "ms"
+    },
+    "s": {
+      "value": "s"
+    },
+    "min": {
+      "value": "min"
+    },
+    "hr": {
+      "value": "hr"
+    },
+    "day": {
+      "value": "day"
+    },
+    "yr": {
+      "value": "yr"
+    }
+  },
   "a11y": {
     "qualitative": {
       "positionAbove": {

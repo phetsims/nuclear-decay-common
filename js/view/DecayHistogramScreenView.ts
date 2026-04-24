@@ -75,7 +75,8 @@ export default class DecayHistogramScreenView extends NuclearDecayScreenView {
       left: this.layoutBounds.minX + MARGIN_X,
       top: this.layoutBounds.minY + MARGIN_Y,
       fill: NuclearDecayCommonConstants.MAIN_PANEL_FILL,
-      tandem: options.tandem.createTandem( 'decayTimeHistogramPanel' )
+      tandem: options.tandem.createTandem( 'decayTimeHistogramPanel' ),
+      timescale: model.atomPool.length !== 1 ? 'linear' : undefined
     } );
     this.addChild( this.decayTimeHistogramPanel );
 

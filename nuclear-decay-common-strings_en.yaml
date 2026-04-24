@@ -28,6 +28,13 @@ stopwatch: 'Stopwatch'
 dataProbe: 'Data Probe'
 percentRemaining: 'Percent of Isotope<br>Remaining (%)'
 timeScale: 'Time Scale'
+timesMap:
+  ms: ms
+  s: s
+  min: min
+  hr: hr
+  day: day
+  yr: yr
 
 a11y:
   qualitative:
