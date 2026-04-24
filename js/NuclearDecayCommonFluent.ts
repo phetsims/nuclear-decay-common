@@ -5,6 +5,7 @@
 /* eslint-disable */
 /* @formatter:off */
 
+import {TReadOnlyProperty} from '../../axon/js/TReadOnlyProperty.js';
 import FluentLibrary from '../../chipper/js/browser-and-node/FluentLibrary.js';
 import FluentConstant from '../../chipper/js/browser/FluentConstant.js';
 import FluentContainer from '../../chipper/js/browser/FluentContainer.js';
@@ -79,6 +80,7 @@ addToMapIfDefined( 'a11y_potentialEnergyBarrierHeight', 'a11y.potentialEnergyBar
 addToMapIfDefined( 'a11y_potentialEnergySlider_accessibleHelpText', 'a11y.potentialEnergySlider.accessibleHelpTextStringProperty' );
 addToMapIfDefined( 'a11y_initialEnergySlider_accessibleHelpText', 'a11y.initialEnergySlider.accessibleHelpTextStringProperty' );
 addToMapIfDefined( 'a11y_decayTimeHistogram_accessibleParagraph', 'a11y.decayTimeHistogram.accessibleParagraphStringProperty' );
+addToMapIfDefined( 'a11y_decayTimeHistogram_scale', 'a11y.decayTimeHistogram.scaleStringProperty' );
 addToMapIfDefined( 'a11y_halfLifeSlider_accessibleHelpText', 'a11y.halfLifeSlider.accessibleHelpTextStringProperty' );
 addToMapIfDefined( 'a11y_halfLifeSlider_accessibleContextResponse', 'a11y.halfLifeSlider.accessibleContextResponseStringProperty' );
 addToMapIfDefined( 'a11y_timeScaleCheckbox_accessibleHelpText', 'a11y.timeScaleCheckbox.accessibleHelpTextStringProperty' );
@@ -187,7 +189,8 @@ const NuclearDecayCommonFluent = {
       accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_initialEnergySlider_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.initialEnergySlider.accessibleHelpTextStringProperty' ) )
     },
     decayTimeHistogram: {
-      accessibleParagraph: new FluentPattern<{ hLifeTime: FluentVariable, isotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayTimeHistogram_accessibleParagraph', _.get( NuclearDecayCommonStrings, 'a11y.decayTimeHistogram.accessibleParagraphStringProperty' ), [{"name":"hLifeTime"},{"name":"isotope"}] )
+      accessibleParagraph: new FluentPattern<{ hLifeTime: FluentVariable, isotope: FluentVariable, scale: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayTimeHistogram_accessibleParagraph', _.get( NuclearDecayCommonStrings, 'a11y.decayTimeHistogram.accessibleParagraphStringProperty' ), [{"name":"hLifeTime"},{"name":"isotope"},{"name":"scale"}] ),
+      scale: new FluentPattern<{ scale: 'linear' | 'logarithmic' | TReadOnlyProperty<'linear' | 'logarithmic'> }>( fluentSupport.bundleProperty, 'a11y_decayTimeHistogram_scale', _.get( NuclearDecayCommonStrings, 'a11y.decayTimeHistogram.scaleStringProperty' ), [{"name":"scale","variants":["linear","logarithmic"]}] )
     },
     halfLifeSlider: {
       accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_halfLifeSlider_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.halfLifeSlider.accessibleHelpTextStringProperty' ) ),

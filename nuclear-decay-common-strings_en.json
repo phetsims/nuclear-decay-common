@@ -190,7 +190,10 @@
     },
     "decayTimeHistogram": {
       "accessibleParagraph": {
-        "value": "Timeline in seconds shows when each { $isotope } atom decayed relative to the half-life, { $hLifeTime } seconds."
+        "value": "{ $scale } timeline in seconds shows when each { $isotope } atom decayed relative to the half-life, { $hLifeTime } seconds."
+      },
+      "scale": {
+        "value": "{ $scale ->\n  [linear] Linear\n  *[logarithmic] Logarithmic\n}"
       }
     },
     "halfLifeSlider": {

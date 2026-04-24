@@ -8,7 +8,7 @@
 
 import BooleanProperty from '../../../axon/js/BooleanProperty.js';
 import DerivedProperty from '../../../axon/js/DerivedProperty.js';
-import DerivedStringProperty from '../../../axon/js/DerivedStringProperty.js';
+import DynamicProperty from '../../../axon/js/DynamicProperty.js';
 import Dimension2 from '../../../dot/js/Dimension2.js';
 import Range from '../../../dot/js/Range.js';
 import { toFixed } from '../../../dot/js/util/toFixed.js';
@@ -198,11 +198,11 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
         createContextResponseAlert: ( newValue, oldValue ) => {
           const increased = oldValue !== null && newValue > oldValue;
           const initialEProgress = increased
-            ? NuclearDecayCommonFluent.a11y.qualitative.progressLowerStringProperty.value
-            : NuclearDecayCommonFluent.a11y.qualitative.progressHigherStringProperty.value;
+                                   ? NuclearDecayCommonFluent.a11y.qualitative.progressLowerStringProperty.value
+                                   : NuclearDecayCommonFluent.a11y.qualitative.progressHigherStringProperty.value;
           const distanceProgress = increased
-            ? NuclearDecayCommonFluent.a11y.qualitative.progressSmallerStringProperty.value
-            : NuclearDecayCommonFluent.a11y.qualitative.progressLargerStringProperty.value;
+                                   ? NuclearDecayCommonFluent.a11y.qualitative.progressSmallerStringProperty.value
+                                   : NuclearDecayCommonFluent.a11y.qualitative.progressLargerStringProperty.value;
           return NuclearDecayCommonFluent.a11y.halfLifeSlider.accessibleContextResponse.format( {
             initialEProgress: initialEProgress, distanceProgress: distanceProgress
           } );
@@ -233,23 +233,23 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     );
 
     // Accessible paragraph describing the timeline, for screen readers.
-    const poloniumNameProperty = AtomNameUtils.getNameAndMass( 84, 127 );
+    const scaleStringProperty = NuclearDecayCommonFluent.a11y.decayTimeHistogram.scale.createProperty( {
+      scale: model.selectedIsotopeProperty.derived( selectedIsotope => selectedIsotope === 'custom' ? 'logarithmic' : 'linear' )
+    } );
 
-    const timelineParagraphStringProperty = new DerivedStringProperty(
-      [
-        model.selectedIsotopeProperty,
-        model.halfLifeProperty,
-        NuclearDecayCommonFluent.isotopeAStringProperty,
-        poloniumNameProperty
-      ],
-      ( selectedIsotope, halfLife, isotopeAName, poloniumName ) => {
-        const isotopeName = selectedIsotope === 'custom' ? isotopeAName : poloniumName;
-        return NuclearDecayCommonFluent.a11y.decayTimeHistogram.accessibleParagraph.format( {
-          isotope: isotopeName,
-          hLifeTime: toFixed( halfLife, 2 )
-        } );
+    const poloniumNameProperty = AtomNameUtils.getNameAndMass( 84, 127 );
+    const isotopeNameProperty = model.selectedIsotopeProperty.derived( selectedIsotope => {
+      if ( selectedIsotope === 'custom' ) {
+        return poloniumNameProperty;
       }
-    );
+      return NuclearDecayCommonFluent.isotopeAStringProperty;
+    } );
+
+    const timelineParagraphStringProperty = NuclearDecayCommonFluent.a11y.decayTimeHistogram.accessibleParagraph.createProperty( {
+      scale: scaleStringProperty,
+      isotope: new DynamicProperty( isotopeNameProperty ),
+      hLifeTime: model.halfLifeProperty.derived( halfLife => toFixed( halfLife, 2 ) )
+    } );
 
     const timelineParagraphNode = new Node( {
       accessibleParagraph: timelineParagraphStringProperty

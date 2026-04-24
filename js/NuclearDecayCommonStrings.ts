@@ -148,6 +148,8 @@ type StringsType = {
     'decayTimeHistogram': {
       'accessibleParagraph': string;
       'accessibleParagraphStringProperty': LocalizedStringProperty;
+      'scale': string;
+      'scaleStringProperty': LocalizedStringProperty;
     };
     'halfLifeSlider': {
       'accessibleHelpText': string;

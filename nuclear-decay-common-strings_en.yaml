@@ -68,7 +68,11 @@ a11y:
   initialEnergySlider:
     accessibleHelpText: Adjust initial energy for alpha particles in nucleus.
   decayTimeHistogram:
-    accessibleParagraph: 'Timeline in seconds shows when each { $isotope } atom decayed relative to the half-life, { $hLifeTime } seconds.'
+    accessibleParagraph: '{ $scale } timeline in seconds shows when each { $isotope } atom decayed relative to the half-life, { $hLifeTime } seconds.'
+    scale:
+      select_scale:
+        linear: Linear
+        logarithmic: Logarithmic
   halfLifeSlider:
     accessibleHelpText: Adjust time for isotope A to undergo one half-life.
     accessibleContextResponse: 'Initial energy { $initialEProgress }, alpha particle escape distance { $distanceProgress }.'
