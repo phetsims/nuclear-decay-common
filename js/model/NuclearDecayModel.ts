@@ -409,7 +409,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   }
 
   private setNewIsotope( newIsotope: SelectableIsotopes ): void {
-
+    this.lastDecayTimeProperty.reset();
     this.timeProperty.reset();
     this.clearAtomLists();
 
