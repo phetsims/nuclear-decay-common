@@ -102,7 +102,7 @@ export default class DecayHistogramScreenView extends NuclearDecayScreenView {
         tandem: options.tandem.createTandem( 'decayTimeHistogramPanel' ),
 
         // If we're in multiple atom mode, set the histogram timescale to be linear
-        timescale: model.atomPool.length !== 1 ? 'linear' : undefined
+        timescale: !model.isSingleAtomMode ? 'linear' : undefined
       } );
     this.addChild( this.decayTimeHistogramPanel );
 

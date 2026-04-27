@@ -46,7 +46,7 @@ export default class NuclearDecayScreenView extends ScreenView {
 
   protected readonly playAreaBoundsProperty: Property<Bounds2>;
 
-  private readonly playAreaBoundsRectangle: Path;
+  protected readonly playAreaBoundsRectangle: Path;
 
   public constructor(
     public readonly model: NuclearDecayModel,
@@ -70,21 +70,26 @@ export default class NuclearDecayScreenView extends ScreenView {
 
     // Prepopulating all atom nodes and pairing them with their respective model atoms.
     this.atomNodesMap = new Map<NuclearDecayAtom, MinimalAtomNode>();
-    model.atomPool.forEach( atom => {
-      const atomNode = new MinimalAtomNode( atom, this.modelViewTransformProperty );
-      this.atomNodesMap.set( atom, atomNode );
-      this.addChild( atomNode );
-    } );
+
+    // Single atom screen is in charge of creating its own atom
+    if ( !model.isSingleAtomMode ) {
+
+      model.atomPool.forEach( atom => {
+        const atomNode = new MinimalAtomNode( atom, this.modelViewTransformProperty );
+        this.atomNodesMap.set( atom, atomNode );
+        this.addChild( atomNode );
+      } );
+    }
 
     phetioStateSetEmitter.addListener( () => {
       this.updateAtomNodes();
     } );
 
+    // Each screen will position this rectangle manually to ensure it's behind the content
     this.playAreaBoundsRectangle = new Path( null, {
       fill: new Color( 0, 255, 0, 0.5 ),
       stroke: new Color( 0, 255, 0, 0.5 )
     } );
-    this.addChild( this.playAreaBoundsRectangle );
 
     this.playAreaBoundsProperty = new Property<Bounds2>( this.layoutBounds );
 

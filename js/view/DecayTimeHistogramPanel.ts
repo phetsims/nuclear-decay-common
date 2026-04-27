@@ -443,8 +443,8 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     } );
 
     if ( histogramData.showUndecayed() ) {
-      const UNDECAYED_WIDTH = this.model.atomPool.length === 1 ? 6 : 25;
-      const UNDECAYED_HEIGHT = this.model.atomPool.length === 1 ? 9 : 16;
+      const UNDECAYED_WIDTH = this.model.isSingleAtomMode ? 6 : 25;
+      const UNDECAYED_HEIGHT = this.model.isSingleAtomMode ? 9 : 16;
 
       const undecayedRectangle = new Rectangle(
         this.getXForTime( histogramData.undecayedTime, this.timescaleProperty.value ), 0, UNDECAYED_WIDTH, UNDECAYED_HEIGHT, {
@@ -457,7 +457,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
         font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
         fill: 'black',
         center: undecayedRectangle.center,
-        visible: this.model.atomPool.length !== 1
+        visible: !this.model.isSingleAtomMode
       } );
       undecayedRectangle.addChild( undecayedCountLabel );
 
