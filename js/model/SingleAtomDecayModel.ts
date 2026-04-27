@@ -51,13 +51,13 @@ export default class SingleAtomDecayModel extends NuclearDecayModel {
       phetioReadOnly: true
     } );
 
-    this.potentialEnergyProperty = new NumberProperty( 0.3, {
+    this.potentialEnergyProperty = new NumberProperty( 1, {
       range: new Range( 0, 1 ),
       tandem: options.tandem.createTandem( 'potentialEnergyProperty' ),
       phetioFeatured: true
     } );
 
-    this.initialEnergyProperty = new NumberProperty( 0, {
+    this.initialEnergyProperty = new NumberProperty( 0.5, {
       range: new Range( -1, 1 ),
       tandem: options.tandem.createTandem( 'initialEnergyProperty' ),
       phetioFeatured: true

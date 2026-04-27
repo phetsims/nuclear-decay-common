@@ -11,7 +11,10 @@ import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../dot/js/Bounds2.js';
 import Dimension2 from '../../../dot/js/Dimension2.js';
 import Range from '../../../dot/js/Range.js';
+import Ray2 from '../../../dot/js/Ray2.js';
 import { clamp } from '../../../dot/js/util/clamp.js';
+import Vector2 from '../../../dot/js/Vector2.js';
+import Vector2Property from '../../../dot/js/Vector2Property.js';
 import Shape from '../../../kite/js/Shape.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
 import ModelViewTransform2 from '../../../phetcommon/js/view/ModelViewTransform2.js';
@@ -23,6 +26,7 @@ import Node from '../../../scenery/js/nodes/Node.js';
 import Path from '../../../scenery/js/nodes/Path.js';
 import Text from '../../../scenery/js/nodes/Text.js';
 import VSlider from '../../../sun/js/VSlider.js';
+import Tandem from '../../../tandem/js/Tandem.js';
 import SingleAtomDecayModel from '../model/SingleAtomDecayModel.js';
 import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
@@ -49,17 +53,20 @@ const LEGEND_Y = 14;
 const LEGEND_LINE_SPACING = 18;
 const LEGEND_TEXT_OFFSET = LEGEND_LINE_LENGTH + 6;
 
-const MAX_INITIAL_ENERGY_HEIGHT = GRAPH_HEIGHT * 0.3;
-
 // Potential energy curve parameters (screen coordinates: negative Y = higher energy)
 const WELL_HALF_WIDTH = 45; // half-width of the flat-bottomed well
 const COULOMB_MIN_Y = -5; // asymptotic Coulomb energy at large distance (just above x-axis)
-const POTENTIAL_PEAK_Y = -GRAPH_HEIGHT * 0.4; // top of the Coulomb barrier (above initial energy line)
+const ENERGY_PEAK_Y = -GRAPH_HEIGHT * 0.4; // top of the Coulomb barrier (above initial energy line)
 const WELL_BOTTOM_Y = GRAPH_HEIGHT * 0.4; // bottom of the nuclear potential well (below x-axis)
 const POINTINESS_FACTOR = 25; // sharpness of the quadratic curve at the barrier peak. 0 = max pointiness, 100 least.
 const CURVINESS_FACTOR = 0; // how curvy the potential energy curve is at the barrier peak. 0 = very curvy, rapid falloff, 1 = closer to a straight line.
 
 export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox {
+
+  // This property tracks the position where initial and potential energies first intersect to the left of the well
+  // With respect to the position ( wellCenterX, 0 ). Will be used to draw the dotted potential circle around the nucleus.
+  public readonly energyIntersectionPointProperty: Vector2Property;
+
   public constructor(
     model: SingleAtomDecayModel,
     bounds: Bounds2,
@@ -286,7 +293,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
           wellCenterMinX, wellCenterMaxX
         );
 
-        const peakY = POTENTIAL_PEAK_Y * value / model.potentialEnergyProperty.range.max + COULOMB_MIN_Y;
+        const peakY = ENERGY_PEAK_Y * value / model.potentialEnergyProperty.range.max + COULOMB_MIN_Y;
         potentialEnergyGraphCurve.shape = new Shape()
           .moveTo( -GRAPH_X_OFFSET, COULOMB_MIN_Y )
           .quadraticCurveTo(
@@ -317,7 +324,51 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     } );
 
     // Higher initial-energy value raises the line (screen-Y is inverted).
-    model.initialEnergyProperty.link( value => { initialEnergyGraphLine.y = -value * MAX_INITIAL_ENERGY_HEIGHT; } );
+    model.initialEnergyProperty.link( value => { initialEnergyGraphLine.y = value * ENERGY_PEAK_Y; } );
+
+    const energyIntersectionPointProperty = new Vector2Property( Vector2.ZERO, {
+      tandem: Tandem.OPT_OUT
+    } );
+
+    Multilink.multilink(
+      [ modelViewTransformProperty, graphRightXProperty, model.potentialEnergyProperty, model.initialEnergyProperty ],
+      ( mvt, graphRightX ) => {
+
+        // Get the center of the well in local coordinates
+        const wellCenterMaxX = graphRightX - WELL_HALF_WIDTH - POINTINESS_FACTOR;
+        const wellCenterX = clamp(
+          mvt.modelToViewX( 0 ) - bounds.left - CONTENT_X_MARGIN - GRAPH_X_OFFSET,
+          wellCenterMinX, wellCenterMaxX
+        );
+
+        if ( potentialEnergyGraphCurve.shape ) {
+
+          // A ray that is positioned at the height of the initial energy and is directed horizontally at the
+          // potential energy curve. This is to use Shape's intersection algorithm.
+          const initialEnergyRay = new Ray2(
+            new Vector2( 0, initialEnergyGraphLine.y ),
+            new Vector2( 1, 0 )
+          );
+
+          // Multiple intersections are found due to the shape of the well. We only use the first one, leftmost.
+          const intersections = potentialEnergyGraphCurve.shape.intersection( initialEnergyRay );
+          if ( intersections.length !== 0 ) {
+            const point = intersections[ 0 ].point;
+            if ( point.y < COULOMB_MIN_Y ) {
+
+              // Make sure the intersection is above the X axis, otherwise it could be intersecting the walls of the well
+              energyIntersectionPointProperty.value = new Vector2(
+                Math.abs( point.x - wellCenterX ), point.y );
+            }
+            else {
+              energyIntersectionPointProperty.value = new Vector2( 1000, 0 );
+            }
+          }
+          else {
+            energyIntersectionPointProperty.value = new Vector2( WELL_HALF_WIDTH, 0 );
+          }
+        }
+      } );
 
     // Static accessible description, always visible when the accordion box is expanded.
     const staticDescriptionNode = new Node( {
@@ -359,29 +410,41 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
 
           // BEFORE DECAY
           // Initial energy is ... potential energy barrier height
-          { stringProperty: NuclearDecayCommonFluent.a11y.energyDiagram.beforeDecay.initialEnergy.createProperty( {
+          {
+            stringProperty: NuclearDecayCommonFluent.a11y.energyDiagram.beforeDecay.initialEnergy.createProperty( {
               position: model.initialEnergyProperty
-            } ), visibleProperty: beforeDecayDescriptionVisibleProperty },
+            } ), visibleProperty: beforeDecayDescriptionVisibleProperty
+          },
           // Alpha particle escape distance is ...
-          { stringProperty: NuclearDecayCommonFluent.a11y.energyDiagram.beforeDecay.escapeDistance.createProperty( {
+          {
+            stringProperty: NuclearDecayCommonFluent.a11y.energyDiagram.beforeDecay.escapeDistance.createProperty( {
               distance: model.escapeDistanceProperty
-            } ), visibleProperty: beforeDecayDescriptionVisibleProperty },
+            } ), visibleProperty: beforeDecayDescriptionVisibleProperty
+          },
 
           // AFTER DECAY
           // Final energy lower
-          { stringProperty: NuclearDecayCommonFluent.a11y.energyDiagram.afterDecay.finalEnergyStringProperty,
-            visibleProperty: afterDecayDescriptionVisibleProperty },
+          {
+            stringProperty: NuclearDecayCommonFluent.a11y.energyDiagram.afterDecay.finalEnergyStringProperty,
+            visibleProperty: afterDecayDescriptionVisibleProperty
+          },
           // Alpha particle escape distance is ...
-          { stringProperty: NuclearDecayCommonFluent.a11y.energyDiagram.afterDecay.escapeDistance.createProperty( {
+          {
+            stringProperty: NuclearDecayCommonFluent.a11y.energyDiagram.afterDecay.escapeDistance.createProperty( {
               distance: model.escapeDistanceProperty
-            } ), visibleProperty: afterDecayDescriptionVisibleProperty },
+            } ), visibleProperty: afterDecayDescriptionVisibleProperty
+          },
           // Potential well is deeper
-          { stringProperty: NuclearDecayCommonFluent.a11y.energyDiagram.afterDecay.potentialWellStringProperty,
-            visibleProperty: afterDecayDescriptionVisibleProperty }
+          {
+            stringProperty: NuclearDecayCommonFluent.a11y.energyDiagram.afterDecay.potentialWellStringProperty,
+            visibleProperty: afterDecayDescriptionVisibleProperty
+          }
         ]
       } )
     } );
 
     super( contentsNode, options );
+
+    this.energyIntersectionPointProperty = energyIntersectionPointProperty;
   }
 }
