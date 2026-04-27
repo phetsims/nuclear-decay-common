@@ -65,4 +65,8 @@ export default class NuclearDecayCommonConstants {
   public static readonly MANUAL_STEP_DT = 1 / 60; // seconds, one frame
   public static readonly NORMAL_SPEED_SCALE = 0.25;
   public static readonly SLOW_SPEED_SCALE = 0.1;
+
+  public static readonly LINEAR_TIME_TO_LOGARITHMIC = ( time: number ): number => {
+    return Math.log10( 10 ** ( 5 * time - 3 ) );
+  };
 }

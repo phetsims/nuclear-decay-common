@@ -236,7 +236,8 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     // TODO: Handle log time properly https://github.com/phetsims/alpha-decay/issues/7
     const getXForTime = ( time: number, timescale: Timescale ) => {
       if ( timescale === 'logarithmic' && time > 0 ) {
-        return ( Math.log10( 10 ** ( 5 * time - 3 ) ) - LOG_MIN_POWER ) / LOG_POWER_INTERVAL * LOG_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET;
+        const logTime = NuclearDecayCommonConstants.LINEAR_TIME_TO_LOGARITHMIC( time );
+        return ( logTime - LOG_MIN_POWER ) / LOG_POWER_INTERVAL * LOG_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET;
       }
       return time * LINEAR_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET;
     };
