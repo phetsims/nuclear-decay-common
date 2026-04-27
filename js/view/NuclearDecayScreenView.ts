@@ -15,7 +15,7 @@ import optionize from '../../../phet-core/js/optionize.js';
 import WithRequired from '../../../phet-core/js/types/WithRequired.js';
 import ModelViewTransform2 from '../../../phetcommon/js/view/ModelViewTransform2.js';
 import Node from '../../../scenery/js/nodes/Node.js';
-import Rectangle from '../../../scenery/js/nodes/Rectangle.js';
+import Path from '../../../scenery/js/nodes/Path.js';
 import Color from '../../../scenery/js/util/Color.js';
 import phetioStateSetEmitter from '../../../tandem/js/phetioStateSetEmitter.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
@@ -43,6 +43,10 @@ export default class NuclearDecayScreenView extends ScreenView {
   private readonly numberOfAtomsInPlayAreaWidth: number;
 
   protected atomNodesMap: Map<NuclearDecayAtom, MinimalAtomNode>;
+
+  protected readonly playAreaBoundsProperty: Property<Bounds2>;
+
+  private readonly playAreaBoundsRectangle: Path;
 
   public constructor(
     public readonly model: NuclearDecayModel,
@@ -75,6 +79,18 @@ export default class NuclearDecayScreenView extends ScreenView {
     phetioStateSetEmitter.addListener( () => {
       this.updateAtomNodes();
     } );
+
+    this.playAreaBoundsRectangle = new Path( null, {
+      fill: new Color( 0, 255, 0, 0.5 ),
+      stroke: new Color( 0, 255, 0, 0.5 )
+    } );
+    this.addChild( this.playAreaBoundsRectangle );
+
+    this.playAreaBoundsProperty = new Property<Bounds2>( this.layoutBounds );
+
+    this.playAreaBoundsProperty.link( bounds => {
+      this.setPlayAreaBounds( bounds );
+    } );
   }
 
   /**
@@ -86,10 +102,7 @@ export default class NuclearDecayScreenView extends ScreenView {
     // Show the area where the atoms can be placed if the 'dev' query parameter is present.
     if ( phet.chipper.queryParameters.dev ) {
       // Green area bounds
-      this.addChild( new Rectangle( playAreaBounds, {
-        fill: new Color( 0, 255, 0, 0.5 ),
-        stroke: new Color( 0, 255, 0, 0.5 )
-      } ) );
+      this.playAreaBoundsRectangle.shape = Shape.bounds( playAreaBounds );
     }
 
     const atomAreaModelWidth = 2 * NuclearDecayCommonConstants.ATOM_RADIUS * this.numberOfAtomsInPlayAreaWidth;

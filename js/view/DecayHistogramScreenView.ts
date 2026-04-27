@@ -6,6 +6,7 @@
  * @author Agustín Vallejo
  */
 
+import Bounds2 from '../../../dot/js/Bounds2.js';
 import { ScreenViewOptions } from '../../../joist/js/ScreenView.js';
 import optionize from '../../../phet-core/js/optionize.js';
 import WithRequired from '../../../phet-core/js/types/WithRequired.js';
@@ -68,18 +69,6 @@ export default class DecayHistogramScreenView extends NuclearDecayScreenView {
     const MARGIN_Y = NuclearDecayCommonConstants.SCREEN_VIEW_Y_MARGIN;
     const PANEL_SPACING = NuclearDecayCommonConstants.PANEL_SPACING;
 
-    // Top-left panel
-
-    this.decayTimeHistogramPanel = new DecayTimeHistogramPanel( model, {
-      minWidth: NuclearDecayCommonConstants.LONG_PANEL_WIDTH,
-      left: this.layoutBounds.minX + MARGIN_X,
-      top: this.layoutBounds.minY + MARGIN_Y,
-      fill: NuclearDecayCommonConstants.MAIN_PANEL_FILL,
-      tandem: options.tandem.createTandem( 'decayTimeHistogramPanel' ),
-      timescale: model.atomPool.length !== 1 ? 'linear' : undefined
-    } );
-    this.addChild( this.decayTimeHistogramPanel );
-
     // Right column panels
 
     this.isotopePanel = new IsotopeControlPanel( model, {
@@ -94,6 +83,28 @@ export default class DecayHistogramScreenView extends NuclearDecayScreenView {
       children: [ this.isotopePanel ]
     } );
     this.addChild( this.rightColumnControls );
+
+    // Top-left panel
+
+    this.decayTimeHistogramPanel = new DecayTimeHistogramPanel(
+      model,
+      new Bounds2(
+        this.layoutBounds.minX + MARGIN_X,
+        this.layoutBounds.minY + MARGIN_Y,
+        this.rightColumnControls.left - MARGIN_X,
+        this.layoutBounds.maxX - MARGIN_Y
+      ),
+      {
+        minWidth: NuclearDecayCommonConstants.LONG_PANEL_WIDTH,
+        left: this.layoutBounds.minX + MARGIN_X,
+        top: this.layoutBounds.minY + MARGIN_Y,
+        fill: NuclearDecayCommonConstants.MAIN_PANEL_FILL,
+        tandem: options.tandem.createTandem( 'decayTimeHistogramPanel' ),
+
+        // If we're in multiple atom mode, set the histogram timescale to be linear
+        timescale: model.atomPool.length !== 1 ? 'linear' : undefined
+      } );
+    this.addChild( this.decayTimeHistogramPanel );
 
     // Bottom-right controls
 

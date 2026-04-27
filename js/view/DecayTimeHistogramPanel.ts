@@ -11,6 +11,8 @@ import DerivedProperty from '../../../axon/js/DerivedProperty.js';
 import DynamicProperty from '../../../axon/js/DynamicProperty.js';
 import Multilink from '../../../axon/js/Multilink.js';
 import Property from '../../../axon/js/Property.js';
+import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
+import Bounds2 from '../../../dot/js/Bounds2.js';
 import Dimension2 from '../../../dot/js/Dimension2.js';
 import Range from '../../../dot/js/Range.js';
 import { toFixed } from '../../../dot/js/util/toFixed.js';
@@ -47,8 +49,10 @@ type SelfOptions = {
 export type DecayTimeHistogramPanelOptions = SelfOptions & WithRequired<NuclearDecayPanelOptions, 'tandem'>;
 
 // Graph dimensions (adjust these to tune the layout)
-const GRAPH_WIDTH = 530;
+const GRAPH_WIDTH = 500;
 const GRAPH_HEIGHT = 80;
+
+const MARGIN_X = 3 * NuclearDecayCommonConstants.PANEL_X_MARGIN;
 
 // left margin: room for rotated label + isotope symbols
 const GRAPH_X_OFFSET = 90;
@@ -63,6 +67,26 @@ const LOG_TICKS = 8;
 const LOG_MIN_POWER = -3; // leftmost tick exponent
 const LOG_POWER_INTERVAL = 3; // orders of magnitude between each log tick
 const LOG_TICK_INTERVAL_WIDTH = 0.9 * GRAPH_WIDTH / ( LOG_TICKS - 1 );
+const LOG_TICK_OFFSET = 6; // pixels
+
+// px to shift the graph area up when the secondary times axis is shown
+const SECONDARY_AXIS_SHIFT = 30;
+
+const secondsInDay = 86400;
+const daysInYear = 365.25;
+const TIMES_MAP: Array<[ number, TReadOnlyProperty<string> ]> = [
+  [ 0.001, NuclearDecayCommonFluent.timesMap.msStringProperty ],
+  [ 1, NuclearDecayCommonFluent.timesMap.sStringProperty ],
+  [ 60, NuclearDecayCommonFluent.timesMap.minStringProperty ],
+  [ 3600, NuclearDecayCommonFluent.timesMap.hrStringProperty ],
+  [ secondsInDay, NuclearDecayCommonFluent.timesMap.dayStringProperty ],
+  [ secondsInDay * daysInYear, NuclearDecayCommonFluent.timesMap.yrStringProperty ],
+
+  // TODO: Is this fine for translation? I figure the number shouldn't change https://github.com/phetsims/alpha-decay/issues/3
+  [ secondsInDay * daysInYear * 1e3, NuclearDecayCommonFluent.timesMap.yrStringProperty.derived( yr => '10<sup>3</sup>' + yr ) ],
+  [ secondsInDay * daysInYear * 1e6, NuclearDecayCommonFluent.timesMap.yrStringProperty.derived( yr => '10<sup>6</sup>' + yr ) ],
+  [ secondsInDay * daysInYear * 1e9, NuclearDecayCommonFluent.timesMap.yrStringProperty.derived( yr => '10<sup>9</sup>' + yr ) ]
+];
 
 export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
@@ -72,7 +96,12 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
   private readonly timescaleProperty: Property<Timescale>;
 
-  public constructor( model: NuclearDecayModel, providedOptions: DecayTimeHistogramPanelOptions ) {
+  private readonly getXForTime: ( time: number, timescale: Timescale ) => number;
+
+  public constructor(
+    model: NuclearDecayModel,
+    bounds: Bounds2,
+    providedOptions: DecayTimeHistogramPanelOptions ) {
 
     const timescaleProperty = new Property<Timescale>( providedOptions.timescale ?? 'linear', {
       tandem: providedOptions.tandem.createTandem( 'timescaleProperty' ),
@@ -94,7 +123,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     // Y-axis rotated label: "Isotope"
 
     const isotopeAxisLabel = new Text( NuclearDecayCommonFluent.isotopeStringProperty, {
-      font: NuclearDecayCommonConstants.CONTROL_FONT,
+      font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
       rotation: -Math.PI / 2,
       centerX: AXIS_LABEL_X,
       centerY: GRAPH_HEIGHT / 2,
@@ -137,7 +166,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     } );
 
     const timeText = new Text( NuclearDecayCommonFluent.timeStringProperty, {
-      font: NuclearDecayCommonConstants.CONTROL_FONT,
+      font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
       left: 0,
       centerY: GRAPH_HEIGHT + 20,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
@@ -165,7 +194,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       visibleProperty: timescaleProperty.derived( timescale => timescale === 'logarithmic' )
     } );
     _.times( LOG_TICKS, ( n: number ) => {
-      const tickX = GRAPH_X_OFFSET + n * LOG_TICK_INTERVAL_WIDTH;
+      const tickX = GRAPH_X_OFFSET + n * LOG_TICK_INTERVAL_WIDTH + LOG_TICK_OFFSET;
       logTicksNode.addChild( new Path(
         new Shape().moveTo( 0, 0 ).lineTo( 0, 10 ),
         { stroke: 'black', lineWidth: 1, x: tickX, y: GRAPH_HEIGHT }
@@ -193,7 +222,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     );
 
     const halfLifeText = new Text( NuclearDecayCommonFluent.halfLifeStringProperty, {
-      font: NuclearDecayCommonConstants.CONTROL_BOLD_FONT,
+      font: NuclearDecayCommonConstants.SMALL_LABEL_BOLD_FONT,
       fill: NuclearDecayCommonColors.halfLifeColorProperty,
       bottom: -6,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
@@ -204,10 +233,16 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       bottom: GRAPH_HEIGHT
     } );
 
-    Multilink.multilink( [ model.halfLifeProperty, timescaleProperty ], ( halfLife, timescale ) => {
-      halfLifeIndicator.centerX = timescale === 'logarithmic' && halfLife > 0
-        ? GRAPH_X_OFFSET + ( Math.log10( halfLife ) - LOG_MIN_POWER ) / LOG_POWER_INTERVAL * LOG_TICK_INTERVAL_WIDTH
-        : GRAPH_X_OFFSET + LINEAR_TICK_INTERVAL_WIDTH * halfLife;
+    // TODO: Handle log time properly https://github.com/phetsims/alpha-decay/issues/7
+    const getXForTime = ( time: number, timescale: Timescale ) => {
+      if ( timescale === 'logarithmic' && time > 0 ) {
+        return ( Math.log10( 10 ** ( 5 * time - 3 ) ) - LOG_MIN_POWER ) / LOG_POWER_INTERVAL * LOG_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET;
+      }
+      return time * LINEAR_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET;
+    };
+
+    Multilink.multilink( [ model.halfLifeProperty, timescaleProperty ], ( halfLife: number, timescale: Timescale ) => {
+      halfLifeIndicator.centerX = getXForTime( halfLife, timescale );
     } );
 
     // eraser button (top-right corner, aligned with half-life label)
@@ -217,10 +252,10 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       },
       accessibleName: NuclearDecayCommonFluent.a11y.eraserButton.accessibleNameStringProperty,
       accessibleContextResponse: NuclearDecayCommonFluent.a11y.eraserButton.accessibleContextResponseStringProperty,
-      tandem: options.tandem.createTandem( 'eraserButton' )
+      tandem: options.tandem.createTandem( 'eraserButton' ),
+      right: bounds.right - MARGIN_X,
+      bottom: GRAPH_HEIGHT
     } );
-    eraserButton.right = 2 * GRAPH_X_OFFSET + GRAPH_WIDTH;
-    eraserButton.bottom = GRAPH_HEIGHT;
 
     // TODO: See https://github.com/phetsims/alpha-decay/issues/3.  This slider is temporary, for debugging purposes,
     //  and should be removed once full support for custom half life is added to this control.
@@ -231,7 +266,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       {
         trackSize: new Dimension2( 80, 2 ),
         thumbSize: new Dimension2( 10, 18 ),
-        right: 2 * GRAPH_X_OFFSET + GRAPH_WIDTH,
+        right: bounds.right - MARGIN_X,
         top: 0,
         visibleProperty: new DerivedProperty(
           [ model.selectedIsotopeProperty ],
@@ -264,22 +299,6 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       phetioFeatured: true
     } );
 
-    const timescaleCheckbox = new Checkbox(
-      timescaleVisibleProperty,
-      new Text( NuclearDecayCommonFluent.timeScaleStringProperty, {
-        font: NuclearDecayCommonConstants.CONTROL_FONT,
-        maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
-      } ), {
-        right: 2 * GRAPH_X_OFFSET + GRAPH_WIDTH,
-        bottom: eraserButton.top - 6,
-        accessibleHelpText: NuclearDecayCommonFluent.a11y.timeScaleCheckbox.accessibleHelpTextStringProperty,
-        accessibleContextResponseChecked: NuclearDecayCommonFluent.a11y.timeScaleCheckbox.accessibleContextResponseCheckedStringProperty,
-        accessibleContextResponseUnchecked: NuclearDecayCommonFluent.a11y.timeScaleCheckbox.accessibleContextResponseUncheckedStringProperty,
-        tandem: options.tandem.createTandem( 'timescaleCheckbox' ),
-        visibleProperty: model.selectedIsotopeProperty.derived( isotope => isotope === 'custom' )
-      }
-    );
-
     // Accessible paragraph describing the timeline, for screen readers.
     const scaleStringProperty = NuclearDecayCommonFluent.a11y.decayTimeHistogram.scale.createProperty( {
       scale: model.selectedIsotopeProperty.derived( selectedIsotope => selectedIsotope === 'custom' ? 'logarithmic' : 'linear' )
@@ -303,16 +322,69 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       accessibleParagraph: timelineParagraphStringProperty
     } );
 
-    // Assemble
+    // Secondary times axis: gray, positioned at the original primary-axis y, shown when timescaleVisibleProperty is true
+    const timesAxisNode = new Node( {
+      visibleProperty: timescaleVisibleProperty,
+      y: GRAPH_HEIGHT + 10 + SECONDARY_AXIS_SHIFT,
+
+      tandem: options.tandem.createTandem( 'timesAxisNode' )
+    } );
+
+    timesAxisNode.addChild( new ArrowNode( GRAPH_X_OFFSET, 0, GRAPH_X_OFFSET + GRAPH_WIDTH, 0, {
+      stroke: 'gray',
+      fill: 'gray',
+      lineWidth: 1,
+      headWidth: 8,
+      tailWidth: 1
+    } ) );
+
+    TIMES_MAP.forEach( ( [ seconds, labelProperty ] ) => {
+      const xPosition = ( Math.log10( seconds ) - LOG_MIN_POWER ) / LOG_POWER_INTERVAL * LOG_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET;
+      timesAxisNode.addChild( new Path(
+        new Shape().moveTo( 0, 0 ).lineTo( 0, 10 ),
+        { stroke: 'gray', lineWidth: 1, x: xPosition, y: 0 }
+      ) );
+      timesAxisNode.addChild( new RichText( labelProperty, {
+        font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
+        fill: 'gray',
+        centerX: xPosition,
+        bottom: 28
+      } ) );
+    } );
+
+    const timescaleCheckbox = new Checkbox(
+      timescaleVisibleProperty,
+      new Text( NuclearDecayCommonFluent.timeScaleStringProperty, {
+        font: NuclearDecayCommonConstants.CONTROL_FONT,
+        maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
+      } ), {
+        right: bounds.right - MARGIN_X,
+        centerY: timesAxisNode.centerY,
+
+        // Description
+        accessibleHelpText: NuclearDecayCommonFluent.a11y.timeScaleCheckbox.accessibleHelpTextStringProperty,
+        accessibleContextResponseChecked: NuclearDecayCommonFluent.a11y.timeScaleCheckbox.accessibleContextResponseCheckedStringProperty,
+        accessibleContextResponseUnchecked: NuclearDecayCommonFluent.a11y.timeScaleCheckbox.accessibleContextResponseUncheckedStringProperty,
+
+        // PhET-iO
+        tandem: options.tandem.createTandem( 'timescaleCheckbox' )
+      }
+    );
+
+    // For bounds purposes, time axis and checkbox are contained in this node that only shows up in custom
+    const timeScaleNode = new Node( {
+      visibleProperty: timescaleProperty.derived( timescale => timescale === 'logarithmic' ),
+      children: [ timesAxisNode, timescaleCheckbox ]
+    } );
 
     const dataPointsLayer = new Node( {
       left: GRAPH_X_OFFSET,
       bottom: timeAxis.centerY
     } );
 
-    const contentsNode = new Node( {
+    // Graph area node
+    const graphAreaNode = new Node( {
       children: [
-        timelineParagraphNode,
         isotopeAxisLabel,
         initialIsotopeSymbol,
         decayProductSymbol,
@@ -321,8 +393,16 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
         halfLifeIndicator,
         eraserButton,
         halfLifeSlider,
-        dataPointsLayer,
-        timescaleCheckbox
+        dataPointsLayer
+      ]
+    } );
+
+    const contentsNode = new Node( {
+      excludeInvisibleChildrenFromBounds: true,
+      children: [
+        timelineParagraphNode,
+        graphAreaNode,
+        timeScaleNode
       ]
     } );
 
@@ -331,13 +411,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     this.model = model;
     this.dataPointsLayer = dataPointsLayer;
     this.timescaleProperty = timescaleProperty;
-  }
-
-  private getXForTime( time: number ): number {
-    if ( this.timescaleProperty.value === 'logarithmic' && time > 0 ) {
-      return ( Math.log10( time ) - LOG_MIN_POWER ) / LOG_POWER_INTERVAL * LOG_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET;
-    }
-    return time * LINEAR_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET;
+    this.getXForTime = getXForTime;
   }
 
   /**
@@ -358,7 +432,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       _.times( value, n => {
         const y = GRAPH_HEIGHT - ( n + 1 ) * BOX_HEIGHT;
         this.dataPointsLayer.addChild( new Rectangle(
-          this.getXForTime( bin ), y, BOX_WIDTH, BOX_HEIGHT, {
+          this.getXForTime( bin, this.timescaleProperty.value ), y, BOX_WIDTH, BOX_HEIGHT, {
             fill: 'black',
             stroke: 'grey',
             lineWidth: 1
@@ -368,11 +442,11 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     } );
 
     if ( histogramData.showUndecayed() ) {
-      const UNDECAYED_WIDTH = 25;
-      const UNDECAYED_HEIGHT = 16;
+      const UNDECAYED_WIDTH = this.model.atomPool.length === 1 ? 6 : 25;
+      const UNDECAYED_HEIGHT = this.model.atomPool.length === 1 ? 9 : 16;
 
       const undecayedRectangle = new Rectangle(
-        this.getXForTime( histogramData.undecayedTime ), 0, UNDECAYED_WIDTH, UNDECAYED_HEIGHT, {
+        this.getXForTime( histogramData.undecayedTime, this.timescaleProperty.value ), 0, UNDECAYED_WIDTH, UNDECAYED_HEIGHT, {
           fill: NuclearDecayCommonColors.undecayedProperty,
           stroke: 'black',
           lineWidth: 1
@@ -381,7 +455,8 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       const undecayedCountLabel = new Text( histogramData.numberOfUndecayedAtoms, {
         font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
         fill: 'black',
-        center: undecayedRectangle.center
+        center: undecayedRectangle.center,
+        visible: this.model.atomPool.length !== 1
       } );
       undecayedRectangle.addChild( undecayedCountLabel );
 
