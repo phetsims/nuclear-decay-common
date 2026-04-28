@@ -136,14 +136,16 @@ export default class DecayHistogramScreenView extends NuclearDecayScreenView {
       tandem: options.tandem.createTandem( 'timeControlNode' )
     } );
 
-    const restartButton = new RestartButton( {
-      listener: () => model.restart(),
-      enabledProperty: model.timeProperty.derived( time => time > 0 ),
-      accessibleName: NuclearDecayCommonFluent.a11y.replayDecay.accessibleNameStringProperty,
-      accessibleHelpText: NuclearDecayCommonFluent.a11y.replayDecay.accessibleHelpTextStringProperty,
-      tandem: options.tandem.createTandem( 'restartButton' )
-    } );
-    this.timeControlNode.addPushButton( restartButton, 0 );
+    if ( model.isSingleAtomMode ) {
+      const restartButton = new RestartButton( {
+        listener: () => model.restart(),
+        enabledProperty: model.timeProperty.derived( time => time > 0 ),
+        accessibleName: NuclearDecayCommonFluent.a11y.replayDecay.accessibleNameStringProperty,
+        accessibleHelpText: NuclearDecayCommonFluent.a11y.replayDecay.accessibleHelpTextStringProperty,
+        tandem: options.tandem.createTandem( 'restartButton' )
+      } );
+      this.timeControlNode.addPushButton( restartButton, 0 );
+    }
 
     this.addChild( this.timeControlNode );
   }
