@@ -317,6 +317,13 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
 
   }
 
+  public reset(): void {
+    this.showUndecayedProperty.reset();
+    this.showDecayedProperty.reset();
+    this.showHalfLivesProperty.reset();
+    this.showDataProbeProperty.reset();
+  }
+
   /**
    * Updates the decay rate lines from the given time series data.
    * Each data point is a Vector2 where x = time (seconds) and y = percentage (0-1).
@@ -328,13 +335,6 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     this.decayedLinePath.shape = DecayRateGraphPanel.dataPointsToShape(
       decayedDataPoints, this.graphWidth, this.graphHeight
     );
-  }
-
-  public reset(): void {
-    this.showUndecayedProperty.reset();
-    this.showDecayedProperty.reset();
-    this.showHalfLivesProperty.reset();
-    this.showDataProbeProperty.reset();
   }
 
   /**

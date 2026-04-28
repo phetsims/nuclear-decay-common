@@ -60,6 +60,15 @@ export default class DecayRateModel extends NuclearDecayModel {
     super.reset();
     this.undecayedCountProperty.reset();
     this.decayedCountProperty.reset();
+    this.resetDataPoints();
+  }
+
+  public override clearAtomLists(): void {
+    super.clearAtomLists();
+    this.resetDataPoints();
+  }
+
+  public resetDataPoints(): void {
     this.undecayedDataPoints.length = 0;
     this.decayedDataPoints.length = 0;
     this.undecayedDataPoints.push( new Vector2( 0, 1 ) );
