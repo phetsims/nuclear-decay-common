@@ -17,6 +17,9 @@ import ModelViewTransform2 from '../../../phetcommon/js/view/ModelViewTransform2
 import Node from '../../../scenery/js/nodes/Node.js';
 import Path from '../../../scenery/js/nodes/Path.js';
 import Color from '../../../scenery/js/util/Color.js';
+import SoundClip from '../../../tambo/js/sound-generators/SoundClip.js';
+import soundManager from '../../../tambo/js/soundManager.js';
+import cardPickup_mp3 from '../../../tambo/sounds/cardPickup_mp3.js';
 import phetioStateSetEmitter from '../../../tandem/js/phetioStateSetEmitter.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
@@ -95,6 +98,16 @@ export default class NuclearDecayScreenView extends ScreenView {
 
     this.playAreaBoundsProperty.link( bounds => {
       this.setPlayAreaBounds( bounds );
+    } );
+
+    const decaySoundClip = new SoundClip( cardPickup_mp3 );
+    soundManager.addSoundGenerator( decaySoundClip );
+
+    model.decayedCountProperty.link( ( count, previous ) => {
+      if ( previous && count > previous ) {
+        // Decay is increasing! Play sound
+        decaySoundClip.play();
+      }
     } );
   }
 

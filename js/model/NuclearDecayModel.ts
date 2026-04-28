@@ -312,13 +312,16 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
           atom.decayTime = this.timeProperty.value;
           this.undecayedAtoms = this.activeAtoms.filter( atom => !atom.hasDecayed );
           this.decayedAtoms.push( atom.copy() );
+
+          // Update the count inside the loop is important to trigger the sound in the view
+          this.decayedCountProperty.value = this.decayedAtoms.length;
+
         }
       } );
     }
 
     this.histogramData.step();
     this.undecayedCountProperty.value = this.undecayedAtoms.length;
-    this.decayedCountProperty.value = this.decayedAtoms.length;
   }
 
   /**
