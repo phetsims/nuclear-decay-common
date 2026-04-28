@@ -340,7 +340,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     } ) );
 
     TIMES_MAP.forEach( ( [ seconds, labelProperty ] ) => {
-      const xPosition = ( Math.log10( seconds ) - LOG_MIN_POWER ) / LOG_POWER_INTERVAL * LOG_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET;
+      const xPosition = ( Math.log10( seconds ) - LOG_MIN_POWER ) / LOG_POWER_INTERVAL * LOG_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET + LOG_TICK_OFFSET;
       timesAxisNode.addChild( new Path(
         new Shape().moveTo( 0, 0 ).lineTo( 0, 10 ),
         { stroke: 'gray', lineWidth: 1, x: xPosition, y: 0 }
