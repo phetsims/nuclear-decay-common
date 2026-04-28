@@ -15,6 +15,7 @@ import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../dot/js/Bounds2.js';
 import Dimension2 from '../../../dot/js/Dimension2.js';
 import Range from '../../../dot/js/Range.js';
+import { clamp } from '../../../dot/js/util/clamp.js';
 import { toFixed } from '../../../dot/js/util/toFixed.js';
 import Shape from '../../../kite/js/Shape.js';
 import optionize from '../../../phet-core/js/optionize.js';
@@ -237,9 +238,9 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     const getXForTime = ( time: number, timescale: Timescale ) => {
       if ( timescale === 'logarithmic' && time > 0 ) {
         const logTime = NuclearDecayCommonConstants.LINEAR_TIME_TO_LOGARITHMIC( time );
-        return ( logTime - LOG_MIN_POWER ) / LOG_POWER_INTERVAL * LOG_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET;
+        return clamp( ( logTime - LOG_MIN_POWER ) / LOG_POWER_INTERVAL * LOG_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET, 0, GRAPH_WIDTH );
       }
-      return time * LINEAR_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET;
+      return clamp( time * LINEAR_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET, 0, GRAPH_WIDTH );
     };
 
     Multilink.multilink( [ model.halfLifeProperty, timescaleProperty ], ( halfLife: number, timescale: Timescale ) => {

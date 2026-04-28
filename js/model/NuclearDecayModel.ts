@@ -149,7 +149,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
     this.selectableIsotopes = selectableIsotopes;
 
-    this.selectedIsotopeProperty = new Property<SelectableIsotopes>( 'polonium-211', {
+    this.selectedIsotopeProperty = new Property<SelectableIsotopes>( 'custom', {
       tandem: options.tandem.createTandem( 'selectedIsotopeProperty' ),
       phetioValueType: StringUnionIO( SelectableIsotopesValues ),
       validValues: SelectableIsotopesValues,
@@ -158,7 +158,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
     this.customHalfLifeProperty = new NumberProperty( 2, {
       tandem: options.tandem.createTandem( 'customHalfLifeProperty' ),
-      range: new Range( 0, Number.POSITIVE_INFINITY ),
+      range: new Range( 0, 18 ),
       phetioFeatured: true
     } );
 
