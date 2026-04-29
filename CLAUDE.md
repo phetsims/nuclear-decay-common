@@ -28,7 +28,7 @@ Shared code library for **Alpha Decay**, **Beta Decay**, and **Radioactive Datin
 | Class | Role |
 |-------|------|
 | `NuclearDecayScreenView` | Common base ScreenView for all nuclear decay sims. |
-| `DecayHistogramScreenView` | ScreenView with histogram-based decay display, isotope panels, and equations. |
+| `SingleAndMultipleAtomsScreenView` | ScreenView with histogram-based decay display, isotope panels, and equations. |
 | `NuclearDecayPanel` | Base Panel with common styling (corner radius, fill, margins from `NuclearDecayCommonConstants`). |
 | `DecayTimeHistogramPanel` | Histogram panel: half-life timeline, time bins, decay counts, eraser button, half-life slider (custom only). |
 | `DecayRateGraphPanel` | Graph panel showing isotope decay rates over time. |
@@ -48,7 +48,7 @@ Shared code library for **Alpha Decay**, **Beta Decay**, and **Radioactive Datin
 
 - **Custom isotope mode**: When `selectedIsotopeProperty === 'custom'`, UI elements like the half-life slider become visible, and `selectedHalfLifeProperty` is user-editable.
 - **Histogram updates**: `DecayTimeHistogramPanel.update(histogramData)` rebuilds the display from `HistogramData` on each step. Watch for memory — it calls `removeAllChildren()` each frame.
-- **Inheritance**: Sim-specific models extend `NuclearDecayModel`; sim-specific views extend `DecayHistogramScreenView` or `NuclearDecayScreenView`.
+- **Inheritance**: Sim-specific models extend `NuclearDecayModel`; sim-specific views extend `SingleAndMultipleAtomsScreenView` or `NuclearDecayScreenView`.
 
 ## Dependencies
 

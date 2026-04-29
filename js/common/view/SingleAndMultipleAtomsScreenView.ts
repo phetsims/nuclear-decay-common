@@ -1,7 +1,8 @@
 // Copyright 2026, University of Colorado Boulder
 /**
- * Common Screen View for screens of the Nuclear Decay suite that use a histogram to display decay times,
- * as well as additional information panels such as isotope legends and decay equations.
+ * Common Screen View for Single Atom and Multiple Atoms screens of the Nuclear Decay suite
+ * Since both use a histogram to display decay times, and additional information panels
+ * such as isotope legends and decay equations.
  *
  * @author Agustín Vallejo
  */
@@ -33,7 +34,7 @@ type SelfOptions = {
 
 export type DecayHistogramScreenViewOptions = SelfOptions & WithRequired<NuclearDecayScreenViewOptions, 'tandem'>;
 
-export default class DecayHistogramScreenView extends NuclearDecayScreenView {
+export default class SingleAndMultipleAtomsScreenView extends NuclearDecayScreenView {
 
   // Child classes will need to reference this panel for layout
   protected readonly decayTimeHistogramPanel: DecayTimeHistogramPanel;

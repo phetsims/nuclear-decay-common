@@ -29,14 +29,14 @@ import undoSolidShape from '../../../../sherpa/js/fontawesome-5/undoSolidShape.j
 import RectangularPushButton from '../../../../sun/js/buttons/RectangularPushButton.js';
 import Checkbox from '../../../../sun/js/Checkbox.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
-import DecayHistogramScreenView, { DecayHistogramScreenViewOptions } from '../../common/view/DecayHistogramScreenView.js';
+import SingleAndMultipleAtomsScreenView, { DecayHistogramScreenViewOptions } from '../../common/view/SingleAndMultipleAtomsScreenView.js';
 import MultipleAtomsModel from '../model/MultipleAtomsModel.js';
 
 type SelfOptions = EmptySelfOptions;
 
 export type MultipleAtomsScreenViewOptions = SelfOptions & DecayHistogramScreenViewOptions;
 
-export default class MultipleAtomsScreenView extends DecayHistogramScreenView {
+export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScreenView {
 
   public constructor( model: MultipleAtomsModel, providedOptions: MultipleAtomsScreenViewOptions ) {
 

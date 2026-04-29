@@ -11,14 +11,14 @@ import EquationAccordionBox from '../../../../nuclear-decay-common/js/common/vie
 import ParticleCountsAccordionBox from '../../../../nuclear-decay-common/js/common/view/ParticleCountsAccordionBox.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
-import DecayHistogramScreenView, { DecayHistogramScreenViewOptions } from '../../common/view/DecayHistogramScreenView.js';
+import SingleAndMultipleAtomsScreenView, { DecayHistogramScreenViewOptions } from '../../common/view/SingleAndMultipleAtomsScreenView.js';
 import SingleAtomModel from '../model/SingleAtomModel.js';
 
 type SelfOptions = EmptySelfOptions;
 
 export type SingleAtomScreenViewOptions = SelfOptions & DecayHistogramScreenViewOptions;
 
-export default class SingleAtomScreenView extends DecayHistogramScreenView {
+export default class SingleAtomScreenView extends SingleAndMultipleAtomsScreenView {
 
   public readonly particleCountsAccordionBox: Node;
 
