@@ -6,13 +6,10 @@
  */
 
 import BooleanProperty from '../../../axon/js/BooleanProperty.js';
-import DerivedProperty from '../../../axon/js/DerivedProperty.js';
 import Multilink from '../../../axon/js/Multilink.js';
 import NumberProperty from '../../../axon/js/NumberProperty.js';
-import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
 import Range from '../../../dot/js/Range.js';
 import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
-import NumberIO from '../../../tandem/js/types/NumberIO.js';
 import NuclearDecayModel, { NuclearDecayModelOptions, SelectableIsotopes } from './NuclearDecayModel.js';
 
 type SelfOptions = EmptySelfOptions;
@@ -27,7 +24,7 @@ export default class SingleAtomDecayModel extends NuclearDecayModel {
   // Initial energy
   public readonly initialEnergyProperty: NumberProperty;
 
-  public readonly escapeDistanceProperty: TReadOnlyProperty<number>;
+  public readonly escapeDistanceProperty: NumberProperty;
 
   // Whether at least one atom has decayed.
   public readonly hasDecayOccurredProperty: BooleanProperty;
@@ -63,17 +60,9 @@ export default class SingleAtomDecayModel extends NuclearDecayModel {
       phetioFeatured: true
     } );
 
-    this.escapeDistanceProperty = new DerivedProperty(
-      [ this.potentialEnergyProperty, this.initialEnergyProperty ],
-      ( potentialEnergy, initialEnergy ) => {
-
-        // TODO TO BE IMPLEMENTED! https://github.com/phetsims/alpha-decay/issues/3
-        return potentialEnergy * initialEnergy;
-      }, {
-        tandem: options.tandem.createTandem( 'escapeDistanceProperty' ),
-        phetioValueType: NumberIO
-      }
-    );
+    this.escapeDistanceProperty = new NumberProperty( 0, {
+      tandem: options.tandem.createTandem( 'escapeDistanceProperty' )
+    } );
 
     const particleCountsTandem = options.tandem.createTandem( 'particleCounts' );
     this.protonCountProperty = new NumberProperty( 0, {
