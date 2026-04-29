@@ -11,16 +11,15 @@ import DynamicProperty from '../../../axon/js/DynamicProperty.js';
 import NumberProperty from '../../../axon/js/NumberProperty.js';
 import Property from '../../../axon/js/Property.js';
 import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
-import optionize from '../../../phet-core/js/optionize.js';
+import optionize, { combineOptions } from '../../../phet-core/js/optionize.js';
 import WithRequired from '../../../phet-core/js/types/WithRequired.js';
 import NumberDisplay from '../../../scenery-phet/js/NumberDisplay.js';
 import HBox from '../../../scenery/js/layout/nodes/HBox.js';
 import VBox from '../../../scenery/js/layout/nodes/VBox.js';
 import RichText from '../../../scenery/js/nodes/RichText.js';
 import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
-import ArrowButton from '../../../sun/js/buttons/ArrowButton.js';
+import ArrowButton, { ArrowButtonOptions } from '../../../sun/js/buttons/ArrowButton.js';
 import TextPushButton from '../../../sun/js/buttons/TextPushButton.js';
-import Tandem from '../../../tandem/js/Tandem.js';
 import NuclearDecayModel, { SelectableIsotopes } from '../model/NuclearDecayModel.js';
 import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
@@ -73,8 +72,7 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
       arrowHeight: 12,
       arrowWidth: 12,
       xMargin: 5,
-      yMargin: 5,
-      tandem: Tandem.OPT_OUT // TODO: We probably do want to instrument these https://github.com/phetsims/alpha-decay/issues/4
+      yMargin: 5
     };
     const DOUBLE_ARROW_BUTTON_OPTIONS = {
       arrowHeight: 12,
@@ -82,24 +80,31 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
       xMargin: 5,
       yMargin: 5,
       numberOfArrows: 2,
-      arrowSpacing: -7,
-      tandem: Tandem.OPT_OUT // TODO: We probably do want to instrument these https://github.com/phetsims/alpha-decay/issues/4
+      arrowSpacing: -7
     };
     const doubleLeftArrowButton = new ArrowButton( 'left', () => {
       atomsToAddProperty.value = Math.max( 1, atomsToAddProperty.value - options.stepSize );
-    }, DOUBLE_ARROW_BUTTON_OPTIONS );
+    }, combineOptions<ArrowButtonOptions>( DOUBLE_ARROW_BUTTON_OPTIONS, {
+      tandem: options.tandem.createTandem( 'doubleLeftArrowButton' )
+    } ) );
 
     const singleLeftArrowButton = new ArrowButton( 'left', () => {
       atomsToAddProperty.value = Math.max( 1, atomsToAddProperty.value - 1 );
-    }, ARROW_BUTTON_OPTIONS );
+    }, combineOptions<ArrowButtonOptions>( ARROW_BUTTON_OPTIONS, {
+      tandem: options.tandem.createTandem( 'singleLeftArrowButton' )
+    } ) );
 
     const singleRightArrowButton = new ArrowButton( 'right', () => {
       atomsToAddProperty.value = Math.min( maxAtoms, atomsToAddProperty.value + 1 );
-    }, ARROW_BUTTON_OPTIONS );
+    }, combineOptions<ArrowButtonOptions>( ARROW_BUTTON_OPTIONS, {
+      tandem: options.tandem.createTandem( 'singleRightArrowButton' )
+    } ) );
 
     const doubleRightArrowButton = new ArrowButton( 'right', () => {
       atomsToAddProperty.value = Math.min( maxAtoms, atomsToAddProperty.value + options.stepSize );
-    }, DOUBLE_ARROW_BUTTON_OPTIONS );
+    }, combineOptions<ArrowButtonOptions>( DOUBLE_ARROW_BUTTON_OPTIONS, {
+      tandem: options.tandem.createTandem( 'doubleRightArrowButton' )
+    } ) );
 
     // Number display showing atom count
     const numberDisplay = new NumberDisplay( atomsToAddProperty, atomsToAddProperty.rangeProperty.value );
