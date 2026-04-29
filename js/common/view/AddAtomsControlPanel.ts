@@ -7,22 +7,22 @@
  * @author Agustín Vallejo
  */
 
-import DynamicProperty from '../../../axon/js/DynamicProperty.js';
-import NumberProperty from '../../../axon/js/NumberProperty.js';
-import Property from '../../../axon/js/Property.js';
-import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
-import optionize, { combineOptions } from '../../../phet-core/js/optionize.js';
-import WithRequired from '../../../phet-core/js/types/WithRequired.js';
-import NumberDisplay from '../../../scenery-phet/js/NumberDisplay.js';
-import HBox from '../../../scenery/js/layout/nodes/HBox.js';
-import VBox from '../../../scenery/js/layout/nodes/VBox.js';
-import RichText from '../../../scenery/js/nodes/RichText.js';
-import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
-import ArrowButton, { ArrowButtonOptions } from '../../../sun/js/buttons/ArrowButton.js';
-import TextPushButton from '../../../sun/js/buttons/TextPushButton.js';
+import DynamicProperty from '../../../../axon/js/DynamicProperty.js';
+import NumberProperty from '../../../../axon/js/NumberProperty.js';
+import Property from '../../../../axon/js/Property.js';
+import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
+import optionize, { combineOptions } from '../../../../phet-core/js/optionize.js';
+import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
+import NumberDisplay from '../../../../scenery-phet/js/NumberDisplay.js';
+import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
+import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
+import RichText from '../../../../scenery/js/nodes/RichText.js';
+import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
+import ArrowButton, { ArrowButtonOptions } from '../../../../sun/js/buttons/ArrowButton.js';
+import TextPushButton from '../../../../sun/js/buttons/TextPushButton.js';
+import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import NuclearDecayModel, { SelectableIsotopes } from '../model/NuclearDecayModel.js';
-import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
-import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
 
 type SelfOptions = {

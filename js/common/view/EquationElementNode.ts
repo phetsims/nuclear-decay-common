@@ -5,16 +5,16 @@
  * @author Agustín Vallejo
  */
 
-import BooleanProperty from '../../../axon/js/BooleanProperty.js';
-import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
-import optionize from '../../../phet-core/js/optionize.js';
-import PhetFont from '../../../scenery-phet/js/PhetFont.js';
-import Node, { NodeOptions } from '../../../scenery/js/nodes/Node.js';
-import RichText from '../../../scenery/js/nodes/RichText.js';
-import type TPaint from '../../../scenery/js/util/TPaint.js';
-import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
+import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
+import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
+import optionize from '../../../../phet-core/js/optionize.js';
+import PhetFont from '../../../../scenery-phet/js/PhetFont.js';
+import Node, { NodeOptions } from '../../../../scenery/js/nodes/Node.js';
+import RichText from '../../../../scenery/js/nodes/RichText.js';
+import type TPaint from '../../../../scenery/js/util/TPaint.js';
+import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
+import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayModel, { ValidIsotopes } from '../model/NuclearDecayModel.js';
-import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 
 type SelfOptions = {
   fill?: TPaint;

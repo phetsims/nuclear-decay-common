@@ -5,19 +5,19 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
-import DerivedStringProperty from '../../../axon/js/DerivedStringProperty.js';
-import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
-import StringUtils from '../../../phetcommon/js/util/StringUtils.js';
-import VBox from '../../../scenery/js/layout/nodes/VBox.js';
-import Node from '../../../scenery/js/nodes/Node.js';
-import RichText from '../../../scenery/js/nodes/RichText.js';
-import Text from '../../../scenery/js/nodes/Text.js';
-import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
+import DerivedStringProperty from '../../../../axon/js/DerivedStringProperty.js';
+import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import StringUtils from '../../../../phetcommon/js/util/StringUtils.js';
+import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
+import Node from '../../../../scenery/js/nodes/Node.js';
+import RichText from '../../../../scenery/js/nodes/RichText.js';
+import Text from '../../../../scenery/js/nodes/Text.js';
+import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
+import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
+import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import SingleAtomDecayModel from '../model/SingleAtomDecayModel.js';
-import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
-import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
-import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import NuclearDecayAccordionBox, { NuclearDecayAccordionBoxOptions } from './NuclearDecayAccordionBox.js';
 
 type SelfOptions = EmptySelfOptions;

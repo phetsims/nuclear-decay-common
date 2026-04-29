@@ -5,11 +5,11 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
-import BooleanProperty from '../../../axon/js/BooleanProperty.js';
-import Multilink from '../../../axon/js/Multilink.js';
-import NumberProperty from '../../../axon/js/NumberProperty.js';
-import Range from '../../../dot/js/Range.js';
-import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
+import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
+import Multilink from '../../../../axon/js/Multilink.js';
+import NumberProperty from '../../../../axon/js/NumberProperty.js';
+import Range from '../../../../dot/js/Range.js';
+import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import NuclearDecayModel, { NuclearDecayModelOptions, SelectableIsotopes } from './NuclearDecayModel.js';
 
 type SelfOptions = EmptySelfOptions;

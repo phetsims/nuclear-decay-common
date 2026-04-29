@@ -8,10 +8,10 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
-import AtomConfig from '../../../shred/js/model/AtomConfig.js';
-import Particle from '../../../shred/js/model/Particle.js';
-import ParticleAtom from '../../../shred/js/model/ParticleAtom.js';
-import Tandem from '../../../tandem/js/Tandem.js';
+import AtomConfig from '../../../../shred/js/model/AtomConfig.js';
+import Particle from '../../../../shred/js/model/Particle.js';
+import ParticleAtom from '../../../../shred/js/model/ParticleAtom.js';
+import Tandem from '../../../../tandem/js/Tandem.js';
 
 type CreateParticleAtomResult = {
   particleAtom: ParticleAtom;

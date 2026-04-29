@@ -5,17 +5,17 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
-import optionize from '../../../phet-core/js/optionize.js';
-import HBox from '../../../scenery/js/layout/nodes/HBox.js';
-import VBox from '../../../scenery/js/layout/nodes/VBox.js';
-import Circle from '../../../scenery/js/nodes/Circle.js';
-import Node from '../../../scenery/js/nodes/Node.js';
-import RichText from '../../../scenery/js/nodes/RichText.js';
-import Text from '../../../scenery/js/nodes/Text.js';
-import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
-import AtomConfig from '../../../shred/js/model/AtomConfig.js';
-import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
-import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
+import optionize from '../../../../phet-core/js/optionize.js';
+import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
+import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
+import Circle from '../../../../scenery/js/nodes/Circle.js';
+import Node from '../../../../scenery/js/nodes/Node.js';
+import RichText from '../../../../scenery/js/nodes/RichText.js';
+import Text from '../../../../scenery/js/nodes/Text.js';
+import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
+import AtomConfig from '../../../../shred/js/model/AtomConfig.js';
+import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
+import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
 
 type SelfOptions = {

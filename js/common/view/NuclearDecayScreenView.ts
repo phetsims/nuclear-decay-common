@@ -5,25 +5,25 @@
  * @author Agustín Vallejo
  */
 
-import Property from '../../../axon/js/Property.js';
-import Bounds2 from '../../../dot/js/Bounds2.js';
-import Vector2 from '../../../dot/js/Vector2.js';
-import ScreenView, { ScreenViewOptions } from '../../../joist/js/ScreenView.js';
-import Shape from '../../../kite/js/Shape.js';
-import affirm from '../../../perennial-alias/js/browser-and-node/affirm.js';
-import optionize from '../../../phet-core/js/optionize.js';
-import WithRequired from '../../../phet-core/js/types/WithRequired.js';
-import ModelViewTransform2 from '../../../phetcommon/js/view/ModelViewTransform2.js';
-import Node from '../../../scenery/js/nodes/Node.js';
-import Path from '../../../scenery/js/nodes/Path.js';
-import Color from '../../../scenery/js/util/Color.js';
-import SoundClip from '../../../tambo/js/sound-generators/SoundClip.js';
-import soundManager from '../../../tambo/js/soundManager.js';
-import cardPickup_mp3 from '../../../tambo/sounds/cardPickup_mp3.js';
-import phetioStateSetEmitter from '../../../tandem/js/phetioStateSetEmitter.js';
+import Property from '../../../../axon/js/Property.js';
+import Bounds2 from '../../../../dot/js/Bounds2.js';
+import Vector2 from '../../../../dot/js/Vector2.js';
+import ScreenView, { ScreenViewOptions } from '../../../../joist/js/ScreenView.js';
+import Shape from '../../../../kite/js/Shape.js';
+import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
+import optionize from '../../../../phet-core/js/optionize.js';
+import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
+import ModelViewTransform2 from '../../../../phetcommon/js/view/ModelViewTransform2.js';
+import Node from '../../../../scenery/js/nodes/Node.js';
+import Path from '../../../../scenery/js/nodes/Path.js';
+import Color from '../../../../scenery/js/util/Color.js';
+import SoundClip from '../../../../tambo/js/sound-generators/SoundClip.js';
+import soundManager from '../../../../tambo/js/soundManager.js';
+import cardPickup_mp3 from '../../../../tambo/sounds/cardPickup_mp3.js';
+import phetioStateSetEmitter from '../../../../tandem/js/phetioStateSetEmitter.js';
+import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
-import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import MinimalAtomNode from './MinimalAtomNode.js';
 
 type SelfOptions = {

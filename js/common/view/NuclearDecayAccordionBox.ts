@@ -5,11 +5,11 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
-import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
-import WithRequired from '../../../phet-core/js/types/WithRequired.js';
-import Node from '../../../scenery/js/nodes/Node.js';
-import AccordionBox, { AccordionBoxOptions } from '../../../sun/js/AccordionBox.js';
-import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
+import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
+import Node from '../../../../scenery/js/nodes/Node.js';
+import AccordionBox, { AccordionBoxOptions } from '../../../../sun/js/AccordionBox.js';
+import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 
 type SelfOptions = EmptySelfOptions;
 

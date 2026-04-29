@@ -7,13 +7,13 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
-import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
-import optionize from '../../../phet-core/js/optionize.js';
-import ModelViewTransform2 from '../../../phetcommon/js/view/ModelViewTransform2.js';
-import Circle, { CircleOptions } from '../../../scenery/js/nodes/Circle.js';
+import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
+import optionize from '../../../../phet-core/js/optionize.js';
+import ModelViewTransform2 from '../../../../phetcommon/js/view/ModelViewTransform2.js';
+import Circle, { CircleOptions } from '../../../../scenery/js/nodes/Circle.js';
+import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
+import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
-import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
-import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 
 type SelfOptions = {
   showElectronCloud?: boolean;

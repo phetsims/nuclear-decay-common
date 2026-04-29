@@ -5,32 +5,32 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
-import DerivedProperty from '../../../axon/js/DerivedProperty.js';
-import Multilink from '../../../axon/js/Multilink.js';
-import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
-import Bounds2 from '../../../dot/js/Bounds2.js';
-import Dimension2 from '../../../dot/js/Dimension2.js';
-import Range from '../../../dot/js/Range.js';
-import Ray2 from '../../../dot/js/Ray2.js';
-import { clamp } from '../../../dot/js/util/clamp.js';
-import Vector2 from '../../../dot/js/Vector2.js';
-import Vector2Property from '../../../dot/js/Vector2Property.js';
-import Shape from '../../../kite/js/Shape.js';
-import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
-import ModelViewTransform2 from '../../../phetcommon/js/view/ModelViewTransform2.js';
-import AccessibleList from '../../../scenery-phet/js/accessibility/AccessibleList.js';
-import ArrowNode from '../../../scenery-phet/js/ArrowNode.js';
-import HBox from '../../../scenery/js/layout/nodes/HBox.js';
-import VBox from '../../../scenery/js/layout/nodes/VBox.js';
-import Node from '../../../scenery/js/nodes/Node.js';
-import Path from '../../../scenery/js/nodes/Path.js';
-import Text from '../../../scenery/js/nodes/Text.js';
-import VSlider from '../../../sun/js/VSlider.js';
-import Tandem from '../../../tandem/js/Tandem.js';
+import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
+import Multilink from '../../../../axon/js/Multilink.js';
+import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
+import Bounds2 from '../../../../dot/js/Bounds2.js';
+import Dimension2 from '../../../../dot/js/Dimension2.js';
+import Range from '../../../../dot/js/Range.js';
+import Ray2 from '../../../../dot/js/Ray2.js';
+import { clamp } from '../../../../dot/js/util/clamp.js';
+import Vector2 from '../../../../dot/js/Vector2.js';
+import Vector2Property from '../../../../dot/js/Vector2Property.js';
+import Shape from '../../../../kite/js/Shape.js';
+import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import ModelViewTransform2 from '../../../../phetcommon/js/view/ModelViewTransform2.js';
+import AccessibleList from '../../../../scenery-phet/js/accessibility/AccessibleList.js';
+import ArrowNode from '../../../../scenery-phet/js/ArrowNode.js';
+import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
+import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
+import Node from '../../../../scenery/js/nodes/Node.js';
+import Path from '../../../../scenery/js/nodes/Path.js';
+import Text from '../../../../scenery/js/nodes/Text.js';
+import VSlider from '../../../../sun/js/VSlider.js';
+import Tandem from '../../../../tandem/js/Tandem.js';
+import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
+import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import SingleAtomDecayModel from '../model/SingleAtomDecayModel.js';
-import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
-import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
-import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import NuclearDecayAccordionBox, { NuclearDecayAccordionBoxOptions } from './NuclearDecayAccordionBox.js';
 
 type SelfOptions = EmptySelfOptions;

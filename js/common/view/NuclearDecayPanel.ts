@@ -5,10 +5,10 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
-import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
-import Panel, { PanelOptions } from '../../../sun/js/Panel.js';
-import Node from '../../../scenery/js/nodes/Node.js';
-import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
+import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import Node from '../../../../scenery/js/nodes/Node.js';
+import Panel, { PanelOptions } from '../../../../sun/js/Panel.js';
+import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 
 type SelfOptions = EmptySelfOptions;
 

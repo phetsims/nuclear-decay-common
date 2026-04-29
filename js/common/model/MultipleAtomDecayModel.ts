@@ -5,7 +5,7 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
-import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
+import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import NuclearDecayModel, { NuclearDecayModelOptions, SelectableIsotopes } from './NuclearDecayModel.js';
 
 type SelfOptions = EmptySelfOptions;

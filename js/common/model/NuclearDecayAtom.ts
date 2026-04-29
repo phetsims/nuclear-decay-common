@@ -6,17 +6,17 @@
  * @author John Blanco (PhET Interactive Simulations)
  */
 
-import dotRandom from '../../../dot/js/dotRandom.js';
-import Vector2, { Vector2StateObject } from '../../../dot/js/Vector2.js';
-import { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
-import affirm from '../../../perennial-alias/js/browser-and-node/affirm.js';
-import AtomInfoUtils from '../../../shred/js/AtomInfoUtils.js';
-import AtomConfig, { AtomConfigStateObject } from '../../../shred/js/model/AtomConfig.js';
-import BooleanIO from '../../../tandem/js/types/BooleanIO.js';
-import IOType from '../../../tandem/js/types/IOType.js';
-import NullableIO from '../../../tandem/js/types/NullableIO.js';
-import NumberIO from '../../../tandem/js/types/NumberIO.js';
-import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
+import dotRandom from '../../../../dot/js/dotRandom.js';
+import Vector2, { Vector2StateObject } from '../../../../dot/js/Vector2.js';
+import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
+import { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import AtomInfoUtils from '../../../../shred/js/AtomInfoUtils.js';
+import AtomConfig, { AtomConfigStateObject } from '../../../../shred/js/model/AtomConfig.js';
+import BooleanIO from '../../../../tandem/js/types/BooleanIO.js';
+import IOType from '../../../../tandem/js/types/IOType.js';
+import NullableIO from '../../../../tandem/js/types/NullableIO.js';
+import NumberIO from '../../../../tandem/js/types/NumberIO.js';
+import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 
 export type NuclearDecayAtomStateObject = {
   atomConfigBeforeDecay: AtomConfigStateObject;

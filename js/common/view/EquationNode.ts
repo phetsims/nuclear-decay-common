@@ -5,13 +5,13 @@
  * @author Agustín Vallejo
  */
 
-import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
-import Dimension2 from '../../../dot/js/Dimension2.js';
-import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
-import ArrowNode from '../../../scenery-phet/js/ArrowNode.js';
-import PlusNode from '../../../scenery-phet/js/PlusNode.js';
-import HBox, { HBoxOptions } from '../../../scenery/js/layout/nodes/HBox.js';
-import Node from '../../../scenery/js/nodes/Node.js';
+import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
+import Dimension2 from '../../../../dot/js/Dimension2.js';
+import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import ArrowNode from '../../../../scenery-phet/js/ArrowNode.js';
+import PlusNode from '../../../../scenery-phet/js/PlusNode.js';
+import HBox, { HBoxOptions } from '../../../../scenery/js/layout/nodes/HBox.js';
+import Node from '../../../../scenery/js/nodes/Node.js';
 import NuclearDecayModel, { SelectableIsotopes } from '../model/NuclearDecayModel.js';
 import EquationElementNode from './EquationElementNode.js';
 

@@ -5,10 +5,10 @@
  * @author Agustín Vallejo
  */
 
-import optionize from '../../../phet-core/js/optionize.js';
-import ShadedSphereNode from '../../../scenery-phet/js/ShadedSphereNode.js';
-import Node, { NodeOptions } from '../../../scenery/js/nodes/Node.js';
-import ShredColors from '../../../shred/js/ShredColors.js';
+import optionize from '../../../../phet-core/js/optionize.js';
+import ShadedSphereNode from '../../../../scenery-phet/js/ShadedSphereNode.js';
+import Node, { NodeOptions } from '../../../../scenery/js/nodes/Node.js';
+import ShredColors from '../../../../shred/js/ShredColors.js';
 
 type SelfOptions = {
   nucleonDiameter?: number;

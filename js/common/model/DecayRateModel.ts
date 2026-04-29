@@ -6,11 +6,11 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
-import DerivedProperty from '../../../axon/js/DerivedProperty.js';
-import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
-import Vector2 from '../../../dot/js/Vector2.js';
-import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
-import NumberIO from '../../../tandem/js/types/NumberIO.js';
+import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
+import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
+import Vector2 from '../../../../dot/js/Vector2.js';
+import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import NumberIO from '../../../../tandem/js/types/NumberIO.js';
 import NuclearDecayModel, { NuclearDecayModelOptions, SelectableIsotopes } from './NuclearDecayModel.js';
 
 type SelfOptions = EmptySelfOptions;

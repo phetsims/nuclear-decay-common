@@ -6,8 +6,8 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
-import { roundToInterval } from '../../../dot/js/util/roundToInterval.js';
-import affirm from '../../../perennial-alias/js/browser-and-node/affirm.js';
+import { roundToInterval } from '../../../../dot/js/util/roundToInterval.js';
+import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
 import NuclearDecayModel from './NuclearDecayModel.js';
 
 const BINS_PER_SECOND = 20;

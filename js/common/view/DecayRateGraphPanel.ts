@@ -7,26 +7,26 @@
  * @author Agustín Vallejo
  */
 
-import BooleanProperty from '../../../axon/js/BooleanProperty.js';
-import Vector2 from '../../../dot/js/Vector2.js';
-import Shape from '../../../kite/js/Shape.js';
-import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
-import WithRequired from '../../../phet-core/js/types/WithRequired.js';
-import PhetFont from '../../../scenery-phet/js/PhetFont.js';
-import HBox from '../../../scenery/js/layout/nodes/HBox.js';
-import VBox from '../../../scenery/js/layout/nodes/VBox.js';
-import Line from '../../../scenery/js/nodes/Line.js';
-import Node from '../../../scenery/js/nodes/Node.js';
-import Path from '../../../scenery/js/nodes/Path.js';
-import Rectangle from '../../../scenery/js/nodes/Rectangle.js';
-import RichText from '../../../scenery/js/nodes/RichText.js';
-import Text from '../../../scenery/js/nodes/Text.js';
-import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
-import Checkbox from '../../../sun/js/Checkbox.js';
+import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
+import Vector2 from '../../../../dot/js/Vector2.js';
+import Shape from '../../../../kite/js/Shape.js';
+import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
+import PhetFont from '../../../../scenery-phet/js/PhetFont.js';
+import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
+import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
+import Line from '../../../../scenery/js/nodes/Line.js';
+import Node from '../../../../scenery/js/nodes/Node.js';
+import Path from '../../../../scenery/js/nodes/Path.js';
+import Rectangle from '../../../../scenery/js/nodes/Rectangle.js';
+import RichText from '../../../../scenery/js/nodes/RichText.js';
+import Text from '../../../../scenery/js/nodes/Text.js';
+import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
+import Checkbox from '../../../../sun/js/Checkbox.js';
+import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
+import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
-import NuclearDecayCommonColors from '../NuclearDecayCommonColors.js';
-import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
-import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
 
 // The maximum time displayed on the x-axis (seconds).

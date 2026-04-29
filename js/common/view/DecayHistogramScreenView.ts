@@ -6,19 +6,19 @@
  * @author Agustín Vallejo
  */
 
-import Bounds2 from '../../../dot/js/Bounds2.js';
-import { ScreenViewOptions } from '../../../joist/js/ScreenView.js';
-import optionize from '../../../phet-core/js/optionize.js';
-import WithRequired from '../../../phet-core/js/types/WithRequired.js';
-import ResetAllButton from '../../../scenery-phet/js/buttons/ResetAllButton.js';
-import RestartButton from '../../../scenery-phet/js/buttons/RestartButton.js';
-import TimeControlNode from '../../../scenery-phet/js/TimeControlNode.js';
-import TimeSpeed from '../../../scenery-phet/js/TimeSpeed.js';
-import VBox from '../../../scenery/js/layout/nodes/VBox.js';
-import Node from '../../../scenery/js/nodes/Node.js';
+import Bounds2 from '../../../../dot/js/Bounds2.js';
+import { ScreenViewOptions } from '../../../../joist/js/ScreenView.js';
+import optionize from '../../../../phet-core/js/optionize.js';
+import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
+import ResetAllButton from '../../../../scenery-phet/js/buttons/ResetAllButton.js';
+import RestartButton from '../../../../scenery-phet/js/buttons/RestartButton.js';
+import TimeControlNode from '../../../../scenery-phet/js/TimeControlNode.js';
+import TimeSpeed from '../../../../scenery-phet/js/TimeSpeed.js';
+import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
+import Node from '../../../../scenery/js/nodes/Node.js';
+import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
-import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
-import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import DecayTimeHistogramPanel from './DecayTimeHistogramPanel.js';
 import IsotopeControlPanel from './IsotopeControlPanel.js';
 import NuclearDecayScreenView, { NuclearDecayScreenViewOptions } from './NuclearDecayScreenView.js';

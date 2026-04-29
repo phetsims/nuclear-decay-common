@@ -8,15 +8,15 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
-import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
-import Vector2 from '../../../dot/js/Vector2.js';
-import optionize from '../../../phet-core/js/optionize.js';
-import ModelViewTransform2 from '../../../phetcommon/js/view/ModelViewTransform2.js';
-import ParticleAtomNode, { ParticleAtomNodeOptions } from '../../../shred/js/view/ParticleAtomNode.js';
-import ParticleView from '../../../shred/js/view/ParticleView.js';
-import Tandem from '../../../tandem/js/Tandem.js';
+import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
+import Vector2 from '../../../../dot/js/Vector2.js';
+import optionize from '../../../../phet-core/js/optionize.js';
+import ModelViewTransform2 from '../../../../phetcommon/js/view/ModelViewTransform2.js';
+import ParticleAtomNode, { ParticleAtomNodeOptions } from '../../../../shred/js/view/ParticleAtomNode.js';
+import ParticleView from '../../../../shred/js/view/ParticleView.js';
+import Tandem from '../../../../tandem/js/Tandem.js';
+import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
-import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import createParticleAtomFromConfig from './createParticleAtomFromConfig.js';
 
 type SelfOptions = {

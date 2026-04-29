@@ -6,16 +6,16 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
-import { TReadOnlyProperty } from '../../../axon/js/TReadOnlyProperty.js';
-import optionize, { EmptySelfOptions } from '../../../phet-core/js/optionize.js';
-import ShadedSphereNode from '../../../scenery-phet/js/ShadedSphereNode.js';
-import HBox from '../../../scenery/js/layout/nodes/HBox.js';
-import VBox from '../../../scenery/js/layout/nodes/VBox.js';
-import Node, { NodeOptions } from '../../../scenery/js/nodes/Node.js';
-import RichText from '../../../scenery/js/nodes/RichText.js';
-import ShredColors from '../../../shred/js/ShredColors.js';
-import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
-import NuclearDecayCommonStrings from '../NuclearDecayCommonStrings.js';
+import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
+import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import ShadedSphereNode from '../../../../scenery-phet/js/ShadedSphereNode.js';
+import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
+import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
+import Node, { NodeOptions } from '../../../../scenery/js/nodes/Node.js';
+import RichText from '../../../../scenery/js/nodes/RichText.js';
+import ShredColors from '../../../../shred/js/ShredColors.js';
+import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonStrings from '../../NuclearDecayCommonStrings.js';
 import AlphaParticleNode from './AlphaParticleNode.js';
 
 type SelfOptions = EmptySelfOptions;

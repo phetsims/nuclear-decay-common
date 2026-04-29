@@ -6,19 +6,19 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
-import optionize from '../../../phet-core/js/optionize.js';
-import WithRequired from '../../../phet-core/js/types/WithRequired.js';
-import HSeparator from '../../../scenery/js/layout/nodes/HSeparator.js';
-import VBox from '../../../scenery/js/layout/nodes/VBox.js';
-import Node from '../../../scenery/js/nodes/Node.js';
-import RichText from '../../../scenery/js/nodes/RichText.js';
-import Text from '../../../scenery/js/nodes/Text.js';
-import AtomNameUtils from '../../../shred/js/AtomNameUtils.js';
-import type { AquaRadioButtonGroupItem } from '../../../sun/js/AquaRadioButtonGroup.js';
-import VerticalAquaRadioButtonGroup from '../../../sun/js/VerticalAquaRadioButtonGroup.js';
+import optionize from '../../../../phet-core/js/optionize.js';
+import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
+import HSeparator from '../../../../scenery/js/layout/nodes/HSeparator.js';
+import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
+import Node from '../../../../scenery/js/nodes/Node.js';
+import RichText from '../../../../scenery/js/nodes/RichText.js';
+import Text from '../../../../scenery/js/nodes/Text.js';
+import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
+import type { AquaRadioButtonGroupItem } from '../../../../sun/js/AquaRadioButtonGroup.js';
+import VerticalAquaRadioButtonGroup from '../../../../sun/js/VerticalAquaRadioButtonGroup.js';
+import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import NuclearDecayModel, { ValidIsotopes } from '../model/NuclearDecayModel.js';
-import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
-import NuclearDecayCommonFluent from '../NuclearDecayCommonFluent.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
 import ParticlesLegendNode from './ParticlesLegendNode.js';
 
