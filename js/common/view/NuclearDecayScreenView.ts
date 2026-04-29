@@ -52,7 +52,7 @@ export default class NuclearDecayScreenView extends ScreenView {
   protected readonly playAreaBoundsRectangle: Path;
 
   public constructor(
-    public readonly model: NuclearDecayModel,
+    protected readonly model: NuclearDecayModel,
     providedOptions?: NuclearDecayScreenViewOptions
   ) {
 
