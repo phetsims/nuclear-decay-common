@@ -6,13 +6,13 @@
  */
 
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
-import NuclearDecayModel, { NuclearDecayModelOptions, SelectableIsotopes } from './NuclearDecayModel.js';
+import NuclearDecayModel, { NuclearDecayModelOptions, SelectableIsotopes } from '../../common/model/NuclearDecayModel.js';
 
 type SelfOptions = EmptySelfOptions;
 
 export type MultipleAtomDecayModelOptions = SelfOptions & NuclearDecayModelOptions;
 
-export default class MultipleAtomDecayModel extends NuclearDecayModel {
+export default class MultipleAtomsModel extends NuclearDecayModel {
 
   public constructor(
     selectableIsotopes: SelectableIsotopes[],

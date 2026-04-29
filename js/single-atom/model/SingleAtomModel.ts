@@ -10,13 +10,13 @@ import Multilink from '../../../../axon/js/Multilink.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import Range from '../../../../dot/js/Range.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
-import NuclearDecayModel, { NuclearDecayModelOptions, SelectableIsotopes } from './NuclearDecayModel.js';
+import NuclearDecayModel, { NuclearDecayModelOptions, SelectableIsotopes } from '../../common/model/NuclearDecayModel.js';
 
 type SelfOptions = EmptySelfOptions;
 
 export type SingleAtomDecayModelOptions = SelfOptions & NuclearDecayModelOptions;
 
-export default class SingleAtomDecayModel extends NuclearDecayModel {
+export default class SingleAtomModel extends NuclearDecayModel {
 
   // Potential energy
   public readonly potentialEnergyProperty: NumberProperty;

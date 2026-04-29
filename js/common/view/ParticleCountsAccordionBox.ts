@@ -16,8 +16,8 @@ import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
+import SingleAtomModel from '../../single-atom/model/SingleAtomModel.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
-import SingleAtomDecayModel from '../model/SingleAtomDecayModel.js';
 import NuclearDecayAccordionBox, { NuclearDecayAccordionBoxOptions } from './NuclearDecayAccordionBox.js';
 
 type SelfOptions = EmptySelfOptions;
@@ -25,7 +25,7 @@ type SelfOptions = EmptySelfOptions;
 export type ParticleCountsAccordionBoxOptions = SelfOptions & NuclearDecayAccordionBoxOptions;
 
 export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox {
-  public constructor( model: SingleAtomDecayModel, providedOptions?: ParticleCountsAccordionBoxOptions ) {
+  public constructor( model: SingleAtomModel, providedOptions?: ParticleCountsAccordionBoxOptions ) {
 
     const isotopeInfoTitleStringProperty = new DerivedStringProperty(
       [

@@ -30,7 +30,7 @@ import Tandem from '../../../../tandem/js/Tandem.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
-import SingleAtomDecayModel from '../model/SingleAtomDecayModel.js';
+import SingleAtomModel from '../../single-atom/model/SingleAtomModel.js';
 import NuclearDecayAccordionBox, { NuclearDecayAccordionBoxOptions } from './NuclearDecayAccordionBox.js';
 
 type SelfOptions = EmptySelfOptions;
@@ -68,7 +68,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
   public readonly energyIntersectionPointProperty: Vector2Property;
 
   public constructor(
-    model: SingleAtomDecayModel,
+    model: SingleAtomModel,
     bounds: Bounds2,
     modelViewTransformProperty: TReadOnlyProperty<ModelViewTransform2>,
     providedOptions?: EnergyDiagramAccordionBoxOptions
