@@ -431,6 +431,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
       if ( newIsotope === 'custom' ) {
         atom.halfLife = this.getHalfLife( newIsotope );
+        atom.timeMode = 'exponential';
       }
       else {
         atom.deriveHalfLife();
@@ -450,6 +451,14 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   public resetAtoms(): void {
     this.atomPool.forEach( atom => atom.reset() );
     this.activeAtoms.length = 0;
+  }
+
+  /**
+   * Reset the decay state of all atoms, meaning that for each atom, if it had decayed, it will go back to its
+   * pre-decayed configuration.
+   */
+  public resetAtomDecayStates(): void {
+    this.atomPool.forEach( atom => atom.resetDecay() );
   }
 
   /**
