@@ -343,10 +343,12 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
         affirm( this.timeMode === 'exponential', 'unexpected time mode' );
 
         // The model is in exponential time mode, so calculate the size of the time step based on an exponential
-        // function.
-        const endOfIntervalInExponentialTime = Math.pow( 10, 6 * ( this.accumulatedLinearTime + dt ) - 3 );
-        timeStep = endOfIntervalInExponentialTime - this.timeProperty.value;
-        this.timeProperty.value = endOfIntervalInExponentialTime;
+        // function.  This exponential function maps a linear time of 0 to 1 ms and adds a scale factor to get the rate
+        // of change that we want based on the design.  It also limits the max value, since this rate of exponential
+        // growth can lead to unsupported values after only a few minutes.
+        const exponentialTime = Math.min( Math.pow( 10, 6 * this.accumulatedLinearTime - 3 ), Number.MAX_VALUE );
+        timeStep = exponentialTime - this.timeProperty.value;
+        this.timeProperty.value = exponentialTime;
       }
 
       this.accumulatedLinearTime += dt;
