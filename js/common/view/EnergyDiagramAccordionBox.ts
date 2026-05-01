@@ -20,8 +20,10 @@ import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.
 import ModelViewTransform2 from '../../../../phetcommon/js/view/ModelViewTransform2.js';
 import AccessibleList from '../../../../scenery-phet/js/accessibility/AccessibleList.js';
 import ArrowNode from '../../../../scenery-phet/js/ArrowNode.js';
+import ArrowShape from '../../../../scenery-phet/js/ArrowShape.js';
 import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
+import Line from '../../../../scenery/js/nodes/Line.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Path from '../../../../scenery/js/nodes/Path.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
@@ -280,6 +282,27 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       visibleProperty: model.isPlayAreaEmptyProperty.derived( isEmpty => !isEmpty )
     } );
 
+    const potentialEnergyGrabber = new Path( new ArrowShape( 0, 20, 0, -20, {
+      headWidth: 20,
+      tailWidth: 10,
+      doubleHead: true
+    } ), {
+      fill: NuclearDecayCommonColors.potentialEnergyProperty,
+      stroke: 'black',
+      x: fullGraphRightX - 100,
+      visibleProperty: model.selectedIsotopeProperty.derived( isotope => isotope === 'custom' )
+    } );
+
+    const potentialEnergyHeightIndicator = new Line( 0, 0, 0, 0, {
+      lineDash: [ 5, 5 ],
+      lineWidth: 2,
+      stroke: NuclearDecayCommonColors.potentialEnergyProperty,
+      visibleProperty: new DerivedProperty(
+        [ model.isPlayAreaEmptyProperty, model.selectedIsotopeProperty ], ( isEmpty, isotope ) => {
+          return !isEmpty && isotope === 'custom';
+        } )
+    } );
+
     Multilink.multilink(
       [ modelViewTransformProperty, model.potentialEnergyProperty, graphRightXProperty ],
       ( mvt, value, graphRightX ) => {
@@ -294,6 +317,11 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         );
 
         const peakY = ENERGY_PEAK_Y * value / model.potentialEnergyProperty.range.max + COULOMB_MIN_Y;
+
+        potentialEnergyGrabber.centerY = peakY;
+
+        potentialEnergyHeightIndicator.setLine( wellCenterX + WELL_HALF_WIDTH, peakY, graphRightX, peakY );
+
         potentialEnergyGraphCurve.shape = new Shape()
           .moveTo( -GRAPH_X_OFFSET, COULOMB_MIN_Y )
           .quadraticCurveTo(
@@ -310,6 +338,17 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       }
     );
 
+    const initialEnergyGrabber = new Path( new ArrowShape( 0, 20, 0, -20, {
+      headWidth: 20,
+      tailWidth: 10,
+      doubleHead: true
+    } ), {
+      fill: NuclearDecayCommonColors.initialEnergyColorProperty,
+      stroke: 'black',
+      x: fullGraphRightX - 80,
+      visibleProperty: model.selectedIsotopeProperty.derived( isotope => isotope === 'custom' )
+    } );
+
     const initialEnergyGraphLine = new Path( null, {
       stroke: NuclearDecayCommonColors.initialEnergyColorProperty,
       lineWidth: 2,
@@ -324,7 +363,11 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     } );
 
     // Higher initial-energy value raises the line (screen-Y is inverted).
-    model.initialEnergyProperty.link( value => { initialEnergyGraphLine.y = value * ENERGY_PEAK_Y; } );
+    model.initialEnergyProperty.link( value => {
+      const height = value * ENERGY_PEAK_Y;
+      initialEnergyGraphLine.y = height;
+      initialEnergyGrabber.centerY = height;
+    } );
 
     const energyIntersectionPointProperty = new Vector2Property( Vector2.ZERO, {
       tandem: Tandem.OPT_OUT
@@ -397,13 +440,16 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         energyAxisLabel,
         distanceAxisLabel,
         subtitleText,
+        slidersBox,
         initialEnergyLegendLine,
         initialEnergyLabel,
+        initialEnergyGraphLine,
+        initialEnergyGrabber,
         potentialEnergyLegendLine,
         potentialEnergyLabel,
         potentialEnergyGraphCurve,
-        initialEnergyGraphLine,
-        slidersBox
+        potentialEnergyGrabber,
+        potentialEnergyHeightIndicator
       ],
       accessibleTemplate: AccessibleList.createTemplateProperty( {
         listItems: [
