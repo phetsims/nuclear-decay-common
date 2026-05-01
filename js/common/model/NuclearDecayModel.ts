@@ -86,7 +86,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   // 'polonium-211' vs 'custom' in Alpha Decay, or 'carbon-14' vs 'hydrogen-3' vs 'custom' in Beta Decay.
   public readonly selectedIsotopeProperty: Property<SelectableIsotopes>;
 
-  // The user-editable half-life for custom isotopes, in seconds.
+  // The user-editable half-life for custom isotopes, in normalized value [0,1] to be mapped according to other factors.
   public readonly customHalfLifeProperty: NumberProperty;
 
   // The effective half-life for the currently selected isotope. For non-custom isotopes this is derived from the
@@ -173,9 +173,9 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       phetioFeatured: true
     } );
 
-    this.customHalfLifeProperty = new NumberProperty( 2, {
+    this.customHalfLifeProperty = new NumberProperty( 0.5, {
       tandem: options.tandem.createTandem( 'customHalfLifeProperty' ),
-      range: new Range( 0, 18 ),
+      range: new Range( 0, 1 ),
       phetioFeatured: true
     } );
 
@@ -187,7 +187,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       [ this.selectedIsotopeProperty, this.customHalfLifeProperty ],
       ( selectedIsotope, customHalfLife ) => {
         if ( selectedIsotope === 'custom' ) {
-          return customHalfLife;
+          return this.expandNormalizedTime( customHalfLife, this.timeMode === 'exponential' );
         }
         const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( selectedIsotope );
         const halfLife = AtomInfoUtils.getNuclideHalfLife( atomConfig.protonCount, atomConfig.neutronCount );
@@ -308,6 +308,13 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     } );
   }
 
+  public expandNormalizedTime( normalizedTime: number, exponential: boolean ): number {
+    return exponential ?
+      NuclearDecayCommonConstants.EXPONENTIAL_TIME(
+        NuclearDecayCommonConstants.EXPONENTIAL_HALF_LIFE_EXPONENT.expandNormalizedValue( normalizedTime ) ) :
+      NuclearDecayCommonConstants.LINEAR_HALF_LIFE.expandNormalizedValue( normalizedTime );
+  }
+
   /**
    * Steps the model from the PhET framework. Adjusts the time step based on the settings, and handles whether the
    * screen is paused or not.
@@ -333,11 +340,13 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
     if ( !this.isPlayAreaEmptyProperty.value ) {
 
+      this.accumulatedLinearTime += dt;
+
       // Calculate the time step to feed to the model based on the time mode, either linear or exponential.
       let timeStep;
       if ( this.timeMode === 'linear' ) {
         timeStep = dt;
-        this.timeProperty.value += timeStep;
+        this.timeProperty.value = this.accumulatedLinearTime;
       }
       else {
         affirm( this.timeMode === 'exponential', 'unexpected time mode' );
@@ -346,12 +355,10 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
         // function.  This exponential function maps a linear time of 0 to 1 ms and adds a scale factor to get the rate
         // of change that we want based on the design.  It also limits the max value, since this rate of exponential
         // growth can lead to unsupported values after only a few minutes.
-        const exponentialTime = Math.min( Math.pow( 10, 6 * this.accumulatedLinearTime - 3 ), Number.MAX_VALUE );
+        const exponentialTime = NuclearDecayCommonConstants.EXPONENTIAL_TIME( 6 * this.accumulatedLinearTime - 3 );
         timeStep = exponentialTime - this.timeProperty.value;
         this.timeProperty.value = exponentialTime;
       }
-
-      this.accumulatedLinearTime += dt;
 
       this.activeAtoms.forEach( ( atom: NuclearDecayAtom ) => {
         const hadDecayed = atom.hasDecayed;
@@ -359,10 +366,9 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
         if ( !hadDecayed && atom.hasDecayed ) {
           this.lastDecayTimeProperty.value = this.timeProperty.value;
-          this.undecayedAtoms = this.activeAtoms.filter( atom => !atom.hasDecayed );
           this.decayedAtoms.push( atom.copy() );
 
-          // Update the count inside the loop is important to trigger the sound in the view
+          // Update the count inside this loop is important to trigger the sound in the view
           this.decayedCountProperty.value = this.decayedAtoms.length;
         }
       } );

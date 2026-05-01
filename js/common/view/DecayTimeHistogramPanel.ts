@@ -14,7 +14,6 @@ import Property from '../../../../axon/js/Property.js';
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
 import Dimension2 from '../../../../dot/js/Dimension2.js';
-import Range from '../../../../dot/js/Range.js';
 import { clamp } from '../../../../dot/js/util/clamp.js';
 import { toFixed } from '../../../../dot/js/util/toFixed.js';
 import Shape from '../../../../kite/js/Shape.js';
@@ -159,11 +158,16 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
     // Time axis
 
-    const timeAxis = new ArrowNode( GRAPH_X_OFFSET, GRAPH_HEIGHT, GRAPH_X_OFFSET + GRAPH_WIDTH, GRAPH_HEIGHT, {
+    const timeAxis = new ArrowNode( GRAPH_X_OFFSET - LOG_TICK_OFFSET, GRAPH_HEIGHT, GRAPH_X_OFFSET + GRAPH_WIDTH, GRAPH_HEIGHT, {
       stroke: 'black',
       lineWidth: 1,
       headWidth: 8,
       tailWidth: 1
+    } );
+
+    timescaleProperty.link( scale => {
+      const offset = scale === 'logarithmic' ? LOG_TICK_OFFSET : 0;
+      timeAxis.setTail( GRAPH_X_OFFSET - offset, GRAPH_HEIGHT );
     } );
 
     const timeText = new Text( NuclearDecayCommonFluent.timeStringProperty, {
@@ -195,7 +199,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       visibleProperty: timescaleProperty.derived( timescale => timescale === 'logarithmic' )
     } );
     _.times( LOG_TICKS, ( n: number ) => {
-      const tickX = GRAPH_X_OFFSET + n * LOG_TICK_INTERVAL_WIDTH + LOG_TICK_OFFSET;
+      const tickX = GRAPH_X_OFFSET + n * LOG_TICK_INTERVAL_WIDTH;
       logTicksNode.addChild( new Path(
         new Shape().moveTo( 0, 0 ).lineTo( 0, 10 ),
         { stroke: 'black', lineWidth: 1, x: tickX, y: GRAPH_HEIGHT }
@@ -263,7 +267,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     // half-life slider, visible only for the custom isotope
     const halfLifeSlider = new HSlider(
       model.customHalfLifeProperty,
-      new Range( 0.1, 4 ), // limit to roughly the graph range for polonium for now.
+      model.customHalfLifeProperty.range,
       {
         trackSize: new Dimension2( 80, 2 ),
         thumbSize: new Dimension2( 10, 18 ),
@@ -276,7 +280,12 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
         accessibleName: NuclearDecayCommonFluent.halfLifeStringProperty,
         accessibleHelpText: NuclearDecayCommonFluent.a11y.halfLifeSlider.accessibleHelpTextStringProperty,
         createAriaValueText: ( _formattedValue, value ) => {
-          return StringUtils.fillIn( NuclearDecayCommonFluent.timeSecondsStringProperty.value, { time: toFixed( value, 2 ) } );
+          const isLogarithmic = timescaleProperty.value === 'logarithmic';
+          const realTime = model.expandNormalizedTime( value, isLogarithmic );
+          const shownTime = isLogarithmic ?
+                            `10<sup>${toFixed( Math.log10( realTime ), 1 )}</sup>` :
+                            toFixed( value, 2 );
+          return StringUtils.fillIn( NuclearDecayCommonFluent.timeSecondsStringProperty.value, { time: shownTime } );
         },
         createContextResponseAlert: ( newValue, oldValue ) => {
           const increased = oldValue !== null && newValue > oldValue;
@@ -331,7 +340,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       tandem: options.tandem.createTandem( 'timesAxisNode' )
     } );
 
-    timesAxisNode.addChild( new ArrowNode( GRAPH_X_OFFSET, 0, GRAPH_X_OFFSET + GRAPH_WIDTH, 0, {
+    timesAxisNode.addChild( new ArrowNode( GRAPH_X_OFFSET - LOG_TICK_OFFSET, 0, GRAPH_X_OFFSET + GRAPH_WIDTH, 0, {
       stroke: 'gray',
       fill: 'gray',
       lineWidth: 1,
@@ -340,7 +349,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     } ) );
 
     TIMES_MAP.forEach( ( [ seconds, labelProperty ] ) => {
-      const xPosition = ( Math.log10( seconds ) - LOG_MIN_POWER ) / LOG_POWER_INTERVAL * LOG_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET + LOG_TICK_OFFSET;
+      const xPosition = ( Math.log10( seconds ) - LOG_MIN_POWER ) / LOG_POWER_INTERVAL * LOG_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET;
       timesAxisNode.addChild( new Path(
         new Shape().moveTo( 0, 0 ).lineTo( 0, 10 ),
         { stroke: 'gray', lineWidth: 1, x: xPosition, y: 0 }

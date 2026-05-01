@@ -6,6 +6,7 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
+import Range from '../../dot/js/Range.js';
 import PhetFont from '../../scenery-phet/js/PhetFont.js';
 import AtomConfig from '../../shred/js/model/AtomConfig.js';
 
@@ -16,6 +17,17 @@ export default class NuclearDecayCommonConstants {
 
   // Max number of nucleons in the sim
   public static readonly MAX_ATOMS = 100;
+
+  // Time ranges for custom half-life in linear time mode.
+  public static readonly LINEAR_HALF_LIFE = new Range( 0.1, 3 ); // seconds
+
+  // Time exponent ranges for custom half-life in exponential time mode. The actual half-life will be 10^x.
+  public static readonly EXPONENTIAL_HALF_LIFE_EXPONENT = new Range( -3, 18 );
+
+  // Function for getting exponential time based with the proper clamps
+  public static readonly EXPONENTIAL_TIME = ( exponent: number ): number => {
+    return Math.min( Math.pow( 10, exponent ), Number.MAX_VALUE );
+  };
 
   // Atom dimensions in model coordinates
   public static readonly ATOM_RADIUS = 1;
