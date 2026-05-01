@@ -28,7 +28,6 @@ export default class HistogramData {
   public numberOfUndecayedAtoms = 0;
   public undecayedTime = 0;
 
-
   public constructor( private readonly model: NuclearDecayModel ) {
   }
 
@@ -57,7 +56,7 @@ export default class HistogramData {
 
     this.numberOfUndecayedAtoms = this.model.undecayedAtoms.length;
     if ( this.numberOfUndecayedAtoms > 0 ) {
-      this.undecayedTime = this.model.undecayedAtoms[ 0 ].time;
+      this.undecayedTime = this.model.timeProperty.value;
     }
 
   }

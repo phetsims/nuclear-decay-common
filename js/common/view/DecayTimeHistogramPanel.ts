@@ -453,6 +453,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
           lineWidth: 1
         }
       );
+
       const undecayedCountLabel = new Text( histogramData.numberOfUndecayedAtoms, {
         font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
         fill: 'black',

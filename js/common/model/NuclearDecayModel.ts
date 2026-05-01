@@ -350,7 +350,6 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       }
 
       this.accumulatedLinearTime += dt;
-      this.timeProperty.value += timeStep;
 
       this.activeAtoms.forEach( ( atom: NuclearDecayAtom ) => {
         const hadDecayed = atom.hasDecayed;
