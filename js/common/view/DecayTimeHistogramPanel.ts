@@ -21,6 +21,7 @@ import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
 import StringUtils from '../../../../phetcommon/js/util/StringUtils.js';
 import ArrowNode from '../../../../scenery-phet/js/ArrowNode.js';
 import EraserButton from '../../../../scenery-phet/js/buttons/EraserButton.js';
+import ShadedSphereNode from '../../../../scenery-phet/js/ShadedSphereNode.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Path from '../../../../scenery/js/nodes/Path.js';
@@ -211,8 +212,15 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
+    const grabberDiameter = 15;
+    const halfLifeGrabber = new ShadedSphereNode( grabberDiameter, {
+      mainColor: NuclearDecayCommonColors.halfLifeColorProperty,
+      visibleProperty: model.selectedIsotopeProperty.derived( isotope => isotope === 'custom' ),
+      cursor: 'pointer'
+    } );
+
     const halfLifeIndicator = new VBox( {
-      children: [ halfLifeText, halfLifeLine ],
+      children: [ halfLifeText, halfLifeLine, halfLifeGrabber ],
       bottom: GRAPH_HEIGHT
     } );
 
