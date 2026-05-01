@@ -66,14 +66,15 @@ const ISOTOPE_TO_ATOM_CONFIG = new Map<ValidIsotopes, AtomConfig>( [
 // bounds.
 const DEFAULT_ATOM_AREA_BOUNDS = new Bounds2( -100, -100, 100, 100 );
 
+// a type the defines whether time grows in a linear fashion or exponentially
+export const TimescaleValues = [ 'linear', 'exponential' ] as const;
+export type Timescale = ( typeof TimescaleValues )[ number ];
+
 type SelfOptions = {
   maxNumberOfAtoms?: number;
 };
 
 export type NuclearDecayModelOptions = SelfOptions & WithRequired<PhetioObjectOptions, 'tandem'>;
-
-// a type the defines whether time grows in a linear fashion or exponentially
-export type TimeMode = 'linear' | 'exponential';
 
 export default class NuclearDecayModel extends PhetioObject implements TModel {
 
@@ -100,7 +101,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   public readonly timeSpeedProperty: EnumerationProperty<TimeSpeed>;
 
   // Whether time progresses in a linear or exponential fashion.
-  private timeMode: TimeMode = 'linear';
+  public readonly timescaleProperty: Property<Timescale>;
 
   // The time experienced by the model when playing.
   public readonly timeProperty: NumberProperty;
@@ -164,6 +165,10 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
     super( options );
 
+    this.maxNumberOfAtoms = options.maxNumberOfAtoms!;
+
+    this.isSingleAtomMode = options.maxNumberOfAtoms === 1;
+
     this.selectableIsotopes = selectableIsotopes;
 
     this.selectedIsotopeProperty = new Property<SelectableIsotopes>( 'custom', {
@@ -179,6 +184,13 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       phetioFeatured: true
     } );
 
+    this.timescaleProperty = new Property<Timescale>( 'linear', {
+      tandem: options.tandem.createTandem( 'timescaleProperty' ),
+      phetioFeatured: true,
+      phetioValueType: StringUnionIO( TimescaleValues ),
+      phetioReadOnly: true
+    } );
+
     // The effective half-life for the selected isotope. For real isotopes (e.g. polonium-211), this looks up the
     // known half-life from the nuclide database via AtomInfoUtils. For the 'custom' isotope, it reflects the
     // user-controlled customHalfLifeProperty, allowing the half-life to be set via a slider. Because this is a
@@ -187,7 +199,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       [ this.selectedIsotopeProperty, this.customHalfLifeProperty ],
       ( selectedIsotope, customHalfLife ) => {
         if ( selectedIsotope === 'custom' ) {
-          return this.expandNormalizedTime( customHalfLife, this.timeMode === 'exponential' );
+          return this.expandNormalizedTime( customHalfLife, this.timescaleProperty.value === 'exponential' );
         }
         const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( selectedIsotope );
         const halfLife = AtomInfoUtils.getNuclideHalfLife( atomConfig.protonCount, atomConfig.neutronCount );
@@ -203,10 +215,6 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       tandem: Tandem.OPT_OUT
     } );
 
-    this.maxNumberOfAtoms = options.maxNumberOfAtoms!;
-
-    this.isSingleAtomMode = options.maxNumberOfAtoms === 1;
-
     const selectedIsotope = this.selectedIsotopeProperty.value;
     const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( selectedIsotope );
     const postDecayAtomConfig = NuclearDecayModel.getIsotopeAtomConfig( NuclearDecayModel.getDecayProduct( selectedIsotope ) );
@@ -219,16 +227,17 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
     this.selectedIsotopeProperty.lazyLink( selectedIsotope => {
       this.setNewIsotope( selectedIsotope );
-      this.timeMode = selectedIsotope === 'custom' && this.isSingleAtomMode ?
+      this.timescaleProperty.value = selectedIsotope === 'custom' && this.isSingleAtomMode ?
                       'exponential' :
                       'linear';
     } );
 
     // When the custom half-life changes, push the new value to all atoms in the pool.
     this.customHalfLifeProperty.lazyLink( customHalfLife => {
+      this.clearAtomLists();
       if ( this.selectedIsotopeProperty.value === 'custom' ) {
         this.atomPool.forEach( atom => {
-          atom.halfLife = customHalfLife;
+          atom.halfLife = this.expandNormalizedTime( customHalfLife, this.timescaleProperty.value === 'exponential' );
         } );
       }
     } );
@@ -281,6 +290,8 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     );
 
     this.histogramData = new HistogramData( this );
+
+    this.decayedCountProperty.link( () => this.histogramData.update() );
 
     this.isPlayAreaEmptyProperty = new BooleanProperty( true );
 
@@ -344,12 +355,12 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
       // Calculate the time step to feed to the model based on the time mode, either linear or exponential.
       let timeStep;
-      if ( this.timeMode === 'linear' ) {
+      if ( this.timescaleProperty.value === 'linear' ) {
         timeStep = dt;
-        this.timeProperty.value = this.accumulatedLinearTime;
+        this.timeProperty.value += timeStep;
       }
       else {
-        affirm( this.timeMode === 'exponential', 'unexpected time mode' );
+        affirm( this.timescaleProperty.value === 'exponential', 'unexpected time mode' );
 
         // The model is in exponential time mode, so calculate the size of the time step based on an exponential
         // function.  This exponential function maps a linear time of 0 to 1 ms and adds a scale factor to get the rate
@@ -376,8 +387,9 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       // Update several variables used to control and present the view.
       this.undecayedAtoms = this.activeAtoms.filter( atom => !atom.hasDecayed );
       this.undecayedCountProperty.value = this.undecayedAtoms.length;
-      this.histogramData.step();
     }
+
+    this.histogramData.step();
   }
 
   /**
@@ -431,7 +443,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
   public getHalfLife( isotope: SelectableIsotopes ): number {
     if ( isotope === 'custom' ) {
-      return this.customHalfLifeProperty.value;
+      return this.expandNormalizedTime( this.customHalfLifeProperty.value, this.timescaleProperty.value === 'exponential' );
     }
     const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
     const halfLife = AtomInfoUtils.getNuclideHalfLife( atomConfig.protonCount, atomConfig.neutronCount );
@@ -474,6 +486,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   private setNewIsotope( newIsotope: SelectableIsotopes ): void {
     this.lastDecayTimeProperty.reset();
     this.timeProperty.reset();
+    this.histogramData.reset();
     this.accumulatedLinearTime = 0;
     this.clearAtomLists();
 
@@ -496,12 +509,17 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   }
 
   /**
-   * Clears all the atom lists, including decayAtoms.
+   * Clears all the atom lists, including decayedAtoms.
    */
   public clearAtomLists(): void {
     this.resetAtoms();
     this.activeAtoms.length = 0;
     this.decayedAtoms.length = 0;
+    this.undecayedAtoms.length = 0;
+    this.undecayedCountProperty.reset();
+    this.decayedCountProperty.reset();
+    this.lastDecayTimeProperty.reset();
+    this.histogramData.reset();
   }
 
   public resetAtoms(): void {
@@ -537,14 +555,12 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
    * Resets the model.
    */
   public reset(): void {
-    this.clearAtomLists();
     this.selectedIsotopeProperty.reset();
     this.customHalfLifeProperty.reset();
     this.isPlayingProperty.reset();
     this.timeSpeedProperty.reset();
     this.timeProperty.reset();
     this.accumulatedLinearTime = 0;
-    this.lastDecayTimeProperty.reset();
   }
 
   /**

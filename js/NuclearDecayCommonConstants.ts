@@ -75,6 +75,6 @@ export default class NuclearDecayCommonConstants {
 
   // Time control constants
   public static readonly MANUAL_STEP_DT = 1 / 60; // seconds, one frame
-  public static readonly NORMAL_SPEED_SCALE = 0.25;
+  public static readonly NORMAL_SPEED_SCALE = 4;
   public static readonly SLOW_SPEED_SCALE = 0.1;
 }

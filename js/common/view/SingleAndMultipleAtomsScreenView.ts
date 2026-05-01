@@ -100,10 +100,7 @@ export default class SingleAndMultipleAtomsScreenView extends NuclearDecayScreen
         left: this.layoutBounds.minX + MARGIN_X,
         top: this.layoutBounds.minY + MARGIN_Y,
         fill: NuclearDecayCommonConstants.MAIN_PANEL_FILL,
-        tandem: options.tandem.createTandem( 'decayTimeHistogramPanel' ),
-
-        // If we're in multiple atom mode, set the histogram timescale to be linear
-        timescale: !model.isSingleAtomMode ? 'linear' : undefined
+        tandem: options.tandem.createTandem( 'decayTimeHistogramPanel' )
       } );
     this.addChild( this.decayTimeHistogramPanel );
 

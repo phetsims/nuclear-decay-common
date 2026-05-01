@@ -10,14 +10,13 @@ import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
 import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
 import DynamicProperty from '../../../../axon/js/DynamicProperty.js';
 import Multilink from '../../../../axon/js/Multilink.js';
-import Property from '../../../../axon/js/Property.js';
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
 import Dimension2 from '../../../../dot/js/Dimension2.js';
 import { clamp } from '../../../../dot/js/util/clamp.js';
 import { toFixed } from '../../../../dot/js/util/toFixed.js';
 import Shape from '../../../../kite/js/Shape.js';
-import optionize from '../../../../phet-core/js/optionize.js';
+import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
 import StringUtils from '../../../../phetcommon/js/util/StringUtils.js';
 import ArrowNode from '../../../../scenery-phet/js/ArrowNode.js';
@@ -32,19 +31,14 @@ import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
 import Checkbox from '../../../../sun/js/Checkbox.js';
 import HSlider from '../../../../sun/js/HSlider.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
-import StringUnionIO from '../../../../tandem/js/types/StringUnionIO.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import HistogramData from '../model/HistogramData.js';
-import NuclearDecayModel, { SelectableIsotopes } from '../model/NuclearDecayModel.js';
+import NuclearDecayModel, { SelectableIsotopes, Timescale } from '../model/NuclearDecayModel.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
 
-type Timescale = 'linear' | 'logarithmic';
-
-type SelfOptions = {
-  timescale?: Timescale;
-};
+type SelfOptions = EmptySelfOptions;
 
 export type DecayTimeHistogramPanelOptions = SelfOptions & WithRequired<NuclearDecayPanelOptions, 'tandem'>;
 
@@ -94,8 +88,6 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
   private model: NuclearDecayModel;
 
-  private readonly timescaleProperty: Property<Timescale>;
-
   private readonly getXForTime: ( time: number, timescale: Timescale ) => number;
 
   public constructor(
@@ -103,21 +95,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     bounds: Bounds2,
     providedOptions: DecayTimeHistogramPanelOptions ) {
 
-    const timescaleProperty = new Property<Timescale>( providedOptions.timescale ?? 'linear', {
-      tandem: providedOptions.tandem.createTandem( 'timescaleProperty' ),
-      phetioFeatured: true,
-      phetioValueType: StringUnionIO( [ 'linear', 'logarithmic' ] )
-    } );
-
-    // If a timescale is not provided, link isotope to switch to logarithmic time scale for custom.
-    if ( !providedOptions.timescale ) {
-      model.selectedIsotopeProperty.link( selectedIsotope => {
-        timescaleProperty.value = selectedIsotope === 'custom' ? 'logarithmic' : 'linear';
-      } );
-    }
-
     const options = optionize<DecayTimeHistogramPanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {
-      timescale: 'linear'
     }, providedOptions );
 
     // Y-axis rotated label: "Isotope"
@@ -165,8 +143,8 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       tailWidth: 1
     } );
 
-    timescaleProperty.link( scale => {
-      const offset = scale === 'logarithmic' ? LOG_TICK_OFFSET : 0;
+    model.timescaleProperty.link( scale => {
+      const offset = scale === 'exponential' ? LOG_TICK_OFFSET : 0;
       timeAxis.setTail( GRAPH_X_OFFSET - offset, GRAPH_HEIGHT );
     } );
 
@@ -179,7 +157,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
     // Linear ticks (0, 1, 2, 3 seconds)
     const linearTicksNode = new Node( {
-      visibleProperty: timescaleProperty.derived( timescale => timescale === 'linear' )
+      visibleProperty: model.timescaleProperty.derived( timescale => timescale === 'linear' )
     } );
     _.times( LINEAR_TICKS, ( n: number ) => {
       const tickX = GRAPH_X_OFFSET + n * LINEAR_TICK_INTERVAL_WIDTH;
@@ -196,7 +174,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
     // Logarithmic ticks (10^-3, 10^0, 10^3, ..., 10^18)
     const logTicksNode = new Node( {
-      visibleProperty: timescaleProperty.derived( timescale => timescale === 'logarithmic' )
+      visibleProperty: model.timescaleProperty.derived( timescale => timescale === 'exponential' )
     } );
     _.times( LOG_TICKS, ( n: number ) => {
       const tickX = GRAPH_X_OFFSET + n * LOG_TICK_INTERVAL_WIDTH;
@@ -239,14 +217,14 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     } );
 
     const getXForTime = ( time: number, timescale: Timescale ) => {
-      if ( timescale === 'logarithmic' && time > 0 ) {
+      if ( timescale === 'exponential' && time > 0 ) {
         const logTime = Math.log10( time );
-        return clamp( ( logTime - LOG_MIN_POWER ) / LOG_POWER_INTERVAL * LOG_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET, 0, GRAPH_WIDTH );
+        return clamp( ( logTime - LOG_MIN_POWER ) / LOG_POWER_INTERVAL * LOG_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET, 0, GRAPH_WIDTH + GRAPH_X_OFFSET );
       }
-      return clamp( time * LINEAR_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET, 0, GRAPH_WIDTH );
+      return clamp( time * LINEAR_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET, 0, GRAPH_WIDTH + GRAPH_X_OFFSET );
     };
 
-    Multilink.multilink( [ model.halfLifeProperty, timescaleProperty ], ( halfLife: number, timescale: Timescale ) => {
+    Multilink.multilink( [ model.halfLifeProperty, model.timescaleProperty ], ( halfLife: number, timescale: Timescale ) => {
       halfLifeIndicator.centerX = getXForTime( halfLife, timescale );
     } );
 
@@ -280,7 +258,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
         accessibleName: NuclearDecayCommonFluent.halfLifeStringProperty,
         accessibleHelpText: NuclearDecayCommonFluent.a11y.halfLifeSlider.accessibleHelpTextStringProperty,
         createAriaValueText: ( _formattedValue, value ) => {
-          const isLogarithmic = timescaleProperty.value === 'logarithmic';
+          const isLogarithmic = model.timescaleProperty.value === 'exponential';
           const realTime = model.expandNormalizedTime( value, isLogarithmic );
           const shownTime = isLogarithmic ?
                             `10<sup>${toFixed( Math.log10( realTime ), 1 )}</sup>` :
@@ -383,7 +361,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
     // For bounds purposes, time axis and checkbox are contained in this node that only shows up in custom
     const timeScaleNode = new Node( {
-      visibleProperty: timescaleProperty.derived( timescale => timescale === 'logarithmic' ),
+      visibleProperty: model.timescaleProperty.derived( timescale => timescale === 'exponential' ),
       children: [ timesAxisNode, timescaleCheckbox ]
     } );
 
@@ -420,7 +398,6 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
     this.model = model;
     this.dataPointsLayer = dataPointsLayer;
-    this.timescaleProperty = timescaleProperty;
     this.getXForTime = getXForTime;
   }
 
@@ -441,8 +418,11 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     histogramData.decayedBinsMap.forEach( ( value, bin ) => {
       _.times( value, n => {
         const y = GRAPH_HEIGHT - ( n + 1 ) * BOX_HEIGHT;
+        const x = this.model.timescaleProperty.value === 'linear' ?
+                  this.getXForTime( bin, this.model.timescaleProperty.value ) :
+                  this.getXForTime( Math.pow( 10, bin ), this.model.timescaleProperty.value );
         this.dataPointsLayer.addChild( new Rectangle(
-          this.getXForTime( bin, this.timescaleProperty.value ), y, BOX_WIDTH, BOX_HEIGHT, {
+          x, y, BOX_WIDTH, BOX_HEIGHT, {
             fill: 'black',
             stroke: 'grey',
             lineWidth: 1
@@ -456,7 +436,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       const UNDECAYED_HEIGHT = this.model.isSingleAtomMode ? 9 : 16;
 
       const undecayedRectangle = new Rectangle(
-        this.getXForTime( histogramData.undecayedTime, this.timescaleProperty.value ), 0, UNDECAYED_WIDTH, UNDECAYED_HEIGHT, {
+        this.getXForTime( histogramData.undecayedTime, this.model.timescaleProperty.value ), 0, UNDECAYED_WIDTH, UNDECAYED_HEIGHT, {
           fill: NuclearDecayCommonColors.undecayedProperty,
           stroke: 'black',
           lineWidth: 1
