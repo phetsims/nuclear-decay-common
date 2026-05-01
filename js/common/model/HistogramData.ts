@@ -41,7 +41,7 @@ export default class HistogramData {
 
     this.model.decayedAtoms.forEach( atom => {
 
-      affirm( atom.decayTime, 'Decayed atoms should have a decay time' );
+      affirm( atom.decayTime !== null, 'Decayed atoms should have a decay time' );
 
       const bin = roundToInterval( atom.decayTime, BIN_SIZE_TIME );
 

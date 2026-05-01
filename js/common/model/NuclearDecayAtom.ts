@@ -17,7 +17,6 @@ import BooleanIO from '../../../../tandem/js/types/BooleanIO.js';
 import IOType from '../../../../tandem/js/types/IOType.js';
 import NullableIO from '../../../../tandem/js/types/NullableIO.js';
 import NumberIO from '../../../../tandem/js/types/NumberIO.js';
-import StringIO from '../../../../tandem/js/types/StringIO.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 
 export type NuclearDecayAtomStateObject = {
@@ -27,21 +26,13 @@ export type NuclearDecayAtomStateObject = {
   isActive: boolean;
   hasDecayed: boolean;
   time: number;
-  timeMode: TimeMode;
   decayTime: number | null;
   position: Vector2StateObject;
 };
 
-export type TimeMode = 'linear' | 'exponential';
-
 type SelfOptions = EmptySelfOptions;
 
 export type NuclearDecayAtomOptions = SelfOptions;
-
-// These scale factors are used to scale sim time to the time experienced by the atom, in both linear and exponential
-// time modes.
-const LINEAR_TIME_SCALE_FACTOR = 1;
-const EXPONENTIAL_TIME_SCALE_FACTOR = 1;
 
 export default class NuclearDecayAtom {
 
@@ -60,14 +51,10 @@ export default class NuclearDecayAtom {
   // Whether the atom has decayed or not.
   public hasDecayed = false;
 
-  // The time that this atom has experienced since the last time it was reset.  This value progresses differently in
-  // the linear versus exponential time modes.
+  // Time experienced by the atom, in seconds. This stops advancing when the atom decays.
   public time = 0;
 
-  // Whether time progresses in a linear or exponential fashion.
-  private _timeMode: TimeMode = 'linear';
-
-  // Time it took to decay
+  // The time at which this atom decayed, or null if it has not decayed yet.
   public decayTime: number | null = null;
 
   public position: Vector2 = new Vector2( 0, 0 );
@@ -90,7 +77,6 @@ export default class NuclearDecayAtom {
       atomConfigBeforeDecay.neutronCount
     );
     this._halfLife = halfLife ? halfLife : Infinity; // Default to a half-life of INFINITY if the nuclide is not found in the data, which means it will decay immediately upon activation.
-    this._timeMode = 'linear';
   }
 
   /**
@@ -101,7 +87,6 @@ export default class NuclearDecayAtom {
     this.isActive = false;
     this.hasDecayed = false;
     this.time = 0;
-    this.timeMode = 'linear';
     this.decayTime = null;
     this.position = new Vector2( 0, 0 );
   }
@@ -113,12 +98,7 @@ export default class NuclearDecayAtom {
   public resetDecay(): void {
     this.time = 0;
     this.hasDecayed = false;
-  }
-
-  // ES5 setter for time mode
-  public set timeMode( value: TimeMode ) {
-    affirm( this.time === 0, 'can\'t set time mode when running' );
-    this._timeMode = value;
+    this.decayTime = null;
   }
 
   public copy(): NuclearDecayAtom {
@@ -139,7 +119,6 @@ export default class NuclearDecayAtom {
     this.isActive = referenceAtom.isActive;
     this.hasDecayed = referenceAtom.hasDecayed;
     this.time = referenceAtom.time;
-    this._timeMode = referenceAtom._timeMode;
     this.decayTime = referenceAtom.decayTime;
     this.position = referenceAtom.position.copy();
   }
@@ -166,29 +145,16 @@ export default class NuclearDecayAtom {
   public step( dt: number ): void {
     if ( this._halfLife && !this.hasDecayed ) {
 
-      let timeInterval;
-
-      // Advance the time based on the current time mode.
-      if ( this._timeMode === 'linear' ) {
-        timeInterval = dt * LINEAR_TIME_SCALE_FACTOR;
-      }
-      else {
-        affirm( this._timeMode === 'exponential', 'unexpected time mode' );
-
-        const startOfIntervalInLinearTime = Math.log10( this.time + 1 );
-        const endOfIntervalInLinearTime = startOfIntervalInLinearTime + dt * EXPONENTIAL_TIME_SCALE_FACTOR;
-        const endOfIntervalInExponentialTime = Math.pow( 10, endOfIntervalInLinearTime ) - 1;
-        timeInterval = endOfIntervalInExponentialTime - this.time;
-      }
+      // Increment the time experienced by the atom.
+      this.time += dt;
 
       // Decide whether the atom will decay in this particular time interval.
-      const probabilityOfDecay = NuclearDecayAtom.decayProbabilityOverInterval( this._halfLife, timeInterval );
+      const probabilityOfDecay = NuclearDecayAtom.decayProbabilityOverInterval( this._halfLife, dt );
       if ( dotRandom.nextDouble() < probabilityOfDecay ) {
         this.hasDecayed = true;
+        this.decayTime = this.time;
       }
 
-      // Increment the time experience by the atom based on the calculated interval.
-      this.time += timeInterval;
     }
   }
 
@@ -220,7 +186,6 @@ export default class NuclearDecayAtom {
       isActive: BooleanIO,
       hasDecayed: BooleanIO,
       time: NumberIO,
-      timeMode: StringIO,
       decayTime: NullableIO( NumberIO ),
       position: Vector2.Vector2IO
     },

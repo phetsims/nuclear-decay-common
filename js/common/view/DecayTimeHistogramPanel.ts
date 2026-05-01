@@ -1,7 +1,7 @@
 // Copyright 2026, University of Colorado Boulder
 /**
- * Panel that displays the half-life timeline for the current isotope, including isotope symbols on
- * the Y axis, a half-life label, a time label, and an eraser button.
+ * Panel that displays the half-life timeline for the current isotope, including isotope symbols on the Y axis, a
+ * half-life label, a time label, and an eraser button.
  *
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
@@ -234,10 +234,9 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       bottom: GRAPH_HEIGHT
     } );
 
-    // TODO: Handle log time properly https://github.com/phetsims/alpha-decay/issues/7
     const getXForTime = ( time: number, timescale: Timescale ) => {
       if ( timescale === 'logarithmic' && time > 0 ) {
-        const logTime = NuclearDecayCommonConstants.LINEAR_TIME_TO_LOGARITHMIC( time );
+        const logTime = Math.log10( time );
         return clamp( ( logTime - LOG_MIN_POWER ) / LOG_POWER_INTERVAL * LOG_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET, 0, GRAPH_WIDTH );
       }
       return clamp( time * LINEAR_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET, 0, GRAPH_WIDTH );
