@@ -9,8 +9,6 @@ import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
 import Multilink from '../../../../axon/js/Multilink.js';
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
-import Dimension2 from '../../../../dot/js/Dimension2.js';
-import Range from '../../../../dot/js/Range.js';
 import Ray2 from '../../../../dot/js/Ray2.js';
 import { clamp } from '../../../../dot/js/util/clamp.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
@@ -20,19 +18,17 @@ import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.
 import ModelViewTransform2 from '../../../../phetcommon/js/view/ModelViewTransform2.js';
 import AccessibleList from '../../../../scenery-phet/js/accessibility/AccessibleList.js';
 import ArrowNode from '../../../../scenery-phet/js/ArrowNode.js';
-import ArrowShape from '../../../../scenery-phet/js/ArrowShape.js';
-import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
-import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
+import DragListener from '../../../../scenery/js/listeners/DragListener.js';
 import Line from '../../../../scenery/js/nodes/Line.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Path from '../../../../scenery/js/nodes/Path.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
-import VSlider from '../../../../sun/js/VSlider.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import SingleAtomModel from '../../single-atom/model/SingleAtomModel.js';
+import EnergyGrabberNode from './EnergyGrabberNode.js';
 import NuclearDecayAccordionBox, { NuclearDecayAccordionBoxOptions } from './NuclearDecayAccordionBox.js';
 
 type SelfOptions = EmptySelfOptions;
@@ -88,103 +84,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       accessibleHelpTextCollapsed: NuclearDecayCommonFluent.a11y.energyDiagram.accessibleHelpTextCollapsedStringProperty
     }, providedOptions );
 
-    // Sliders to the right of the graph that drive the vertical position of each energy line.
-
-    const sliderTrackSize = new Dimension2( 4, GRAPH_HEIGHT * 0.75 );
-    const sliderThumbSize = new Dimension2( 20, 12 );
-    const sliderIconShape = new Shape().moveTo( 0, 0 ).lineTo( LEGEND_LINE_LENGTH, 0 );
-    const slidersEnabledProperty = model.isPlayAreaEmptyProperty.derived( isEmpty => !isEmpty );
-
-    const sliderAriaValueText = ( value: number, range: Range ) => {
-      const normalized = ( value - range.min ) / ( range.max - range.min );
-      if ( normalized < 0.33 ) {return NuclearDecayCommonFluent.a11y.qualitative.valueLowStringProperty.value;}
-      if ( normalized < 0.67 ) {return NuclearDecayCommonFluent.a11y.qualitative.valueMediumStringProperty.value;}
-      return NuclearDecayCommonFluent.a11y.qualitative.valueHighStringProperty.value;
-    };
-
-    const initialEnergySlider = new VSlider( model.initialEnergyProperty, model.initialEnergyProperty.range, {
-      trackSize: sliderTrackSize,
-      thumbSize: sliderThumbSize,
-      enabledProperty: slidersEnabledProperty,
-      tandem: options.tandem.createTandem( 'initialEnergySlider' ),
-      accessibleName: NuclearDecayCommonFluent.initialEnergyStringProperty,
-      accessibleHelpText: NuclearDecayCommonFluent.a11y.initialEnergySlider.accessibleHelpTextStringProperty,
-      createAriaValueText: ( _formattedValue, value ) => {
-        const range = model.initialEnergyProperty.range;
-        return sliderAriaValueText( value, range );
-      },
-      createContextResponseAlert: ( newValue, oldValue ) => {
-        const increased = oldValue !== null && newValue > oldValue;
-        const distanceProgress = increased
-                                 ? NuclearDecayCommonFluent.a11y.qualitative.progressLargerStringProperty.value
-                                 : NuclearDecayCommonFluent.a11y.qualitative.progressSmallerStringProperty.value;
-        const hLifeProgress = increased
-                              ? NuclearDecayCommonFluent.a11y.qualitative.progressShorterStringProperty.value
-                              : NuclearDecayCommonFluent.a11y.qualitative.progressLongerStringProperty.value;
-        return NuclearDecayCommonFluent.a11y.energyDiagramSliders.accessibleContextResponse.format( {
-          distanceProgress: distanceProgress, hLifeProgress: hLifeProgress
-        } );
-      }
-    } );
-
-    const potentialEnergySlider = new VSlider( model.potentialEnergyProperty, model.potentialEnergyProperty.range, {
-      trackSize: sliderTrackSize,
-      thumbSize: sliderThumbSize,
-      enabledProperty: slidersEnabledProperty,
-      tandem: options.tandem.createTandem( 'potentialEnergySlider' ),
-      accessibleName: NuclearDecayCommonFluent.a11y.potentialEnergyBarrierHeightStringProperty,
-      accessibleHelpText: NuclearDecayCommonFluent.a11y.potentialEnergySlider.accessibleHelpTextStringProperty,
-      createAriaValueText: ( _formattedValue, value ) => {
-        const range = model.potentialEnergyProperty.range;
-        return sliderAriaValueText( value, range );
-      },
-      createContextResponseAlert: ( newValue, oldValue ) => {
-        const increased = oldValue !== null && newValue > oldValue;
-        const distanceProgress = increased
-                                 ? NuclearDecayCommonFluent.a11y.qualitative.progressSmallerStringProperty.value
-                                 : NuclearDecayCommonFluent.a11y.qualitative.progressLargerStringProperty.value;
-        const hLifeProgress = increased
-                              ? NuclearDecayCommonFluent.a11y.qualitative.progressLongerStringProperty.value
-                              : NuclearDecayCommonFluent.a11y.qualitative.progressShorterStringProperty.value;
-        return NuclearDecayCommonFluent.a11y.energyDiagramSliders.accessibleContextResponse.format( {
-          distanceProgress: distanceProgress, hLifeProgress: hLifeProgress
-        } );
-      }
-    } );
-
-    const initialEnergySliderControl = new VBox( {
-      spacing: 4,
-      children: [
-        new Path( sliderIconShape, { stroke: NuclearDecayCommonColors.initialEnergyColorProperty, lineWidth: 2 } ),
-        initialEnergySlider
-      ]
-    } );
-
-    const potentialEnergySliderControl = new VBox( {
-      spacing: 4,
-      children: [
-        new Path( sliderIconShape, { stroke: NuclearDecayCommonColors.potentialEnergyProperty, lineWidth: 4 } ),
-        potentialEnergySlider
-      ]
-    } );
-
-    const slidersBox = new HBox( {
-      spacing: 15,
-      children: [ potentialEnergySliderControl, initialEnergySliderControl ],
-      right: bounds.right - CONTENT_X_MARGIN,
-      centerY: 0,
-      visibleProperty: model.selectedIsotopeProperty.derived( isotope => isotope === 'custom' )
-    } );
-
-    // Graph width is derived from the provided bounds so the box fits between the screen's left edge and the
-    // time controls on the bottom-right. In custom mode, reserve SLIDER_REGION_WIDTH on the right for the
-    // vertical sliders; otherwise the chart extends to fill that space.
-    const fullGraphRightX = bounds.right - CONTENT_X_MARGIN;
-    const customGraphRightX = slidersBox.left - CONTENT_X_MARGIN;
-
-    const graphRightXProperty = model.selectedIsotopeProperty.derived(
-      isotope => isotope === 'custom' ? customGraphRightX : fullGraphRightX
-    );
+    const graphRightX = bounds.right - CONTENT_X_MARGIN;
 
     // Left edge inside which WELL_CENTER_X can sit without pushing the curve out of the graph region.
     const wellCenterMinX = WELL_HALF_WIDTH + POINTINESS_FACTOR;
@@ -200,7 +100,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
 
     // X-axis: rightward arrow (long); extended to match graphRightXProperty below.
 
-    const xAxis = new ArrowNode( -GRAPH_X_OFFSET, 0, fullGraphRightX, 0, {
+    const xAxis = new ArrowNode( -GRAPH_X_OFFSET, 0, graphRightX, 0, {
       stroke: 'black',
       lineWidth: 1,
       headWidth: 8,
@@ -221,7 +121,8 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     const distanceAxisLabel = new Text( NuclearDecayCommonFluent.distanceStringProperty, {
       font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
       centerY: 10,
-      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
+      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH,
+      right: graphRightX - 15
     } );
 
     // Subtitle: "Alpha Particle Energy"
@@ -282,15 +183,14 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       visibleProperty: model.isPlayAreaEmptyProperty.derived( isEmpty => !isEmpty )
     } );
 
-    const potentialEnergyGrabber = new Path( new ArrowShape( 0, 20, 0, -20, {
-      headWidth: 20,
-      tailWidth: 10,
-      doubleHead: true
-    } ), {
+    // Double-headed vertical arrow for dragging the potential energy barrier height.
+    // Only visible in custom isotope mode. Dragging up increases potentialEnergyProperty.
+    const potentialEnergyGrabber = new EnergyGrabberNode( model.potentialEnergyProperty, model, {
       fill: NuclearDecayCommonColors.potentialEnergyProperty,
-      stroke: 'black',
-      x: fullGraphRightX - 100,
-      visibleProperty: model.selectedIsotopeProperty.derived( isotope => isotope === 'custom' )
+      x: graphRightX - 100,
+      tandem: options.tandem.createTandem( 'potentialEnergyGrabber' ),
+      accessibleName: NuclearDecayCommonFluent.potentialEnergyStringProperty,
+      accessibleHelpText: NuclearDecayCommonFluent.a11y.potentialEnergySlider.accessibleHelpTextStringProperty
     } );
 
     const potentialEnergyHeightIndicator = new Line( 0, 0, 0, 0, {
@@ -304,8 +204,8 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     } );
 
     Multilink.multilink(
-      [ modelViewTransformProperty, model.potentialEnergyProperty, graphRightXProperty ],
-      ( mvt, value, graphRightX ) => {
+      [ modelViewTransformProperty, model.potentialEnergyProperty ],
+      ( mvt, value ) => {
 
         // Convert model x=0 into the content's local coordinate system: box.left + contentXMargin positions the
         // content, and the leftmost drawn element (x-axis) starts at local -GRAPH_X_OFFSET, so local x=0 is
@@ -338,28 +238,20 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       }
     );
 
-    const initialEnergyGrabber = new Path( new ArrowShape( 0, 20, 0, -20, {
-      headWidth: 20,
-      tailWidth: 10,
-      doubleHead: true
-    } ), {
+    // Double-headed vertical arrow for dragging the initial energy level.
+    // Only visible in custom isotope mode. Dragging up increases initialEnergyProperty.
+    const initialEnergyGrabber = new EnergyGrabberNode( model.initialEnergyProperty, model, {
       fill: NuclearDecayCommonColors.initialEnergyColorProperty,
-      stroke: 'black',
-      x: fullGraphRightX - 80,
-      visibleProperty: model.selectedIsotopeProperty.derived( isotope => isotope === 'custom' )
+      x: graphRightX - 80,
+      tandem: options.tandem.createTandem( 'initialEnergyGrabber' ),
+      accessibleName: NuclearDecayCommonFluent.initialEnergyStringProperty,
+      accessibleHelpText: NuclearDecayCommonFluent.a11y.initialEnergySlider.accessibleHelpTextStringProperty
     } );
 
-    const initialEnergyGraphLine = new Path( null, {
+    const initialEnergyGraphLine = new Path( new Shape().moveTo( -GRAPH_X_OFFSET, 0 ).lineTo( graphRightX, 0 ), {
       stroke: NuclearDecayCommonColors.initialEnergyColorProperty,
       lineWidth: 2,
       visibleProperty: model.isPlayAreaEmptyProperty.derived( isEmpty => !isEmpty )
-    } );
-
-    // Rebuild the x-axis, distance label position, and initial-energy line when the chart width changes.
-    graphRightXProperty.link( graphRightX => {
-      xAxis.setTailAndTip( -GRAPH_X_OFFSET, 0, graphRightX, 0 );
-      distanceAxisLabel.right = graphRightX - 15;
-      initialEnergyGraphLine.shape = new Shape().moveTo( -GRAPH_X_OFFSET, 0 ).lineTo( graphRightX, 0 );
     } );
 
     // Higher initial-energy value raises the line (screen-Y is inverted).
@@ -374,8 +266,8 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     } );
 
     Multilink.multilink(
-      [ modelViewTransformProperty, graphRightXProperty, model.potentialEnergyProperty, model.initialEnergyProperty ],
-      ( mvt, graphRightX ) => {
+      [ modelViewTransformProperty, model.potentialEnergyProperty, model.initialEnergyProperty ],
+      mvt => {
 
         // Get the center of the well in local coordinates
         const wellCenterMaxX = graphRightX - WELL_HALF_WIDTH - POINTINESS_FACTOR;
@@ -440,7 +332,6 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         energyAxisLabel,
         distanceAxisLabel,
         subtitleText,
-        slidersBox,
         initialEnergyLegendLine,
         initialEnergyLabel,
         initialEnergyGraphLine,
@@ -488,6 +379,38 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         ]
       } )
     } );
+
+    // --- initialEnergyGrabber interaction ---
+    //
+    // The initial energy line sits at screen-y = value * ENERGY_PEAK_Y (ENERGY_PEAK_Y is negative, so higher values
+    // move the line upward). Inverting: value = localY / ENERGY_PEAK_Y.
+    //
+    // contentsNode is defined below; safe to reference because these callbacks only fire at runtime.
+
+    // Pointer drag: convert absolute pointer position to an initialEnergyProperty value.
+    initialEnergyGrabber.addInputListener( new DragListener( {
+      tandem: Tandem.OPT_OUT,
+      drag: event => {
+        const localY = contentsNode.globalToLocalPoint( event.pointer.point ).y;
+        const value = localY / ENERGY_PEAK_Y;
+        model.initialEnergyProperty.value = clamp( value, model.initialEnergyProperty.range.min, model.initialEnergyProperty.range.max );
+      }
+    } ) );
+
+    // --- potentialEnergyGrabber interaction ---
+    //
+    // The barrier peak sits at screen-y = ENERGY_PEAK_Y * value / range.max + COULOMB_MIN_Y.
+    // Inverting: value = (localY − COULOMB_MIN_Y) / ENERGY_PEAK_Y * range.max.
+
+    // Pointer drag: convert absolute pointer position to a potentialEnergyProperty value.
+    potentialEnergyGrabber.addInputListener( new DragListener( {
+      tandem: Tandem.OPT_OUT,
+      drag: event => {
+        const localY = contentsNode.globalToLocalPoint( event.pointer.point ).y;
+        const value = ( localY - COULOMB_MIN_Y ) / ENERGY_PEAK_Y * model.potentialEnergyProperty.range.max;
+        model.potentialEnergyProperty.value = clamp( value, model.potentialEnergyProperty.range.min, model.potentialEnergyProperty.range.max );
+      }
+    } ) );
 
     super( contentsNode, options );
 

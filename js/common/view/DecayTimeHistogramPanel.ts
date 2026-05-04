@@ -7,22 +7,19 @@
  */
 
 import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
-import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
 import DynamicProperty from '../../../../axon/js/DynamicProperty.js';
 import Multilink from '../../../../axon/js/Multilink.js';
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
-import Dimension2 from '../../../../dot/js/Dimension2.js';
 import { clamp } from '../../../../dot/js/util/clamp.js';
 import { toFixed } from '../../../../dot/js/util/toFixed.js';
 import Shape from '../../../../kite/js/Shape.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
-import StringUtils from '../../../../phetcommon/js/util/StringUtils.js';
 import ArrowNode from '../../../../scenery-phet/js/ArrowNode.js';
 import EraserButton from '../../../../scenery-phet/js/buttons/EraserButton.js';
-import ShadedSphereNode from '../../../../scenery-phet/js/ShadedSphereNode.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
+import DragListener from '../../../../scenery/js/listeners/DragListener.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Path from '../../../../scenery/js/nodes/Path.js';
 import Rectangle from '../../../../scenery/js/nodes/Rectangle.js';
@@ -30,13 +27,13 @@ import RichText from '../../../../scenery/js/nodes/RichText.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
 import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
 import Checkbox from '../../../../sun/js/Checkbox.js';
-import HSlider from '../../../../sun/js/HSlider.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import HistogramData from '../model/HistogramData.js';
 import NuclearDecayModel, { SelectableIsotopes, Timescale } from '../model/NuclearDecayModel.js';
+import HalfLifeGrabberNode from './HalfLifeGrabberNode.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
 
 type SelfOptions = EmptySelfOptions;
@@ -212,17 +209,46 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
-    const grabberDiameter = 15;
-    const halfLifeGrabber = new ShadedSphereNode( grabberDiameter, {
-      mainColor: NuclearDecayCommonColors.halfLifeColorProperty,
-      visibleProperty: model.selectedIsotopeProperty.derived( isotope => isotope === 'custom' ),
-      cursor: 'pointer'
-    } );
+    // The half-life grabber is a draggable sphere that sits below the half-life dashed line. It is only visible in
+    // custom isotope mode, and converts horizontal drag position into a normalized customHalfLifeProperty value.
+    const halfLifeGrabber = new HalfLifeGrabberNode( model );
 
     const halfLifeIndicator = new VBox( {
       children: [ halfLifeText, halfLifeLine, halfLifeGrabber ],
       bottom: GRAPH_HEIGHT
     } );
+
+    // Converts an x position in graphAreaNode's local frame to a normalized customHalfLifeProperty value [0, 1].
+    // This is the inverse of the getXForTime → halfLife → normalizedTime chain.
+    //
+    // Linear: x = time * LINEAR_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET
+    //         → normalized = (time − linRange.min) / linRange.length
+    //
+    // Exponential: x = (log10(time) − LOG_MIN_POWER) / LOG_POWER_INTERVAL * LOG_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET
+    //              → normalized = (log10(time) − expRange.min) / expRange.length
+    const normalizedFromLocalX = ( localX: number ): number => {
+      const clampedX = clamp( localX, GRAPH_X_OFFSET, GRAPH_X_OFFSET + 0.9 * GRAPH_WIDTH );
+      if ( model.timescaleProperty.value === 'exponential' ) {
+        const logTime = ( clampedX - GRAPH_X_OFFSET ) / LOG_TICK_INTERVAL_WIDTH * LOG_POWER_INTERVAL + LOG_MIN_POWER;
+        const expRange = NuclearDecayCommonConstants.EXPONENTIAL_HALF_LIFE_EXPONENT;
+        return ( clamp( logTime, expRange.min, expRange.max ) - expRange.min ) / expRange.getLength();
+      }
+      else {
+        const time = ( clampedX - GRAPH_X_OFFSET ) / LINEAR_TICK_INTERVAL_WIDTH;
+        const linRange = NuclearDecayCommonConstants.LINEAR_HALF_LIFE;
+        return ( clamp( time, linRange.min, linRange.max ) - linRange.min ) / linRange.getLength();
+      }
+    };
+
+    // Pointer drag: convert the pointer's absolute x position to a normalized half-life value.
+    // graphAreaNode is defined below; safe to reference because this callback only fires at runtime.
+    halfLifeGrabber.addInputListener( new DragListener( {
+      tandem: Tandem.OPT_OUT,
+      drag: event => {
+        const localX = graphAreaNode.globalToLocalPoint( event.pointer.point ).x;
+        model.customHalfLifeProperty.value = clamp( normalizedFromLocalX( localX ), 0, 1 );
+      }
+    } ) );
 
     const getXForTime = ( time: number, timescale: Timescale ) => {
       if ( timescale === 'exponential' && time > 0 ) {
@@ -247,47 +273,6 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       right: bounds.right - MARGIN_X,
       bottom: GRAPH_HEIGHT
     } );
-
-    // TODO: See https://github.com/phetsims/alpha-decay/issues/3.  This slider is temporary, for debugging purposes,
-    //  and should be removed once full support for custom half life is added to this control.
-    // half-life slider, visible only for the custom isotope
-    const halfLifeSlider = new HSlider(
-      model.customHalfLifeProperty,
-      model.customHalfLifeProperty.range,
-      {
-        trackSize: new Dimension2( 80, 2 ),
-        thumbSize: new Dimension2( 10, 18 ),
-        right: bounds.right - MARGIN_X,
-        top: 0,
-        visibleProperty: new DerivedProperty(
-          [ model.selectedIsotopeProperty ],
-          selectedIsotope => selectedIsotope === 'custom'
-        ),
-        accessibleName: NuclearDecayCommonFluent.halfLifeStringProperty,
-        accessibleHelpText: NuclearDecayCommonFluent.a11y.halfLifeSlider.accessibleHelpTextStringProperty,
-        createAriaValueText: ( _formattedValue, value ) => {
-          const isLogarithmic = model.timescaleProperty.value === 'exponential';
-          const realTime = model.expandNormalizedTime( value, isLogarithmic );
-          const shownTime = isLogarithmic ?
-                            `10<sup>${toFixed( Math.log10( realTime ), 1 )}</sup>` :
-                            toFixed( value, 2 );
-          return StringUtils.fillIn( NuclearDecayCommonFluent.timeSecondsStringProperty.value, { time: shownTime } );
-        },
-        createContextResponseAlert: ( newValue, oldValue ) => {
-          const increased = oldValue !== null && newValue > oldValue;
-          const initialEProgress = increased
-                                   ? NuclearDecayCommonFluent.a11y.qualitative.progressLowerStringProperty.value
-                                   : NuclearDecayCommonFluent.a11y.qualitative.progressHigherStringProperty.value;
-          const distanceProgress = increased
-                                   ? NuclearDecayCommonFluent.a11y.qualitative.progressSmallerStringProperty.value
-                                   : NuclearDecayCommonFluent.a11y.qualitative.progressLargerStringProperty.value;
-          return NuclearDecayCommonFluent.a11y.halfLifeSlider.accessibleContextResponse.format( {
-            initialEProgress: initialEProgress, distanceProgress: distanceProgress
-          } );
-        },
-        tandem: Tandem.OPT_OUT
-      }
-    );
 
     // TODO Move somewhere else to VisibleProperties https://github.com/phetsims/alpha-decay/issues/3
     const timescaleVisibleProperty = new BooleanProperty( false, {
@@ -388,7 +373,6 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
         timeText,
         halfLifeIndicator,
         eraserButton,
-        halfLifeSlider,
         dataPointsLayer
       ]
     } );
