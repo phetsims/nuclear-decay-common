@@ -20,7 +20,7 @@ const MAX_DISPLAY_TIME = 3.25; // seconds
 // Histogram settings for exponential time
 const BINS_PER_EXPONENT = 20 / 6; // 20 bins per 6 exponent range (10^-3s to 10^3s)
 const EXPONENT_BIN_SIZE = 1 / BINS_PER_EXPONENT; // exponent range per bin
-const MAX_EXPONENT = 18;
+const MAX_EXPONENT = 19;
 
 export default class HistogramData {
 
@@ -87,6 +87,9 @@ export default class HistogramData {
     this.numberOfUndecayedAtoms = this.model.undecayedAtoms.length;
     if ( this.numberOfUndecayedAtoms > 0 ) {
       this.undecayedTime = this.model.timeProperty.value;
+    }
+    else {
+      this.undecayedTime = 0;
     }
   }
 

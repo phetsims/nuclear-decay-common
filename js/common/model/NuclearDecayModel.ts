@@ -235,6 +235,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     // When the custom half-life changes, push the new value to all atoms in the pool.
     this.customHalfLifeProperty.lazyLink( customHalfLife => {
       this.clearAtomLists();
+
       if ( this.selectedIsotopeProperty.value === 'custom' ) {
         this.atomPool.forEach( atom => {
           atom.halfLife = this.expandNormalizedTime( customHalfLife, this.timescaleProperty.value === 'exponential' );
@@ -456,7 +457,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
    */
   public activateMultipleAtoms( n: number ): void {
     this.clearAtomLists();
-    this.timeProperty.reset();
+    this.resetTimes();
     // Activate multiple atoms with random positions
     _.times( n, () => this.activateAtom( true ) );
   }
@@ -484,11 +485,8 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   }
 
   private setNewIsotope( newIsotope: SelectableIsotopes ): void {
-    this.lastDecayTimeProperty.reset();
-    this.timeProperty.reset();
-    this.histogramData.reset();
-    this.accumulatedLinearTime = 0;
     this.clearAtomLists();
+    this.resetTimes();
 
     const newDecayProduct = NuclearDecayModel.getDecayProduct( newIsotope );
     const newAtomConfig = NuclearDecayModel.getIsotopeAtomConfig( newIsotope );
@@ -513,18 +511,24 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
    */
   public clearAtomLists(): void {
     this.resetAtoms();
+    this.resetTimes();
     this.activeAtoms.length = 0;
     this.decayedAtoms.length = 0;
     this.undecayedAtoms.length = 0;
     this.undecayedCountProperty.reset();
     this.decayedCountProperty.reset();
-    this.lastDecayTimeProperty.reset();
     this.histogramData.reset();
   }
 
   public resetAtoms(): void {
     this.atomPool.forEach( atom => atom.reset() );
     this.activeAtoms.length = 0;
+  }
+
+  private resetTimes(): void {
+    this.timeProperty.reset();
+    this.accumulatedLinearTime = 0;
+    this.lastDecayTimeProperty.reset();
   }
 
   /**
@@ -535,8 +539,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     this.atomPool.forEach( atom => atom.resetDecay() );
 
     // Because the time may be progressing exponentially, we need to reset the time value here too.
-    this.timeProperty.reset();
-    this.accumulatedLinearTime = 0;
+    this.resetTimes();
   }
 
   /**
@@ -559,8 +562,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     this.customHalfLifeProperty.reset();
     this.isPlayingProperty.reset();
     this.timeSpeedProperty.reset();
-    this.timeProperty.reset();
-    this.accumulatedLinearTime = 0;
+    this.resetTimes();
   }
 
   /**
