@@ -76,7 +76,6 @@ export default class EquationElementNode extends Node {
     ];
 
     super( options );
-    //nop
   }
 
   public static createFromIsotope( isotope: ValidIsotopes, providedOptions: EquationElementNodeOptions ): EquationElementNode {
