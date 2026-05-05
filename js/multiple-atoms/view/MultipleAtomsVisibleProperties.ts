@@ -1,7 +1,6 @@
 // Copyright 2026, University of Colorado Boulder
 /**
- * Class that controls the visibility of UI elements.
- * In this case only the electron cloud and stopwatch, but it can be extended to control more elements if needed.
+ * Class that controls the visibility of UI elements for the second screens of the Decay suite.
  *
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
@@ -26,5 +25,10 @@ export default class MultipleAtomsVisibleProperties {
       phetioFeatured: true
     } );
 
+  }
+
+  public reset(): void {
+    this.electronCloudVisibleProperty.reset();
+    this.stopwatchVisibleProperty.reset();
   }
 }

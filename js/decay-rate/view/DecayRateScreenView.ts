@@ -23,6 +23,7 @@ import Path from '../../../../scenery/js/nodes/Path.js';
 import undoSolidShape from '../../../../sherpa/js/fontawesome-5/undoSolidShape.js';
 import RectangularPushButton from '../../../../sun/js/buttons/RectangularPushButton.js';
 import DecayRateModel from '../model/DecayRateModel.js';
+import DecayRateVisibleProperties from './DecayRateVisibleProperties.js';
 
 type SelfOptions = EmptySelfOptions;
 
@@ -33,6 +34,8 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
   // TODO: Find a way to have this be this.model without conflicts with parent class https://github.com/phetsims/alpha-decay/issues/3
   private readonly decayRateModel: DecayRateModel;
   private readonly decayRateGraphPanel: DecayRateGraphPanel;
+
+  private readonly visibleProperties: DecayRateVisibleProperties;
 
   public constructor( model: DecayRateModel, providedOptions: DecayRateScreenViewOptions ) {
 
@@ -45,6 +48,8 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
     const PANEL_SPACING = NuclearDecayCommonConstants.PANEL_SPACING;
 
     super( model, options );
+
+    this.visibleProperties = new DecayRateVisibleProperties( options.tandem.createTandem( 'visibleProperties' ) );
 
     // Bottom-right controls
 
@@ -106,7 +111,7 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
 
     this.decayRateModel = model;
 
-    this.decayRateGraphPanel = new DecayRateGraphPanel( model, {
+    this.decayRateGraphPanel = new DecayRateGraphPanel( model, this.visibleProperties, {
       left: this.layoutBounds.minX + MARGIN_X,
       top: this.layoutBounds.minY + MARGIN_Y,
       tandem: options.tandem.createTandem( 'decayRateGraphPanel' )
@@ -149,6 +154,6 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
 
   public override reset(): void {
     super.reset();
-    this.decayRateGraphPanel.reset();
+    this.visibleProperties.reset();
   }
 }

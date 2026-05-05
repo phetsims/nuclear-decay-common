@@ -38,6 +38,8 @@ export type MultipleAtomsScreenViewOptions = SelfOptions & DecayHistogramScreenV
 
 export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScreenView {
 
+  private readonly visibleProperties: MultipleAtomsVisibleProperties;
+
   public constructor( model: MultipleAtomsModel, providedOptions: MultipleAtomsScreenViewOptions ) {
 
     const visibleProperties = new MultipleAtomsVisibleProperties( providedOptions.tandem );
@@ -96,6 +98,8 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
 
     super( model, options );
 
+    this.visibleProperties = visibleProperties;
+
     const defaultAtomsToAdd = 100;
     const atomsToAddProperty = new NumberProperty(
       Math.min( model.maxNumberOfAtoms, defaultAtomsToAdd ), {
@@ -146,5 +150,10 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     this.rightColumnControls.addChild( isotopesLegendPanel );
 
     this.children = [ this.playAreaBoundsRectangle, ...this.children ];
+  }
+
+  public override reset(): void {
+    super.reset();
+    this.visibleProperties.reset();
   }
 }

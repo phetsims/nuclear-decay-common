@@ -7,7 +7,6 @@
  * @author Agustín Vallejo
  */
 
-import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import Shape from '../../../../kite/js/Shape.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
@@ -23,6 +22,7 @@ import RichText from '../../../../scenery/js/nodes/RichText.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
 import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
 import Checkbox from '../../../../sun/js/Checkbox.js';
+import DecayRateVisibleProperties from '../../decay-rate/view/DecayRateVisibleProperties.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
@@ -38,17 +38,15 @@ export type DecayRateGraphOptions = SelfOptions & WithRequired<NuclearDecayPanel
 
 export default class DecayRateGraphPanel extends NuclearDecayPanel {
 
-  private readonly showUndecayedProperty: BooleanProperty;
-  private readonly showDecayedProperty: BooleanProperty;
-  private readonly showHalfLivesProperty: BooleanProperty;
-  private readonly showDataProbeProperty: BooleanProperty;
-
   private readonly undecayedLinePath: Path;
   private readonly decayedLinePath: Path;
   private readonly graphWidth: number;
   private readonly graphHeight: number;
 
-  public constructor( model: NuclearDecayModel, providedOptions?: DecayRateGraphOptions ) {
+  public constructor(
+    model: NuclearDecayModel,
+    visibleProperties: DecayRateVisibleProperties,
+    providedOptions?: DecayRateGraphOptions ) {
     const options = optionize<DecayRateGraphOptions, SelfOptions, NuclearDecayPanelOptions>()( {
       minWidth: NuclearDecayCommonConstants.LONG_PANEL_WIDTH
     }, providedOptions );
@@ -77,25 +75,6 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       children: [ undecayedCountLabel, decayedCountLabel ]
     } );
 
-    // Checkboxes
-    // TODO: Should also live in the VisibleProperties https://github.com/phetsims/alpha-decay/issues/4
-    const showUndecayedProperty = new BooleanProperty( true, {
-      tandem: options.tandem.createTandem( 'showUndecayedProperty' ),
-      phetioFeatured: true
-    } );
-    const showDecayedProperty = new BooleanProperty( true, {
-      tandem: options.tandem.createTandem( 'showDecayedProperty' ),
-      phetioFeatured: true
-    } );
-    const showHalfLivesProperty = new BooleanProperty( false, {
-      tandem: options.tandem.createTandem( 'showHalfLivesProperty' ),
-      phetioFeatured: true
-    } );
-    const showDataProbeProperty = new BooleanProperty( false, {
-      tandem: options.tandem.createTandem( 'showDataProbeProperty' ),
-      phetioFeatured: true
-    } );
-
     const CHECKBOX_LABEL_FONT = NuclearDecayCommonConstants.CONTROL_FONT;
     const LINE_SAMPLE_LENGTH = 24;
     const ICON_WIDTH = 20;
@@ -118,7 +97,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
         mainIcon
       ]
     } );
-    const undecayedCheckbox = new Checkbox( showUndecayedProperty, undecayedCheckboxContent, {
+    const undecayedCheckbox = new Checkbox( visibleProperties.showUndecayedProperty, undecayedCheckboxContent, {
       tandem: options.tandem.createTandem( 'undecayedCheckbox' )
     } );
 
@@ -139,7 +118,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
         productIcon
       ]
     } );
-    const decayedCheckbox = new Checkbox( showDecayedProperty, decayedCheckboxContent, {
+    const decayedCheckbox = new Checkbox( visibleProperties.showDecayedProperty, decayedCheckboxContent, {
       tandem: options.tandem.createTandem( 'decayedCheckbox' )
     } );
 
@@ -156,7 +135,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
         halfLifeLineSample
       ]
     } );
-    const halfLifeCheckbox = new Checkbox( showHalfLivesProperty, halfLifeCheckboxContent, {
+    const halfLifeCheckbox = new Checkbox( visibleProperties.showHalfLivesProperty, halfLifeCheckboxContent, {
       tandem: options.tandem.createTandem( 'halfLifeCheckbox' )
     } );
 
@@ -165,7 +144,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       font: CHECKBOX_LABEL_FONT,
       maxWidth: 100
     } );
-    const dataProbeCheckbox = new Checkbox( showDataProbeProperty, dataProbeCheckboxContent, {
+    const dataProbeCheckbox = new Checkbox( visibleProperties.showDataProbeProperty, dataProbeCheckboxContent, {
       tandem: options.tandem.createTandem( 'dataProbeCheckbox' )
     } );
 
@@ -258,7 +237,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       halfLifeIndicator.centerX = ( halfLife / MAX_TIME ) * GRAPH_WIDTH;
     } );
 
-    showHalfLivesProperty.link( visible => { halfLifeIndicator.visible = visible; } );
+    visibleProperties.showHalfLivesProperty.link( visible => { halfLifeIndicator.visible = visible; } );
 
     // Line paths for the decay curves, clipped to the graph area.
     const undecayedLinePath = new Path( null, {
@@ -272,8 +251,8 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       clipArea: Shape.rect( 0, 0, GRAPH_WIDTH, GRAPH_HEIGHT )
     } );
 
-    showUndecayedProperty.link( visible => { undecayedLinePath.visible = visible; } );
-    showDecayedProperty.link( visible => { decayedLinePath.visible = visible; } );
+    visibleProperties.showUndecayedProperty.link( visible => { undecayedLinePath.visible = visible; } );
+    visibleProperties.showDecayedProperty.link( visible => { decayedLinePath.visible = visible; } );
 
     // Assemble graph with axes
     const graphArea = new Node( {
@@ -305,23 +284,11 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
 
     super( contentNode, options );
 
-    this.showUndecayedProperty = showUndecayedProperty;
-    this.showDecayedProperty = showDecayedProperty;
-    this.showHalfLivesProperty = showHalfLivesProperty;
-    this.showDataProbeProperty = showDataProbeProperty;
-
     this.undecayedLinePath = undecayedLinePath;
     this.decayedLinePath = decayedLinePath;
     this.graphWidth = GRAPH_WIDTH;
     this.graphHeight = GRAPH_HEIGHT;
 
-  }
-
-  public reset(): void {
-    this.showUndecayedProperty.reset();
-    this.showDecayedProperty.reset();
-    this.showHalfLivesProperty.reset();
-    this.showDataProbeProperty.reset();
   }
 
   /**
