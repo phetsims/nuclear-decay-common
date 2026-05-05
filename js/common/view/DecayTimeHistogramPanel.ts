@@ -86,6 +86,8 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
   private model: NuclearDecayModel;
 
+  private timescaleVisibleProperty: BooleanProperty;
+
   private readonly getXForTime: ( time: number, timescale: Timescale ) => number;
 
   public constructor(
@@ -274,7 +276,6 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       bottom: GRAPH_HEIGHT
     } );
 
-    // TODO Move somewhere else to VisibleProperties https://github.com/phetsims/alpha-decay/issues/3
     const timescaleVisibleProperty = new BooleanProperty( false, {
       tandem: options.tandem.createTandem( 'timescaleVisibleProperty' ),
       phetioFeatured: true
@@ -391,6 +392,11 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     this.model = model;
     this.dataPointsLayer = dataPointsLayer;
     this.getXForTime = getXForTime;
+    this.timescaleVisibleProperty = timescaleVisibleProperty;
+  }
+
+  public reset(): void {
+    this.timescaleVisibleProperty.reset();
   }
 
   /**

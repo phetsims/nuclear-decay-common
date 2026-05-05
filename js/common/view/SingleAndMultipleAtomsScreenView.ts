@@ -148,6 +148,11 @@ export default class SingleAndMultipleAtomsScreenView extends NuclearDecayScreen
     this.addChild( this.timeControlNode );
   }
 
+  public override reset(): void {
+    super.reset();
+    this.decayTimeHistogramPanel.reset();
+  }
+
   public override step( dt: number ): void {
     super.step( dt );
     this.decayTimeHistogramPanel.update( this.model.histogramData );
