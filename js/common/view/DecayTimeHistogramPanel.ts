@@ -73,7 +73,7 @@ const TIMES_MAP: Array<[ number, TReadOnlyProperty<string> ]> = [
   [ secondsInDay, NuclearDecayCommonFluent.timesMap.dayStringProperty ],
   [ secondsInDay * daysInYear, NuclearDecayCommonFluent.timesMap.yrStringProperty ],
 
-  // TODO: Is this fine for translation? I figure the number shouldn't change https://github.com/phetsims/alpha-decay/issues/3
+  // Since the exponent won't need to be translated we derive the string like this. It was tested to work for RTL so don't worry
   [ secondsInDay * daysInYear * 1e3, NuclearDecayCommonFluent.timesMap.yrStringProperty.derived( yr => '10<sup>3</sup>' + yr ) ],
   [ secondsInDay * daysInYear * 1e6, NuclearDecayCommonFluent.timesMap.yrStringProperty.derived( yr => '10<sup>6</sup>' + yr ) ],
   [ secondsInDay * daysInYear * 1e9, NuclearDecayCommonFluent.timesMap.yrStringProperty.derived( yr => '10<sup>9</sup>' + yr ) ]
