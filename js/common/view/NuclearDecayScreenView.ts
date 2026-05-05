@@ -158,11 +158,15 @@ export default class NuclearDecayScreenView extends ScreenView {
    * Update atom nodes that are related to active atoms
    */
   public updateAtomNodes(): void {
-    this.model.activeAtoms.forEach( atom => {
-      const atomNode = this.atomNodesMap.get( atom );
-      affirm( atomNode, 'Atom Node should exist for active atom' );
-      atomNode.update();
-    } );
+
+    // Single atom screen updates the atom node separately
+    if ( !this.model.isSingleAtomMode ) {
+      this.model.activeAtoms.forEach( atom => {
+        const atomNode = this.atomNodesMap.get( atom );
+        affirm( atomNode, 'Atom Node should exist for active atom' );
+        atomNode.update();
+      } );
+    }
   }
 
   public activateMultipleAtomNodes( n: number ): void {
