@@ -7,7 +7,6 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
-import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
 import Range from '../../../../dot/js/Range.js';
@@ -31,6 +30,7 @@ import Checkbox from '../../../../sun/js/Checkbox.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
 import SingleAndMultipleAtomsScreenView, { DecayHistogramScreenViewOptions } from '../../common/view/SingleAndMultipleAtomsScreenView.js';
 import MultipleAtomsModel from '../model/MultipleAtomsModel.js';
+import MultipleAtomsVisibleProperties from './MultipleAtomsVisibleProperties.js';
 
 type SelfOptions = EmptySelfOptions;
 
@@ -40,15 +40,7 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
 
   public constructor( model: MultipleAtomsModel, providedOptions: MultipleAtomsScreenViewOptions ) {
 
-    // TODO: Move them to wherever we create VisibleProperties https://github.com/phetsims/alpha-decay/issues/3
-    const electronCloudVisibleProperty = new BooleanProperty( false, {
-      tandem: providedOptions.tandem.createTandem( 'electronCloudVisibleProperty' ),
-      phetioFeatured: true
-    } );
-    const stopwatchVisibleProperty = new BooleanProperty( false, {
-      tandem: providedOptions.tandem.createTandem( 'stopwatchVisibleProperty' ),
-      phetioFeatured: true
-    } );
+    const visibleProperties = new MultipleAtomsVisibleProperties( providedOptions.tandem );
 
     const stopwatchIcon = rasterizeNode( new StopwatchNode( new Stopwatch( {
       isVisible: true,
@@ -70,7 +62,7 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     stopwatchIcon.setScaleMagnitude( 0.3 );
 
     const electronCloudRadius = 10;
-    const electronCloudCheckbox = new Checkbox( electronCloudVisibleProperty,
+    const electronCloudCheckbox = new Checkbox( visibleProperties.electronCloudVisibleProperty,
       new HBox( {
         spacing: 10,
         children: [
@@ -85,7 +77,7 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
       tandem: providedOptions.tandem.createTandem( 'electronCloudCheckbox' )
       }
     );
-    const stopwatchCheckbox = new Checkbox( stopwatchVisibleProperty,
+    const stopwatchCheckbox = new Checkbox( visibleProperties.stopwatchVisibleProperty,
       new HBox( {
         spacing: 10,
         children: [
