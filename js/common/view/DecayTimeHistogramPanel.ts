@@ -22,7 +22,6 @@ import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
 import DragListener from '../../../../scenery/js/listeners/DragListener.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Path from '../../../../scenery/js/nodes/Path.js';
-import Rectangle from '../../../../scenery/js/nodes/Rectangle.js';
 import RichText from '../../../../scenery/js/nodes/RichText.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
 import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
@@ -31,8 +30,8 @@ import Tandem from '../../../../tandem/js/Tandem.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
-import HistogramData from '../model/HistogramData.js';
 import NuclearDecayModel, { SelectableIsotopes, Timescale } from '../model/NuclearDecayModel.js';
+import DecayTimeHistogramCanvasNode from './DecayTimeHistogramCanvasNode.js';
 import HalfLifeGrabberNode from './HalfLifeGrabberNode.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
 
@@ -82,13 +81,9 @@ const TIMES_MAP: Array<[ number, TReadOnlyProperty<string> ]> = [
 
 export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
-  private dataPointsLayer: Node;
-
-  private model: NuclearDecayModel;
+  private readonly histogramCanvasNode: DecayTimeHistogramCanvasNode;
 
   private timescaleVisibleProperty: BooleanProperty;
-
-  private readonly getXForTime: ( time: number, timescale: Timescale ) => number;
 
   public constructor(
     model: NuclearDecayModel,
@@ -359,10 +354,10 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       children: [ timesAxisNode, timescaleCheckbox ]
     } );
 
-    const dataPointsLayer = new Node( {
-      left: GRAPH_X_OFFSET,
-      bottom: timeAxis.centerY
-    } );
+    const histogramCanvasNode = new DecayTimeHistogramCanvasNode(
+      model.histogramData, getXForTime, model.timescaleProperty, model.isSingleAtomMode,
+      new Bounds2( 0, 0, GRAPH_X_OFFSET + GRAPH_WIDTH, GRAPH_HEIGHT )
+    );
 
     // Graph area node
     const graphAreaNode = new Node( {
@@ -372,9 +367,9 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
         decayProductSymbol,
         timeAxis,
         timeText,
-        halfLifeIndicator,
         eraserButton,
-        dataPointsLayer
+        histogramCanvasNode,
+        halfLifeIndicator
       ]
     } );
 
@@ -389,9 +384,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
     super( contentsNode, options );
 
-    this.model = model;
-    this.dataPointsLayer = dataPointsLayer;
-    this.getXForTime = getXForTime;
+    this.histogramCanvasNode = histogramCanvasNode;
     this.timescaleVisibleProperty = timescaleVisibleProperty;
   }
 
@@ -402,54 +395,8 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
   /**
    * Updates the half-life panel's display based on pre-computed histogram data.
    */
-  public update( histogramData: HistogramData ): void {
-
-    // TODO: Check out the implementation of HistogramCanvasPainter https://github.com/phetsims/alpha-decay/issues/3
-    this.dataPointsLayer.removeAllChildren();
-
-    const BOX_WIDTH = 6;
-
-    const BOX_HEIGHT = histogramData.tallestBinCount * 9 < GRAPH_HEIGHT ? 9 :
-                       histogramData.tallestBinCount * 6 < GRAPH_HEIGHT ? 6 : 3;
-
-    histogramData.decayedBinsMap.forEach( ( value, bin ) => {
-      _.times( value, n => {
-        const y = GRAPH_HEIGHT - ( n + 1 ) * BOX_HEIGHT;
-        const x = this.model.timescaleProperty.value === 'linear' ?
-                  this.getXForTime( bin, this.model.timescaleProperty.value ) :
-                  this.getXForTime( Math.pow( 10, bin ), this.model.timescaleProperty.value );
-        this.dataPointsLayer.addChild( new Rectangle(
-          x, y, BOX_WIDTH, BOX_HEIGHT, {
-            fill: 'black',
-            stroke: 'grey',
-            lineWidth: 1
-          }
-        ) );
-      } );
-    } );
-
-    if ( histogramData.showUndecayed() ) {
-      const UNDECAYED_WIDTH = this.model.isSingleAtomMode ? 6 : 25;
-      const UNDECAYED_HEIGHT = this.model.isSingleAtomMode ? 9 : 16;
-
-      const undecayedRectangle = new Rectangle(
-        this.getXForTime( histogramData.undecayedTime, this.model.timescaleProperty.value ), 0, UNDECAYED_WIDTH, UNDECAYED_HEIGHT, {
-          fill: NuclearDecayCommonColors.undecayedProperty,
-          stroke: 'black',
-          lineWidth: 1
-        }
-      );
-
-      const undecayedCountLabel = new Text( histogramData.numberOfUndecayedAtoms, {
-        font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
-        fill: 'black',
-        center: undecayedRectangle.center,
-        visible: !this.model.isSingleAtomMode
-      } );
-      undecayedRectangle.addChild( undecayedCountLabel );
-
-      this.dataPointsLayer.addChild( undecayedRectangle );
-    }
+  public update(): void {
+    this.histogramCanvasNode.update();
   }
 
 }

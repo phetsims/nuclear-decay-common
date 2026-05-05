@@ -155,6 +155,6 @@ export default class SingleAndMultipleAtomsScreenView extends NuclearDecayScreen
 
   public override step( dt: number ): void {
     super.step( dt );
-    this.decayTimeHistogramPanel.update( this.model.histogramData );
+    this.decayTimeHistogramPanel.update();
   }
 }
