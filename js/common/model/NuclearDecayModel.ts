@@ -476,8 +476,6 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     // Activate the atom.
     atom.isActive = true;
 
-    // TODO: We probably need to make sure the config is correct here, see https://github.com/phetsims/alpha-decay/issues/3.
-
     if ( randomizePosition ) {
       atom.position = this.getRandomPositionWithinBounds();
     }

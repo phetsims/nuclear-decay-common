@@ -405,7 +405,6 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
   public update( histogramData: HistogramData ): void {
 
     // TODO: Check out the implementation of HistogramCanvasPainter https://github.com/phetsims/alpha-decay/issues/3
-    // TODO: Make sure this is not a memory leak https://github.com/phetsims/alpha-decay/issues/3
     this.dataPointsLayer.removeAllChildren();
 
     const BOX_WIDTH = 6;
