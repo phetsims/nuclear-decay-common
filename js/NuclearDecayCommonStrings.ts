@@ -70,6 +70,8 @@ type StringsType = {
   'stopwatchStringProperty': LocalizedStringProperty;
   'dataProbe': string;
   'dataProbeStringProperty': LocalizedStringProperty;
+  'dataProbeTimePattern': string;
+  'dataProbeTimePatternStringProperty': LocalizedStringProperty;
   'percentRemaining': string;
   'percentRemainingStringProperty': LocalizedStringProperty;
   'timeScale': string;

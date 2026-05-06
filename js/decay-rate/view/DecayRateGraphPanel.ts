@@ -32,6 +32,7 @@ import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import DecayRateModel from '../model/DecayRateModel.js';
 import DataProbeGrabberNode from './DataProbeGrabberNode.js';
+import DataProbePanel from './DataProbePanel.js';
 import DecayRateVisibleProperties from './DecayRateVisibleProperties.js';
 
 // The maximum time displayed on the x-axis (seconds).
@@ -47,6 +48,9 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
   private readonly decayedLinePath: Path;
   private readonly graphWidth: number;
   private readonly graphHeight: number;
+  private readonly dataProbePanel: DataProbePanel;
+  private readonly decayRateModel: DecayRateModel;
+  private probeGraphX: number;
 
   public constructor(
     model: DecayRateModel,
@@ -260,7 +264,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     visibleProperties.showDecayedProperty.link( visible => { decayedLinePath.visible = visible; } );
 
     const dataProbeLine = new Path(
-      new Shape().moveTo( 0, 0 ).lineTo( 0, GRAPH_HEIGHT ),
+      new Shape().moveTo( 0, 0 ).lineTo( 0, GRAPH_HEIGHT + 20 ),
       {
         stroke: NuclearDecayCommonColors.dataProbeColorProperty,
         lineWidth: 2,
@@ -269,28 +273,44 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       }
     );
 
-    const dataProbeText = new Text( NuclearDecayCommonFluent.halfLifeStringProperty, {
-      font: NuclearDecayCommonConstants.SMALL_LABEL_BOLD_FONT,
-      fill: NuclearDecayCommonColors.dataProbeColorProperty,
-      bottom: -6,
-      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
+    const dataProbeGrabber = new DataProbeGrabberNode( model, {
+      centerX: dataProbeLine.centerX,
+      top: dataProbeLine.bottom
     } );
 
-    const dataProbeGrabber = new DataProbeGrabberNode( model );
-
-    const dataProbeNode = new VBox( {
+    const dataProbeNode = new Node( {
       visibleProperty: visibleProperties.showDataProbeProperty,
       children: [
-        dataProbeText,
         dataProbeLine,
         dataProbeGrabber
       ],
-      bottom: GRAPH_HEIGHT + 15
+      bottom: GRAPH_HEIGHT + 15,
+      centerX: GRAPH_WIDTH / 2
     } );
+
+    const dataProbePanel = new DataProbePanel(
+      undecayedSymbol,
+      decayedSymbol,
+      NuclearDecayCommonColors.undecayedProperty,
+      {
+        centerX: dataProbeNode.centerX,
+        bottom: dataProbeNode.top
+      }
+    );
 
     // Assemble graph with axes
     const graphArea = new Node( {
-      children: [ graphBackground, gridLines, halfLifeIndicator, undecayedLinePath, decayedLinePath, yTickContainer, xTickContainer, dataProbeNode ]
+      children: [
+        graphBackground,
+        gridLines,
+        halfLifeIndicator,
+        undecayedLinePath,
+        decayedLinePath,
+        yTickContainer,
+        xTickContainer,
+        dataProbeNode,
+        dataProbePanel
+      ]
     } );
 
     // Pointer drag: convert the pointer's absolute x position to a normalized graph value.
@@ -299,6 +319,9 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       drag: event => {
         const localX = graphArea.globalToLocalPoint( event.pointer.point ).x;
         dataProbeNode.centerX = clamp( localX, 0, GRAPH_WIDTH );
+        dataProbePanel.centerX = clamp( localX, dataProbePanel.width / 2, GRAPH_WIDTH - dataProbePanel.width / 2 );
+        this.probeGraphX = dataProbeNode.centerX;
+        this.updateProbeReadouts();
       }
     } ) );
 
@@ -331,6 +354,9 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     this.decayedLinePath = decayedLinePath;
     this.graphWidth = GRAPH_WIDTH;
     this.graphHeight = GRAPH_HEIGHT;
+    this.dataProbePanel = dataProbePanel;
+    this.decayRateModel = model;
+    this.probeGraphX = 0;
 
   }
 
@@ -345,6 +371,36 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     this.decayedLinePath.shape = DecayRateGraphPanel.dataPointsToShape(
       decayedDataPoints, this.graphWidth, this.graphHeight
     );
+    this.updateProbeReadouts();
+  }
+
+  private updateProbeReadouts(): void {
+    const time = ( this.probeGraphX / this.graphWidth ) * MAX_TIME;
+    const undecayedPercent = DecayRateGraphPanel.getPercentageAtTime( this.decayRateModel.undecayedDataPoints, time );
+    const decayedPercent = DecayRateGraphPanel.getPercentageAtTime( this.decayRateModel.decayedDataPoints, time );
+    this.dataProbePanel.updateReadouts( undecayedPercent, decayedPercent, time );
+  }
+
+  // Returns the percentage (0-1) at the largest data point time that is <= the given time,
+  // or null if the given time exceeds the range of collected data.
+  private static getPercentageAtTime( dataPoints: Vector2[], time: number ): number | null {
+    if ( dataPoints.length === 0 ) {
+      return null;
+    }
+    const lastPoint = dataPoints[ dataPoints.length - 1 ];
+    if ( time > lastPoint.x + 0.01 ) {
+      return null;
+    }
+    let result: number | null = null;
+    for ( const point of dataPoints ) {
+      if ( point.x <= time ) {
+        result = point.y;
+      }
+      else {
+        break;
+      }
+    }
+    return result;
   }
 
   /**

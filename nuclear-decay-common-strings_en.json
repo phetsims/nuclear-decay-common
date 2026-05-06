@@ -83,6 +83,9 @@
   "dataProbe": {
     "value": "Data Probe"
   },
+  "dataProbeTimePattern": {
+    "value": "{{time}} s"
+  },
   "percentRemaining": {
     "value": "Percent of Isotope<br>Remaining (%)"
   },
