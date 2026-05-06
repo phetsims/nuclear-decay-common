@@ -11,7 +11,6 @@ import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
 import Range from '../../../../dot/js/Range.js';
 import AddAtomsControlPanel from '../../../../nuclear-decay-common/js/common/view/AddAtomsControlPanel.js';
-import DecayRateGraphPanel from '../../../../nuclear-decay-common/js/common/view/DecayRateGraphPanel.js';
 import IsotopeLegendPanel from '../../../../nuclear-decay-common/js/common/view/IsotopeLegendPanel.js';
 import NuclearDecayScreenView, { NuclearDecayScreenViewOptions } from '../../../../nuclear-decay-common/js/common/view/NuclearDecayScreenView.js';
 import NuclearDecayCommonColors from '../../../../nuclear-decay-common/js/NuclearDecayCommonColors.js';
@@ -23,6 +22,7 @@ import Path from '../../../../scenery/js/nodes/Path.js';
 import undoSolidShape from '../../../../sherpa/js/fontawesome-5/undoSolidShape.js';
 import RectangularPushButton from '../../../../sun/js/buttons/RectangularPushButton.js';
 import DecayRateModel from '../model/DecayRateModel.js';
+import DecayRateGraphPanel from './DecayRateGraphPanel.js';
 import DecayRateVisibleProperties from './DecayRateVisibleProperties.js';
 
 type SelfOptions = EmptySelfOptions;

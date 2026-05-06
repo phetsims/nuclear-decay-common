@@ -59,7 +59,7 @@ export default class EnergyGrabberNode extends AccessibleSlider( Path, 1 ) {
           return !isEmpty && selectedIsotope === 'custom';
         }
       ),
-      cursor: 'pointer',
+      cursor: 'n-resize',
       stroke: 'black',
 
       // Keyboard accessibility: makes the sphere focusable and reachable via Tab.

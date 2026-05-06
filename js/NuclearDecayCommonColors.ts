@@ -48,6 +48,10 @@ const NuclearDecayCommonColors = {
 
   resetButtonProperty: new ProfileColorProperty( nuclearDecayCommon, 'resetButton', {
     default: '#79aee3'
+  } ),
+
+  dataProbeColorProperty: new ProfileColorProperty( nuclearDecayCommon, 'dataProbe', {
+    default: '#aaaaaa'
   } )
 };
 

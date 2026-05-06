@@ -1,7 +1,7 @@
 // Copyright 2026, University of Colorado Boulder
 /**
- * HalfLifeGrabberNode is a draggable node that allows the user to adjust the half-life of the custom isotope
- * in the Nuclear Decay simulation suite.
+ * DataProbeGrabberNode is a draggable node that allows the user to adjust the data probe on the Decay Rate screen
+ * to learn about the current value of the graph.
  * It is implemented as an AccessibleSlider, which provides keyboard accessibility and screen reader support.
  *
  * @author Agustín Vallejo
@@ -14,26 +14,27 @@ import StrictOmit from '../../../../phet-core/js/types/StrictOmit.js';
 import StringUtils from '../../../../phetcommon/js/util/StringUtils.js';
 import ShadedSphereNode, { ShadedSphereNodeOptions } from '../../../../scenery-phet/js/ShadedSphereNode.js';
 import AccessibleSlider, { type AccessibleSliderOptions } from '../../../../sun/js/accessibility/AccessibleSlider.js';
-import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
-import NuclearDecayModel from '../model/NuclearDecayModel.js';
+import DecayRateModel from '../model/DecayRateModel.js';
 
 type SelfOptions = EmptySelfOptions;
 
 type ParentOptions = ShadedSphereNodeOptions & AccessibleSliderOptions;
 
-export type HalfLifeGrabberNodeOptions = SelfOptions & StrictOmit<ParentOptions,
+export type DataProbeGrabberNodeOptions = SelfOptions & StrictOmit<ParentOptions,
   'valueProperty' | 'enabledRangeProperty' | 'startDrag' | 'endDrag'>;
 
-export default class HalfLifeGrabberNode extends AccessibleSlider( ShadedSphereNode, 1 ) {
-  public constructor( model: NuclearDecayModel, providedOptions?: HalfLifeGrabberNodeOptions ) {
-    const options = optionize<HalfLifeGrabberNodeOptions, SelfOptions, ParentOptions>()( {
+export default class DataProbeGrabberNode extends AccessibleSlider( ShadedSphereNode, 1 ) {
+  public constructor(
+    model: DecayRateModel,
+    providedOptions?: DataProbeGrabberNodeOptions
+  ) {
+    const options = optionize<DataProbeGrabberNodeOptions, SelfOptions, ParentOptions>()( {
 
       valueProperty: model.customHalfLifeProperty,
       enabledRangeProperty: model.customHalfLifeProperty.rangeProperty,
 
-      mainColor: NuclearDecayCommonColors.halfLifeColorProperty,
-      visibleProperty: model.selectedIsotopeProperty.derived( isotope => isotope === 'custom' ),
+      mainColor: 'grey',
       cursor: 'w-resize',
 
       // Keyboard accessibility: makes the sphere focusable and reachable via Tab.

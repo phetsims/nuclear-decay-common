@@ -7,6 +7,7 @@
  * @author Agustín Vallejo
  */
 
+import { clamp } from '../../../../dot/js/util/clamp.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import Shape from '../../../../kite/js/Shape.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
@@ -14,6 +15,7 @@ import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
 import PhetFont from '../../../../scenery-phet/js/PhetFont.js';
 import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
+import DragListener from '../../../../scenery/js/listeners/DragListener.js';
 import Line from '../../../../scenery/js/nodes/Line.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Path from '../../../../scenery/js/nodes/Path.js';
@@ -22,12 +24,15 @@ import RichText from '../../../../scenery/js/nodes/RichText.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
 import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
 import Checkbox from '../../../../sun/js/Checkbox.js';
-import DecayRateVisibleProperties from '../../decay-rate/view/DecayRateVisibleProperties.js';
+import Tandem from '../../../../tandem/js/Tandem.js';
+import NuclearDecayModel from '../../common/model/NuclearDecayModel.js';
+import NuclearDecayPanel, { NuclearDecayPanelOptions } from '../../common/view/NuclearDecayPanel.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
-import NuclearDecayModel from '../model/NuclearDecayModel.js';
-import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
+import DecayRateModel from '../model/DecayRateModel.js';
+import DataProbeGrabberNode from './DataProbeGrabberNode.js';
+import DecayRateVisibleProperties from './DecayRateVisibleProperties.js';
 
 // The maximum time displayed on the x-axis (seconds).
 const MAX_TIME = 3;
@@ -44,7 +49,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
   private readonly graphHeight: number;
 
   public constructor(
-    model: NuclearDecayModel,
+    model: DecayRateModel,
     visibleProperties: DecayRateVisibleProperties,
     providedOptions?: DecayRateGraphOptions ) {
     const options = optionize<DecayRateGraphOptions, SelfOptions, NuclearDecayPanelOptions>()( {
@@ -254,10 +259,48 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     visibleProperties.showUndecayedProperty.link( visible => { undecayedLinePath.visible = visible; } );
     visibleProperties.showDecayedProperty.link( visible => { decayedLinePath.visible = visible; } );
 
+    const dataProbeLine = new Path(
+      new Shape().moveTo( 0, 0 ).lineTo( 0, GRAPH_HEIGHT ),
+      {
+        stroke: NuclearDecayCommonColors.dataProbeColorProperty,
+        lineWidth: 2,
+        lineDash: [ 5, 5 ],
+        y: 0
+      }
+    );
+
+    const dataProbeText = new Text( NuclearDecayCommonFluent.halfLifeStringProperty, {
+      font: NuclearDecayCommonConstants.SMALL_LABEL_BOLD_FONT,
+      fill: NuclearDecayCommonColors.dataProbeColorProperty,
+      bottom: -6,
+      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
+    } );
+
+    const dataProbeGrabber = new DataProbeGrabberNode( model );
+
+    const dataProbeNode = new VBox( {
+      visibleProperty: visibleProperties.showDataProbeProperty,
+      children: [
+        dataProbeText,
+        dataProbeLine,
+        dataProbeGrabber
+      ],
+      bottom: GRAPH_HEIGHT + 15
+    } );
+
     // Assemble graph with axes
     const graphArea = new Node( {
-      children: [ graphBackground, gridLines, halfLifeIndicator, undecayedLinePath, decayedLinePath, yTickContainer, xTickContainer ]
+      children: [ graphBackground, gridLines, halfLifeIndicator, undecayedLinePath, decayedLinePath, yTickContainer, xTickContainer, dataProbeNode ]
     } );
+
+    // Pointer drag: convert the pointer's absolute x position to a normalized graph value.
+    dataProbeGrabber.addInputListener( new DragListener( {
+      tandem: Tandem.OPT_OUT,
+      drag: event => {
+        const localX = graphArea.globalToLocalPoint( event.pointer.point ).x;
+        dataProbeNode.centerX = clamp( localX, 0, GRAPH_WIDTH );
+      }
+    } ) );
 
     // Position x-axis label below the graph
     xAxisLabel.centerTop = new Vector2( GRAPH_WIDTH / 2, GRAPH_HEIGHT + 20 );

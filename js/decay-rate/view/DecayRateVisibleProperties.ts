@@ -30,7 +30,7 @@ export default class DecayRateVisibleProperties {
       tandem: tandem.createTandem( 'showHalfLivesProperty' ),
       phetioFeatured: true
     } );
-    this.showDataProbeProperty = new BooleanProperty( false, {
+    this.showDataProbeProperty = new BooleanProperty( true, {
       tandem: tandem.createTandem( 'showDataProbeProperty' ),
       phetioFeatured: true
     } );
