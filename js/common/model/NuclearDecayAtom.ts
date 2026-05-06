@@ -7,12 +7,14 @@
  * @author John Blanco (PhET Interactive Simulations)
  */
 
+import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import dotRandom from '../../../../dot/js/dotRandom.js';
 import Vector2, { Vector2StateObject } from '../../../../dot/js/Vector2.js';
 import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
 import { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import AtomInfoUtils from '../../../../shred/js/AtomInfoUtils.js';
 import AtomConfig, { AtomConfigStateObject } from '../../../../shred/js/model/AtomConfig.js';
+import Tandem from '../../../../tandem/js/Tandem.js';
 import BooleanIO from '../../../../tandem/js/types/BooleanIO.js';
 import IOType from '../../../../tandem/js/types/IOType.js';
 import NullableIO from '../../../../tandem/js/types/NullableIO.js';
@@ -35,8 +37,8 @@ type SelfOptions = EmptySelfOptions;
 
 export type NuclearDecayAtomOptions = SelfOptions;
 
-// const EJECTED_PARTICLE_SPEED = NuclearDecayCommonConstants.ATOM_RADIUS * 50; // in model units per second
-// const EJECTED_PARTICLE_SPEED_PROPERTY = new NumberProperty( EJECTED_PARTICLE_SPEED );
+const EJECTED_PARTICLE_SPEED = NuclearDecayCommonConstants.ATOM_RADIUS * 30; // in model units per second
+const EJECTED_PARTICLE_SPEED_PROPERTY = new NumberProperty( EJECTED_PARTICLE_SPEED );
 
 export default class NuclearDecayAtom {
 
@@ -97,10 +99,10 @@ export default class NuclearDecayAtom {
       // JPB REVIEW: Does this need to handle beta decay too?  If so, it needs to be added.
       // In the custom case, an alpha particle is ejected.
       this.ejectedDecayParticles.push( new EjectedDecayParticle( 'alpha', {
-        // animationSpeedProperty: EJECTED_PARTICLE_SPEED_PROPERTY,
+        animationSpeedProperty: EJECTED_PARTICLE_SPEED_PROPERTY,
 
         // JPB REVIEW: Uh-oh. If we aren't providing tandems, what do we do here?
-        // tandem: Tandem.OPT_OUT
+        tandem: Tandem.OPT_OUT
       } ) );
     }
     else {
@@ -134,10 +136,10 @@ export default class NuclearDecayAtom {
       if ( mostPrevalentDecay === 'alphaDecay' ) {
         this.ejectedDecayParticles.push( new EjectedDecayParticle( 'alpha', {
 
-          // animationSpeedProperty: EJECTED_PARTICLE_SPEED_PROPERTY,
+          animationSpeedProperty: EJECTED_PARTICLE_SPEED_PROPERTY,
 
           // JPB REVIEW: Uh-oh. If we aren't providing tandems, what do we do here?
-          // tandem: Tandem.OPT_OUT
+          tandem: Tandem.OPT_OUT
         } ) );
       }
 

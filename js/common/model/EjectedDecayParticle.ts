@@ -1,31 +1,41 @@
 // Copyright 2026, University of Colorado Boulder
+
 /**
- * Temporary fix
+ * A particle emitted during radioactive decay that can be activated and deactivated by the model.
  *
- * @author John Blanco
+ * @author John Blanco (PhET Interactive Simulations)
  */
 
-import Property from '../../../../axon/js/Property.js';
-import Vector2 from '../../../../dot/js/Vector2.js';
-import { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
+import optionize from '../../../../phet-core/js/optionize.js';
+import Particle, { ParticleOptions, ParticleType } from '../../../../shred/js/model/Particle.js';
 
-type SelfOptions = EmptySelfOptions;
+type SelfOptions = {
+  initialIsActive?: boolean;
+};
 
-export type EjectedDecayParticleOptions = SelfOptions;
+export type EjectedDecayParticleOptions = SelfOptions & ParticleOptions;
 
-export default class EjectedDecayParticle {
+export default class EjectedDecayParticle extends Particle {
 
-  public readonly isActiveProperty = new Property<boolean>( false );
-  public readonly positionProperty = new Property<Vector2>( Vector2.ZERO );
-  public readonly destinationProperty = new Property<Vector2>( Vector2.ZERO );
+  public readonly isActiveProperty: BooleanProperty;
 
+  public constructor( type: ParticleType, providedOptions?: EjectedDecayParticleOptions ) {
 
-  public constructor( public readonly type: string, providedOptions: EjectedDecayParticleOptions ) {
-    // noop. Please fix
+    const options = optionize<EjectedDecayParticleOptions, SelfOptions, ParticleOptions>()( {
+      initialIsActive: false
+    }, providedOptions );
 
+    super( type, options );
+
+    this.isActiveProperty = new BooleanProperty( options.initialIsActive, {
+      tandem: options.tandem.createTandem( 'isActiveProperty' ),
+      phetioReadOnly: true
+    } );
   }
 
-  public step( dt: number ): void {
-    // no-op, please fix
+  public override dispose(): void {
+    this.isActiveProperty.dispose();
+    super.dispose();
   }
 }
