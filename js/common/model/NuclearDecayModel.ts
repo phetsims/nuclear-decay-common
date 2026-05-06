@@ -595,6 +595,8 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     documentation: 'The model for nuclear decay, containing pools and lists of atoms.',
     stateSchema: {
       atomPool: ReferenceArrayIO( NuclearDecayAtom.NuclearDecayAtomIO ),
+
+      // TODO: Do we need this field?  See https://github.com/phetsims/alpha-decay/issues/3.
       decayedAtoms: ReferenceArrayIO( NuclearDecayAtom.NuclearDecayAtomIO )
     },
     applyState: ( model, stateObject ) => {
