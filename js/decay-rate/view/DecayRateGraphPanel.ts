@@ -16,6 +16,7 @@ import PhetFont from '../../../../scenery-phet/js/PhetFont.js';
 import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
 import DragListener from '../../../../scenery/js/listeners/DragListener.js';
+import Circle from '../../../../scenery/js/nodes/Circle.js';
 import Line from '../../../../scenery/js/nodes/Line.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Path from '../../../../scenery/js/nodes/Path.js';
@@ -78,11 +79,42 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     const decayedCountLabel = new RichText( decayedSymbol, {
       font: NuclearDecayCommonConstants.CONTROL_FONT
     } );
+
+    const pieChartRadius = 30;
+    const decayedBackgroundCircle = new Circle( pieChartRadius, {
+      fill: 'black'
+    } );
+
+    const undecayedArc = new Path( null, {
+      stroke: 'black',
+      fill: NuclearDecayCommonColors.undecayedProperty
+    } );
+    model.percentageOfUndecayedProperty.link( undecayedPercent => {
+      if ( undecayedPercent === 1 ) {
+        undecayedArc.shape = new Shape().circle( Vector2.ZERO, pieChartRadius );
+      }
+      else {
+        undecayedArc.shape = new Shape().moveTo( 0, 0 ).arc(
+          0, 0, pieChartRadius, 0, 2 * Math.PI * undecayedPercent ).lineTo( 0, 0 ).close();
+      }
+    } );
+
+    const pieChartNode = new Node( {
+      children: [ decayedBackgroundCircle, undecayedArc ]
+    } );
+
     const countLabels = new VBox( {
       spacing: 4,
       align: 'left',
+      layoutOptions: { stretch: true },
       children: [ undecayedCountLabel, decayedCountLabel ]
     } );
+
+    const countLabelsAndPieChart = new HBox( {
+      spacing: 20,
+      children: [ countLabels, pieChartNode ]
+    } );
+
 
     const CHECKBOX_LABEL_FONT = NuclearDecayCommonConstants.CONTROL_FONT;
     const LINE_SAMPLE_LENGTH = 24;
@@ -345,9 +377,9 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     // Assemble the full layout
     // Left column: count labels + checkboxes
     const leftColumn = new VBox( {
-      spacing: 12,
+      spacing: 20,
       align: 'left',
-      children: [ countLabels, checkboxGroup ]
+      children: [ countLabelsAndPieChart, checkboxGroup ]
     } );
 
     // Bottom section: checkboxes on the left, graph on the right
