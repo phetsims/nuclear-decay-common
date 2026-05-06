@@ -105,7 +105,7 @@ export default class NuclearDecayScreenView extends ScreenView {
     soundManager.addSoundGenerator( decaySoundClip );
 
     model.decayedCountProperty.link( ( count, previous ) => {
-      if ( previous && count > previous ) {
+      if ( previous !== null && count > previous ) {
         // Decay is increasing! Play sound
         decaySoundClip.play();
       }

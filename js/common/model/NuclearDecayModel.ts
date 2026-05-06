@@ -562,6 +562,8 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     this.isPlayingProperty.reset();
     this.timeSpeedProperty.reset();
     this.resetTimes();
+    this.clearAtomLists();
+    this.histogramData.reset();
   }
 
   /**
