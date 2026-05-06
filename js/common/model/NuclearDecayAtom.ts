@@ -7,6 +7,7 @@
  * @author John Blanco (PhET Interactive Simulations)
  */
 
+import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import dotRandom from '../../../../dot/js/dotRandom.js';
 import Vector2, { Vector2StateObject } from '../../../../dot/js/Vector2.js';
 import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
@@ -35,6 +36,9 @@ export type NuclearDecayAtomStateObject = {
 type SelfOptions = EmptySelfOptions;
 
 export type NuclearDecayAtomOptions = SelfOptions;
+
+const EJECTED_PARTICLE_SPEED = NuclearDecayCommonConstants.ATOM_RADIUS * 50; // in model units per second
+const EJECTED_PARTICLE_SPEED_PROPERTY = new NumberProperty( EJECTED_PARTICLE_SPEED );
 
 export default class NuclearDecayAtom {
 
@@ -95,6 +99,7 @@ export default class NuclearDecayAtom {
       // JPB REVIEW: Does this need to handle beta decay too?  If so, it needs to be added.
       // In the custom case, an alpha particle is ejected.
       this.ejectedDecayParticles.push( new EjectedDecayParticle( 'alpha', {
+        animationSpeedProperty: EJECTED_PARTICLE_SPEED_PROPERTY,
 
         // JPB REVIEW: Uh-oh. If we aren't providing tandems, what do we do here?
         tandem: Tandem.OPT_OUT
@@ -130,6 +135,8 @@ export default class NuclearDecayAtom {
       const mostPrevalentDecay = availableDecaysAndPercents[ 0 ][ 0 ];
       if ( mostPrevalentDecay === 'alphaDecay' ) {
         this.ejectedDecayParticles.push( new EjectedDecayParticle( 'alpha', {
+
+          animationSpeedProperty: EJECTED_PARTICLE_SPEED_PROPERTY,
 
           // JPB REVIEW: Uh-oh. If we aren't providing tandems, what do we do here?
           tandem: Tandem.OPT_OUT
@@ -223,9 +230,9 @@ export default class NuclearDecayAtom {
           particle.isActiveProperty.value = true;
           particle.positionProperty.value = this.position.copy();
 
-          // JPB REVIEW: This value is based on the model bounds, but we should figure out a better way to come up with
-          // it.
-          const ejectionTravelDistance = 200;
+          // Destination for ejected particles. In reality, they wouldn't stop until they hit something, but in the sim
+          // we don't bother moving them once they are out of view.
+          const ejectionTravelDistance = NuclearDecayCommonConstants.ATOM_RADIUS * 500;
           const travelVector = new Vector2( ejectionTravelDistance, 0 ).rotated( dotRandom.nextDouble() * 2 * Math.PI );
           particle.destinationProperty.value = particle.positionProperty.value.plus( travelVector );
         } );

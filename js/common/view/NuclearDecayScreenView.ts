@@ -24,6 +24,7 @@ import phetioStateSetEmitter from '../../../../tandem/js/phetioStateSetEmitter.j
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
+import AlphaParticleNode from './AlphaParticleNode.js';
 import MinimalAtomNode from './MinimalAtomNode.js';
 
 type SelfOptions = {
@@ -108,6 +109,21 @@ export default class NuclearDecayScreenView extends ScreenView {
         // Decay is increasing! Play sound
         decaySoundClip.play();
       }
+    } );
+
+    // Add view elements for each particle that could be ejected from a nucleus on a decay event.
+    model.atomPool.forEach( atom => {
+      atom.ejectedDecayParticles.forEach( particle => {
+        affirm( particle.type === 'alpha', 'unhandled particle type' );
+        const particleNode = new AlphaParticleNode( {
+          nucleonDiameter: this.modelViewTransformProperty.value.modelToViewDeltaX( 0.2 ),
+          visibleProperty: particle.isActiveProperty
+        } );
+        this.addChild( particleNode );
+        particle.positionProperty.link( position => {
+          particleNode.center = this.modelViewTransformProperty.value.modelToViewPosition( position );
+        } );
+      } );
     } );
   }
 
