@@ -31,6 +31,7 @@ addToMapIfDefined( 'nuclear_decay_common_title', 'nuclear-decay-common.titleStri
 addToMapIfDefined( 'resetNucleus', 'resetNucleusStringProperty' );
 addToMapIfDefined( 'nuclearEquation', 'nuclearEquationStringProperty' );
 addToMapIfDefined( 'halfLife', 'halfLifeStringProperty' );
+addToMapIfDefined( 'halfLives', 'halfLivesStringProperty' );
 addToMapIfDefined( 'isotope', 'isotopeStringProperty' );
 addToMapIfDefined( 'time', 'timeStringProperty' );
 addToMapIfDefined( 'addAtom', 'addAtomStringProperty' );
@@ -125,6 +126,7 @@ const NuclearDecayCommonFluent = {
   resetNucleusStringProperty: _.get( NuclearDecayCommonStrings, 'resetNucleusStringProperty' ),
   nuclearEquationStringProperty: _.get( NuclearDecayCommonStrings, 'nuclearEquationStringProperty' ),
   halfLifeStringProperty: _.get( NuclearDecayCommonStrings, 'halfLifeStringProperty' ),
+  halfLivesStringProperty: _.get( NuclearDecayCommonStrings, 'halfLivesStringProperty' ),
   isotopeStringProperty: _.get( NuclearDecayCommonStrings, 'isotopeStringProperty' ),
   timeStringProperty: _.get( NuclearDecayCommonStrings, 'timeStringProperty' ),
   addAtomStringProperty: _.get( NuclearDecayCommonStrings, 'addAtomStringProperty' ),
@@ -138,6 +140,7 @@ const NuclearDecayCommonFluent = {
   protonStringProperty: _.get( NuclearDecayCommonStrings, 'protonStringProperty' ),
   neutronStringProperty: _.get( NuclearDecayCommonStrings, 'neutronStringProperty' ),
   timeSecondsStringProperty: _.get( NuclearDecayCommonStrings, 'timeSecondsStringProperty' ),
+  dataProbeTimePatternStringProperty: _.get( NuclearDecayCommonStrings, 'dataProbeTimePatternStringProperty' ),
   alphaParticleStringProperty: _.get( NuclearDecayCommonStrings, 'alphaParticleStringProperty' ),
   isotopeAStringProperty: _.get( NuclearDecayCommonStrings, 'isotopeAStringProperty' ),
   isotopeBStringProperty: _.get( NuclearDecayCommonStrings, 'isotopeBStringProperty' ),
@@ -149,7 +152,6 @@ const NuclearDecayCommonFluent = {
   electronCloudStringProperty: _.get( NuclearDecayCommonStrings, 'electronCloudStringProperty' ),
   stopwatchStringProperty: _.get( NuclearDecayCommonStrings, 'stopwatchStringProperty' ),
   dataProbeStringProperty: _.get( NuclearDecayCommonStrings, 'dataProbeStringProperty' ),
-  dataProbeTimePatternStringProperty: _.get( NuclearDecayCommonStrings, 'dataProbeTimePatternStringProperty' ),
   percentRemainingStringProperty: _.get( NuclearDecayCommonStrings, 'percentRemainingStringProperty' ),
   timeScaleStringProperty: _.get( NuclearDecayCommonStrings, 'timeScaleStringProperty' ),
   timesMap: {

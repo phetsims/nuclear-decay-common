@@ -137,15 +137,15 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       lineWidth: 2,
       lineDash: [ 2, 4 ]
     } );
-    const halfLifeCheckboxContent = new HBox( {
+    const halfLivesCheckboxContent = new HBox( {
       spacing: 6,
       children: [
-        new Text( NuclearDecayCommonFluent.halfLifeStringProperty, { font: CHECKBOX_LABEL_FONT, maxWidth: 100 } ),
+        new Text( NuclearDecayCommonFluent.halfLivesStringProperty, { font: CHECKBOX_LABEL_FONT, maxWidth: 100 } ),
         halfLifeLineSample
       ]
     } );
-    const halfLifeCheckbox = new Checkbox( visibleProperties.showHalfLivesProperty, halfLifeCheckboxContent, {
-      tandem: options.tandem.createTandem( 'halfLifeCheckbox' )
+    const halfLivesCheckbox = new Checkbox( visibleProperties.showHalfLivesProperty, halfLivesCheckboxContent, {
+      tandem: options.tandem.createTandem( 'halfLivesCheckbox' )
     } );
 
     // Data Probe checkbox
@@ -160,7 +160,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     const checkboxGroup = new VBox( {
       spacing: 10,
       align: 'left',
-      children: [ undecayedCheckbox, decayedCheckbox, halfLifeCheckbox, dataProbeCheckbox ]
+      children: [ undecayedCheckbox, decayedCheckbox, halfLivesCheckbox, dataProbeCheckbox ]
     } );
 
     // Graph placeholder area
@@ -220,33 +220,42 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       maxWidth: 100
     } );
 
-    // Half-life dashed vertical line and label
-    const halfLifeLine = new Path(
-      new Shape().moveTo( 0, 0 ).lineTo( 0, GRAPH_HEIGHT ),
-      {
-        stroke: NuclearDecayCommonColors.halfLifeColorProperty,
-        lineWidth: 2,
-        lineDash: [ 5, 5 ]
-      }
-    );
+    const halfLives: Node[] = [];
+    const halfLifeMultiples = 5;
+    _.times( halfLifeMultiples, i => {
+      // Half-life dashed vertical line and label
+      const halfLifeLine = new Path(
+        new Shape().moveTo( 0, 0 ).lineTo( 0, GRAPH_HEIGHT ),
+        {
+          stroke: NuclearDecayCommonColors.halfLifeColorProperty,
+          lineWidth: 2,
+          lineDash: [ 5, 5 ]
+        }
+      );
 
-    const halfLifeLabel = new Text( NuclearDecayCommonFluent.halfLifeStringProperty, {
-      font: NuclearDecayCommonConstants.CONTROL_BOLD_FONT,
-      fill: NuclearDecayCommonColors.halfLifeColorProperty,
-      bottom: -6,
-      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
+      const halfLifeLabel = new Text( i + 1, {
+        font: NuclearDecayCommonConstants.CONTROL_BOLD_FONT,
+        fill: NuclearDecayCommonColors.halfLifeColorProperty,
+        bottom: -6,
+        maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
+      } );
+
+      const halfLifeIndicator = new VBox( {
+        children: [ halfLifeLabel, halfLifeLine ],
+        bottom: GRAPH_HEIGHT,
+        visibleProperty: visibleProperties.showHalfLivesProperty
+      } );
+
+      halfLives.push( halfLifeIndicator );
     } );
 
-    const halfLifeIndicator = new VBox( {
-      children: [ halfLifeLabel, halfLifeLine ],
-      bottom: GRAPH_HEIGHT
-    } );
 
     model.halfLifeProperty.link( halfLife => {
-      halfLifeIndicator.centerX = ( halfLife / MAX_TIME ) * GRAPH_WIDTH;
+      _.times( halfLifeMultiples, i => {
+        const indicator = halfLives[ i ];
+        indicator.centerX = ( ( i + 1 ) * halfLife / MAX_TIME ) * GRAPH_WIDTH;
+      } );
     } );
-
-    visibleProperties.showHalfLivesProperty.link( visible => { halfLifeIndicator.visible = visible; } );
 
     // Line paths for the decay curves, clipped to the graph area.
     const undecayedLinePath = new Path( null, {
@@ -303,7 +312,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       children: [
         graphBackground,
         gridLines,
-        halfLifeIndicator,
+        ...halfLives,
         undecayedLinePath,
         decayedLinePath,
         yTickContainer,
@@ -356,7 +365,9 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     this.graphHeight = GRAPH_HEIGHT;
     this.dataProbePanel = dataProbePanel;
     this.decayRateModel = model;
-    this.probeGraphX = 0;
+    this.probeGraphX = dataProbeNode.centerX;
+
+    this.updateProbeReadouts();
 
   }
 

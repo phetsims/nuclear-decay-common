@@ -11,6 +11,9 @@
   "halfLife": {
     "value": "Half-life"
   },
+  "halfLives": {
+    "value": "Half-lives"
+  },
   "isotope": {
     "value": "Isotope"
   },
@@ -50,6 +53,9 @@
   "timeSeconds": {
     "value": "{{time}} seconds"
   },
+  "dataProbeTimePattern": {
+    "value": "{{time}} s"
+  },
   "alphaParticle": {
     "value": "Alpha<br>Particle"
   },
@@ -82,9 +88,6 @@
   },
   "dataProbe": {
     "value": "Data Probe"
-  },
-  "dataProbeTimePattern": {
-    "value": "{{time}} s"
   },
   "percentRemaining": {
     "value": "Percent of Isotope<br>Remaining (%)"

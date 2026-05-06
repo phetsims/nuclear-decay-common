@@ -22,6 +22,8 @@ type StringsType = {
   'nuclearEquationStringProperty': LocalizedStringProperty;
   'halfLife': string;
   'halfLifeStringProperty': LocalizedStringProperty;
+  'halfLives': string;
+  'halfLivesStringProperty': LocalizedStringProperty;
   'isotope': string;
   'isotopeStringProperty': LocalizedStringProperty;
   'time': string;
@@ -48,6 +50,8 @@ type StringsType = {
   'neutronStringProperty': LocalizedStringProperty;
   'timeSeconds': string;
   'timeSecondsStringProperty': LocalizedStringProperty;
+  'dataProbeTimePattern': string;
+  'dataProbeTimePatternStringProperty': LocalizedStringProperty;
   'alphaParticle': string;
   'alphaParticleStringProperty': LocalizedStringProperty;
   'isotopeA': string;
@@ -70,8 +74,6 @@ type StringsType = {
   'stopwatchStringProperty': LocalizedStringProperty;
   'dataProbe': string;
   'dataProbeStringProperty': LocalizedStringProperty;
-  'dataProbeTimePattern': string;
-  'dataProbeTimePatternStringProperty': LocalizedStringProperty;
   'percentRemaining': string;
   'percentRemainingStringProperty': LocalizedStringProperty;
   'timeScale': string;
