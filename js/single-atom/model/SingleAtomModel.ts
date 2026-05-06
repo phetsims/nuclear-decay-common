@@ -77,12 +77,12 @@ export default class SingleAtomModel extends NuclearDecayModel {
       [
         this.selectedIsotopeProperty,
         this.hasDecayOccurredProperty
-      ], ( isotope, hasDecayOcurred ) => {
+      ], ( isotope, hasDecayOccurred ) => {
         const decayProduct = NuclearDecayModel.getDecayProduct( isotope );
         const isotopeAtomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
         const decayAtomConfig = NuclearDecayModel.getIsotopeAtomConfig( decayProduct );
-        this.protonCountProperty.value = hasDecayOcurred ? decayAtomConfig.protonCount : isotopeAtomConfig.protonCount;
-        this.neutronCountProperty.value = hasDecayOcurred ? decayAtomConfig.neutronCount : isotopeAtomConfig.neutronCount;
+        this.protonCountProperty.value = hasDecayOccurred ? decayAtomConfig.protonCount : isotopeAtomConfig.protonCount;
+        this.neutronCountProperty.value = hasDecayOccurred ? decayAtomConfig.neutronCount : isotopeAtomConfig.neutronCount;
       }
     );
   }

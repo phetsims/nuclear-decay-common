@@ -9,9 +9,10 @@
 
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import dotRandom from '../../../../dot/js/dotRandom.js';
+import Range from '../../../../dot/js/Range.js';
 import Vector2, { Vector2StateObject } from '../../../../dot/js/Vector2.js';
 import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
-import { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import AtomInfoUtils from '../../../../shred/js/AtomInfoUtils.js';
 import AtomConfig, { AtomConfigStateObject } from '../../../../shred/js/model/AtomConfig.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
@@ -33,12 +34,23 @@ export type NuclearDecayAtomStateObject = {
   position: Vector2StateObject;
 };
 
-type SelfOptions = EmptySelfOptions;
+type NuclearDecayAtomOptions = {
 
-export type NuclearDecayAtomOptions = SelfOptions;
+  // Whether to restrict the angles at which particles are ejected during decay.  As of this writing, this restricts
+  // ejected particles to a mostly horizontal range with little up/down motion.  This is needed in screens where the
+  // atom has panels above and below, so that the particles aren't hidden from view too quickly.
+  restrictEjectionAngles?: boolean;
+};
 
 const EJECTED_PARTICLE_SPEED = NuclearDecayCommonConstants.ATOM_RADIUS * 30; // in model units per second
 const EJECTED_PARTICLE_SPEED_PROPERTY = new NumberProperty( EJECTED_PARTICLE_SPEED );
+
+// Define the angle ranges at which decay produce particles can be ejected when restricted angles are turned on.
+const EJECTION_ANGLE_MULTIPLIER = 0.1;
+const EJECTED_PARTICLE_ANGLE_RANGES = [
+  new Range( -Math.PI * EJECTION_ANGLE_MULTIPLIER, Math.PI * EJECTION_ANGLE_MULTIPLIER ),
+  new Range( Math.PI - Math.PI * EJECTION_ANGLE_MULTIPLIER, Math.PI + Math.PI * EJECTION_ANGLE_MULTIPLIER )
+];
 
 export default class NuclearDecayAtom {
 
@@ -75,18 +87,22 @@ export default class NuclearDecayAtom {
   // phet-io.
   public readonly ejectedDecayParticles: EjectedDecayParticle[] = [];
 
+  // Whether the angles at which ejected decay particles are restricted to a limited range.
+  private readonly restrictEjectionAngles: boolean;
+
   public constructor(
     atomConfigBeforeDecay: AtomConfig,
     atomConfigAfterDecay: AtomConfig,
     providedOptions?: NuclearDecayAtomOptions
   ) {
 
-    // const options = optionize<NuclearDecayAtomOptions, EmptySelfOptions, NuclearDecayAtomOptions>()( {
-    //   // no-op
-    // }, providedOptions );
+    const options = optionize<NuclearDecayAtomOptions, EmptySelfOptions, NuclearDecayAtomOptions>()( {
+      restrictEjectionAngles: false
+    }, providedOptions );
 
     this.atomConfigBeforeDecay = atomConfigBeforeDecay;
     this.atomConfigAfterDecay = atomConfigAfterDecay;
+    this.restrictEjectionAngles = options.restrictEjectionAngles;
 
     const halfLife = AtomInfoUtils.getNuclideHalfLife(
       atomConfigBeforeDecay.protonCount,
@@ -236,12 +252,7 @@ export default class NuclearDecayAtom {
         this.ejectedDecayParticles.forEach( particle => {
           particle.isActiveProperty.value = true;
           particle.positionProperty.value = this.position.copy();
-
-          // Destination for ejected particles. In reality, they wouldn't stop until they hit something, but in the sim
-          // we don't bother moving them once they are out of view.
-          const ejectionTravelDistance = NuclearDecayCommonConstants.ATOM_RADIUS * 500;
-          const travelVector = new Vector2( ejectionTravelDistance, 0 ).rotated( dotRandom.nextDouble() * 2 * Math.PI );
-          particle.destinationProperty.value = particle.positionProperty.value.plus( travelVector );
+          particle.destinationProperty.value = this.getEjectionDestination();
         } );
       }
     }
@@ -250,6 +261,32 @@ export default class NuclearDecayAtom {
         particle.step( dt );
       } );
     }
+  }
+
+  /**
+   * Create a random destination for an ejected particle to travel to, based on the current position of the atom and the
+   * settings for ejection angle restrictions.
+   */
+  private getEjectionDestination() : Vector2 {
+
+    // Set the distance. In reality, ejected particles wouldn't stop until they hit or otherwise interacted with
+    // something, but in the sim we don't bother moving them once they are out of view.
+    const ejectionTravelDistance = NuclearDecayCommonConstants.ATOM_RADIUS * 500;
+
+    let ejectionAngle: number; // in radians
+    if ( !this.restrictEjectionAngles ) {
+
+      // Use a fully random angle for the ejection.
+      ejectionAngle = dotRandom.nextDouble() * 2 * Math.PI;
+    }
+    else {
+
+      // Use a random ejection angle from the allowed ranges.
+      const ejectionAngleRange = dotRandom.sample( EJECTED_PARTICLE_ANGLE_RANGES );
+      ejectionAngle = ejectionAngleRange.min + dotRandom.nextDouble() * ejectionAngleRange.getLength();
+    }
+    const travelVector = new Vector2( ejectionTravelDistance, 0 ).rotated( ejectionAngle );
+    return this.position.plus( travelVector );
   }
 
   private static decayConstantFromHalfLife( halfLife: number ): number {

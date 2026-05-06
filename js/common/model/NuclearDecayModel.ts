@@ -221,7 +221,13 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
     // Prepopulate all the atoms
     _.times( this.maxNumberOfAtoms, () => {
-      const atom = new NuclearDecayAtom( atomConfig, postDecayAtomConfig );
+      const atom = new NuclearDecayAtom( atomConfig, postDecayAtomConfig, {
+
+        // In the single-atom case, the angle at which decay products are ejected is restricted to a horizontal band so
+        // that the particles don't go behind panels.  This is due to the layout for the single-atom screens, and does
+        // not correspond to anything physical that is being modelled.
+        restrictEjectionAngles: this.maxNumberOfAtoms === 1
+      } );
       this.atomPool.push( atom );
     } );
 
