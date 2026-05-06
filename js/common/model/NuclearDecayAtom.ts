@@ -13,11 +13,13 @@ import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
 import { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import AtomInfoUtils from '../../../../shred/js/AtomInfoUtils.js';
 import AtomConfig, { AtomConfigStateObject } from '../../../../shred/js/model/AtomConfig.js';
+import Tandem from '../../../../tandem/js/Tandem.js';
 import BooleanIO from '../../../../tandem/js/types/BooleanIO.js';
 import IOType from '../../../../tandem/js/types/IOType.js';
 import NullableIO from '../../../../tandem/js/types/NullableIO.js';
 import NumberIO from '../../../../tandem/js/types/NumberIO.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import EjectedDecayParticle from './EjectedDecayParticle.js';
 
 export type NuclearDecayAtomStateObject = {
   atomConfigBeforeDecay: AtomConfigStateObject;
@@ -57,7 +59,17 @@ export default class NuclearDecayAtom {
   // The time at which this atom decayed, or null if it has not decayed yet.
   public decayTime: number | null = null;
 
+  // The location of this atom in model space.
   public position: Vector2 = new Vector2( 0, 0 );
+
+  // The particles that will be ejected from this atom when decay occurs. These are the relatively light particles, such
+  // as alpha particles and electrons, that will move away from the nucleus to depict a decay event.  The heavier
+  // decay product, such as the lead nucleus that is left after polonium-211 decays by ejecting an alpha particle, is
+  // not ejected and does not move away, so it will not be on this list.  These are populated during construction and
+  // stay around forever, and are just activated and deactivated as needed when decay occurs and is reset.  This may
+  // seem a bit odd, but having things always around instead of dynamically created and destroyed works better for
+  // phet-io.
+  public readonly ejectedDecayParticles: EjectedDecayParticle[] = [];
 
   public constructor(
     atomConfigBeforeDecay: AtomConfig,
@@ -77,6 +89,56 @@ export default class NuclearDecayAtom {
       atomConfigBeforeDecay.neutronCount
     );
     this._halfLife = halfLife ? halfLife : Infinity; // Default to a half-life of INFINITY if the nuclide is not found in the data, which means it will decay immediately upon activation.
+
+    if ( atomConfigBeforeDecay.protonCount === NuclearDecayCommonConstants.CUSTOM_UNDECAYED.protonCount ) {
+
+      // JPB REVIEW: Does this need to handle beta decay too?  If so, it needs to be added.
+      // In the custom case, an alpha particle is ejected.
+      this.ejectedDecayParticles.push( new EjectedDecayParticle( 'alpha', {
+
+        // JPB REVIEW: Uh-oh. If we aren't providing tandems, what do we do here?
+        tandem: Tandem.OPT_OUT
+      } ) );
+    }
+    else {
+
+      // Look up the type of decay that should occur based on the pre-decay configuration.
+      const availableDecaysAndPercents = AtomInfoUtils.getAvailableDecaysAndPercents(
+        this.atomConfigBeforeDecay.protonCount,
+        this.atomConfigAfterDecay.neutronCount
+      );
+
+      affirm( availableDecaysAndPercents.length > 0, 'no decay information found for this isotope' );
+
+      // Sort the decay information from most to least likely.
+      availableDecaysAndPercents.sort( ( a, b ) => {
+        const aLikelihood = a[ 1 ];
+        const bLikelihood = b[ 1 ];
+
+        if ( aLikelihood === null && bLikelihood === null ) {
+          return 0;
+        }
+        if ( aLikelihood === null ) {
+          return 1;
+        }
+        if ( bLikelihood === null ) {
+          return -1;
+        }
+        return bLikelihood - aLikelihood;
+      } );
+
+      const mostPrevalentDecay = availableDecaysAndPercents[ 0 ][ 0 ];
+      if ( mostPrevalentDecay === 'alphaDecay' ) {
+        this.ejectedDecayParticles.push( new EjectedDecayParticle( 'alpha', {
+
+          // JPB REVIEW: Uh-oh. If we aren't providing tandems, what do we do here?
+          tandem: Tandem.OPT_OUT
+        } ) );
+      }
+
+      // Other decay types are not handled yet.
+      affirm( mostPrevalentDecay === 'alphaDecay', 'unhandled decay type' );
+    }
   }
 
   /**
@@ -84,10 +146,8 @@ export default class NuclearDecayAtom {
    * AtomConfigs and half-life don't need resetting.
    */
   public reset(): void {
+    this.resetDecay();
     this.isActive = false;
-    this.hasDecayed = false;
-    this.time = 0;
-    this.decayTime = null;
     this.position = new Vector2( 0, 0 );
   }
 
@@ -96,6 +156,10 @@ export default class NuclearDecayAtom {
    * resets the atom back to its original state.
    */
   public resetDecay(): void {
+    this.ejectedDecayParticles.forEach( particle => {
+      particle.isActiveProperty.value = false;
+      particle.positionProperty.value = this.position.copy();
+    } );
     this.time = 0;
     this.hasDecayed = false;
     this.decayTime = null;
@@ -153,8 +217,24 @@ export default class NuclearDecayAtom {
       if ( dotRandom.nextDouble() < probabilityOfDecay ) {
         this.hasDecayed = true;
         this.decayTime = this.time;
-      }
 
+        // Activate and position the ejected decay particles.
+        this.ejectedDecayParticles.forEach( particle => {
+          particle.isActiveProperty.value = true;
+          particle.positionProperty.value = this.position.copy();
+
+          // JPB REVIEW: This value is based on the model bounds, but we should figure out a better way to come up with
+          // it.
+          const ejectionTravelDistance = 200;
+          const travelVector = new Vector2( ejectionTravelDistance, 0 ).rotated( dotRandom.nextDouble() * 2 * Math.PI );
+          particle.destinationProperty.value = particle.positionProperty.value.plus( travelVector );
+        } );
+      }
+    }
+    else if ( this.hasDecayed && this.ejectedDecayParticles.length > 0 ) {
+      this.ejectedDecayParticles.forEach( particle => {
+        particle.step( dt );
+      } );
     }
   }
 

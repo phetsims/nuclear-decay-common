@@ -557,6 +557,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
    */
   public reset(): void {
     this.selectedIsotopeProperty.reset();
+    this.atomPool.forEach( atom => { atom.reset(); } );
     this.customHalfLifeProperty.reset();
     this.isPlayingProperty.reset();
     this.timeSpeedProperty.reset();
