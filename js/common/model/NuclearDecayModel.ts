@@ -1,4 +1,5 @@
 // Copyright 2026, University of Colorado Boulder
+
 /**
  * Base model for the nuclear decay sim, which will hold the state of the nucleus and perform the decay calculations.
  *
@@ -23,7 +24,7 @@ import optionize from '../../../../phet-core/js/optionize.js';
 import IntentionalAny from '../../../../phet-core/js/types/IntentionalAny.js';
 import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
 import TimeSpeed from '../../../../scenery-phet/js/TimeSpeed.js';
-import AtomInfoUtils from '../../../../shred/js/AtomInfoUtils.js';
+import AtomInfoUtils, { DecayType } from '../../../../shred/js/AtomInfoUtils.js';
 import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
 import AtomConfig from '../../../../shred/js/model/AtomConfig.js';
 import PhetioObject, { PhetioObjectOptions } from '../../../../tandem/js/PhetioObject.js';
@@ -154,6 +155,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
   protected constructor(
     selectableIsotopes: SelectableIsotopes[],
+    decayType: DecayType,
     providedOptions?: NuclearDecayModelOptions
   ) {
 
@@ -221,7 +223,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
     // Prepopulate all the atoms
     _.times( this.maxNumberOfAtoms, () => {
-      const atom = new NuclearDecayAtom( atomConfig, postDecayAtomConfig, {
+      const atom = new NuclearDecayAtom( atomConfig, decayType, postDecayAtomConfig, {
 
         // In the single-atom case, the angle at which decay products are ejected is restricted to a horizontal band so
         // that the particles don't go behind panels.  This is due to the layout for the single-atom screens, and does

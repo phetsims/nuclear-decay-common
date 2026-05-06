@@ -1,7 +1,7 @@
 // Copyright 2026, University of Colorado Boulder
 /**
- * Model for decay rates screens in alpha and beta decay. Tracks decay percentages over time
- * for plotting on the decay rate graph.
+ * Model for decay rates screens in alpha and beta decay. Tracks decay percentages over time for plotting on the decay
+ * rate graph.
  *
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
@@ -10,6 +10,7 @@ import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import { DecayType } from '../../../../shred/js/AtomInfoUtils.js';
 import NumberIO from '../../../../tandem/js/types/NumberIO.js';
 import NuclearDecayModel, { NuclearDecayModelOptions, SelectableIsotopes } from '../../common/model/NuclearDecayModel.js';
 
@@ -28,13 +29,14 @@ export default class DecayRateModel extends NuclearDecayModel {
 
   public constructor(
     selectableIsotopes: SelectableIsotopes[],
+    decayType: DecayType,
     providedOptions?: DecayRateModelOptions
   ) {
     const options = optionize<DecayRateModelOptions, SelfOptions, NuclearDecayModelOptions>()( {
       maxNumberOfAtoms: 1000
     }, providedOptions );
 
-    super( selectableIsotopes, options );
+    super( selectableIsotopes, decayType, options );
 
     this.elapsedHalfLivesProperty = new DerivedProperty(
       [ this.timeProperty, this.halfLifeProperty ],

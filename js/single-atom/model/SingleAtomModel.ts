@@ -10,6 +10,7 @@ import Multilink from '../../../../axon/js/Multilink.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import Range from '../../../../dot/js/Range.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import { DecayType } from '../../../../shred/js/AtomInfoUtils.js';
 import NuclearDecayModel, { NuclearDecayModelOptions, SelectableIsotopes } from '../../common/model/NuclearDecayModel.js';
 
 type SelfOptions = EmptySelfOptions;
@@ -35,13 +36,14 @@ export default class SingleAtomModel extends NuclearDecayModel {
 
   public constructor(
     selectableIsotopes: SelectableIsotopes[],
+    decayType: DecayType,
     providedOptions?: SingleAtomDecayModelOptions
   ) {
     const options = optionize<SingleAtomDecayModelOptions, SelfOptions, NuclearDecayModelOptions>()( {
       maxNumberOfAtoms: 1
     }, providedOptions );
 
-    super( selectableIsotopes, options );
+    super( selectableIsotopes, decayType, options );
 
     this.hasDecayOccurredProperty = new BooleanProperty( false, {
       tandem: options.tandem.createTandem( 'hasDecayOccurredProperty' ),

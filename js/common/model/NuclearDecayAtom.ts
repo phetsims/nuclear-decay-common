@@ -1,7 +1,8 @@
 // Copyright 2026, University of Colorado Boulder
 
 /**
- * Atom that belongs to the Nuclear Decay Suite, it has information on the decay status and time.
+ * NuclearDecayAtom is a model of an atom that can undergo a single nuclear decay. This model is a shared and widely
+ * used element within the Nuclear Decay suite of sims.
  *
  * @author Agustín Vallejo (PhET Interactive Simulations)
  * @author John Blanco (PhET Interactive Simulations)
@@ -13,19 +14,21 @@ import Range from '../../../../dot/js/Range.js';
 import Vector2, { Vector2StateObject } from '../../../../dot/js/Vector2.js';
 import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
-import AtomInfoUtils from '../../../../shred/js/AtomInfoUtils.js';
+import AtomInfoUtils, { DecayType, decayTypeValues } from '../../../../shred/js/AtomInfoUtils.js';
 import AtomConfig, { AtomConfigStateObject } from '../../../../shred/js/model/AtomConfig.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
 import BooleanIO from '../../../../tandem/js/types/BooleanIO.js';
 import IOType from '../../../../tandem/js/types/IOType.js';
 import NullableIO from '../../../../tandem/js/types/NullableIO.js';
 import NumberIO from '../../../../tandem/js/types/NumberIO.js';
+import StringUnionIO from '../../../../tandem/js/types/StringUnionIO.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import EjectedDecayParticle from './EjectedDecayParticle.js';
 
 export type NuclearDecayAtomStateObject = {
   atomConfigBeforeDecay: AtomConfigStateObject;
   atomConfigAfterDecay: AtomConfigStateObject;
+  decayType: DecayType;
   halfLife: number;
   isActive: boolean;
   hasDecayed: boolean;
@@ -90,8 +93,12 @@ export default class NuclearDecayAtom {
   // Whether the angles at which ejected decay particles are restricted to a limited range.
   private readonly restrictEjectionAngles: boolean;
 
+  // The type of decay that this nucleus will undergo.
+  private readonly decayType: DecayType;
+
   public constructor(
     atomConfigBeforeDecay: AtomConfig,
+    decayType: DecayType,
     atomConfigAfterDecay: AtomConfig,
     providedOptions?: NuclearDecayAtomOptions
   ) {
@@ -103,6 +110,7 @@ export default class NuclearDecayAtom {
     this.atomConfigBeforeDecay = atomConfigBeforeDecay;
     this.atomConfigAfterDecay = atomConfigAfterDecay;
     this.restrictEjectionAngles = options.restrictEjectionAngles;
+    this.decayType = decayType;
 
     const halfLife = AtomInfoUtils.getNuclideHalfLife(
       atomConfigBeforeDecay.protonCount,
@@ -110,57 +118,26 @@ export default class NuclearDecayAtom {
     );
     this._halfLife = halfLife ? halfLife : Infinity; // Default to a half-life of INFINITY if the nuclide is not found in the data, which means it will decay immediately upon activation.
 
-    if ( atomConfigBeforeDecay.protonCount === NuclearDecayCommonConstants.CUSTOM_UNDECAYED.protonCount ) {
+    // Make sure the code handles the specified decay type.
+    affirm( decayType === 'alphaDecay' || decayType === 'betaMinusDecay', `unhandled decay type: ${decayType}` );
 
-      // JPB REVIEW: Does this need to handle beta decay too?  If so, it needs to be added.
-      // In the custom case, an alpha particle is ejected.
+    // Add the particles that will be ejected upon a decay event.
+    if ( decayType === 'alphaDecay' ) {
       this.ejectedDecayParticles.push( new EjectedDecayParticle( 'alpha', {
+
         animationSpeedProperty: EJECTED_PARTICLE_SPEED_PROPERTY,
 
         // JPB REVIEW: Uh-oh. If we aren't providing tandems, what do we do here?
         tandem: Tandem.OPT_OUT
       } ) );
     }
-    else {
+    else if ( decayType === 'betaMinusDecay' ) {
+      this.ejectedDecayParticles.push( new EjectedDecayParticle( 'electron', {
+        animationSpeedProperty: EJECTED_PARTICLE_SPEED_PROPERTY,
+        tandem: Tandem.OPT_OUT
+      } ) );
 
-      // Look up the type of decay that should occur based on the pre-decay configuration.
-      const availableDecaysAndPercents = AtomInfoUtils.getAvailableDecaysAndPercents(
-        this.atomConfigBeforeDecay.protonCount,
-        this.atomConfigAfterDecay.neutronCount
-      );
-
-      affirm( availableDecaysAndPercents.length > 0, 'no decay information found for this isotope' );
-
-      // Sort the decay information from most to least likely.
-      availableDecaysAndPercents.sort( ( a, b ) => {
-        const aLikelihood = a[ 1 ];
-        const bLikelihood = b[ 1 ];
-
-        if ( aLikelihood === null && bLikelihood === null ) {
-          return 0;
-        }
-        if ( aLikelihood === null ) {
-          return 1;
-        }
-        if ( bLikelihood === null ) {
-          return -1;
-        }
-        return bLikelihood - aLikelihood;
-      } );
-
-      const mostPrevalentDecay = availableDecaysAndPercents[ 0 ][ 0 ];
-      if ( mostPrevalentDecay === 'alphaDecay' ) {
-        this.ejectedDecayParticles.push( new EjectedDecayParticle( 'alpha', {
-
-          animationSpeedProperty: EJECTED_PARTICLE_SPEED_PROPERTY,
-
-          // JPB REVIEW: Uh-oh. If we aren't providing tandems, what do we do here?
-          tandem: Tandem.OPT_OUT
-        } ) );
-      }
-
-      // Other decay types are not handled yet.
-      affirm( mostPrevalentDecay === 'alphaDecay', 'unhandled decay type' );
+      // Note: We will also need to add the electron antineutrino as some point.
     }
   }
 
@@ -189,7 +166,7 @@ export default class NuclearDecayAtom {
   }
 
   public copy(): NuclearDecayAtom {
-    const newAtom = new NuclearDecayAtom( this.atomConfigBeforeDecay, this.atomConfigAfterDecay );
+    const newAtom = new NuclearDecayAtom( this.atomConfigBeforeDecay, this.decayType, this.atomConfigAfterDecay );
     newAtom._halfLife = this._halfLife;
     newAtom.isActive = this.isActive;
     newAtom.hasDecayed = this.hasDecayed;
@@ -312,6 +289,7 @@ export default class NuclearDecayAtom {
     valueType: NuclearDecayAtom,
     stateSchema: {
       atomConfigBeforeDecay: AtomConfig.AtomConfigIO,
+      decayType: StringUnionIO( decayTypeValues ),
       atomConfigAfterDecay: AtomConfig.AtomConfigIO,
       halfLife: NumberIO,
       isActive: BooleanIO,
@@ -323,6 +301,7 @@ export default class NuclearDecayAtom {
     fromStateObject: ( stateObject: NuclearDecayAtomStateObject ) => {
       const atom = new NuclearDecayAtom(
         new AtomConfig( stateObject.atomConfigBeforeDecay.protonCount, stateObject.atomConfigBeforeDecay.neutronCount, stateObject.atomConfigBeforeDecay.electronCount ),
+        stateObject.decayType,
         new AtomConfig( stateObject.atomConfigAfterDecay.protonCount, stateObject.atomConfigAfterDecay.neutronCount, stateObject.atomConfigAfterDecay.electronCount )
       );
       atom.isActive = stateObject.isActive;

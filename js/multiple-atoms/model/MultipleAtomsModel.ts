@@ -6,6 +6,7 @@
  */
 
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import { DecayType } from '../../../../shred/js/AtomInfoUtils.js';
 import NuclearDecayModel, { NuclearDecayModelOptions, SelectableIsotopes } from '../../common/model/NuclearDecayModel.js';
 
 type SelfOptions = EmptySelfOptions;
@@ -16,11 +17,12 @@ export default class MultipleAtomsModel extends NuclearDecayModel {
 
   public constructor(
     selectableIsotopes: SelectableIsotopes[],
+    decayType: DecayType,
     providedOptions?: MultipleAtomDecayModelOptions
   ) {
     const options = optionize<MultipleAtomDecayModelOptions, SelfOptions, NuclearDecayModelOptions>()( {
     }, providedOptions );
 
-    super( selectableIsotopes, options );
+    super( selectableIsotopes, decayType, options );
   }
 }

@@ -114,15 +114,19 @@ export default class NuclearDecayScreenView extends ScreenView {
     // Add view elements for each particle that could be ejected from a nucleus on a decay event.
     model.atomPool.forEach( atom => {
       atom.ejectedDecayParticles.forEach( particle => {
-        affirm( particle.type === 'alpha', 'unhandled particle type' );
-        const particleNode = new AlphaParticleNode( {
-          nucleonDiameter: this.modelViewTransformProperty.value.modelToViewDeltaX( 0.2 ),
-          visibleProperty: particle.isActiveProperty
-        } );
-        this.addChild( particleNode );
-        particle.positionProperty.link( position => {
-          particleNode.center = this.modelViewTransformProperty.value.modelToViewPosition( position );
-        } );
+        if ( particle.type === 'alpha' ) {
+          const particleNode = new AlphaParticleNode( {
+            nucleonDiameter: this.modelViewTransformProperty.value.modelToViewDeltaX( 0.2 ),
+            visibleProperty: particle.isActiveProperty
+          } );
+          this.addChild( particleNode );
+          particle.positionProperty.link( position => {
+            particleNode.center = this.modelViewTransformProperty.value.modelToViewPosition( position );
+          } );
+        }
+        else {
+          console.warn( `particle type not supported yet: ${particle.type}` );
+        }
       } );
     } );
   }
