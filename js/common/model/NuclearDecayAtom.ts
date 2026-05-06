@@ -213,14 +213,21 @@ export default class NuclearDecayAtom {
     this._halfLife = value;
   }
 
-  public step( dt: number ): void {
+  /**
+   * Step the atom forward in time.  This step function supports a separate, optional parameter for decay time so that
+   * the time used to calculate decay can be separate from the time used to do things like animate the movement of the
+   * atom.  This was done to support exponential decay times, but may be useful for other things as well.
+   * @param dt - delta time, in seconds
+   * @param [decayDt] - an optional separate time used in the decay calculation
+   */
+  public step( dt: number, decayDt = dt ): void {
     if ( this._halfLife && !this.hasDecayed ) {
 
       // Increment the time experienced by the atom.
-      this.time += dt;
+      this.time += decayDt;
 
       // Decide whether the atom will decay in this particular time interval.
-      const probabilityOfDecay = NuclearDecayAtom.decayProbabilityOverInterval( this._halfLife, dt );
+      const probabilityOfDecay = NuclearDecayAtom.decayProbabilityOverInterval( this._halfLife, decayDt );
       if ( dotRandom.nextDouble() < probabilityOfDecay ) {
         this.hasDecayed = true;
         this.decayTime = this.time;
