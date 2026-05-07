@@ -53,6 +53,9 @@
   "timeSeconds": {
     "value": "{{time}} seconds"
   },
+  "seconds": {
+    "value": "seconds"
+  },
   "dataProbeTimePattern": {
     "value": "{{time}} s"
   },

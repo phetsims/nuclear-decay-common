@@ -153,6 +153,9 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   // Data that can be presented in a histogram in the view that represents the decay state of the atoms.
   public readonly histogramData: HistogramData;
 
+  // The first screen will stop counting time once decay ocurrs, we create this here to control the stepping of time in the model.
+  public readonly continueAddingTimeProperty: BooleanProperty;
+
   protected constructor(
     selectableIsotopes: SelectableIsotopes[],
     decayType: DecayType,
@@ -235,8 +238,8 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     this.selectedIsotopeProperty.lazyLink( selectedIsotope => {
       this.setNewIsotope( selectedIsotope );
       this.timescaleProperty.value = selectedIsotope === 'custom' && this.isSingleAtomMode ?
-                      'exponential' :
-                      'linear';
+                                     'exponential' :
+                                     'linear';
     } );
 
     // When the custom half-life changes, push the new value to all atoms in the pool.
@@ -325,13 +328,18 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       tandem: options.tandem.createTandem( 'timeSpeedProperty' ),
       phetioFeatured: true
     } );
+
+    this.continueAddingTimeProperty = new BooleanProperty( true, {
+      tandem: options.tandem.createTandem( 'continueAddingTimeProperty' ),
+      phetioFeatured: true
+    } );
   }
 
   public expandNormalizedTime( normalizedTime: number, exponential: boolean ): number {
     return exponential ?
-      NuclearDecayCommonConstants.EXPONENTIAL_TIME(
-        NuclearDecayCommonConstants.EXPONENTIAL_HALF_LIFE_EXPONENT.expandNormalizedValue( normalizedTime ) ) :
-      NuclearDecayCommonConstants.LINEAR_HALF_LIFE.expandNormalizedValue( normalizedTime );
+           NuclearDecayCommonConstants.EXPONENTIAL_TIME(
+             NuclearDecayCommonConstants.EXPONENTIAL_HALF_LIFE_EXPONENT.expandNormalizedValue( normalizedTime ) ) :
+           NuclearDecayCommonConstants.LINEAR_HALF_LIFE.expandNormalizedValue( normalizedTime );
   }
 
   /**
@@ -366,7 +374,9 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       let timeStep;
       if ( this.timescaleProperty.value === 'linear' ) {
         timeStep = dt;
-        this.timeProperty.value += timeStep;
+        if ( this.continueAddingTimeProperty.value ) {
+          this.timeProperty.value += timeStep;
+        }
       }
       else {
         affirm( this.timescaleProperty.value === 'exponential', 'unexpected time mode' );
@@ -377,7 +387,9 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
         // growth can lead to unsupported values after only a few minutes.
         const exponentialTime = NuclearDecayCommonConstants.EXPONENTIAL_TIME( 6 * this.accumulatedLinearTime - 3 );
         timeStep = exponentialTime - this.timeProperty.value;
-        this.timeProperty.value = exponentialTime;
+        if ( this.continueAddingTimeProperty.value ) {
+          this.timeProperty.value = exponentialTime;
+        }
       }
 
       this.activeAtoms.forEach( ( atom: NuclearDecayAtom ) => {

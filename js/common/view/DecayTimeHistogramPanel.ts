@@ -20,6 +20,7 @@ import ArrowNode from '../../../../scenery-phet/js/ArrowNode.js';
 import EraserButton from '../../../../scenery-phet/js/buttons/EraserButton.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
 import DragListener from '../../../../scenery/js/listeners/DragListener.js';
+import Line from '../../../../scenery/js/nodes/Line.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Path from '../../../../scenery/js/nodes/Path.js';
 import RichText from '../../../../scenery/js/nodes/RichText.js';
@@ -90,8 +91,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     bounds: Bounds2,
     providedOptions: DecayTimeHistogramPanelOptions ) {
 
-    const options = optionize<DecayTimeHistogramPanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {
-    }, providedOptions );
+    const options = optionize<DecayTimeHistogramPanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {}, providedOptions );
 
     // Y-axis rotated label: "Isotope"
 
@@ -189,8 +189,8 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
     // Half-life dashed line and label
 
-    const halfLifeLine = new Path(
-      new Shape().moveTo( 0, 0 ).lineTo( 0, GRAPH_HEIGHT ),
+    const halfLifeLine = new Line(
+      0, 0, 0, GRAPH_HEIGHT,
       {
         stroke: NuclearDecayCommonColors.halfLifeColorProperty,
         lineWidth: 2,
@@ -274,6 +274,10 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     const timescaleVisibleProperty = new BooleanProperty( false, {
       tandem: options.tandem.createTandem( 'timescaleVisibleProperty' ),
       phetioFeatured: true
+    } );
+
+    timescaleVisibleProperty.link( visible => {
+      halfLifeLine.setLine( 0, 0, 0, visible ? GRAPH_HEIGHT + SECONDARY_AXIS_SHIFT + 6 : GRAPH_HEIGHT - 4 );
     } );
 
     // Accessible paragraph describing the timeline, for screen readers.
@@ -377,8 +381,8 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       excludeInvisibleChildrenFromBounds: true,
       children: [
         timelineParagraphNode,
-        graphAreaNode,
-        timeScaleNode
+        timeScaleNode,
+        graphAreaNode
       ]
     } );
 

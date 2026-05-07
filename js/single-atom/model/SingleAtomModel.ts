@@ -87,6 +87,10 @@ export default class SingleAtomModel extends NuclearDecayModel {
         this.neutronCountProperty.value = hasDecayOccurred ? decayAtomConfig.neutronCount : isotopeAtomConfig.neutronCount;
       }
     );
+
+    this.hasDecayOccurredProperty.link( hasDecayOccurred => {
+      this.continueAddingTimeProperty.value = !hasDecayOccurred;
+    } );
   }
 
   public override step( dt: number ): void {
@@ -96,6 +100,7 @@ export default class SingleAtomModel extends NuclearDecayModel {
 
   public override reset(): void {
     super.reset();
+    this.hasDecayOccurredProperty.reset();
     this.potentialEnergyProperty.reset();
     this.initialEnergyProperty.reset();
   }

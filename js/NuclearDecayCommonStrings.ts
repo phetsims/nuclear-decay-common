@@ -50,6 +50,8 @@ type StringsType = {
   'neutronStringProperty': LocalizedStringProperty;
   'timeSeconds': string;
   'timeSecondsStringProperty': LocalizedStringProperty;
+  'seconds': string;
+  'secondsStringProperty': LocalizedStringProperty;
   'dataProbeTimePattern': string;
   'dataProbeTimePatternStringProperty': LocalizedStringProperty;
   'alphaParticle': string;
