@@ -13,7 +13,7 @@ import dotRandom from '../../../../dot/js/dotRandom.js';
 import Range from '../../../../dot/js/Range.js';
 import Vector2, { Vector2StateObject } from '../../../../dot/js/Vector2.js';
 import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
-import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import optionize from '../../../../phet-core/js/optionize.js';
 import AtomInfoUtils, { DecayType, decayTypeValues } from '../../../../shred/js/AtomInfoUtils.js';
 import AtomConfig, { AtomConfigStateObject } from '../../../../shred/js/model/AtomConfig.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
@@ -37,16 +37,20 @@ export type NuclearDecayAtomStateObject = {
   position: Vector2StateObject;
 };
 
-type NuclearDecayAtomOptions = {
+type SelfOptions = {
 
   // Whether to restrict the angles at which particles are ejected during decay.  As of this writing, this restricts
   // ejected particles to a mostly horizontal range with little up/down motion.  This is needed in screens where the
   // atom has panels above and below, so that the particles aren't hidden from view too quickly.
   restrictEjectionAngles?: boolean;
+
+  // The speed at which ejected decay particles move, in model units per second.
+  particleEjectionSpeed?: number;
 };
 
-const EJECTED_PARTICLE_SPEED = NuclearDecayCommonConstants.ATOM_RADIUS * 30; // in model units per second
-const EJECTED_PARTICLE_SPEED_PROPERTY = new NumberProperty( EJECTED_PARTICLE_SPEED );
+export type NuclearDecayAtomOptions = SelfOptions;
+
+const DEFAULT_PARTICLE_EJECTION_SPEED = NuclearDecayCommonConstants.ATOM_RADIUS * 30; // in model units per second
 
 // Define the angle ranges at which decay produce particles can be ejected when restricted angles are turned on.
 const EJECTION_ANGLE_MULTIPLIER = 0.1;
@@ -90,6 +94,9 @@ export default class NuclearDecayAtom {
   // Whether the angles at which ejected decay particles are restricted to a limited range.
   private readonly restrictEjectionAngles: boolean;
 
+  // The speed at which ejected particles move away from the decayed atom.
+  private readonly particleEjectionSpeed: number;
+
   // The type of decay that this nucleus will undergo.
   private readonly decayType: DecayType;
 
@@ -99,13 +106,15 @@ export default class NuclearDecayAtom {
     providedOptions?: NuclearDecayAtomOptions
   ) {
 
-    const options = optionize<NuclearDecayAtomOptions, EmptySelfOptions, NuclearDecayAtomOptions>()( {
-      restrictEjectionAngles: false
+    const options = optionize<NuclearDecayAtomOptions, SelfOptions, NuclearDecayAtomOptions>()( {
+      restrictEjectionAngles: false,
+      particleEjectionSpeed: DEFAULT_PARTICLE_EJECTION_SPEED
     }, providedOptions );
 
     this.atomConfigBeforeDecay = atomConfigBeforeDecay;
     this.atomConfigAfterDecay = NuclearDecayAtom.deriveAtomConfigAfterDecay( atomConfigBeforeDecay, decayType );
     this.restrictEjectionAngles = options.restrictEjectionAngles;
+    this.particleEjectionSpeed = options.particleEjectionSpeed;
     this.decayType = decayType;
 
     const halfLife = AtomInfoUtils.getNuclideHalfLife(
@@ -121,7 +130,7 @@ export default class NuclearDecayAtom {
     if ( decayType === 'alphaDecay' ) {
       this.ejectedDecayParticles.push( new EjectedDecayParticle( 'alpha', {
 
-        animationSpeedProperty: EJECTED_PARTICLE_SPEED_PROPERTY,
+        animationSpeedProperty: new NumberProperty( options.particleEjectionSpeed ),
 
         // JPB REVIEW: Uh-oh. If we aren't providing tandems, what do we do here?
         tandem: Tandem.OPT_OUT
@@ -129,7 +138,7 @@ export default class NuclearDecayAtom {
     }
     else if ( decayType === 'betaMinusDecay' ) {
       this.ejectedDecayParticles.push( new EjectedDecayParticle( 'electron', {
-        animationSpeedProperty: EJECTED_PARTICLE_SPEED_PROPERTY,
+        animationSpeedProperty: new NumberProperty( options.particleEjectionSpeed ),
         tandem: Tandem.OPT_OUT
       } ) );
 
@@ -168,7 +177,10 @@ export default class NuclearDecayAtom {
   }
 
   public copy(): NuclearDecayAtom {
-    const newAtom = new NuclearDecayAtom( this.atomConfigBeforeDecay, this.decayType );
+    const newAtom = new NuclearDecayAtom( this.atomConfigBeforeDecay, this.decayType, {
+      restrictEjectionAngles: this.restrictEjectionAngles,
+      particleEjectionSpeed: this.particleEjectionSpeed
+    } );
     newAtom._halfLife = this._halfLife;
     newAtom.isActive = this.isActive;
     newAtom.time = this.time;
