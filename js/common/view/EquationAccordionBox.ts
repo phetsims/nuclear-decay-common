@@ -42,7 +42,7 @@ export default class EquationAccordionBox extends NuclearDecayAccordionBox {
       accessibleHelpTextCollapsed: NuclearDecayCommonFluent.a11y.nuclearEquation.accessibleHelpTextCollapsedStringProperty
     }, providedOptions );
 
-    const equationNode = EquationNode.createEquation(
+    const equationNode = new EquationNode(
       isotopeProperty,
       isPlayAreaEmptyProperty,
       hasDecayOcurredProperty

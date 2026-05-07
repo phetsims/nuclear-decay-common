@@ -60,18 +60,20 @@ export default class EquationElementNode extends Node {
       visibleProperty: options.isActiveProperty
     } );
 
+    const symbolNode = new Node( {
+      children: [ symbolText, superscriptText, subscriptText ]
+    } );
+
     // Show a question mark when the element is not active
     const questionMarkNode = new RichText( '?', {
-      font: NuclearDecayCommonConstants.CONTROL_FONT,
+      font: NuclearDecayCommonConstants.TITLE_FONT,
       fill: options.fill,
-      center: symbolText.center,
+      center: symbolNode.center,
       visibleProperty: options.isActiveProperty.derived( isActive => !isActive )
     } );
 
     options.children = [
-      symbolText,
-      superscriptText,
-      subscriptText,
+      symbolNode,
       questionMarkNode
     ];
 
