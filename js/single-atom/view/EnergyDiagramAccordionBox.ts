@@ -186,7 +186,6 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     // Double-headed vertical arrow for dragging the potential energy barrier height.
     // Only visible in custom isotope mode. Dragging up increases potentialEnergyProperty.
     const potentialEnergyGrabber = new EnergyGrabberNode( model.potentialEnergyProperty, model, {
-      fill: NuclearDecayCommonColors.potentialEnergyProperty,
       x: graphRightX - 100,
       tandem: options.tandem.createTandem( 'potentialEnergyGrabber' ),
       accessibleName: NuclearDecayCommonFluent.potentialEnergyStringProperty,
@@ -241,7 +240,6 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     // Double-headed vertical arrow for dragging the initial energy level.
     // Only visible in custom isotope mode. Dragging up increases initialEnergyProperty.
     const initialEnergyGrabber = new EnergyGrabberNode( model.initialEnergyProperty, model, {
-      fill: NuclearDecayCommonColors.initialEnergyColorProperty,
       x: graphRightX - 80,
       tandem: options.tandem.createTandem( 'initialEnergyGrabber' ),
       accessibleName: NuclearDecayCommonFluent.initialEnergyStringProperty,

@@ -48,8 +48,8 @@ export default class EnergyGrabberNode extends AccessibleSlider( Path, 1 ) {
       enabledRangeProperty: energyProperty.rangeProperty,
 
       arrowShapeOptions: {
-        headWidth: 20,
-        tailWidth: 10,
+        headWidth: 15,
+        tailWidth: 5,
         doubleHead: true
       },
 
@@ -61,6 +61,8 @@ export default class EnergyGrabberNode extends AccessibleSlider( Path, 1 ) {
       ),
       cursor: 'n-resize',
       stroke: 'black',
+
+      fill: 'yellow',
 
       // Keyboard accessibility: makes the sphere focusable and reachable via Tab.
       focusable: true,
@@ -83,7 +85,7 @@ export default class EnergyGrabberNode extends AccessibleSlider( Path, 1 ) {
       }
     }, providedOptions );
 
-    const arrowShape = new ArrowShape( 0, 20, 0, -20, options.arrowShapeOptions );
+    const arrowShape = new ArrowShape( 0, 15, 0, -15, options.arrowShapeOptions );
 
     super( arrowShape, options );
   }
