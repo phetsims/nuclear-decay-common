@@ -66,11 +66,11 @@ export default class ParticlesLegendNode extends Node {
     );
 
     const content = new HBox( {
-      spacing: 16,
+      spacing: 25,
       align: 'center',
       children: [
         new VBox( {
-          spacing: 8,
+          spacing: 15,
           align: 'left',
           children: [ protonLegend, neutronLegend ]
         } ),

@@ -118,7 +118,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       font: NuclearDecayCommonConstants.CONTROL_BOLD_FONT,
       fill: NuclearDecayCommonColors.undecayedProperty,
       left: ISOTOPE_SYMBOL_X,
-      centerY: 0,
+      centerY: 5,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 

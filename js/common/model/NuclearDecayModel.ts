@@ -347,6 +347,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       const scaledLinearTimeStep = dt * timeSpeedScale;
       this.stepModel( scaledLinearTimeStep );
     }
+    this.histogramData.step();
   }
 
   /**
@@ -396,8 +397,6 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       this.undecayedAtoms = this.activeAtoms.filter( atom => !atom.hasDecayed );
       this.undecayedCountProperty.value = this.undecayedAtoms.length;
     }
-
-    this.histogramData.step();
   }
 
   /**
@@ -487,6 +486,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       atom.position = this.getRandomPositionWithinBounds();
     }
     this.activeAtoms.push( atom );
+    this.manualStep();
   }
 
   private setNewIsotope( newIsotope: SelectableIsotopes ): void {
@@ -506,6 +506,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
         atom.deriveHalfLife();
       }
     } );
+    this.manualStep();
   }
 
   /**

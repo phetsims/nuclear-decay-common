@@ -1,6 +1,6 @@
 // Copyright 2026, University of Colorado Boulder
 /**
- * Panel that allows users to navigate between isotopes and add atoms to the play area.
+ * Panel that allows users to select number of atoms and add them to the play area.
  * Shows the isotope name as a title and provides arrow buttons for navigation,
  * a number display, and an "Add" button.
  *
