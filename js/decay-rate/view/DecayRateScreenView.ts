@@ -136,7 +136,8 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
       },
       right: playAreaBounds.right,
       top: playAreaBounds.top,
-      tandem: options.tandem.createTandem( 'resetButton' )
+      tandem: options.tandem.createTandem( 'resetButton' ),
+      enabledProperty: model.isPlayAreaEmptyProperty.derived( empty => !empty )
     } );
     this.addChild( resetButton );
 

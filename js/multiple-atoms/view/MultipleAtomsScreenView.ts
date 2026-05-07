@@ -137,7 +137,8 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
       },
       right: playAreaBounds.right,
       top: playAreaBounds.top,
-      tandem: options.tandem.createTandem( 'resetButton' )
+      tandem: options.tandem.createTandem( 'resetButton' ),
+      enabledProperty: model.isPlayAreaEmptyProperty.derived( empty => !empty )
     } );
     this.addChild( resetButton );
 
