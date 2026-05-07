@@ -99,7 +99,6 @@ export default class NuclearDecayAtom {
   public constructor(
     atomConfigBeforeDecay: AtomConfig,
     decayType: DecayType,
-    atomConfigAfterDecay: AtomConfig,
     providedOptions?: NuclearDecayAtomOptions
   ) {
 
@@ -108,7 +107,7 @@ export default class NuclearDecayAtom {
     }, providedOptions );
 
     this.atomConfigBeforeDecay = atomConfigBeforeDecay;
-    this.atomConfigAfterDecay = atomConfigAfterDecay;
+    this.atomConfigAfterDecay = NuclearDecayAtom.deriveAtomConfigAfterDecay( atomConfigBeforeDecay, decayType );
     this.restrictEjectionAngles = options.restrictEjectionAngles;
     this.decayType = decayType;
 
@@ -166,7 +165,7 @@ export default class NuclearDecayAtom {
   }
 
   public copy(): NuclearDecayAtom {
-    const newAtom = new NuclearDecayAtom( this.atomConfigBeforeDecay, this.decayType, this.atomConfigAfterDecay );
+    const newAtom = new NuclearDecayAtom( this.atomConfigBeforeDecay, this.decayType );
     newAtom._halfLife = this._halfLife;
     newAtom.isActive = this.isActive;
     newAtom.hasDecayed = this.hasDecayed;
@@ -185,6 +184,14 @@ export default class NuclearDecayAtom {
     this.time = referenceAtom.time;
     this.decayTime = referenceAtom.decayTime;
     this.position = referenceAtom.position.copy();
+  }
+
+  /**
+   * Sets the atomConfigBeforeDecay and derives the atomConfigAfterDecay based on the current decayType.
+   */
+  public setAtomConfigBeforeDecay( atomConfigBeforeDecay: AtomConfig ): void {
+    this.atomConfigBeforeDecay = atomConfigBeforeDecay;
+    this.atomConfigAfterDecay = NuclearDecayAtom.deriveAtomConfigAfterDecay( atomConfigBeforeDecay, this.decayType );
   }
 
   /**
@@ -244,7 +251,7 @@ export default class NuclearDecayAtom {
    * Create a random destination for an ejected particle to travel to, based on the current position of the atom and the
    * settings for ejection angle restrictions.
    */
-  private getEjectionDestination() : Vector2 {
+  private getEjectionDestination(): Vector2 {
 
     // Set the distance. In reality, ejected particles wouldn't stop until they hit or otherwise interacted with
     // something, but in the sim we don't bother moving them once they are out of view.
@@ -281,6 +288,27 @@ export default class NuclearDecayAtom {
     return 1 - Math.exp( -lambda * dt );
   }
 
+  private static deriveAtomConfigAfterDecay( atomConfigBeforeDecay: AtomConfig, decayType: DecayType ): AtomConfig {
+    affirm( decayType === 'alphaDecay' || decayType === 'betaMinusDecay', `unhandled decay type: ${decayType}` );
+    if ( decayType === 'alphaDecay' ) {
+      return new AtomConfig(
+        atomConfigBeforeDecay.protonCount - 2,
+        atomConfigBeforeDecay.neutronCount - 2,
+        atomConfigBeforeDecay.electronCount - 2
+      );
+    }
+    if ( decayType === 'betaMinusDecay' ) {
+      return new AtomConfig(
+        atomConfigBeforeDecay.protonCount + 1,
+        atomConfigBeforeDecay.neutronCount - 1,
+        atomConfigBeforeDecay.electronCount + 1
+      );
+    }
+
+    // The code should never get here, but if something weird happens and it does, return simple Hydrogen.
+    return new AtomConfig( 1, 0, 1 );
+  }
+
   /**
    * Data-type IOType for PhET-iO serialization. NuclearDecayAtom is not a PhetioObject itself — it is serialized
    * by a parent model via aggregate state.
@@ -301,8 +329,7 @@ export default class NuclearDecayAtom {
     fromStateObject: ( stateObject: NuclearDecayAtomStateObject ) => {
       const atom = new NuclearDecayAtom(
         new AtomConfig( stateObject.atomConfigBeforeDecay.protonCount, stateObject.atomConfigBeforeDecay.neutronCount, stateObject.atomConfigBeforeDecay.electronCount ),
-        stateObject.decayType,
-        new AtomConfig( stateObject.atomConfigAfterDecay.protonCount, stateObject.atomConfigAfterDecay.neutronCount, stateObject.atomConfigAfterDecay.electronCount )
+        stateObject.decayType
       );
       atom.isActive = stateObject.isActive;
       atom.hasDecayed = stateObject.hasDecayed;

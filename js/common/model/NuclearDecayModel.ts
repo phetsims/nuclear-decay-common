@@ -219,11 +219,10 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
     const selectedIsotope = this.selectedIsotopeProperty.value;
     const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( selectedIsotope );
-    const postDecayAtomConfig = NuclearDecayModel.getIsotopeAtomConfig( NuclearDecayModel.getDecayProduct( selectedIsotope ) );
 
     // Prepopulate all the atoms
     _.times( this.maxNumberOfAtoms, () => {
-      const atom = new NuclearDecayAtom( atomConfig, decayType, postDecayAtomConfig, {
+      const atom = new NuclearDecayAtom( atomConfig, decayType, {
 
         // In the single-atom case, the angle at which decay products are ejected is restricted to a horizontal band so
         // that the particles don't go behind panels.  This is due to the layout for the single-atom screens, and does
@@ -494,14 +493,11 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     this.clearAtomLists();
     this.resetTimes();
 
-    const newDecayProduct = NuclearDecayModel.getDecayProduct( newIsotope );
     const newAtomConfig = NuclearDecayModel.getIsotopeAtomConfig( newIsotope );
-    const newPostDecayAtomConfig = NuclearDecayModel.getIsotopeAtomConfig( newDecayProduct );
 
     this.atomPool.forEach( atom => {
       atom.reset();
-      atom.atomConfigBeforeDecay = newAtomConfig;
-      atom.atomConfigAfterDecay = newPostDecayAtomConfig;
+      atom.setAtomConfigBeforeDecay( newAtomConfig );
 
       if ( newIsotope === 'custom' ) {
         atom.halfLife = this.getHalfLife( newIsotope );
