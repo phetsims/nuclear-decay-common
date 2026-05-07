@@ -69,9 +69,6 @@ export default class NuclearDecayAtom {
   // Whether the atom is in the play area or not
   public isActive = false;
 
-  // Whether the atom has decayed or not.
-  public hasDecayed = false;
-
   // Time experienced by the atom, in seconds. This stops advancing when the atom decays.
   public time = 0;
 
@@ -141,6 +138,13 @@ export default class NuclearDecayAtom {
   }
 
   /**
+   * As a convenience, provide a flag that indicates whether this atom has decayed.
+   */
+  public get hasDecayed(): boolean {
+    return this.decayTime !== null;
+  }
+
+  /**
    * Resets all fields.
    * AtomConfigs and half-life don't need resetting.
    */
@@ -160,7 +164,6 @@ export default class NuclearDecayAtom {
       particle.positionProperty.value = this.position.copy();
     } );
     this.time = 0;
-    this.hasDecayed = false;
     this.decayTime = null;
   }
 
@@ -168,7 +171,6 @@ export default class NuclearDecayAtom {
     const newAtom = new NuclearDecayAtom( this.atomConfigBeforeDecay, this.decayType );
     newAtom._halfLife = this._halfLife;
     newAtom.isActive = this.isActive;
-    newAtom.hasDecayed = this.hasDecayed;
     newAtom.time = this.time;
     newAtom.decayTime = this.decayTime;
     newAtom.position = this.position.copy();
@@ -180,7 +182,6 @@ export default class NuclearDecayAtom {
    */
   public set( referenceAtom: NuclearDecayAtom ): void {
     this.isActive = referenceAtom.isActive;
-    this.hasDecayed = referenceAtom.hasDecayed;
     this.time = referenceAtom.time;
     this.decayTime = referenceAtom.decayTime;
     this.position = referenceAtom.position.copy();
@@ -229,7 +230,6 @@ export default class NuclearDecayAtom {
       // Decide whether the atom will decay in this particular time interval.
       const probabilityOfDecay = NuclearDecayAtom.decayProbabilityOverInterval( this._halfLife, decayDt );
       if ( dotRandom.nextDouble() < probabilityOfDecay ) {
-        this.hasDecayed = true;
         this.decayTime = this.time;
 
         // Activate and position the ejected decay particles.
@@ -305,7 +305,8 @@ export default class NuclearDecayAtom {
       );
     }
 
-    // The code should never get here, but if something weird happens and it does, return simple Hydrogen.
+    // This code should be unreachable because of the affirm statements, but we need to return something to satisfy the
+    // return type.
     return new AtomConfig( 1, 0, 1 );
   }
 
@@ -332,7 +333,6 @@ export default class NuclearDecayAtom {
         stateObject.decayType
       );
       atom.isActive = stateObject.isActive;
-      atom.hasDecayed = stateObject.hasDecayed;
       atom._halfLife = stateObject.halfLife;
       atom.time = stateObject.time;
       atom.decayTime = stateObject.decayTime;
