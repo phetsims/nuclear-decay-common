@@ -7,12 +7,12 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
-import EquationAccordionBox from '../../../../nuclear-decay-common/js/common/view/EquationAccordionBox.js';
-import ParticleCountsAccordionBox from '../../../../nuclear-decay-common/js/common/view/ParticleCountsAccordionBox.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import SingleAndMultipleAtomsScreenView, { DecayHistogramScreenViewOptions } from '../../common/view/SingleAndMultipleAtomsScreenView.js';
 import SingleAtomModel from '../model/SingleAtomModel.js';
+import EquationAccordionBox from './EquationAccordionBox.js';
+import ParticleCountsAccordionBox from './ParticleCountsAccordionBox.js';
 
 type SelfOptions = EmptySelfOptions;
 

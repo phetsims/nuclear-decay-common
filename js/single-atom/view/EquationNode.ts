@@ -11,7 +11,7 @@ import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.
 import ArrowNode from '../../../../scenery-phet/js/ArrowNode.js';
 import PlusNode from '../../../../scenery-phet/js/PlusNode.js';
 import HBox, { HBoxOptions } from '../../../../scenery/js/layout/nodes/HBox.js';
-import NuclearDecayModel, { SelectableIsotopes } from '../model/NuclearDecayModel.js';
+import NuclearDecayModel, { SelectableIsotopes } from '../../common/model/NuclearDecayModel.js';
 import EquationElementNode from './EquationElementNode.js';
 
 type SelfOptions = EmptySelfOptions;

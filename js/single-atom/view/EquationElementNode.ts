@@ -13,8 +13,8 @@ import Node, { NodeOptions } from '../../../../scenery/js/nodes/Node.js';
 import RichText from '../../../../scenery/js/nodes/RichText.js';
 import type TPaint from '../../../../scenery/js/util/TPaint.js';
 import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
+import NuclearDecayModel, { ValidIsotopes } from '../../common/model/NuclearDecayModel.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
-import NuclearDecayModel, { ValidIsotopes } from '../model/NuclearDecayModel.js';
 
 type SelfOptions = {
   fill?: TPaint;

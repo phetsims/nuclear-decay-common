@@ -129,7 +129,7 @@ export default class SingleAndMultipleAtomsScreenView extends NuclearDecayScreen
         accessibleHelpText: NuclearDecayCommonFluent.a11y.speedControls.accessibleHelpTextStringProperty
       },
       accessibleHeading: NuclearDecayCommonFluent.a11y.timeControls.accessibleHeadingStringProperty,
-      bottom: this.resetAllButton.top - PANEL_SPACING,
+      bottom: this.resetAllButton.top - 4 * PANEL_SPACING,
       right: this.resetAllButton.right,
       tandem: options.tandem.createTandem( 'timeControlNode' )
     } );

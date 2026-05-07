@@ -13,12 +13,12 @@ import Node from '../../../../scenery/js/nodes/Node.js';
 import RichText from '../../../../scenery/js/nodes/RichText.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
 import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
+import NuclearDecayModel from '../../common/model/NuclearDecayModel.js';
+import NuclearDecayAccordionBox, { NuclearDecayAccordionBoxOptions } from '../../common/view/NuclearDecayAccordionBox.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
-import SingleAtomModel from '../../single-atom/model/SingleAtomModel.js';
-import NuclearDecayModel from '../model/NuclearDecayModel.js';
-import NuclearDecayAccordionBox, { NuclearDecayAccordionBoxOptions } from './NuclearDecayAccordionBox.js';
+import SingleAtomModel from '../model/SingleAtomModel.js';
 
 type SelfOptions = EmptySelfOptions;
 

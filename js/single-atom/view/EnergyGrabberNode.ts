@@ -16,8 +16,8 @@ import StrictOmit from '../../../../phet-core/js/types/StrictOmit.js';
 import ArrowShape, { ArrowShapeOptions } from '../../../../scenery-phet/js/ArrowShape.js';
 import Path, { PathOptions } from '../../../../scenery/js/nodes/Path.js';
 import AccessibleSlider, { type AccessibleSliderOptions } from '../../../../sun/js/accessibility/AccessibleSlider.js';
+import NuclearDecayModel from '../../common/model/NuclearDecayModel.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
-import NuclearDecayModel from '../model/NuclearDecayModel.js';
 
 type SelfOptions = {
   arrowShapeOptions?: ArrowShapeOptions;
