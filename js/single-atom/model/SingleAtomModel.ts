@@ -34,6 +34,10 @@ export default class SingleAtomModel extends NuclearDecayModel {
 
   public readonly neutronCountProperty: NumberProperty;
 
+  // Since we want halfLife to affect energy levels and viceversa, we use this flag to control when the
+  // mapping is being made to avoid circular updates.
+  public mappingInProgress = false;
+
   public constructor(
     selectableIsotopes: SelectableIsotopes[],
     decayType: DecayType,
@@ -90,6 +94,15 @@ export default class SingleAtomModel extends NuclearDecayModel {
 
     this.hasDecayOccurredProperty.link( hasDecayOccurred => {
       this.continueAddingTimeProperty.value = !hasDecayOccurred;
+    } );
+
+    this.customHalfLifeProperty.lazyLink( halfLife => {
+      if ( this.mappingInProgress ) { return; }
+
+      this.mappingInProgress = true;
+      const validInitialEnergyRange = new Range( 0.1, this.potentialEnergyProperty.value );
+      this.initialEnergyProperty.value = validInitialEnergyRange.expandNormalizedValue( 1 - halfLife );
+      this.mappingInProgress = false;
     } );
   }
 

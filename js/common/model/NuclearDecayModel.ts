@@ -244,7 +244,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
     // When the custom half-life changes, push the new value to all atoms in the pool.
     this.customHalfLifeProperty.lazyLink( customHalfLife => {
-      this.clearAtomLists();
+      // this.clearAtomLists();
 
       if ( this.selectedIsotopeProperty.value === 'custom' ) {
         this.atomPool.forEach( atom => {

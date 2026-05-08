@@ -52,7 +52,8 @@ const LEGEND_LINE_SPACING = 18;
 const LEGEND_TEXT_OFFSET = LEGEND_LINE_LENGTH + 6;
 
 // Potential energy curve parameters (screen coordinates: negative Y = higher energy)
-const WELL_HALF_WIDTH = 45; // half-width of the flat-bottomed well
+export const WELL_HALF_WIDTH = 45; // half-width of the flat-bottomed well
+export const MAX_ESCAPE_DISTANCE = 1000; // used when initial energy is above the barrier, so the intersection point is off the graph
 const COULOMB_MIN_Y = -5; // asymptotic Coulomb energy at large distance (just above x-axis)
 const ENERGY_PEAK_Y = -GRAPH_HEIGHT * 0.4; // top of the Coulomb barrier (above initial energy line)
 const WELL_BOTTOM_Y = GRAPH_HEIGHT * 0.4; // bottom of the nuclear potential well (below x-axis)
@@ -294,7 +295,9 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
                 Math.abs( point.x - wellCenterX ), point.y );
             }
             else {
-              energyIntersectionPointProperty.value = new Vector2( 1000, 0 );
+
+              // Make the escape distance very huge
+              energyIntersectionPointProperty.value = new Vector2( MAX_ESCAPE_DISTANCE, 0 );
             }
           }
           else {
