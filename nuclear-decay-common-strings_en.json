@@ -50,6 +50,9 @@
   "neutron": {
     "value": "Neutron"
   },
+  "particleCounts": {
+    "value": "Particle Counts"
+  },
   "timeSeconds": {
     "value": "{{time}} seconds"
   },

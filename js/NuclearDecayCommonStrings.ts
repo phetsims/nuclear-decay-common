@@ -48,6 +48,8 @@ type StringsType = {
   'protonStringProperty': LocalizedStringProperty;
   'neutron': string;
   'neutronStringProperty': LocalizedStringProperty;
+  'particleCounts': string;
+  'particleCountsStringProperty': LocalizedStringProperty;
   'timeSeconds': string;
   'timeSecondsStringProperty': LocalizedStringProperty;
   'seconds': string;

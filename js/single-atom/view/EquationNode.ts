@@ -46,12 +46,12 @@ export default class EquationNode extends HBox {
     const arrowNode = new ArrowNode( 0, 0, 20, 0, {
       stroke: 'black',
       tailWidth: 1,
-      headWidth: 3,
-      headHeight: 2,
+      headWidth: 6,
+      headHeight: 5,
       lineWidth: 1.5
     } );
 
-    const plusNode = new PlusNode( { size: new Dimension2( 10, 2 ) } );
+    const plusNode = new PlusNode( { size: new Dimension2( 8, 2 ) } );
 
     options.children = [ firstTerm, arrowNode, secondTerm, plusNode, thirdTerm ];
 

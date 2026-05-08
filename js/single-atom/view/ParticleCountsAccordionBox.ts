@@ -5,7 +5,9 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
+import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
 import DerivedStringProperty from '../../../../axon/js/DerivedStringProperty.js';
+import Multilink from '../../../../axon/js/Multilink.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import StringUtils from '../../../../phetcommon/js/util/StringUtils.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
@@ -25,36 +27,57 @@ type SelfOptions = EmptySelfOptions;
 export type ParticleCountsAccordionBoxOptions = SelfOptions & NuclearDecayAccordionBoxOptions;
 
 export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox {
-  public constructor( model: SingleAtomModel, providedOptions?: ParticleCountsAccordionBoxOptions ) {
+  public constructor( model: SingleAtomModel, providedOptions: ParticleCountsAccordionBoxOptions ) {
+
+    const accordionBoxExpandedProperty = new BooleanProperty( true, {
+      tandem: providedOptions.tandem.createTandem( 'accordionBoxExpandedProperty' )
+    } );
 
     const isotopeInfoTitleStringProperty = new DerivedStringProperty(
       [
         model.selectedIsotopeProperty,
         model.isPlayAreaEmptyProperty,
         model.hasDecayOccurredProperty,
-        NuclearDecayCommonFluent.isotopeInfoTitleStringProperty
-      ], ( selectedIsotope, isPlayAreaEmpty, hasDecayOccurred, pattern ) => {
-        if ( isPlayAreaEmpty ) {
-          return '--';
+        accordionBoxExpandedProperty,
+        NuclearDecayCommonFluent.isotopeInfoTitleStringProperty,
+        NuclearDecayCommonFluent.particleCountsStringProperty
+      ], (
+          selectedIsotope,
+          isPlayAreaEmpty,
+          hasDecayOccurred,
+          expanded,
+          pattern,
+          closedTitle
+          ) => {
+        if ( expanded ) {
+          if ( isPlayAreaEmpty ) {
+            return '--';
+          }
+          else if ( selectedIsotope === 'custom' ) {
+            return NuclearDecayCommonFluent.isotopeAStringProperty.value;
+          }
+          const isotope = hasDecayOccurred ? NuclearDecayModel.getDecayProduct( selectedIsotope ) : selectedIsotope;
+          const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
+          return StringUtils.fillIn( pattern, {
+            nameAndNumber: AtomNameUtils.getName( atomConfig.protonCount ),
+            numberSymbol: AtomNameUtils.getMassAndSymbol( atomConfig.protonCount, atomConfig.neutronCount )
+          } );
         }
-        else if ( selectedIsotope === 'custom' ) {
-          return NuclearDecayCommonFluent.isotopeAStringProperty.value;
+        else {
+          return closedTitle;
         }
-        const isotope = hasDecayOccurred ? NuclearDecayModel.getDecayProduct( selectedIsotope ) : selectedIsotope;
-        const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
-        return StringUtils.fillIn( pattern, {
-          nameAndNumber: AtomNameUtils.getName( atomConfig.protonCount ),
-          numberSymbol: AtomNameUtils.getMassAndSymbol( atomConfig.protonCount, atomConfig.neutronCount )
-        } );
       } );
 
     const titleNode = new RichText( isotopeInfoTitleStringProperty, {
       font: NuclearDecayCommonConstants.TITLE_BOLD_FONT,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
-    model.hasDecayOccurredProperty.link( hasDecayed => {
-      titleNode.fill = hasDecayed ? 'black' : NuclearDecayCommonColors.undecayedProperty;
-    } );
+
+    Multilink.multilink(
+      [ model.hasDecayOccurredProperty, accordionBoxExpandedProperty ], ( hasDecayed, expanded ) => {
+        titleNode.fill = hasDecayed || !expanded ? 'black' : NuclearDecayCommonColors.undecayedProperty;
+      }
+    );
 
     const protonsStringProperty = new DerivedStringProperty(
       [
@@ -96,7 +119,8 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
       titleNode: titleNode,
       minWidth: NuclearDecayCommonConstants.RIGHT_PANEL_WIDTH,
       accessibleName: NuclearDecayCommonFluent.a11y.particleCounts.accessibleNameStringProperty,
-      accessibleHelpTextCollapsed: NuclearDecayCommonFluent.a11y.particleCounts.accessibleHelpTextCollapsedStringProperty
+      accessibleHelpTextCollapsed: NuclearDecayCommonFluent.a11y.particleCounts.accessibleHelpTextCollapsedStringProperty,
+      expandedProperty: accordionBoxExpandedProperty
     }, providedOptions );
 
     const particleCountsParagraphStringProperty = new DerivedStringProperty(

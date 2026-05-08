@@ -5,7 +5,7 @@
 /* eslint-disable */
 /* @formatter:off */
 
-import { TReadOnlyProperty } from '../../axon/js/TReadOnlyProperty.js';
+import {TReadOnlyProperty} from '../../axon/js/TReadOnlyProperty.js';
 import FluentLibrary from '../../chipper/js/browser-and-node/FluentLibrary.js';
 import FluentConstant from '../../chipper/js/browser/FluentConstant.js';
 import FluentContainer from '../../chipper/js/browser/FluentContainer.js';
@@ -44,6 +44,7 @@ addToMapIfDefined( 'custom', 'customStringProperty' );
 addToMapIfDefined( 'decayTime', 'decayTimeStringProperty' );
 addToMapIfDefined( 'proton', 'protonStringProperty' );
 addToMapIfDefined( 'neutron', 'neutronStringProperty' );
+addToMapIfDefined( 'particleCounts', 'particleCountsStringProperty' );
 addToMapIfDefined( 'seconds', 'secondsStringProperty' );
 addToMapIfDefined( 'alphaParticle', 'alphaParticleStringProperty' );
 addToMapIfDefined( 'isotopeA', 'isotopeAStringProperty' );
@@ -140,6 +141,7 @@ const NuclearDecayCommonFluent = {
   decayTimeStringProperty: _.get( NuclearDecayCommonStrings, 'decayTimeStringProperty' ),
   protonStringProperty: _.get( NuclearDecayCommonStrings, 'protonStringProperty' ),
   neutronStringProperty: _.get( NuclearDecayCommonStrings, 'neutronStringProperty' ),
+  particleCountsStringProperty: _.get( NuclearDecayCommonStrings, 'particleCountsStringProperty' ),
   timeSecondsStringProperty: _.get( NuclearDecayCommonStrings, 'timeSecondsStringProperty' ),
   secondsStringProperty: _.get( NuclearDecayCommonStrings, 'secondsStringProperty' ),
   dataProbeTimePatternStringProperty: _.get( NuclearDecayCommonStrings, 'dataProbeTimePatternStringProperty' ),
