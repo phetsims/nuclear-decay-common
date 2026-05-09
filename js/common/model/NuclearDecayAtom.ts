@@ -39,6 +39,11 @@ export type NuclearDecayAtomStateObject = {
 
 type SelfOptions = {
 
+  // Whether this atoms should eject lower mass decay products, such as alpha particle, when decay occurs.  This
+  // defaults to `true`, but is useful to turn it off when modelling large numbers of atoms, and it isn't necessary to
+  // depict ejected decay products.
+  ejectParticlesOnDecay?: boolean;
+
   // Whether to restrict the angles at which particles are ejected during decay.  As of this writing, this restricts
   // ejected particles to a mostly horizontal range with little up/down motion.  This is needed in screens where the
   // atom has panels above and below, so that the particles aren't hidden from view too quickly.
@@ -97,6 +102,9 @@ export default class NuclearDecayAtom {
   // The speed at which ejected particles move away from the decayed atom.
   private readonly particleEjectionSpeed: number;
 
+  // See related options for description of this field.
+  private readonly ejectParticlesOnDecay: boolean;
+
   // The type of decay that this nucleus will undergo.
   private readonly decayType: DecayType;
 
@@ -107,12 +115,14 @@ export default class NuclearDecayAtom {
   ) {
 
     const options = optionize<NuclearDecayAtomOptions, SelfOptions, NuclearDecayAtomOptions>()( {
+      ejectParticlesOnDecay: true,
       restrictEjectionAngles: false,
       particleEjectionSpeed: DEFAULT_PARTICLE_EJECTION_SPEED
     }, providedOptions );
 
     this.atomConfigBeforeDecay = atomConfigBeforeDecay;
     this.atomConfigAfterDecay = NuclearDecayAtom.deriveAtomConfigAfterDecay( atomConfigBeforeDecay, decayType );
+    this.ejectParticlesOnDecay = options.ejectParticlesOnDecay;
     this.restrictEjectionAngles = options.restrictEjectionAngles;
     this.particleEjectionSpeed = options.particleEjectionSpeed;
     this.decayType = decayType;
@@ -126,23 +136,25 @@ export default class NuclearDecayAtom {
     // Make sure the code handles the specified decay type.
     affirm( decayType === 'alphaDecay' || decayType === 'betaMinusDecay', `unhandled decay type: ${decayType}` );
 
-    // Add the particles that will be ejected upon a decay event.
-    if ( decayType === 'alphaDecay' ) {
-      this.ejectedDecayParticles.push( new EjectedDecayParticle( 'alpha', {
+    // Add the particles that will be ejected upon a decay event if this atom is so configured.
+    if ( options.ejectParticlesOnDecay ) {
+      if ( decayType === 'alphaDecay' ) {
+        this.ejectedDecayParticles.push( new EjectedDecayParticle( 'alpha', {
 
-        animationSpeedProperty: new NumberProperty( options.particleEjectionSpeed ),
+          animationSpeedProperty: new NumberProperty( options.particleEjectionSpeed ),
 
-        // JPB REVIEW: Uh-oh. If we aren't providing tandems, what do we do here?
-        tandem: Tandem.OPT_OUT
-      } ) );
-    }
-    else if ( decayType === 'betaMinusDecay' ) {
-      this.ejectedDecayParticles.push( new EjectedDecayParticle( 'electron', {
-        animationSpeedProperty: new NumberProperty( options.particleEjectionSpeed ),
-        tandem: Tandem.OPT_OUT
-      } ) );
+          // JPB REVIEW: Uh-oh. If we aren't providing tandems, what do we do here?
+          tandem: Tandem.OPT_OUT
+        } ) );
+      }
+      else if ( decayType === 'betaMinusDecay' ) {
+        this.ejectedDecayParticles.push( new EjectedDecayParticle( 'electron', {
+          animationSpeedProperty: new NumberProperty( options.particleEjectionSpeed ),
+          tandem: Tandem.OPT_OUT
+        } ) );
 
-      // Note: We will also need to add the electron antineutrino as some point.
+        // Note: We will also need to add the electron antineutrino as some point.
+      }
     }
   }
 
@@ -178,6 +190,7 @@ export default class NuclearDecayAtom {
 
   public copy(): NuclearDecayAtom {
     const newAtom = new NuclearDecayAtom( this.atomConfigBeforeDecay, this.decayType, {
+      ejectParticlesOnDecay: this.ejectParticlesOnDecay,
       restrictEjectionAngles: this.restrictEjectionAngles,
       particleEjectionSpeed: this.particleEjectionSpeed
     } );
