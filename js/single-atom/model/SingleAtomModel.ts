@@ -66,6 +66,12 @@ export default class SingleAtomModel extends NuclearDecayModel {
       phetioFeatured: true
     } );
 
+    // Clear data points when half-life or energy levels are changed.
+    Multilink.multilink(
+      [ this.halfLifeProperty, this.potentialEnergyProperty, this.initialEnergyProperty ], () => {
+        this.clearAtomLists( false, true );
+      } );
+
     this.escapeDistanceProperty = new NumberProperty( 0, {
       tandem: options.tandem.createTandem( 'escapeDistanceProperty' )
     } );
