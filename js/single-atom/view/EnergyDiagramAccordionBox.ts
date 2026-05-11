@@ -54,7 +54,7 @@ const LEGEND_TEXT_OFFSET = LEGEND_LINE_LENGTH + 6;
 // Potential energy curve parameters (screen coordinates: negative Y = higher energy)
 export const WELL_HALF_WIDTH = 45; // half-width of the flat-bottomed well
 export const MAX_ESCAPE_DISTANCE = 1000; // used when initial energy is above the barrier, so the intersection point is off the graph
-const COULOMB_MIN_Y = -5; // asymptotic Coulomb energy at large distance (just above x-axis)
+const COULOMB_MIN_Y = 0; // asymptotic Coulomb energy at large distance (just above x-axis)
 const ENERGY_PEAK_Y = -GRAPH_HEIGHT * 0.4; // top of the Coulomb barrier (above initial energy line)
 const WELL_BOTTOM_Y = GRAPH_HEIGHT * 0.4; // bottom of the nuclear potential well (below x-axis)
 const POINTINESS_FACTOR = 25; // sharpness of the quadratic curve at the barrier peak. 0 = max pointiness, 100 least.
@@ -328,18 +328,18 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     const contentsNode = new Node( {
       children: [
         staticDescriptionNode,
-        yAxis,
-        xAxis,
         energyAxisLabel,
         distanceAxisLabel,
         subtitleText,
         initialEnergyLegendLine,
         initialEnergyLabel,
         initialEnergyGraphLine,
-        initialEnergyGrabber,
         potentialEnergyLegendLine,
         potentialEnergyLabel,
         potentialEnergyGraphCurve,
+        yAxis,
+        xAxis,
+        initialEnergyGrabber,
         potentialEnergyGrabber,
         potentialEnergyHeightIndicator
       ],

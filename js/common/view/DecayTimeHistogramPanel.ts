@@ -276,9 +276,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       phetioFeatured: true
     } );
 
-    timescaleVisibleProperty.link( visible => {
-      halfLifeLine.setLine( 0, 0, 0, visible ? GRAPH_HEIGHT + SECONDARY_AXIS_SHIFT + 6 : GRAPH_HEIGHT - 4 );
-    } );
+    halfLifeLine.setLine( 0, 0, 0, GRAPH_HEIGHT + SECONDARY_AXIS_SHIFT + 6 );
 
     // Accessible paragraph describing the timeline, for screen readers.
     const scaleStringProperty = NuclearDecayCommonFluent.a11y.decayTimeHistogram.scale.createProperty( {
