@@ -71,12 +71,20 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     const undecayedSymbol = AtomNameUtils.getMassAndSymbol( undecayedAtomConfig.protonCount, undecayedAtomConfig.neutronCount );
     const decayedSymbol = AtomNameUtils.getMassAndSymbol( decayedAtomConfig.protonCount, decayedAtomConfig.neutronCount );
 
+    const undecayedCountStringProperty = model.undecayedCountProperty.derived( count => {
+      return `${undecayedSymbol}: ${count}`;
+    } );
+
+    const decayedCountStringProperty = model.decayedCountProperty.derived( count => {
+      return `${decayedSymbol}: ${count}`;
+    } );
+
     // Isotope count labels at the top
-    const undecayedCountLabel = new RichText( undecayedSymbol, {
+    const undecayedCountLabel = new RichText( undecayedCountStringProperty, {
       font: NuclearDecayCommonConstants.CONTROL_FONT,
       fill: NuclearDecayCommonColors.undecayedProperty
     } );
-    const decayedCountLabel = new RichText( decayedSymbol, {
+    const decayedCountLabel = new RichText( decayedCountStringProperty, {
       font: NuclearDecayCommonConstants.CONTROL_FONT
     } );
 
