@@ -30,7 +30,7 @@ isotopeInfoTitle: '{{nameAndNumber}} ({{numberSymbol}})'
 electronCloud: 'Electron Cloud'
 stopwatch: 'Stopwatch'
 dataProbe: 'Data Probe'
-percentRemaining: 'Percent of Isotope<br>Remaining (%)'
+percentRemaining: 'Isotope Remaining (%)'
 timeScale: 'Time Scale'
 timesMap:
   ms: ms

@@ -26,6 +26,10 @@ const NuclearDecayCommonColors = {
     default: '#ff00ff'
   } ),
 
+  decayedProperty: new ProfileColorProperty( nuclearDecayCommon, 'decayed', {
+    default: 'black'
+  } ),
+
   potentialEnergyProperty: new ProfileColorProperty( nuclearDecayCommon, 'potentialEnergy', {
     default: '#5555ff'
   } ),

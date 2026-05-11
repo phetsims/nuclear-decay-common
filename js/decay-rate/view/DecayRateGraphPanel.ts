@@ -81,26 +81,28 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     } );
 
     const pieChartRadius = 30;
-    const decayedBackgroundCircle = new Circle( pieChartRadius, {
-      fill: 'black'
-    } );
-
-    const undecayedArc = new Path( null, {
+    const undecayedBackgroundCircle = new Circle( pieChartRadius, {
       stroke: 'black',
       fill: NuclearDecayCommonColors.undecayedProperty
     } );
-    model.percentageOfUndecayedProperty.link( undecayedPercent => {
-      if ( undecayedPercent === 1 ) {
-        undecayedArc.shape = new Shape().circle( Vector2.ZERO, pieChartRadius );
+
+    const decayedArc = new Path( null, {
+      stroke: 'black',
+      fill: NuclearDecayCommonColors.decayedProperty,
+      visibleProperty: model.isPlayAreaEmptyProperty.derived( empty => !empty )
+    } );
+    model.percentageOfDecayedProperty.link( decayedPercent => {
+      if ( decayedPercent === 0 ) {
+        decayedArc.shape = null;
       }
       else {
-        undecayedArc.shape = new Shape().moveTo( 0, 0 ).arc(
-          0, 0, pieChartRadius, 0, 2 * Math.PI * undecayedPercent ).lineTo( 0, 0 ).close();
+        decayedArc.shape = new Shape().moveTo( 0, 0 ).arc(
+          0, 0, pieChartRadius, 0, 2 * Math.PI * decayedPercent ).lineTo( 0, 0 ).close();
       }
     } );
 
     const pieChartNode = new Node( {
-      children: [ decayedBackgroundCircle, undecayedArc ]
+      children: [ undecayedBackgroundCircle, decayedArc ]
     } );
 
     const countLabels = new VBox( {
