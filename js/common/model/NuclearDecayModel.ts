@@ -478,6 +478,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     this.resetTimes();
     // Activate multiple atoms with random positions
     _.times( n, () => this.activateAtom( true ) );
+    this.manualStep();
   }
 
   /**
@@ -498,7 +499,12 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       atom.position = this.getRandomPositionWithinBounds();
     }
     this.activeAtoms.push( atom );
-    this.manualStep();
+
+    if ( this.isSingleAtomMode ) {
+
+      // Step the model to update the screen with the new atom. But not if we're activating multiple atoms
+      this.manualStep();
+    }
   }
 
   private setNewIsotope( newIsotope: SelectableIsotopes ): void {
