@@ -522,16 +522,24 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   }
 
   /**
-   * Clears all the atom lists, including decayedAtoms.
+   * Clears all the atom lists.
+   * With optional parameters to specify whether to clear the undecayed and decayed lists,
+   * since in some cases we want to clear one but not the other.
    */
-  public clearAtomLists(): void {
-    this.resetAtoms();
-    this.resetTimes();
-    this.activeAtoms.length = 0;
-    this.decayedAtoms.length = 0;
-    this.undecayedAtoms.length = 0;
-    this.undecayedCountProperty.reset();
-    this.decayedCountProperty.reset();
+  public clearAtomLists( clearUndecayed = true, clearDecayed = true ): void {
+
+    if ( clearUndecayed ) {
+      this.resetTimes();
+      this.resetAtoms();
+      this.undecayedAtoms.length = 0;
+      this.undecayedCountProperty.reset();
+    }
+
+    if ( clearDecayed ) {
+      this.decayedAtoms.length = 0;
+      this.decayedCountProperty.reset();
+    }
+
     this.histogramData.reset();
   }
 

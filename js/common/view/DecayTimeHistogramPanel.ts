@@ -262,7 +262,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     // eraser button (top-right corner, aligned with half-life label)
     const eraserButton = new EraserButton( {
       listener: () => {
-        model.decayedAtoms.length = 0;
+        model.clearAtomLists( false, true );
       },
       accessibleName: NuclearDecayCommonFluent.a11y.eraserButton.accessibleNameStringProperty,
       accessibleContextResponse: NuclearDecayCommonFluent.a11y.eraserButton.accessibleContextResponseStringProperty,
