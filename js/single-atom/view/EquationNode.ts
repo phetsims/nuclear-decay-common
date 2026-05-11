@@ -23,6 +23,7 @@ export default class EquationNode extends HBox {
     isotopeProperty: TReadOnlyProperty<SelectableIsotopes>,
     isPlayAreaEmptyProperty: TReadOnlyProperty<boolean>,
     hasDecayOcurredProperty: TReadOnlyProperty<boolean>,
+    isCustomProperty: TReadOnlyProperty<boolean>,
     providedOptions?: EquationNodeOptions
   ) {
 
@@ -32,15 +33,30 @@ export default class EquationNode extends HBox {
 
     const undecayedIsotope = isotopeProperty.value;
     const decayedIsotope = NuclearDecayModel.getDecayProduct( undecayedIsotope );
-    const firstTerm = EquationElementNode.createFromIsotope( undecayedIsotope, {
-      isActiveProperty: isPlayAreaEmptyProperty.derived( isEmpty => !isEmpty )
+    const firstTermIsotope = EquationElementNode.createFromIsotope( undecayedIsotope, {
+      isActiveProperty: isPlayAreaEmptyProperty.derived( isEmpty => !isEmpty ),
+      visibleProperty: isCustomProperty.derived( isCustom => !isCustom )
     } );
-    const secondTerm = EquationElementNode.createFromIsotope( decayedIsotope, {
-      isActiveProperty: hasDecayOcurredProperty
+    const secondTermIsotope = EquationElementNode.createFromIsotope( decayedIsotope, {
+      isActiveProperty: hasDecayOcurredProperty,
+        visibleProperty: isCustomProperty.derived( isCustom => !isCustom )
     } );
+
+    const firstTermCustom = new EquationElementNode( 'A', '(p+n)', 'p', {
+      isActiveProperty: isPlayAreaEmptyProperty.derived( isEmpty => !isEmpty ),
+      visibleProperty: isCustomProperty
+    } );
+
+    // (p+n)-4 and p-2
+    const secondTermCustom = new EquationElementNode( 'B',
+      '(p+n)\u22124', 'p\u22122', {
+        isActiveProperty: hasDecayOcurredProperty,
+        visibleProperty: isCustomProperty
+      } );
+
+
     const thirdTerm = EquationElementNode.createFromIsotope( 'helium-2', {
       isActiveProperty: hasDecayOcurredProperty
-
     } );
 
     const arrowNode = new ArrowNode( 0, 0, 20, 0, {
@@ -53,7 +69,13 @@ export default class EquationNode extends HBox {
 
     const plusNode = new PlusNode( { size: new Dimension2( 8, 2 ) } );
 
-    options.children = [ firstTerm, arrowNode, secondTerm, plusNode, thirdTerm ];
+    options.children = [
+      firstTermIsotope, firstTermCustom,
+      arrowNode,
+      secondTermIsotope, secondTermCustom,
+      plusNode,
+      thirdTerm
+    ];
 
     super( options );
   }

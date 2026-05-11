@@ -40,6 +40,7 @@ export default class SingleAtomScreenView extends SingleAndMultipleAtomsScreenVi
     this.equationAccordionBox = new EquationAccordionBox( model.selectedIsotopeProperty,
       model.isPlayAreaEmptyProperty,
       model.hasDecayOccurredProperty,
+      model.selectedIsotopeProperty.derived( isotope => isotope === 'custom' ),
       {
         tandem: options.tandem.createTandem( 'equationAccordionBox' )
       } );
