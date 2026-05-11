@@ -40,21 +40,25 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
         model.hasDecayOccurredProperty,
         accordionBoxExpandedProperty,
         NuclearDecayCommonFluent.isotopeInfoTitleStringProperty,
-        NuclearDecayCommonFluent.particleCountsStringProperty
+        NuclearDecayCommonFluent.particleCountsStringProperty,
+        NuclearDecayCommonFluent.isotopeAStringProperty,
+        NuclearDecayCommonFluent.isotopeBStringProperty
       ], (
           selectedIsotope,
           isPlayAreaEmpty,
           hasDecayOccurred,
           expanded,
           pattern,
-          closedTitle
+          closedTitle,
+          isotopeA,
+          isotopeB
           ) => {
         if ( expanded ) {
           if ( isPlayAreaEmpty ) {
             return '--';
           }
           else if ( selectedIsotope === 'custom' ) {
-            return NuclearDecayCommonFluent.isotopeAStringProperty.value;
+            return !hasDecayOccurred ? isotopeA : isotopeB;
           }
           const isotope = hasDecayOccurred ? NuclearDecayModel.getDecayProduct( selectedIsotope ) : selectedIsotope;
           const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
@@ -90,7 +94,8 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
           return StringUtils.fillIn( pattern, { protons: '--' } );
         }
         else if ( selectedIsotope === 'custom' ) {
-          return StringUtils.fillIn( pattern, { protons: 'p' } );
+          // p or p minus 2
+          return StringUtils.fillIn( pattern, { protons: !hasDecayOccurred ? 'p' : 'p\u22122' } );
         }
         const isotope = hasDecayOccurred ? NuclearDecayModel.getDecayProduct( selectedIsotope ) : selectedIsotope;
         const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
@@ -108,7 +113,8 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
           return StringUtils.fillIn( pattern, { neutrons: '--' } );
         }
         else if ( selectedIsotope === 'custom' ) {
-          return StringUtils.fillIn( pattern, { neutrons: 'n' } );
+          // n or n minus 2
+          return StringUtils.fillIn( pattern, { neutrons: !hasDecayOccurred ? 'n' : 'n\u22122' } );
         }
         const isotope = hasDecayOccurred ? NuclearDecayModel.getDecayProduct( selectedIsotope ) : selectedIsotope;
         const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
