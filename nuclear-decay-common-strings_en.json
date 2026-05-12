@@ -32,6 +32,9 @@
   "potentialEnergy": {
     "value": "Potential Energy"
   },
+  "finalEnergy": {
+    "value": "Final Energy"
+  },
   "distance": {
     "value": "Distance"
   },

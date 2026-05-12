@@ -36,6 +36,8 @@ type StringsType = {
   'initialEnergyStringProperty': LocalizedStringProperty;
   'potentialEnergy': string;
   'potentialEnergyStringProperty': LocalizedStringProperty;
+  'finalEnergy': string;
+  'finalEnergyStringProperty': LocalizedStringProperty;
   'distance': string;
   'distanceStringProperty': LocalizedStringProperty;
   'energy': string;

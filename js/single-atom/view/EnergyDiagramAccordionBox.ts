@@ -29,6 +29,7 @@ import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import SingleAtomModel from '../model/SingleAtomModel.js';
+import EnergyDiagramLegendNode from './EnergyDiagramLegendNode.js';
 import EnergyGrabberNode from './EnergyGrabberNode.js';
 
 type SelfOptions = EmptySelfOptions;
@@ -45,11 +46,8 @@ const GRAPH_HEIGHT = 160;
 const GRAPH_X_OFFSET = 15;
 
 // Legend
-const LEGEND_LINE_LENGTH = 22;
 const LEGEND_X = GRAPH_X_OFFSET + 10;
-const LEGEND_Y = 14;
-const LEGEND_LINE_SPACING = 18;
-const LEGEND_TEXT_OFFSET = LEGEND_LINE_LENGTH + 6;
+const LEGEND_Y = 25;
 
 // Potential energy curve parameters (screen coordinates: negative Y = higher energy)
 export const WELL_HALF_WIDTH = 45; // half-width of the flat-bottomed well
@@ -59,6 +57,8 @@ const ENERGY_PEAK_Y = -GRAPH_HEIGHT * 0.4; // top of the Coulomb barrier (above 
 const WELL_BOTTOM_Y = GRAPH_HEIGHT * 0.4; // bottom of the nuclear potential well (below x-axis)
 const POINTINESS_FACTOR = 25; // sharpness of the quadratic curve at the barrier peak. 0 = max pointiness, 100 least.
 const CURVINESS_FACTOR = 0; // how curvy the potential energy curve is at the barrier peak. 0 = very curvy, rapid falloff, 1 = closer to a straight line.
+
+const FINAL_ENERGY_HEIGHT = 18; // height of the final energy line after decay (below x-axis)
 
 export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox {
 
@@ -126,49 +126,10 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       right: graphRightX - 15
     } );
 
-    // Subtitle: "Alpha Particle Energy"
-
-    const subtitleText = new Text( NuclearDecayCommonFluent.alphaParticleEnergyStringProperty, {
-      font: NuclearDecayCommonConstants.SMALL_LABEL_BOLD_FONT,
-      left: LEGEND_X,
-      top: LEGEND_Y,
-      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
-    } );
-
-    // Legend lines and labels
-
-    const initialEnergyLegendLine = new Path(
-      new Shape().moveTo( 0, 0 ).lineTo( LEGEND_LINE_LENGTH, 0 ),
-      {
-        stroke: NuclearDecayCommonColors.initialEnergyColorProperty,
-        lineWidth: 2,
-        left: LEGEND_X,
-        centerY: LEGEND_Y + LEGEND_LINE_SPACING + subtitleText.height
-      }
-    );
-
-    const initialEnergyLabel = new Text( NuclearDecayCommonFluent.initialEnergyStringProperty, {
-      font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
-      left: LEGEND_X + LEGEND_TEXT_OFFSET,
-      centerY: initialEnergyLegendLine.centerY,
-      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
-    } );
-
-    const potentialEnergyLegendLine = new Path(
-      new Shape().moveTo( 0, 0 ).lineTo( LEGEND_LINE_LENGTH, 0 ),
-      {
-        stroke: NuclearDecayCommonColors.potentialEnergyProperty,
-        lineWidth: 4,
-        left: LEGEND_X,
-        centerY: initialEnergyLegendLine.centerY + LEGEND_LINE_SPACING
-      }
-    );
-
-    const potentialEnergyLabel = new Text( NuclearDecayCommonFluent.potentialEnergyStringProperty, {
-      font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
-      left: LEGEND_X + LEGEND_TEXT_OFFSET,
-      centerY: potentialEnergyLegendLine.centerY,
-      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
+    const legend = new EnergyDiagramLegendNode( model.hasDecayOccurredProperty, {
+      tandem: options.tandem.createTandem( 'legend' ),
+      x: LEGEND_X,
+      y: LEGEND_Y
     } );
 
     // Graph lines
@@ -247,7 +208,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       accessibleHelpText: NuclearDecayCommonFluent.a11y.initialEnergySlider.accessibleHelpTextStringProperty
     } );
 
-    const initialEnergyGraphLine = new Path( new Shape().moveTo( -GRAPH_X_OFFSET, 0 ).lineTo( graphRightX, 0 ), {
+    const initialEnergyGraphLine = new Line( -GRAPH_X_OFFSET, 0, graphRightX, 0, {
       stroke: NuclearDecayCommonColors.initialEnergyColorProperty,
       lineWidth: 2,
       visibleProperty: model.isPlayAreaEmptyProperty.derived( isEmpty => !isEmpty )
@@ -258,6 +219,13 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       const height = value * ENERGY_PEAK_Y;
       initialEnergyGraphLine.y = height;
       initialEnergyGrabber.centerY = height;
+    } );
+
+    const finalEnergyGraphLine = new Line( -GRAPH_X_OFFSET, FINAL_ENERGY_HEIGHT, graphRightX, FINAL_ENERGY_HEIGHT, {
+      stroke: NuclearDecayCommonColors.finalEnergyProperty,
+      lineWidth: 2,
+      lineDash: [ 7, 7 ],
+      visibleProperty: model.hasDecayOccurredProperty
     } );
 
     const energyIntersectionPointProperty = new Vector2Property( Vector2.ZERO, {
@@ -330,18 +298,15 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         staticDescriptionNode,
         energyAxisLabel,
         distanceAxisLabel,
-        subtitleText,
-        initialEnergyLegendLine,
-        initialEnergyLabel,
+        legend,
         initialEnergyGraphLine,
-        potentialEnergyLegendLine,
-        potentialEnergyLabel,
         potentialEnergyGraphCurve,
         yAxis,
         xAxis,
         initialEnergyGrabber,
         potentialEnergyGrabber,
-        potentialEnergyHeightIndicator
+        potentialEnergyHeightIndicator,
+        finalEnergyGraphLine
       ],
       accessibleTemplate: AccessibleList.createTemplateProperty( {
         listItems: [
