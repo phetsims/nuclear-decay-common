@@ -10,11 +10,13 @@
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
 import Range from '../../../../dot/js/Range.js';
+import Vector2 from '../../../../dot/js/Vector2.js';
 import AddAtomsControlPanel from '../../../../nuclear-decay-common/js/common/view/AddAtomsControlPanel.js';
 import IsotopeLegendPanel from '../../../../nuclear-decay-common/js/common/view/IsotopeLegendPanel.js';
 import NuclearDecayCommonColors from '../../../../nuclear-decay-common/js/NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../../../nuclear-decay-common/js/NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../../../nuclear-decay-common/js/NuclearDecayCommonFluent.js';
+import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import Stopwatch from '../../../../scenery-phet/js/Stopwatch.js';
 import StopwatchNode from '../../../../scenery-phet/js/StopwatchNode.js';
@@ -149,6 +151,31 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
       }
     );
     this.rightColumnControls.addChild( isotopesLegendPanel );
+
+
+    affirm( model.stopwatch, 'The model should have a stopwatch for the Multiple Atoms screen.' );
+    const stopwatch = model.stopwatch;
+
+    // Set a default position within the play area.
+    stopwatch.positionProperty.value = new Vector2(
+      this.rightColumnControls.centerX, this.rightColumnControls.bottom + 30
+    );
+
+    const stopwatchNode = new StopwatchNode( stopwatch, {
+      dragBoundsProperty: this.visibleBoundsProperty,
+      tandem: options.tandem.createTandem( 'stopwatchNode' ),
+      visibleProperty: visibleProperties.stopwatchVisibleProperty,
+      numberDisplayOptions: {
+        numberFormatter: StopwatchNode.createRichTextNumberFormatter( {
+            showAsMinutesAndSeconds: false,
+            numberOfDecimalPlaces: 2
+        } )
+      },
+      visiblePropertyOptions: {
+        phetioReadOnly: true
+      }
+    } );
+    this.addChild( stopwatchNode );
 
     this.children = [ this.playAreaBoundsRectangle, ...this.children ];
   }

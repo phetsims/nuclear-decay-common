@@ -23,6 +23,7 @@ import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 import IntentionalAny from '../../../../phet-core/js/types/IntentionalAny.js';
 import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
+import Stopwatch from '../../../../scenery-phet/js/Stopwatch.js';
 import TimeSpeed from '../../../../scenery-phet/js/TimeSpeed.js';
 import AtomInfoUtils, { DecayType } from '../../../../shred/js/AtomInfoUtils.js';
 import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
@@ -73,6 +74,7 @@ export type Timescale = ( typeof TimescaleValues )[ number ];
 
 type SelfOptions = {
   maxNumberOfAtoms?: number;
+  useStopwatch?: boolean;
 };
 
 export type NuclearDecayModelOptions = SelfOptions & WithRequired<PhetioObjectOptions, 'tandem'>;
@@ -156,6 +158,9 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   // The first screen will stop counting time once decay ocurrs, we create this here to control the stepping of time in the model.
   public readonly continueAddingTimeProperty: BooleanProperty;
 
+  // Second screen will include a stopwatch, we might create it here for stepping but not on other screens.
+  public readonly stopwatch: Stopwatch | null;
+
   protected constructor(
     selectableIsotopes: SelectableIsotopes[],
     decayType: DecayType,
@@ -165,7 +170,8 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     const options = optionize<NuclearDecayModelOptions, SelfOptions, PhetioObjectOptions>()( {
       maxNumberOfAtoms: NuclearDecayCommonConstants.MAX_ATOMS,
       phetioType: NuclearDecayModel.NuclearDecayModelIO,
-      phetioState: true
+      phetioState: true,
+      useStopwatch: false
     }, providedOptions );
 
     super( options );
@@ -333,6 +339,11 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       tandem: options.tandem.createTandem( 'continueAddingTimeProperty' ),
       phetioFeatured: true
     } );
+
+    this.stopwatch = options.useStopwatch ? new Stopwatch( {
+      isVisible: false,
+      tandem: options.tandem.createTandem( 'stopwatch' )
+    } ) : null;
   }
 
   public expandNormalizedTime( normalizedTime: number, exponential: boolean ): number {
@@ -391,6 +402,8 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
           this.timeProperty.value = exponentialTime;
         }
       }
+
+      this.stopwatch?.step( timeStep );
 
       this.activeAtoms.forEach( ( atom: NuclearDecayAtom ) => {
         const hadDecayed = atom.hasDecayed;
@@ -595,6 +608,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     this.resetTimes();
     this.clearAtomLists();
     this.histogramData.reset();
+    this.stopwatch?.reset();
   }
 
   /**
