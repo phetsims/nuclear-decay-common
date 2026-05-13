@@ -157,9 +157,10 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     const stopwatch = model.stopwatch;
 
     // Set a default position within the play area.
-    stopwatch.positionProperty.value = new Vector2(
+    stopwatch.positionProperty.setInitialValue( new Vector2(
       this.rightColumnControls.centerX, this.rightColumnControls.bottom + 30
-    );
+    ) );
+    stopwatch.positionProperty.reset();
 
     const stopwatchNode = new StopwatchNode( stopwatch, {
       dragBoundsProperty: this.visibleBoundsProperty,
