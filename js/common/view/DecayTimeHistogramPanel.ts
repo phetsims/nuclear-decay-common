@@ -32,6 +32,7 @@ import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import NuclearDecayModel, { SelectableIsotopes, Timescale } from '../model/NuclearDecayModel.js';
+import { DecayPieChartNode } from './DecayPieChartNode.js';
 import DecayTimeHistogramCanvasNode from './DecayTimeHistogramCanvasNode.js';
 import HalfLifeGrabberNode from './HalfLifeGrabberNode.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
@@ -101,6 +102,13 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       centerX: AXIS_LABEL_X,
       centerY: GRAPH_HEIGHT / 2,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
+    } );
+
+    const pieChartNode = new DecayPieChartNode( model, {
+      tandem: options.tandem.createTandem( 'pieChartNode' ),
+      centerY: GRAPH_HEIGHT / 2,
+      right: isotopeAxisLabel.left - 20,
+      visible: !model.isSingleAtomMode
     } );
 
     // Isotope symbols
@@ -268,7 +276,8 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       accessibleContextResponse: NuclearDecayCommonFluent.a11y.eraserButton.accessibleContextResponseStringProperty,
       tandem: options.tandem.createTandem( 'eraserButton' ),
       right: bounds.right - MARGIN_X,
-      bottom: GRAPH_HEIGHT
+      bottom: GRAPH_HEIGHT,
+      visible: model.isSingleAtomMode
     } );
 
     const timescaleVisibleProperty = new BooleanProperty( false, {
@@ -363,7 +372,9 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
     // Graph area node
     const graphAreaNode = new Node( {
+      excludeInvisibleChildrenFromBounds: true,
       children: [
+        pieChartNode,
         isotopeAxisLabel,
         initialIsotopeSymbol,
         decayProductSymbol,

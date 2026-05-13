@@ -571,6 +571,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     this.timeProperty.reset();
     this.accumulatedLinearTime = 0;
     this.lastDecayTimeProperty.reset();
+    this.stopwatch?.setTime( 0 );
   }
 
   /**

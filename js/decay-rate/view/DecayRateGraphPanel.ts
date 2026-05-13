@@ -16,7 +16,6 @@ import PhetFont from '../../../../scenery-phet/js/PhetFont.js';
 import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
 import DragListener from '../../../../scenery/js/listeners/DragListener.js';
-import Circle from '../../../../scenery/js/nodes/Circle.js';
 import Line from '../../../../scenery/js/nodes/Line.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Path from '../../../../scenery/js/nodes/Path.js';
@@ -27,6 +26,7 @@ import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
 import Checkbox from '../../../../sun/js/Checkbox.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
 import NuclearDecayModel from '../../common/model/NuclearDecayModel.js';
+import { DecayPieChartNode } from '../../common/view/DecayPieChartNode.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from '../../common/view/NuclearDecayPanel.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
@@ -42,6 +42,14 @@ const MAX_TIME = 3;
 type SelfOptions = EmptySelfOptions;
 
 export type DecayRateGraphOptions = SelfOptions & WithRequired<NuclearDecayPanelOptions, 'tandem'>;
+
+const CHECKBOX_LABEL_FONT = NuclearDecayCommonConstants.CONTROL_FONT;
+const LINE_SAMPLE_LENGTH = 24;
+const ICON_WIDTH = 20;
+const ICON_HEIGHT = 16;
+
+const GRAPH_WIDTH = 750;
+const GRAPH_HEIGHT = 150;
 
 export default class DecayRateGraphPanel extends NuclearDecayPanel {
 
@@ -71,65 +79,9 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     const undecayedSymbol = AtomNameUtils.getMassAndSymbol( undecayedAtomConfig.protonCount, undecayedAtomConfig.neutronCount );
     const decayedSymbol = AtomNameUtils.getMassAndSymbol( decayedAtomConfig.protonCount, decayedAtomConfig.neutronCount );
 
-    const undecayedCountStringProperty = model.undecayedCountProperty.derived( count => {
-      return `${undecayedSymbol}: ${count}`;
+    const pieChartNode = new DecayPieChartNode( model, {
+      tandem: options.tandem.createTandem( 'pieChartNode' )
     } );
-
-    const decayedCountStringProperty = model.decayedCountProperty.derived( count => {
-      return `${decayedSymbol}: ${count}`;
-    } );
-
-    // Isotope count labels at the top
-    const undecayedCountLabel = new RichText( undecayedCountStringProperty, {
-      font: NuclearDecayCommonConstants.CONTROL_FONT,
-      fill: NuclearDecayCommonColors.undecayedProperty
-    } );
-    const decayedCountLabel = new RichText( decayedCountStringProperty, {
-      font: NuclearDecayCommonConstants.CONTROL_FONT
-    } );
-
-    const pieChartRadius = 30;
-    const undecayedBackgroundCircle = new Circle( pieChartRadius, {
-      stroke: 'black',
-      fill: NuclearDecayCommonColors.undecayedProperty
-    } );
-
-    const decayedArc = new Path( null, {
-      stroke: 'black',
-      fill: NuclearDecayCommonColors.decayedProperty,
-      visibleProperty: model.isPlayAreaEmptyProperty.derived( empty => !empty )
-    } );
-    model.percentageOfDecayedProperty.link( decayedPercent => {
-      if ( decayedPercent === 0 ) {
-        decayedArc.shape = null;
-      }
-      else {
-        decayedArc.shape = new Shape().moveTo( 0, 0 ).arc(
-          0, 0, pieChartRadius, 0, 2 * Math.PI * decayedPercent ).lineTo( 0, 0 ).close();
-      }
-    } );
-
-    const pieChartNode = new Node( {
-      children: [ undecayedBackgroundCircle, decayedArc ]
-    } );
-
-    const countLabels = new VBox( {
-      spacing: 4,
-      align: 'left',
-      layoutOptions: { stretch: true },
-      children: [ undecayedCountLabel, decayedCountLabel ]
-    } );
-
-    const countLabelsAndPieChart = new HBox( {
-      spacing: 20,
-      children: [ countLabels, pieChartNode ]
-    } );
-
-
-    const CHECKBOX_LABEL_FONT = NuclearDecayCommonConstants.CONTROL_FONT;
-    const LINE_SAMPLE_LENGTH = 24;
-    const ICON_WIDTH = 20;
-    const ICON_HEIGHT = 16;
 
     // Decay curve icon: filled area under an exponential-decay-like quad curve (top-left to bottom-right)
     const decayShape = new Shape()
@@ -204,10 +156,6 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       align: 'left',
       children: [ undecayedCheckbox, decayedCheckbox, halfLivesCheckbox, dataProbeCheckbox ]
     } );
-
-    // Graph placeholder area
-    const GRAPH_WIDTH = 750;
-    const GRAPH_HEIGHT = 180;
 
     const graphBackground = new Rectangle( 0, 0, GRAPH_WIDTH, GRAPH_HEIGHT, {
       fill: 'white',
@@ -345,7 +293,8 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       NuclearDecayCommonColors.undecayedProperty,
       {
         centerX: dataProbeNode.centerX,
-        bottom: dataProbeNode.top
+        bottom: dataProbeNode.top,
+        visibleProperty: visibleProperties.showDataProbeProperty
       }
     );
 
@@ -388,8 +337,8 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     // Left column: count labels + checkboxes
     const leftColumn = new VBox( {
       spacing: 20,
-      align: 'left',
-      children: [ countLabelsAndPieChart, checkboxGroup ]
+      align: 'center',
+      children: [ pieChartNode, checkboxGroup ]
     } );
 
     // Bottom section: checkboxes on the left, graph on the right
