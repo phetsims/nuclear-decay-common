@@ -285,7 +285,10 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       phetioFeatured: true
     } );
 
-    halfLifeLine.setLine( 0, 0, 0, GRAPH_HEIGHT + SECONDARY_AXIS_SHIFT + 6 );
+    model.selectedIsotopeProperty.link( isotope => {
+      halfLifeLine.setLine( 0, 0, 0,
+        isotope === 'custom' ? GRAPH_HEIGHT + SECONDARY_AXIS_SHIFT + 6 : GRAPH_HEIGHT );
+    } );
 
     // Accessible paragraph describing the timeline, for screen readers.
     const scaleStringProperty = NuclearDecayCommonFluent.a11y.decayTimeHistogram.scale.createProperty( {
