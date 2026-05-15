@@ -33,7 +33,8 @@ export default class DecayRateModel extends NuclearDecayModel {
     providedOptions?: DecayRateModelOptions
   ) {
     const options = optionize<DecayRateModelOptions, SelfOptions, NuclearDecayModelOptions>()( {
-      maxNumberOfAtoms: 1000
+      maxNumberOfAtoms: 1000,
+      ejectParticlesOnDecay: false
     }, providedOptions );
 
     super( selectableIsotopes, decayType, options );

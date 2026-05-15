@@ -75,6 +75,7 @@ export type Timescale = ( typeof TimescaleValues )[ number ];
 type SelfOptions = {
   maxNumberOfAtoms?: number;
   useStopwatch?: boolean;
+  ejectParticlesOnDecay?: boolean;
 };
 
 export type NuclearDecayModelOptions = SelfOptions & WithRequired<PhetioObjectOptions, 'tandem'>;
@@ -171,7 +172,8 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       maxNumberOfAtoms: NuclearDecayCommonConstants.MAX_ATOMS,
       phetioType: NuclearDecayModel.NuclearDecayModelIO,
       phetioState: true,
-      useStopwatch: false
+      useStopwatch: false,
+      ejectParticlesOnDecay: true
     }, providedOptions );
 
     super( options );
@@ -236,7 +238,8 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
         // In the single-atom case, the angle at which decay products are ejected is restricted to a horizontal band so
         // that the particles don't go behind panels.  This is due to the layout for the single-atom screens, and does
         // not correspond to anything physical that is being modelled.
-        restrictEjectionAngles: this.maxNumberOfAtoms === 1
+        restrictEjectionAngles: this.maxNumberOfAtoms === 1,
+        ejectParticlesOnDecay: options.ejectParticlesOnDecay
       } );
       this.atomPool.push( atom );
     } );
