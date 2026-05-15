@@ -23,6 +23,9 @@
   "addAtom": {
     "value": "Add Atom"
   },
+  "add": {
+    "value": "Add"
+  },
   "alphaParticleEnergy": {
     "value": "Alpha Particle Energy"
   },

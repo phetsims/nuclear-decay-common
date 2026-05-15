@@ -110,7 +110,7 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
     const numberDisplay = new NumberDisplay( atomsToAddProperty, atomsToAddProperty.rangeProperty.value );
 
     // Add button
-    const addButton = new TextPushButton( NuclearDecayCommonFluent.addAtomStringProperty, {
+    const addButton = new TextPushButton( NuclearDecayCommonFluent.addStringProperty, {
       font: NuclearDecayCommonConstants.CONTROL_FONT,
       baseColor: 'orange',
       listener: () => {
