@@ -250,12 +250,12 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     // Line paths for the decay curves, clipped to the graph area.
     const undecayedLinePath = new Path( null, {
       stroke: NuclearDecayCommonColors.undecayedProperty,
-      lineWidth: 2,
+      lineWidth: 3,
       clipArea: Shape.rect( 0, 0, GRAPH_WIDTH, GRAPH_HEIGHT )
     } );
     const decayedLinePath = new Path( null, {
       stroke: 'black',
-      lineWidth: 2,
+      lineWidth: 3,
       clipArea: Shape.rect( 0, 0, GRAPH_WIDTH, GRAPH_HEIGHT )
     } );
 

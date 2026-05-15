@@ -20,6 +20,7 @@ import RichText from '../../../../scenery/js/nodes/RichText.js';
 import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
 import ArrowButton, { ArrowButtonOptions } from '../../../../sun/js/buttons/ArrowButton.js';
 import TextPushButton from '../../../../sun/js/buttons/TextPushButton.js';
+import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import NuclearDecayModel, { SelectableIsotopes } from '../model/NuclearDecayModel.js';
@@ -112,7 +113,7 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
     // Add button
     const addButton = new TextPushButton( NuclearDecayCommonFluent.addStringProperty, {
       font: NuclearDecayCommonConstants.CONTROL_FONT,
-      baseColor: 'orange',
+      baseColor: NuclearDecayCommonColors.addButtonProperty,
       listener: () => {
         addAtomsCallback( atomsToAddProperty.value );
       },
