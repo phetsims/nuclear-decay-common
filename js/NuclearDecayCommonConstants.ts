@@ -7,8 +7,11 @@
  */
 
 import Range from '../../dot/js/Range.js';
+import { clamp } from '../../dot/js/util/clamp.js';
 import PhetFont from '../../scenery-phet/js/PhetFont.js';
 import AtomConfig from '../../shred/js/model/AtomConfig.js';
+
+const EXPONENTIAL_HALF_LIFE_EXPONENT = new Range( -3, 18 );
 
 export default class NuclearDecayCommonConstants {
   public constructor() {
@@ -22,7 +25,7 @@ export default class NuclearDecayCommonConstants {
   public static readonly LINEAR_HALF_LIFE = new Range( 0.1, 3 ); // seconds
 
   // Time exponent ranges for custom half-life in exponential time mode. The actual half-life will be 10^x.
-  public static readonly EXPONENTIAL_HALF_LIFE_EXPONENT = new Range( -3, 18 );
+  public static readonly EXPONENTIAL_HALF_LIFE_EXPONENT = EXPONENTIAL_HALF_LIFE_EXPONENT;
 
   // Function for getting exponential time based with the proper clamps
   public static readonly EXPONENTIAL_TIME = ( exponent: number ): number => {
@@ -77,4 +80,25 @@ export default class NuclearDecayCommonConstants {
   public static readonly MANUAL_STEP_DT = 1 / 60; // seconds, one frame
   public static readonly NORMAL_SPEED_SCALE = 0.25;
   public static readonly SLOW_SPEED_SCALE = 0.1;
+
+  public static readonly ENERGIES_TO_HALF_LIFE_EXPONENT_MAPPING =
+    ( kineticEnergy: number, potentialEnergy: number ): number => {
+
+    // If kinetic energy is negative, return the maximum half-life
+    if ( kineticEnergy < 0 ) { return 1; }
+
+    // If kinetic energy is greater than potential energy, return the minimum half-life (immediate decay)
+    if ( kineticEnergy > potentialEnergy ) { return 0; }
+
+    // Expression obtained from the integral of the curve between the kinetic energy line and the potential energy line, normalized to the range [0, 1]
+    return clamp(
+      ( Math.sqrt( potentialEnergy ) - Math.sqrt( kineticEnergy ) ) ** 2 / Math.sqrt( potentialEnergy ), 0, 1 );
+  };
+
+  public static readonly HALF_LIFE_TO_KINETIC_ENERGY_MAPPING = ( normalizedHL: number, potentialEnergy: number ): number => {
+
+    // Inverse of the above function solving for kinetic energy
+    return clamp(
+      ( Math.sqrt( potentialEnergy ) - Math.sqrt( normalizedHL * Math.sqrt( potentialEnergy ) ) ) ** 2, 0, 1 );
+  };
 }

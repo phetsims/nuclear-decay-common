@@ -12,6 +12,7 @@ import Range from '../../../../dot/js/Range.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import { DecayType } from '../../../../shred/js/AtomInfoUtils.js';
 import NuclearDecayModel, { NuclearDecayModelOptions, SelectableIsotopes } from '../../common/model/NuclearDecayModel.js';
+import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 
 type SelfOptions = EmptySelfOptions;
 
@@ -102,12 +103,21 @@ export default class SingleAtomModel extends NuclearDecayModel {
       this.continueAddingTimeProperty.value = !hasDecayOccurred;
     } );
 
+    Multilink.multilink(
+      [ this.potentialEnergyProperty, this.initialEnergyProperty ],
+      ( potentialEnergy, initialEnergy ) => {
+        if ( this.mappingInProgress ) { return; }
+
+        this.mappingInProgress = true;
+        this.customHalfLifeProperty.value = NuclearDecayCommonConstants.ENERGIES_TO_HALF_LIFE_EXPONENT_MAPPING( initialEnergy, potentialEnergy );
+        this.mappingInProgress = false;
+      } );
+
     this.customHalfLifeProperty.lazyLink( halfLife => {
       if ( this.mappingInProgress ) { return; }
 
       this.mappingInProgress = true;
-      const validInitialEnergyRange = new Range( 0.1, this.potentialEnergyProperty.value );
-      this.initialEnergyProperty.value = validInitialEnergyRange.expandNormalizedValue( 1 - halfLife );
+      this.initialEnergyProperty.value = NuclearDecayCommonConstants.HALF_LIFE_TO_KINETIC_ENERGY_MAPPING( halfLife, this.potentialEnergyProperty.value );
       this.mappingInProgress = false;
     } );
   }
