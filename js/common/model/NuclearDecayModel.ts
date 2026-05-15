@@ -238,7 +238,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
         // In the single-atom case, the angle at which decay products are ejected is restricted to a horizontal band so
         // that the particles don't go behind panels.  This is due to the layout for the single-atom screens, and does
         // not correspond to anything physical that is being modelled.
-        restrictEjectionAngles: this.maxNumberOfAtoms === 1,
+        restrictEjectionAngles: this.isSingleAtomMode,
         ejectParticlesOnDecay: options.ejectParticlesOnDecay
       } );
       this.atomPool.push( atom );
@@ -639,14 +639,17 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     stateSchema: {
       atomPool: ReferenceArrayIO( NuclearDecayAtom.NuclearDecayAtomIO ),
 
-      // TODO: Do we need this field?  See https://github.com/phetsims/alpha-decay/issues/3.
+      // Decayed atoms needs its own referencing because it contains atoms beyond the atomPool.
+      // Mostly important for first screen where atom pool is a single atom, but we store the
+      // information of all the atoms that have decayed beforehand.
       decayedAtoms: ReferenceArrayIO( NuclearDecayAtom.NuclearDecayAtomIO )
     },
     applyState: ( model, stateObject ) => {
 
+      const atomsIO = ReferenceArrayIO( NuclearDecayAtom.NuclearDecayAtomIO );
+
       // Restore atomPool state from the serialized data.
-      const atomPoolIO = ReferenceArrayIO( NuclearDecayAtom.NuclearDecayAtomIO );
-      atomPoolIO.fromStateObject( stateObject.atomPool ).forEach( ( atom, i ) => {
+      atomsIO.fromStateObject( stateObject.atomPool ).forEach( ( atom, i ) => {
         model.atomPool[ i ].set( atom );
       } );
 
@@ -655,9 +658,8 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       model.undecayedAtoms = model.activeAtoms.filter( atom => !atom.hasDecayed );
 
       // Restore decayedAtoms (these are independent copies, not pool references).
-      const decayedAtomsIO = ReferenceArrayIO( NuclearDecayAtom.NuclearDecayAtomIO );
       model.decayedAtoms.length = 0;
-      model.decayedAtoms.push( ...decayedAtomsIO.fromStateObject( stateObject.decayedAtoms ) );
+      model.decayedAtoms.push( ...atomsIO.fromStateObject( stateObject.decayedAtoms ) );
 
       model.isPlayAreaEmptyProperty.value = model.activeAtoms.length === 0;
     }

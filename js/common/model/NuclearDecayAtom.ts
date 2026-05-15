@@ -21,11 +21,13 @@ import BooleanIO from '../../../../tandem/js/types/BooleanIO.js';
 import IOType from '../../../../tandem/js/types/IOType.js';
 import NullableIO from '../../../../tandem/js/types/NullableIO.js';
 import NumberIO from '../../../../tandem/js/types/NumberIO.js';
+import ReferenceArrayIO from '../../../../tandem/js/types/ReferenceArrayIO.js';
 import StringUnionIO from '../../../../tandem/js/types/StringUnionIO.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
-import EjectedDecayParticle from './EjectedDecayParticle.js';
+import EjectedDecayParticle, { EjectedDecayParticleStateObject } from './EjectedDecayParticle.js';
 
 export type NuclearDecayAtomStateObject = {
+  ejectedDecayParticles: EjectedDecayParticleStateObject[];
   atomConfigBeforeDecay: AtomConfigStateObject;
   atomConfigAfterDecay: AtomConfigStateObject;
   decayType: DecayType;
@@ -97,16 +99,16 @@ export default class NuclearDecayAtom {
   public readonly ejectedDecayParticles: EjectedDecayParticle[] = [];
 
   // Whether the angles at which ejected decay particles are restricted to a limited range.
-  private readonly restrictEjectionAngles: boolean;
+  private restrictEjectionAngles: boolean;
 
   // The speed at which ejected particles move away from the decayed atom.
-  private readonly particleEjectionSpeed: number;
+  private particleEjectionSpeed: number;
 
   // See related options for description of this field.
-  private readonly ejectParticlesOnDecay: boolean;
+  private ejectParticlesOnDecay: boolean;
 
   // The type of decay that this nucleus will undergo.
-  private readonly decayType: DecayType;
+  private decayType: DecayType;
 
   public constructor(
     atomConfigBeforeDecay: AtomConfig,
@@ -139,13 +141,14 @@ export default class NuclearDecayAtom {
     // Add the particles that will be ejected upon a decay event if this atom is so configured.
     if ( options.ejectParticlesOnDecay ) {
       if ( decayType === 'alphaDecay' ) {
-        this.ejectedDecayParticles.push( new EjectedDecayParticle( 'alpha', {
+        const particle = new EjectedDecayParticle( 'alpha', {
 
           animationSpeedProperty: new NumberProperty( options.particleEjectionSpeed ),
 
           // JPB REVIEW: Uh-oh. If we aren't providing tandems, what do we do here?
           tandem: Tandem.OPT_OUT
-        } ) );
+        } );
+        this.ejectedDecayParticles.push( particle );
       }
       else if ( decayType === 'betaMinusDecay' ) {
         this.ejectedDecayParticles.push( new EjectedDecayParticle( 'electron', {
@@ -209,7 +212,19 @@ export default class NuclearDecayAtom {
     this.isActive = referenceAtom.isActive;
     this.time = referenceAtom.time;
     this.decayTime = referenceAtom.decayTime;
+    this.decayType = referenceAtom.decayType;
     this.position = referenceAtom.position.copy();
+
+    // Sets the relevant values for the existing ejected particles to avoid overwriting them
+    // This is important since these properties are listened to by the particle respective nodes.
+    referenceAtom.ejectedDecayParticles.forEach( ( particleState, i ) => {
+
+      if ( i < this.ejectedDecayParticles.length ) {
+        this.ejectedDecayParticles[ i ].isActiveProperty.value = particleState.isActiveProperty.value;
+        this.ejectedDecayParticles[ i ].positionProperty.value = particleState.positionProperty.value;
+        this.ejectedDecayParticles[ i ].destinationProperty.value = particleState.destinationProperty.value;
+      }
+    } );
   }
 
   /**
@@ -350,7 +365,8 @@ export default class NuclearDecayAtom {
       hasDecayed: BooleanIO,
       time: NumberIO,
       decayTime: NullableIO( NumberIO ),
-      position: Vector2.Vector2IO
+      position: Vector2.Vector2IO,
+      ejectedDecayParticles: ReferenceArrayIO( EjectedDecayParticle.EjectedDecayParticleIO )
     },
     fromStateObject: ( stateObject: NuclearDecayAtomStateObject ) => {
       const atom = new NuclearDecayAtom(
@@ -362,6 +378,16 @@ export default class NuclearDecayAtom {
       atom.time = stateObject.time;
       atom.decayTime = stateObject.decayTime;
       atom.position = Vector2.Vector2IO.fromStateObject( stateObject.position );
+
+      stateObject.ejectedDecayParticles.forEach( ( particleState, i ) => {
+
+        if ( i < atom.ejectedDecayParticles.length ) {
+          atom.ejectedDecayParticles[ i ].isActiveProperty.value = particleState.isActive;
+          atom.ejectedDecayParticles[ i ].positionProperty.value = Vector2.Vector2IO.fromStateObject( particleState.position );
+          atom.ejectedDecayParticles[ i ].destinationProperty.value = Vector2.Vector2IO.fromStateObject( particleState.destination );
+        }
+      } );
+
       return atom;
     }
   } );
