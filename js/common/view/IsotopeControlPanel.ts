@@ -20,7 +20,6 @@ import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import NuclearDecayModel, { ValidIsotopes } from '../model/NuclearDecayModel.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
-import ParticlesLegendNode from './ParticlesLegendNode.js';
 
 type SelfOptions = {
   // The second screen has additional checkboxes in the middle of the panel
@@ -89,17 +88,13 @@ export default class IsotopeControlPanel extends NuclearDecayPanel {
         titleNode,
         isotopeSelectorRadioButtonGroup,
         new HSeparator(),
-        ...options.middleContent,
-        new HSeparator(),
-        new ParticlesLegendNode()
+        ...options.middleContent
       ];
     }
     else {
       children = [
         titleNode,
-        isotopeSelectorRadioButtonGroup,
-        new HSeparator(),
-        new ParticlesLegendNode()
+        isotopeSelectorRadioButtonGroup
       ];
     }
 

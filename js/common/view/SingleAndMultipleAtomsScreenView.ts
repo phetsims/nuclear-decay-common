@@ -23,6 +23,7 @@ import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import DecayTimeHistogramPanel from './DecayTimeHistogramPanel.js';
 import IsotopeControlPanel from './IsotopeControlPanel.js';
 import NuclearDecayScreenView, { NuclearDecayScreenViewOptions } from './NuclearDecayScreenView.js';
+import ParticlesLegendNode from './ParticlesLegendNode.js';
 
 type SelfOptions = {
   // Additional content to add to the isotope panel
@@ -72,6 +73,8 @@ export default class SingleAndMultipleAtomsScreenView extends NuclearDecayScreen
 
     // Right column panels
 
+    const particleLegendPanel = new ParticlesLegendNode();
+
     this.isotopePanel = new IsotopeControlPanel( model, {
       middleContent: options.isotopePanelMiddleContent,
       tandem: options.tandem.createTandem( 'isotopePanel' )
@@ -81,7 +84,7 @@ export default class SingleAndMultipleAtomsScreenView extends NuclearDecayScreen
       spacing: PANEL_SPACING,
       right: this.layoutBounds.maxX - MARGIN_X,
       top: this.layoutBounds.minY + MARGIN_Y,
-      children: [ this.isotopePanel ]
+      children: [ particleLegendPanel, this.isotopePanel ]
     } );
     this.addChild( this.rightColumnControls );
 

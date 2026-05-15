@@ -38,6 +38,9 @@ type SelfOptions = EmptySelfOptions;
 
 export type MultipleAtomsScreenViewOptions = SelfOptions & DecayHistogramScreenViewOptions;
 
+const MARGIN_X = NuclearDecayCommonConstants.SCREEN_VIEW_X_MARGIN;
+const MARGIN_Y = NuclearDecayCommonConstants.SCREEN_VIEW_Y_MARGIN;
+
 export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScreenView {
 
   private readonly visibleProperties: MultipleAtomsVisibleProperties;
@@ -147,10 +150,11 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     const isotopesLegendPanel = new IsotopeLegendPanel(
       [ NuclearDecayCommonConstants.POLONIUM_211, NuclearDecayCommonConstants.LEAD_207 ],
       {
-        minWidth: this.rightColumnControls.width
+        left: this.layoutBounds.minX + MARGIN_X,
+        bottom: this.layoutBounds.maxY - MARGIN_Y
       }
     );
-    this.rightColumnControls.addChild( isotopesLegendPanel );
+    this.addChild( isotopesLegendPanel );
 
 
     affirm( model.stopwatch, 'The model should have a stopwatch for the Multiple Atoms screen.' );

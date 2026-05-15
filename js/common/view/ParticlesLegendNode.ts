@@ -7,34 +7,40 @@
  */
 
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
-import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import optionize, { combineOptions, EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import ShadedSphereNode from '../../../../scenery-phet/js/ShadedSphereNode.js';
-import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
+import HBox, { HBoxOptions } from '../../../../scenery/js/layout/nodes/HBox.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
-import Node, { NodeOptions } from '../../../../scenery/js/nodes/Node.js';
+import Node from '../../../../scenery/js/nodes/Node.js';
 import RichText from '../../../../scenery/js/nodes/RichText.js';
 import ShredColors from '../../../../shred/js/ShredColors.js';
+import Panel, { PanelOptions } from '../../../../sun/js/Panel.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonStrings from '../../NuclearDecayCommonStrings.js';
 import AlphaParticleNode from './AlphaParticleNode.js';
 
 type SelfOptions = EmptySelfOptions;
 
-export type ParticlesLegendNodeOptions = SelfOptions & NodeOptions;
+export type ParticlesLegendNodeOptions = SelfOptions & PanelOptions;
 
 const ITEM_SPACING = 6;
 const SPHERE_DIAMETER = NuclearDecayCommonConstants.NUCLEON_DIAMETER;
 
-export default class ParticlesLegendNode extends Node {
+export default class ParticlesLegendNode extends Panel {
   public constructor( providedOptions?: ParticlesLegendNodeOptions ) {
-    const options = optionize<ParticlesLegendNodeOptions, SelfOptions, NodeOptions>()( {
+    const options = optionize<ParticlesLegendNodeOptions, SelfOptions, PanelOptions>()( {
+      fill: NuclearDecayCommonConstants.MAIN_PANEL_FILL,
+      layoutOptions: {
+        stretch: true
+      }
     }, providedOptions );
 
     const particleLegendItem = (
       labelIconNode: Node,
-      labelStringProperty: TReadOnlyProperty<string>
+      labelStringProperty: TReadOnlyProperty<string>,
+      providedOptions?: HBoxOptions
     ): HBox => {
-      return new HBox( {
+      return new HBox( combineOptions<HBoxOptions>( {
         spacing: ITEM_SPACING,
         children: [
           labelIconNode,
@@ -43,7 +49,7 @@ export default class ParticlesLegendNode extends Node {
             maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
           } )
         ]
-      } );
+      }, providedOptions ) );
     };
 
     const protonLegend = particleLegendItem(
@@ -66,11 +72,13 @@ export default class ParticlesLegendNode extends Node {
     );
 
     const content = new HBox( {
-      spacing: 25,
+      spacing: 20,
       align: 'center',
+      justify: 'center',
+      yMargin: 5,
       children: [
         new VBox( {
-          spacing: 15,
+          spacing: 10,
           align: 'left',
           children: [ protonLegend, neutronLegend ]
         } ),
@@ -78,7 +86,6 @@ export default class ParticlesLegendNode extends Node {
       ]
     } );
 
-    super( options );
-    this.addChild( content );
+    super( content, options );
   }
 }
