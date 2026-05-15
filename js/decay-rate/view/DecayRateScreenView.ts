@@ -112,7 +112,7 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
     this.decayRateModel = model;
 
     this.decayRateGraphPanel = new DecayRateGraphPanel( model, this.visibleProperties, {
-      left: this.layoutBounds.minX + MARGIN_X,
+      centerX: this.layoutBounds.centerX,
       top: this.layoutBounds.minY + MARGIN_Y,
       tandem: options.tandem.createTandem( 'decayRateGraphPanel' )
     } );

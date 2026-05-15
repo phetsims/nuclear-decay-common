@@ -37,7 +37,7 @@ import DataProbePanel from './DataProbePanel.js';
 import DecayRateVisibleProperties from './DecayRateVisibleProperties.js';
 
 // The maximum time displayed on the x-axis (seconds).
-const MAX_TIME = 3;
+const MAX_TIME = 3.5;
 
 type SelfOptions = EmptySelfOptions;
 
@@ -191,7 +191,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     const xTickContainer = new Node();
     const xLabels = [ '0', '1', '2', '3' ];
     xLabels.forEach( ( label, index ) => {
-      const x = ( index / ( xLabels.length - 1 ) ) * GRAPH_WIDTH;
+      const x = ( index / MAX_TIME ) * GRAPH_WIDTH;
       xTickContainer.addChild( new Text( label, {
         font: TICK_FONT,
         centerTop: new Vector2( x, GRAPH_HEIGHT + 4 )
@@ -211,7 +211,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     } );
 
     const halfLives: Node[] = [];
-    const halfLifeMultiples = 5;
+    const halfLifeMultiples = 6;
     _.times( halfLifeMultiples, i => {
       // Half-life dashed vertical line and label
       const halfLifeLine = new Path(
@@ -267,7 +267,6 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       {
         stroke: NuclearDecayCommonColors.dataProbeColorProperty,
         lineWidth: 2,
-        lineDash: [ 5, 5 ],
         y: 0
       }
     );
@@ -344,6 +343,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     // Bottom section: checkboxes on the left, graph on the right
     const contentNode = new HBox( {
       spacing: 12,
+      xMargin: 10,
       align: 'top',
       children: [ leftColumn, graphArea ]
     } );
