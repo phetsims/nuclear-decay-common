@@ -23,8 +23,10 @@ import DragListener from '../../../../scenery/js/listeners/DragListener.js';
 import Line from '../../../../scenery/js/nodes/Line.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Path from '../../../../scenery/js/nodes/Path.js';
+import Rectangle from '../../../../scenery/js/nodes/Rectangle.js';
 import RichText from '../../../../scenery/js/nodes/RichText.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
+import Color from '../../../../scenery/js/util/Color.js';
 import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
 import Checkbox from '../../../../sun/js/Checkbox.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
@@ -52,6 +54,8 @@ const GRAPH_X_OFFSET = 90;
 const ISOTOPE_SYMBOL_X = 35; // x of the isotope symbol column
 const AXIS_LABEL_X = 10; // x center of the rotated "Isotope" label
 
+const TICK_HEIGHT = 12;
+const TICK_LABEL_SPACING = 15;
 const LINEAR_TICKS = 4;
 const LINEAR_TICK_INTERVAL_WIDTH = 0.9 * GRAPH_WIDTH / ( LINEAR_TICKS - 1 );
 
@@ -158,42 +162,81 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
+
+    // TODO: Repeated code, maybe make a build-axis function https://github.com/phetsims/alpha-decay/issues/3
     // Linear ticks (0, 1, 2, 3 seconds)
     const linearTicksNode = new Node( {
-      visibleProperty: model.timescaleProperty.derived( timescale => timescale === 'linear' )
+      visibleProperty: model.timescaleProperty.derived( timescale => timescale === 'linear' ),
+      y: GRAPH_HEIGHT
     } );
     _.times( LINEAR_TICKS, ( n: number ) => {
       const tickX = GRAPH_X_OFFSET + n * LINEAR_TICK_INTERVAL_WIDTH;
       linearTicksNode.addChild( new Path(
-        new Shape().moveTo( 0, 0 ).lineTo( 0, 10 ),
-        { stroke: 'black', lineWidth: 1, x: tickX, y: GRAPH_HEIGHT }
+        new Shape().moveTo( 0, 0 ).lineTo( 0, TICK_HEIGHT ),
+        { stroke: 'black', lineWidth: 1, x: tickX, y: 0 }
       ) );
       linearTicksNode.addChild( new Text( n, {
         font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
         centerX: tickX,
-        top: GRAPH_HEIGHT + 12
+        top: TICK_LABEL_SPACING
       } ) );
     } );
 
     // Logarithmic ticks (10^-3, 10^0, 10^3, ..., 10^18)
     const logTicksNode = new Node( {
-      visibleProperty: model.timescaleProperty.derived( timescale => timescale === 'exponential' )
+      visibleProperty: model.timescaleProperty.derived( timescale => timescale === 'exponential' ),
+      y: GRAPH_HEIGHT
     } );
     _.times( LOG_TICKS, ( n: number ) => {
       const tickX = GRAPH_X_OFFSET + n * LOG_TICK_INTERVAL_WIDTH;
       logTicksNode.addChild( new Path(
-        new Shape().moveTo( 0, 0 ).lineTo( 0, 10 ),
-        { stroke: 'black', lineWidth: 1, x: tickX, y: GRAPH_HEIGHT }
+        new Shape().moveTo( 0, 0 ).lineTo( 0, TICK_HEIGHT ),
+        { stroke: 'black', lineWidth: 1, x: tickX, y: 0 }
       ) );
       logTicksNode.addChild( new RichText( `10<sup>${LOG_MIN_POWER + n * LOG_POWER_INTERVAL}</sup>`, {
         font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
         centerX: tickX,
-        top: GRAPH_HEIGHT + 12
+        top: TICK_LABEL_SPACING
       } ) );
     } );
 
     timeAxis.addChild( linearTicksNode );
     timeAxis.addChild( logTicksNode );
+
+    const timescaleVisibleProperty = new BooleanProperty( false, {
+      tandem: options.tandem.createTandem( 'timescaleVisibleProperty' ),
+      phetioFeatured: true
+    } );
+
+    // Secondary times axis: gray, positioned at the original primary-axis y, shown when timescaleVisibleProperty is true
+    const timesAxisNode = new Node( {
+      visibleProperty: timescaleVisibleProperty,
+      y: GRAPH_HEIGHT + 10 + SECONDARY_AXIS_SHIFT,
+
+      tandem: options.tandem.createTandem( 'timesAxisNode' )
+    } );
+
+    timesAxisNode.addChild( new ArrowNode( GRAPH_X_OFFSET - LOG_TICK_OFFSET, 0, GRAPH_X_OFFSET + GRAPH_WIDTH, 0, {
+      stroke: 'gray',
+      fill: 'gray',
+      lineWidth: 1,
+      headWidth: 8,
+      tailWidth: 1
+    } ) );
+
+    TIMES_MAP.forEach( ( [ seconds, labelProperty ] ) => {
+      const xPosition = ( Math.log10( seconds ) - LOG_MIN_POWER ) / LOG_POWER_INTERVAL * LOG_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET;
+      timesAxisNode.addChild( new Path(
+        new Shape().moveTo( 0, 0 ).lineTo( 0, TICK_HEIGHT ),
+        { stroke: 'gray', lineWidth: 1, x: xPosition, y: 0 }
+      ) );
+      timesAxisNode.addChild( new RichText( labelProperty, {
+        font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
+        fill: 'gray',
+        centerX: xPosition,
+        top: TICK_LABEL_SPACING
+      } ) );
+    } );
 
     // Half-life dashed line and label
 
@@ -210,8 +253,32 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     const halfLifeText = new Text( NuclearDecayCommonFluent.halfLifeStringProperty, {
       font: NuclearDecayCommonConstants.SMALL_LABEL_BOLD_FONT,
       fill: NuclearDecayCommonColors.halfLifeColorProperty,
-      bottom: -6,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
+    } );
+
+    // The string readout for the halflife will be 2 significant units for non-custom, only 1 for custom
+    // No need to listen to selectedIsotopeProperty because when it changes, halfLifeProperty will change too.
+    const halfLifeNumberStringProperty = model.halfLifeProperty.derived( halfLife => {
+      return toFixed( halfLife, model.selectedIsotopeProperty.value === 'custom' ? 1 : 2 );
+    } );
+
+    const halfLifeNumber = new Text( halfLifeNumberStringProperty, {
+      font: NuclearDecayCommonConstants.SMALL_LABEL_BOLD_FONT,
+      fill: NuclearDecayCommonColors.halfLifeColorProperty,
+      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
+    } );
+
+    const numberBackgroundRect = new Rectangle( halfLifeNumber.bounds.dilated( 5 ), {
+      children: [ halfLifeNumber ],
+      fill: new Color( 255, 255, 255, 0.8 )
+    } );
+
+    const halfLifeNumberDisplay = new Node( {
+      children: [ numberBackgroundRect, halfLifeNumber ],
+      visible: !model.isSingleAtomMode
+    } );
+    halfLifeNumber.boundsProperty.link( () => {
+      halfLifeNumber.center = numberBackgroundRect.center;
     } );
 
     // The half-life grabber is a draggable sphere that sits below the half-life dashed line. It is only visible in
@@ -219,8 +286,16 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     const halfLifeGrabber = new HalfLifeGrabberNode( model );
 
     const halfLifeIndicator = new VBox( {
-      children: [ halfLifeText, halfLifeLine, halfLifeGrabber ],
-      bottom: GRAPH_HEIGHT
+      align: 'center',
+      children: [ halfLifeText, halfLifeLine, halfLifeGrabber, halfLifeNumberDisplay ],
+      bottom: model.isSingleAtomMode ? GRAPH_HEIGHT : GRAPH_HEIGHT + halfLifeNumberDisplay.height + 2
+    } );
+
+    model.selectedIsotopeProperty.link( isotope => {
+      halfLifeLine.setLine( 0, 0, 0,
+        isotope !== 'custom' ? GRAPH_HEIGHT :
+          model.isSingleAtomMode ? GRAPH_HEIGHT + SECONDARY_AXIS_SHIFT + 6 : GRAPH_HEIGHT - 3
+      );
     } );
 
     // Converts an x position in graphAreaNode's local frame to a normalized customHalfLifeProperty value [0, 1].
@@ -280,16 +355,6 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       visible: model.isSingleAtomMode
     } );
 
-    const timescaleVisibleProperty = new BooleanProperty( false, {
-      tandem: options.tandem.createTandem( 'timescaleVisibleProperty' ),
-      phetioFeatured: true
-    } );
-
-    model.selectedIsotopeProperty.link( isotope => {
-      halfLifeLine.setLine( 0, 0, 0,
-        isotope === 'custom' ? GRAPH_HEIGHT + SECONDARY_AXIS_SHIFT + 6 : GRAPH_HEIGHT );
-    } );
-
     // Accessible paragraph describing the timeline, for screen readers.
     const scaleStringProperty = NuclearDecayCommonFluent.a11y.decayTimeHistogram.scale.createProperty( {
       scale: model.selectedIsotopeProperty.derived( selectedIsotope => selectedIsotope === 'custom' ? 'logarithmic' : 'linear' )
@@ -311,36 +376,6 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
     const timelineParagraphNode = new Node( {
       accessibleParagraph: timelineParagraphStringProperty
-    } );
-
-    // Secondary times axis: gray, positioned at the original primary-axis y, shown when timescaleVisibleProperty is true
-    const timesAxisNode = new Node( {
-      visibleProperty: timescaleVisibleProperty,
-      y: GRAPH_HEIGHT + 10 + SECONDARY_AXIS_SHIFT,
-
-      tandem: options.tandem.createTandem( 'timesAxisNode' )
-    } );
-
-    timesAxisNode.addChild( new ArrowNode( GRAPH_X_OFFSET - LOG_TICK_OFFSET, 0, GRAPH_X_OFFSET + GRAPH_WIDTH, 0, {
-      stroke: 'gray',
-      fill: 'gray',
-      lineWidth: 1,
-      headWidth: 8,
-      tailWidth: 1
-    } ) );
-
-    TIMES_MAP.forEach( ( [ seconds, labelProperty ] ) => {
-      const xPosition = ( Math.log10( seconds ) - LOG_MIN_POWER ) / LOG_POWER_INTERVAL * LOG_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET;
-      timesAxisNode.addChild( new Path(
-        new Shape().moveTo( 0, 0 ).lineTo( 0, 10 ),
-        { stroke: 'gray', lineWidth: 1, x: xPosition, y: 0 }
-      ) );
-      timesAxisNode.addChild( new RichText( labelProperty, {
-        font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
-        fill: 'gray',
-        centerX: xPosition,
-        bottom: 28
-      } ) );
     } );
 
     const timescaleCheckbox = new Checkbox(
