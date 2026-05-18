@@ -16,6 +16,7 @@ import PhetFont from '../../../../scenery-phet/js/PhetFont.js';
 import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
 import DragListener from '../../../../scenery/js/listeners/DragListener.js';
+import Circle from '../../../../scenery/js/nodes/Circle.js';
 import Line from '../../../../scenery/js/nodes/Line.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Path from '../../../../scenery/js/nodes/Path.js';
@@ -55,6 +56,8 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
 
   private readonly undecayedLinePath: Path;
   private readonly decayedLinePath: Path;
+  private readonly undecayedDataCircle: Path;
+  private readonly decayedDataCircle: Path;
   private readonly graphWidth: number;
   private readonly graphHeight: number;
   private readonly dataProbePanel: DataProbePanel;
@@ -247,6 +250,18 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       } );
     } );
 
+    const dataCircleRadius = 5;
+    const undecayedDataCircle = new Circle( dataCircleRadius, {
+      fill: 'white',
+      stroke: NuclearDecayCommonColors.undecayedProperty,
+      lineWidth: 2
+    } );
+    const decayedDataCircle = new Circle( dataCircleRadius, {
+      fill: 'white',
+      stroke: 'black',
+      lineWidth: 2
+    } );
+
     // Line paths for the decay curves, clipped to the graph area.
     const undecayedLinePath = new Path( null, {
       stroke: NuclearDecayCommonColors.undecayedProperty,
@@ -308,7 +323,9 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
         yTickContainer,
         xTickContainer,
         dataProbeNode,
-        dataProbePanel
+        dataProbePanel,
+        undecayedDataCircle,
+        decayedDataCircle
       ]
     } );
 
@@ -352,6 +369,8 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
 
     this.undecayedLinePath = undecayedLinePath;
     this.decayedLinePath = decayedLinePath;
+    this.undecayedDataCircle = undecayedDataCircle;
+    this.decayedDataCircle = decayedDataCircle;
     this.graphWidth = GRAPH_WIDTH;
     this.graphHeight = GRAPH_HEIGHT;
     this.dataProbePanel = dataProbePanel;
@@ -381,6 +400,23 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     const undecayedPercent = DecayRateGraphPanel.getPercentageAtTime( this.decayRateModel.undecayedDataPoints, time );
     const decayedPercent = DecayRateGraphPanel.getPercentageAtTime( this.decayRateModel.decayedDataPoints, time );
     this.dataProbePanel.updateReadouts( undecayedPercent, decayedPercent, time );
+
+    if ( undecayedPercent !== null ) {
+      this.undecayedDataCircle.visible = true;
+      this.undecayedDataCircle.center = new Vector2( this.probeGraphX, this.graphHeight * ( 1 - undecayedPercent ) );
+    }
+    else {
+      this.undecayedDataCircle.visible = false;
+    }
+
+    if ( decayedPercent !== null ) {
+      this.decayedDataCircle.visible = true;
+      this.decayedDataCircle.center = new Vector2( this.probeGraphX, this.graphHeight * ( 1 - decayedPercent ) );
+    }
+    else {
+      this.decayedDataCircle.visible = false;
+    }
+
   }
 
   // Returns the percentage (0-1) at the largest data point time that is <= the given time,
