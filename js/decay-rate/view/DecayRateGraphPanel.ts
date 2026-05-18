@@ -362,6 +362,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       spacing: 12,
       xMargin: 10,
       align: 'top',
+      justify: 'center',
       children: [ leftColumn, graphArea ]
     } );
 
