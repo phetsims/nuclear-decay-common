@@ -51,6 +51,15 @@ export default class EjectedDecayParticle extends Particle {
     super.dispose();
   }
 
+  /**
+   * Sets the values for this particle based on a reference particle, used for serialization
+   */
+  public set( referenceParticle: EjectedDecayParticle ): void {
+    this.isActiveProperty.value = referenceParticle.isActiveProperty.value;
+    this.positionProperty.value = referenceParticle.positionProperty.value;
+    this.destinationProperty.value = referenceParticle.destinationProperty.value;
+  }
+
   public static readonly EjectedDecayParticleIO = new IOType<EjectedDecayParticle, EjectedDecayParticleStateObject>( 'EjectedDecayParticleIO', {
     valueType: EjectedDecayParticle,
     documentation: 'A particle ejected from a nucleus during a decay event.',

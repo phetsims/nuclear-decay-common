@@ -30,10 +30,10 @@ import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
 import AtomConfig from '../../../../shred/js/model/AtomConfig.js';
 import PhetioObject, { PhetioObjectOptions } from '../../../../tandem/js/PhetioObject.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
+import ArrayIO from '../../../../tandem/js/types/ArrayIO.js';
 import IOType from '../../../../tandem/js/types/IOType.js';
 import NullableIO from '../../../../tandem/js/types/NullableIO.js';
 import NumberIO from '../../../../tandem/js/types/NumberIO.js';
-import ReferenceArrayIO from '../../../../tandem/js/types/ReferenceArrayIO.js';
 import StringUnionIO from '../../../../tandem/js/types/StringUnionIO.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import HistogramData from './HistogramData.js';
@@ -637,19 +637,22 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     valueType: NuclearDecayModel,
     documentation: 'The model for nuclear decay, containing pools and lists of atoms.',
     stateSchema: {
-      atomPool: ReferenceArrayIO( NuclearDecayAtom.NuclearDecayAtomIO ),
+      atomPool: ArrayIO( NuclearDecayAtom.NuclearDecayAtomIO ),
 
       // Decayed atoms needs its own referencing because it contains atoms beyond the atomPool.
       // Mostly important for first screen where atom pool is a single atom, but we store the
       // information of all the atoms that have decayed beforehand.
-      decayedAtoms: ReferenceArrayIO( NuclearDecayAtom.NuclearDecayAtomIO )
+      decayedAtoms: ArrayIO( NuclearDecayAtom.NuclearDecayAtomIO )
     },
     applyState: ( model, stateObject ) => {
 
-      const atomsIO = ReferenceArrayIO( NuclearDecayAtom.NuclearDecayAtomIO );
-
       // Restore atomPool state from the serialized data.
-      atomsIO.fromStateObject( stateObject.atomPool ).forEach( ( atom, i ) => {
+
+      const deserializedAtomPool = ArrayIO( NuclearDecayAtom.NuclearDecayAtomIO ).fromStateObject( stateObject.atomPool );
+
+      affirm( deserializedAtomPool.length === model.atomPool.length, 'Atom pools should be the same length' );
+
+      deserializedAtomPool.forEach( ( atom, i ) => {
         model.atomPool[ i ].set( atom );
       } );
 
@@ -659,7 +662,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
       // Restore decayedAtoms (these are independent copies, not pool references).
       model.decayedAtoms.length = 0;
-      model.decayedAtoms.push( ...atomsIO.fromStateObject( stateObject.decayedAtoms ) );
+      model.decayedAtoms.push( ...ArrayIO( NuclearDecayAtom.NuclearDecayAtomIO ).fromStateObject( stateObject.decayedAtoms ) );
 
       model.isPlayAreaEmptyProperty.value = model.activeAtoms.length === 0;
     }

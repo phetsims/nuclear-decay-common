@@ -17,11 +17,11 @@ import optionize from '../../../../phet-core/js/optionize.js';
 import AtomInfoUtils, { DecayType, decayTypeValues } from '../../../../shred/js/AtomInfoUtils.js';
 import AtomConfig, { AtomConfigStateObject } from '../../../../shred/js/model/AtomConfig.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
+import ArrayIO from '../../../../tandem/js/types/ArrayIO.js';
 import BooleanIO from '../../../../tandem/js/types/BooleanIO.js';
 import IOType from '../../../../tandem/js/types/IOType.js';
 import NullableIO from '../../../../tandem/js/types/NullableIO.js';
 import NumberIO from '../../../../tandem/js/types/NumberIO.js';
-import ReferenceArrayIO from '../../../../tandem/js/types/ReferenceArrayIO.js';
 import StringUnionIO from '../../../../tandem/js/types/StringUnionIO.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import EjectedDecayParticle, { EjectedDecayParticleStateObject } from './EjectedDecayParticle.js';
@@ -37,6 +37,7 @@ export type NuclearDecayAtomStateObject = {
   time: number;
   decayTime: number | null;
   position: Vector2StateObject;
+  ejectParticlesOnDecay: boolean;
 };
 
 type SelfOptions = {
@@ -217,13 +218,17 @@ export default class NuclearDecayAtom {
 
     // Sets the relevant values for the existing ejected particles to avoid overwriting them
     // This is important since these properties are listened to by the particle respective nodes.
-    referenceAtom.ejectedDecayParticles.forEach( ( particleState, i ) => {
+    this.setEjectedDecayParticles( referenceAtom.ejectedDecayParticles );
+  }
 
-      if ( i < this.ejectedDecayParticles.length ) {
-        this.ejectedDecayParticles[ i ].isActiveProperty.value = particleState.isActiveProperty.value;
-        this.ejectedDecayParticles[ i ].positionProperty.value = particleState.positionProperty.value;
-        this.ejectedDecayParticles[ i ].destinationProperty.value = particleState.destinationProperty.value;
-      }
+  /**
+   * Sets values for individual ejected decay particles based on a reference array
+   */
+  public setEjectedDecayParticles( referenceParticles: EjectedDecayParticle[] ): void {
+    affirm( referenceParticles.length === this.ejectedDecayParticles.length, 'Should be same length!' );
+
+    referenceParticles.forEach( ( particleState, i ) => {
+      this.ejectedDecayParticles[ i ].set( particleState );
     } );
   }
 
@@ -366,12 +371,16 @@ export default class NuclearDecayAtom {
       time: NumberIO,
       decayTime: NullableIO( NumberIO ),
       position: Vector2.Vector2IO,
-      ejectedDecayParticles: ReferenceArrayIO( EjectedDecayParticle.EjectedDecayParticleIO )
+      ejectedDecayParticles: ArrayIO( EjectedDecayParticle.EjectedDecayParticleIO ),
+      ejectParticlesOnDecay: BooleanIO
     },
     fromStateObject: ( stateObject: NuclearDecayAtomStateObject ) => {
       const atom = new NuclearDecayAtom(
         new AtomConfig( stateObject.atomConfigBeforeDecay.protonCount, stateObject.atomConfigBeforeDecay.neutronCount, stateObject.atomConfigBeforeDecay.electronCount ),
-        stateObject.decayType
+        stateObject.decayType,
+        {
+          ejectParticlesOnDecay: stateObject.ejectParticlesOnDecay
+        }
       );
       atom.isActive = stateObject.isActive;
       atom._halfLife = stateObject.halfLife;
@@ -379,14 +388,9 @@ export default class NuclearDecayAtom {
       atom.decayTime = stateObject.decayTime;
       atom.position = Vector2.Vector2IO.fromStateObject( stateObject.position );
 
-      stateObject.ejectedDecayParticles.forEach( ( particleState, i ) => {
+      const deserializedEjectedParticles = ArrayIO( EjectedDecayParticle.EjectedDecayParticleIO ).fromStateObject( stateObject.ejectedDecayParticles );
 
-        if ( i < atom.ejectedDecayParticles.length ) {
-          atom.ejectedDecayParticles[ i ].isActiveProperty.value = particleState.isActive;
-          atom.ejectedDecayParticles[ i ].positionProperty.value = Vector2.Vector2IO.fromStateObject( particleState.position );
-          atom.ejectedDecayParticles[ i ].destinationProperty.value = Vector2.Vector2IO.fromStateObject( particleState.destination );
-        }
-      } );
+      atom.setEjectedDecayParticles( deserializedEjectedParticles );
 
       return atom;
     }

@@ -125,7 +125,7 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
     this.addChild( this.decayRateGraphPanel );
 
     const playAreaBounds = new Bounds2(
-      this.decayRateGraphPanel.left,
+      this.layoutBounds.left,
       this.decayRateGraphPanel.bottom + NuclearDecayCommonConstants.SCREEN_VIEW_Y_MARGIN,
       this.layoutBounds.right - NuclearDecayCommonConstants.SCREEN_VIEW_Y_MARGIN,
       addAtomsPanel.top - NuclearDecayCommonConstants.SCREEN_VIEW_Y_MARGIN
