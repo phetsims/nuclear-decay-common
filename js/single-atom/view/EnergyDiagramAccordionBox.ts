@@ -80,12 +80,13 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       allowContentToOverlapTitle: true,
       left: bounds.left,
       bottom: bounds.bottom,
+      minWidth: bounds.right - bounds.left,
       resize: false,
       accessibleName: NuclearDecayCommonFluent.a11y.energyDiagram.accessibleNameStringProperty,
       accessibleHelpTextCollapsed: NuclearDecayCommonFluent.a11y.energyDiagram.accessibleHelpTextCollapsedStringProperty
     }, providedOptions );
 
-    const graphRightX = bounds.right - CONTENT_X_MARGIN;
+    const graphRightX = 600;
 
     // Left edge inside which WELL_CENTER_X can sit without pushing the curve out of the graph region.
     const wellCenterMinX = WELL_HALF_WIDTH + POINTINESS_FACTOR;

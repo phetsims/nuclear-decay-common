@@ -127,7 +127,7 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     const playAreaBounds = new Bounds2(
       this.decayTimeHistogramPanel.left,
       this.decayTimeHistogramPanel.bottom + NuclearDecayCommonConstants.SCREEN_VIEW_Y_MARGIN,
-      this.rightColumnControls.left - NuclearDecayCommonConstants.SCREEN_VIEW_Y_MARGIN,
+      this.decayTimeHistogramPanel.right,
       addAtomsPanel.top - NuclearDecayCommonConstants.SCREEN_VIEW_Y_MARGIN
     );
     this.setPlayAreaBounds( playAreaBounds );

@@ -18,6 +18,7 @@ import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.
 import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
 import ArrowNode from '../../../../scenery-phet/js/ArrowNode.js';
 import EraserButton from '../../../../scenery-phet/js/buttons/EraserButton.js';
+import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
 import DragListener from '../../../../scenery/js/listeners/DragListener.js';
 import Line from '../../../../scenery/js/nodes/Line.js';
@@ -110,8 +111,6 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
     const pieChartNode = new DecayPieChartNode( model, {
       tandem: options.tandem.createTandem( 'pieChartNode' ),
-      centerY: GRAPH_HEIGHT / 2,
-      right: isotopeAxisLabel.left - 20,
       visible: !model.isSingleAtomMode
     } );
 
@@ -350,7 +349,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       accessibleName: NuclearDecayCommonFluent.a11y.eraserButton.accessibleNameStringProperty,
       accessibleContextResponse: NuclearDecayCommonFluent.a11y.eraserButton.accessibleContextResponseStringProperty,
       tandem: options.tandem.createTandem( 'eraserButton' ),
-      right: bounds.right - MARGIN_X,
+      right: NuclearDecayCommonConstants.LONG_PANEL_WIDTH - MARGIN_X,
       bottom: GRAPH_HEIGHT,
       visible: model.isSingleAtomMode
     } );
@@ -384,7 +383,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
         font: NuclearDecayCommonConstants.CONTROL_FONT,
         maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
       } ), {
-        right: bounds.right - MARGIN_X,
+        right: NuclearDecayCommonConstants.LONG_PANEL_WIDTH - MARGIN_X,
         centerY: timesAxisNode.centerY,
 
         // Description
@@ -412,7 +411,6 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     const graphAreaNode = new Node( {
       excludeInvisibleChildrenFromBounds: true,
       children: [
-        pieChartNode,
         isotopeAxisLabel,
         initialIsotopeSymbol,
         decayProductSymbol,
@@ -424,12 +422,21 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       ]
     } );
 
-    const contentsNode = new Node( {
+    const graphNode = new Node( {
       excludeInvisibleChildrenFromBounds: true,
       children: [
         timelineParagraphNode,
         timeScaleNode,
         graphAreaNode
+      ]
+    } );
+
+    const contentsNode = new HBox( {
+      spacing: 20,
+      justify: 'center',
+      children: [
+        pieChartNode,
+        graphNode
       ]
     } );
 

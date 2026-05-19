@@ -95,7 +95,7 @@ export default class SingleAndMultipleAtomsScreenView extends NuclearDecayScreen
       new Bounds2(
         this.layoutBounds.minX + MARGIN_X,
         this.layoutBounds.minY + MARGIN_Y,
-        this.rightColumnControls.left - MARGIN_X,
+        NuclearDecayCommonConstants.LONG_PANEL_WIDTH,
         this.layoutBounds.maxX - MARGIN_Y
       ),
       {
@@ -134,7 +134,8 @@ export default class SingleAndMultipleAtomsScreenView extends NuclearDecayScreen
       accessibleHeading: NuclearDecayCommonFluent.a11y.timeControls.accessibleHeadingStringProperty,
       bottom: this.resetAllButton.top - 4 * PANEL_SPACING,
       right: this.resetAllButton.right,
-      tandem: options.tandem.createTandem( 'timeControlNode' )
+      tandem: options.tandem.createTandem( 'timeControlNode' ),
+      flowBoxSpacing: 10
     } );
 
     if ( model.isSingleAtomMode ) {

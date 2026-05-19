@@ -52,7 +52,7 @@ export default class NuclearDecayCommonConstants {
   public static readonly CUSTOM_DECAYED = new AtomConfig( 198, 198, 198 );
 
   // Screen view margins
-  public static readonly SCREEN_VIEW_X_MARGIN = 15;
+  public static readonly SCREEN_VIEW_X_MARGIN = 30;
   public static readonly SCREEN_VIEW_Y_MARGIN = 15;
 
   // Text constants
@@ -65,7 +65,7 @@ export default class NuclearDecayCommonConstants {
   public static readonly SMALL_LABEL_BOLD_FONT = new PhetFont( { size: 14, weight: 'bold' } );
 
   // Layout constants for panel sizing and spacing
-  public static readonly LONG_PANEL_WIDTH = 600;
+  public static readonly LONG_PANEL_WIDTH = 740;
   public static readonly RIGHT_PANEL_WIDTH = 200;
   public static readonly PANEL_X_MARGIN = 10;
   public static readonly PANEL_Y_MARGIN = 10;
