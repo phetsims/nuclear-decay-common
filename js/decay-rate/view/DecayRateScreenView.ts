@@ -17,6 +17,7 @@ import NuclearDecayCommonConstants from '../../../../nuclear-decay-common/js/Nuc
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import ResetAllButton from '../../../../scenery-phet/js/buttons/ResetAllButton.js';
 import TimeControlNode from '../../../../scenery-phet/js/TimeControlNode.js';
+import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
 import Path from '../../../../scenery/js/nodes/Path.js';
 import undoSolidShape from '../../../../sherpa/js/fontawesome-5/undoSolidShape.js';
 import RectangularPushButton from '../../../../sun/js/buttons/RectangularPushButton.js';
@@ -24,6 +25,7 @@ import IsotopeSelectionPanel from '../../common/view/IsotopeSelectionPanel.js';
 import DecayRateModel from '../model/DecayRateModel.js';
 import DecayRateGraphPanel from './DecayRateGraphPanel.js';
 import DecayRateVisibleProperties from './DecayRateVisibleProperties.js';
+import SortButton from './SortButton.js';
 
 type SelfOptions = EmptySelfOptions;
 
@@ -140,12 +142,27 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
         model.clearAtomLists();
         this.activateMultipleAtomNodes( atomsToAddProperty.value );
       },
-      right: playAreaBounds.right,
-      top: playAreaBounds.top,
       tandem: options.tandem.createTandem( 'resetButton' ),
       enabledProperty: model.isPlayAreaEmptyProperty.derived( empty => !empty )
     } );
-    this.addChild( resetButton );
+
+    const sortButton = new SortButton( {
+      tandem: options.tandem.createTandem( 'sortButton' ),
+      enabledProperty: model.isPlayAreaEmptyProperty.derived( empty => !empty ),
+      baseColor: NuclearDecayCommonColors.resetButtonProperty,
+      maxWidth: resetButton.width,
+      listener: () => {
+        // no-op for now
+      }
+    } );
+
+    const rightButtonsBox = new VBox( {
+      children: [ resetButton, sortButton ],
+      spacing: 20,
+      right: playAreaBounds.right,
+      centerY: playAreaBounds.centerY
+    } );
+    this.addChild( rightButtonsBox );
 
     this.children = [ this.playAreaBoundsRectangle, ...this.children ];
 
