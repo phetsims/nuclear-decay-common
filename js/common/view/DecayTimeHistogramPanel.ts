@@ -94,7 +94,6 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
   public constructor(
     model: NuclearDecayModel,
-    bounds: Bounds2,
     providedOptions: DecayTimeHistogramPanelOptions ) {
 
     const options = optionize<DecayTimeHistogramPanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {}, providedOptions );

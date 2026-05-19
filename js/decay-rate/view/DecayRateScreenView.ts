@@ -11,7 +11,6 @@ import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
 import Range from '../../../../dot/js/Range.js';
 import AddAtomsControlPanel from '../../../../nuclear-decay-common/js/common/view/AddAtomsControlPanel.js';
-import IsotopeLegendPanel from '../../../../nuclear-decay-common/js/common/view/IsotopeLegendPanel.js';
 import NuclearDecayScreenView, { NuclearDecayScreenViewOptions } from '../../../../nuclear-decay-common/js/common/view/NuclearDecayScreenView.js';
 import NuclearDecayCommonColors from '../../../../nuclear-decay-common/js/NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../../../nuclear-decay-common/js/NuclearDecayCommonConstants.js';
@@ -21,6 +20,7 @@ import TimeControlNode from '../../../../scenery-phet/js/TimeControlNode.js';
 import Path from '../../../../scenery/js/nodes/Path.js';
 import undoSolidShape from '../../../../sherpa/js/fontawesome-5/undoSolidShape.js';
 import RectangularPushButton from '../../../../sun/js/buttons/RectangularPushButton.js';
+import IsotopeSelectionPanel from '../../common/view/IsotopeSelectionPanel.js';
 import DecayRateModel from '../model/DecayRateModel.js';
 import DecayRateGraphPanel from './DecayRateGraphPanel.js';
 import DecayRateVisibleProperties from './DecayRateVisibleProperties.js';
@@ -99,7 +99,7 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
       } );
     this.addChild( addAtomsPanel );
 
-    const isotopesLegendPanel = new IsotopeLegendPanel(
+    const isotopesLegendPanel = new IsotopeSelectionPanel(
       [ NuclearDecayCommonConstants.POLONIUM_211, NuclearDecayCommonConstants.LEAD_207 ],
       {
         includeAtomRepresentation: true,

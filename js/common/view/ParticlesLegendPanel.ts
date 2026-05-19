@@ -14,25 +14,23 @@ import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import RichText from '../../../../scenery/js/nodes/RichText.js';
 import ShredColors from '../../../../shred/js/ShredColors.js';
-import Panel, { PanelOptions } from '../../../../sun/js/Panel.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonStrings from '../../NuclearDecayCommonStrings.js';
 import AlphaParticleNode from './AlphaParticleNode.js';
+import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
 
 type SelfOptions = EmptySelfOptions;
 
-export type ParticlesLegendNodeOptions = SelfOptions & PanelOptions;
+export type ParticlesLegendPanelOptions = SelfOptions & NuclearDecayPanelOptions;
 
 const ITEM_SPACING = 6;
 const SPHERE_DIAMETER = NuclearDecayCommonConstants.NUCLEON_DIAMETER;
 
-export default class ParticlesLegendNode extends Panel {
-  public constructor( providedOptions?: ParticlesLegendNodeOptions ) {
-    const options = optionize<ParticlesLegendNodeOptions, SelfOptions, PanelOptions>()( {
+export default class ParticlesLegendPanel extends NuclearDecayPanel {
+  public constructor( providedOptions?: ParticlesLegendPanelOptions ) {
+    const options = optionize<ParticlesLegendPanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {
       fill: NuclearDecayCommonConstants.MAIN_PANEL_FILL,
-      layoutOptions: {
-        stretch: true
-      }
+      minWidth: NuclearDecayCommonConstants.RIGHT_PANEL_WIDTH
     }, providedOptions );
 
     const particleLegendItem = (

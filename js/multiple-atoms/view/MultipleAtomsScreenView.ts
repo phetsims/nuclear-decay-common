@@ -12,7 +12,6 @@ import Bounds2 from '../../../../dot/js/Bounds2.js';
 import Range from '../../../../dot/js/Range.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import AddAtomsControlPanel from '../../../../nuclear-decay-common/js/common/view/AddAtomsControlPanel.js';
-import IsotopeLegendPanel from '../../../../nuclear-decay-common/js/common/view/IsotopeLegendPanel.js';
 import NuclearDecayCommonColors from '../../../../nuclear-decay-common/js/NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../../../nuclear-decay-common/js/NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../../../nuclear-decay-common/js/NuclearDecayCommonFluent.js';
@@ -30,6 +29,7 @@ import undoSolidShape from '../../../../sherpa/js/fontawesome-5/undoSolidShape.j
 import RectangularPushButton from '../../../../sun/js/buttons/RectangularPushButton.js';
 import Checkbox from '../../../../sun/js/Checkbox.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
+import IsotopeSelectionPanel from '../../common/view/IsotopeSelectionPanel.js';
 import SingleAndMultipleAtomsScreenView, { DecayHistogramScreenViewOptions } from '../../common/view/SingleAndMultipleAtomsScreenView.js';
 import MultipleAtomsModel from '../model/MultipleAtomsModel.js';
 import MultipleAtomsVisibleProperties from './MultipleAtomsVisibleProperties.js';
@@ -147,7 +147,7 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     } );
     this.addChild( resetButton );
 
-    const isotopesLegendPanel = new IsotopeLegendPanel(
+    const isotopesLegendPanel = new IsotopeSelectionPanel(
       [ NuclearDecayCommonConstants.POLONIUM_211, NuclearDecayCommonConstants.LEAD_207 ],
       {
         left: this.layoutBounds.minX + MARGIN_X,

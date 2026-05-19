@@ -7,7 +7,6 @@
  * @author Agustín Vallejo
  */
 
-import Bounds2 from '../../../../dot/js/Bounds2.js';
 import { ScreenViewOptions } from '../../../../joist/js/ScreenView.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
@@ -23,7 +22,7 @@ import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import DecayTimeHistogramPanel from './DecayTimeHistogramPanel.js';
 import IsotopeControlPanel from './IsotopeControlPanel.js';
 import NuclearDecayScreenView, { NuclearDecayScreenViewOptions } from './NuclearDecayScreenView.js';
-import ParticlesLegendNode from './ParticlesLegendNode.js';
+import ParticlesLegendPanel from './ParticlesLegendPanel.js';
 
 type SelfOptions = {
   // Additional content to add to the isotope panel
@@ -73,7 +72,7 @@ export default class SingleAndMultipleAtomsScreenView extends NuclearDecayScreen
 
     // Right column panels
 
-    const particleLegendPanel = new ParticlesLegendNode();
+    const particleLegendPanel = new ParticlesLegendPanel();
 
     this.isotopePanel = new IsotopeControlPanel( model, {
       middleContent: options.isotopePanelMiddleContent,
@@ -92,12 +91,6 @@ export default class SingleAndMultipleAtomsScreenView extends NuclearDecayScreen
 
     this.decayTimeHistogramPanel = new DecayTimeHistogramPanel(
       model,
-      new Bounds2(
-        this.layoutBounds.minX + MARGIN_X,
-        this.layoutBounds.minY + MARGIN_Y,
-        NuclearDecayCommonConstants.LONG_PANEL_WIDTH,
-        this.layoutBounds.maxX - MARGIN_Y
-      ),
       {
         minWidth: NuclearDecayCommonConstants.LONG_PANEL_WIDTH,
         left: this.layoutBounds.minX + MARGIN_X,

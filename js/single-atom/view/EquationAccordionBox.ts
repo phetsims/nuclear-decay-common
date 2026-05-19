@@ -40,6 +40,7 @@ export default class EquationAccordionBox extends NuclearDecayAccordionBox {
     const options = optionize<EquationAccordionBoxOptions, SelfOptions, NuclearDecayAccordionBoxOptions>()( {
       titleNode: titleNode,
       minWidth: NuclearDecayCommonConstants.RIGHT_PANEL_WIDTH,
+      maxWidth: NuclearDecayCommonConstants.RIGHT_PANEL_WIDTH,
       accessibleHelpTextCollapsed: NuclearDecayCommonFluent.a11y.nuclearEquation.accessibleHelpTextCollapsedStringProperty,
       showTitleWhenExpanded: false
     }, providedOptions );

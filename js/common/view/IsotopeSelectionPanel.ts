@@ -22,12 +22,13 @@ type SelfOptions = {
   includeAtomRepresentation?: boolean;
 };
 
-export type IsotopeLegendPanelOptions = SelfOptions & NuclearDecayPanelOptions;
+export type IsotopeSelectionPanelOptions = SelfOptions & NuclearDecayPanelOptions;
 
-export default class IsotopeLegendPanel extends NuclearDecayPanel {
-  public constructor( atomConfigs: AtomConfig[], providedOptions?: IsotopeLegendPanelOptions ) {
-    const options = optionize<IsotopeLegendPanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {
-      includeAtomRepresentation: false
+export default class IsotopeSelectionPanel extends NuclearDecayPanel {
+  public constructor( atomConfigs: AtomConfig[], providedOptions?: IsotopeSelectionPanelOptions ) {
+    const options = optionize<IsotopeSelectionPanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {
+      includeAtomRepresentation: false,
+      minWidth: NuclearDecayCommonConstants.RIGHT_PANEL_WIDTH
     }, providedOptions );
 
     const rows = atomConfigs.map( ( atomConfig, index ) => {
