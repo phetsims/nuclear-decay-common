@@ -146,11 +146,10 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
       enabledProperty: model.isPlayAreaEmptyProperty.derived( empty => !empty )
     } );
 
-    const sortButton = new SortButton( {
+    const sortButton = new SortButton( resetButton.bounds, {
       tandem: options.tandem.createTandem( 'sortButton' ),
       enabledProperty: model.isPlayAreaEmptyProperty.derived( empty => !empty ),
       baseColor: NuclearDecayCommonColors.resetButtonProperty,
-      maxWidth: resetButton.width,
       listener: () => {
         // no-op for now
       }

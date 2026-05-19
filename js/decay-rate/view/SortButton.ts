@@ -6,6 +6,7 @@
  */
 
 import Bounds2 from '../../../../dot/js/Bounds2.js';
+import Dimension2 from '../../../../dot/js/Dimension2.js';
 import Shape from '../../../../kite/js/Shape.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
@@ -19,42 +20,42 @@ type SortButtonOptions = SelfOptions & WithRequired<RectangularPushButtonOptions
 export default class SortButton extends RectangularPushButton {
 
   public constructor(
+    buttonBounds: Bounds2,
     providedOptions: SortButtonOptions
   ) {
-    const tenFrameIcon = SortButton.createTenFrameIcon();
+    const sortedIcon = SortButton.createSortedIcon( buttonBounds );
     const options = optionize<SortButtonOptions, SelfOptions, RectangularPushButtonOptions>()( {
-        content: tenFrameIcon,
-        touchAreaXDilation: 5,
-        touchAreaYDilation: 5
-      }, providedOptions );
+      content: sortedIcon,
+      touchAreaXDilation: 5,
+      touchAreaYDilation: 5,
+      size: new Dimension2( buttonBounds.width, buttonBounds.height )
+    }, providedOptions );
     super( options );
   }
 
-  private static createTenFrameIcon(): Node {
-    const tenFrameWidth = 48;
-    const tenFrameHeight = 22;
-    const tenFrameLineWidth = 2;
+  private static createSortedIcon( bounds: Bounds2 ): Node {
+    const sortedIconWidth = bounds.width;
+    const sortedIconHeight = sortedIconWidth / 2;
+    const sortedIconLineWidth = 2;
+    const columns = 4;
 
     // outer frame
-    const shape = new Shape().rect( 0, 0, tenFrameWidth, tenFrameHeight );
-    shape.moveTo( 0, tenFrameHeight / 2 );
+    const shape = new Shape().rect( 0, 0, sortedIconWidth, sortedIconHeight );
+    shape.moveTo( 0, sortedIconHeight / 2 );
 
     // horizontal line
-    shape.lineTo( tenFrameWidth, tenFrameHeight / 2 );
+    shape.lineTo( sortedIconWidth, sortedIconHeight / 2 );
 
     // vertical lines
-    const verticalLineSpacing = tenFrameWidth / 5;
-    _.times( 4, i => {
+    const verticalLineSpacing = sortedIconWidth / columns;
+    _.times( columns - 1, i => {
       shape.moveTo( verticalLineSpacing + i * verticalLineSpacing, 0 );
-      shape.lineTo( verticalLineSpacing + i * verticalLineSpacing, tenFrameHeight );
+      shape.lineTo( verticalLineSpacing + i * verticalLineSpacing, sortedIconHeight );
     } );
-
-    const shapeWidth = shape.bounds.width;
 
     return new Path( shape, {
       stroke: 'black',
-      lineWidth: tenFrameLineWidth,
-      localBounds: Bounds2.rect( 0, -shape.bounds.height / 2, shapeWidth, shapeWidth )
+      lineWidth: sortedIconLineWidth
     } );
   }
 }
