@@ -16,6 +16,8 @@ import optionize from '../../../../phet-core/js/optionize.js';
 import ModelViewTransform2 from '../../../../phetcommon/js/view/ModelViewTransform2.js';
 import Circle from '../../../../scenery/js/nodes/Circle.js';
 import Node, { NodeOptions } from '../../../../scenery/js/nodes/Node.js';
+import Color from '../../../../scenery/js/util/Color.js';
+import RadialGradient from '../../../../scenery/js/util/RadialGradient.js';
 import ShredColors from '../../../../shred/js/ShredColors.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 
@@ -69,11 +71,13 @@ class DynamicNucleusNode extends Node {
 
     const center = modelViewTransform.value.modelToViewPosition( atom.position );
 
+    // Create the gradients used for proton and neutron fills.
+    const neutronFill = DynamicNucleusNode.createNucleonFill( ShredColors.neutronColorProperty, options.nucleonRadius );
+    const protonFill = DynamicNucleusNode.createNucleonFill( ShredColors.protonColorProperty, options.nucleonRadius );
+
     // Add the nucleon nodes.
     _.times( numberOfNucleonsToDisplay, count => {
-      const colorProperty = count < atom.atomConfigBeforeDecay.protonCount ?
-                            ShredColors.protonColorProperty :
-                            ShredColors.neutronColorProperty;
+      const colorProperty = count < atom.atomConfigBeforeDecay.protonCount ? protonFill : neutronFill;
 
       const nucleusCircle = new Circle( options.nucleonRadius, {
         fill: colorProperty,
@@ -109,6 +113,18 @@ class DynamicNucleusNode extends Node {
   private getRandomNucleonOffsetVector(): Vector2 {
     const length = ( dotRandom.nextDouble() - 0.5 ) * this.nucleusDiameter;
     return new Vector2( length, 0 ).rotated( dotRandom.nextDouble() * 2 * Math.PI );
+  }
+
+  private static createNucleonFill(
+    baseColorProperty: TReadOnlyProperty<Color>,
+    nucleonRadius: number
+  ): RadialGradient {
+
+    return new RadialGradient(
+      -nucleonRadius * 0.4, -nucleonRadius * 0.4, 0,
+      -nucleonRadius * 0.4, -nucleonRadius * 0.4, nucleonRadius * 1.6 )
+      .addColorStop( 0, 'white' )
+      .addColorStop( 1, baseColorProperty.value );
   }
 
 }
