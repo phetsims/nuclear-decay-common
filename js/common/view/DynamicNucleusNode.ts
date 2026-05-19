@@ -8,6 +8,7 @@
  * @author John Blanco (PhET Interactive Simulations)
  */
 
+import stepTimer from '../../../../axon/js/stepTimer.js';
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import dotRandom from '../../../../dot/js/dotRandom.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
@@ -21,7 +22,7 @@ import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 type SelfOptions = {
 
   // The radius to use for nucleons, in screen coordinates.
-  nucleonRadius?: number
+  nucleonRadius?: number;
 };
 type DynamicNucleusNodeOptions = SelfOptions & NodeOptions;
 
@@ -33,6 +34,7 @@ class DynamicNucleusNode extends Node {
     atom: NuclearDecayAtom,
     // JPB REVIEW: Why is this a Property?
     modelViewTransform: TReadOnlyProperty<ModelViewTransform2>,
+    isPlayingProperty: TReadOnlyProperty<boolean>,
     providedOptions?: DynamicNucleusNodeOptions
   ) {
 
@@ -59,18 +61,41 @@ class DynamicNucleusNode extends Node {
 
     super( options );
 
+    const center = modelViewTransform.value.modelToViewPosition( atom.position );
+
     // Add the nucleon nodes.
     _.times( numberOfNucleonsToDisplay, () => {
       const nucleusCircle = new Circle( options.nucleonRadius, {
         fill: Color.GREEN.colorUtilsBrighter( 0.5 ),
         stroke: Color.GREEN.colorUtilsDarker( 0.5 ),
-        center: new Vector2( ( dotRandom.nextDouble() - 0.5 ) * 20, ( dotRandom.nextDouble() - 0.5 ) * 20 )
+        center: center.plus( this.getRandomNucleonOffsetVector() )
       } );
       this.addChild( nucleusCircle );
       this.nucleonNodes.push( nucleusCircle );
     } );
 
+    // Add a listener to the step timer that implements the dynamic motion of the particles in the nucleus.
+    let timeAccumulator = 0;
+    stepTimer.addListener( dt => {
+      if ( this.isVisible() && isPlayingProperty.value ) {
+        timeAccumulator += dt;
+        if ( timeAccumulator > 0.1 ) {
+          timeAccumulator = 0;
+          this.nucleonNodes.forEach( node => {
+            const offsetVector = this.getRandomNucleonOffsetVector();
+            node.center = center.plus( offsetVector );
+          } );
+        }
+      }
+    } );
   }
+
+  // JPB REVIEW: Static?  Or use a config option?
+  private getRandomNucleonOffsetVector(): Vector2 {
+    const length = ( dotRandom.nextDouble() - 0.5 ) * 20;
+    return new Vector2( length, 0 ).rotated( dotRandom.nextDouble() * 2 * Math.PI );
+  }
+
 }
 
 export default DynamicNucleusNode;
