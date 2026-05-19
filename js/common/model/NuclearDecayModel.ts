@@ -623,6 +623,39 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   }
 
   /**
+   * Sorts active atoms into a grid, with undecayed atoms first and decayed atoms after.
+   * The number of columns scales with the total atom count to fill the available play area.
+   */
+  public sort(): void {
+    const bounds = this.atomPlacementAreaProperty.value.bounds.erodedX( 100 );
+    const n = this.activeAtoms.length;
+    if ( n === 0 ) { return; }
+
+    const sorted = [
+      ...this.activeAtoms.filter( atom => !atom.hasDecayed ),
+      ...this.activeAtoms.filter( atom => atom.hasDecayed )
+    ];
+
+    const aspectRatio = bounds.width / bounds.height;
+
+    // Initial estimate of cols and rows, we'll try some up and down to see if there are exact solutions
+    const cols = Math.ceil( Math.sqrt( n * aspectRatio ) );
+    const rows = Math.ceil( n / cols );
+
+    const spacingX = bounds.width / cols;
+    const spacingY = bounds.height / rows;
+
+    sorted.forEach( ( atom, index ) => {
+      const col = index % cols;
+      const row = Math.floor( index / cols );
+      atom.position = new Vector2(
+        bounds.minX + spacingX * col,
+        bounds.maxY - spacingY * row
+      );
+    } );
+  }
+
+  /**
    * Restarts the simulation to its initial state. Override in subclasses to implement specific restart behavior.
    */
   public restart(): void {

@@ -151,7 +151,8 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
       enabledProperty: model.isPlayAreaEmptyProperty.derived( empty => !empty ),
       baseColor: NuclearDecayCommonColors.resetButtonProperty,
       listener: () => {
-        // no-op for now
+        model.sort();
+        this.updateAtomNodes();
       }
     } );
 
