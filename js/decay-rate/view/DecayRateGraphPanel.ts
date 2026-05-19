@@ -360,7 +360,6 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     // Bottom section: checkboxes on the left, graph on the right
     const contentNode = new HBox( {
       spacing: 12,
-      xMargin: 10,
       align: 'top',
       justify: 'center',
       children: [ leftColumn, graphArea ]
@@ -377,6 +376,9 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     this.dataProbePanel = dataProbePanel;
     this.decayRateModel = model;
     this.probeGraphX = dataProbeNode.centerX;
+
+    // Freeze the graph's local bounds so moving children like the Grabber won't affect its bounds.
+    graphArea.localBounds = graphArea.localBounds.copy();
 
     this.updateProbeReadouts();
 
