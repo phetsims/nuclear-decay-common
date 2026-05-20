@@ -10,7 +10,10 @@ import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import IntentionalAny from '../../../../phet-core/js/types/IntentionalAny.js';
 import { DecayType } from '../../../../shred/js/AtomInfoUtils.js';
+import ArrayIO from '../../../../tandem/js/types/ArrayIO.js';
+import IOType from '../../../../tandem/js/types/IOType.js';
 import NumberIO from '../../../../tandem/js/types/NumberIO.js';
 import NuclearDecayModel, { NuclearDecayModelOptions, SelectableIsotopes } from '../../common/model/NuclearDecayModel.js';
 
@@ -34,7 +37,8 @@ export default class DecayRateModel extends NuclearDecayModel {
   ) {
     const options = optionize<DecayRateModelOptions, SelfOptions, NuclearDecayModelOptions>()( {
       maxNumberOfAtoms: 1000,
-      ejectParticlesOnDecay: false
+      ejectParticlesOnDecay: false,
+      phetioType: DecayRateModel.DecayRateModelIO
     }, providedOptions );
 
     super( selectableIsotopes, decayType, options );
@@ -87,4 +91,29 @@ export default class DecayRateModel extends NuclearDecayModel {
     this.undecayedDataPoints.length = 0;
     this.decayedDataPoints.length = 0;
   }
+
+
+  /**
+   * Reference-type IOType for PhET-iO serialization. The model persists for the lifetime of the sim;
+   * its mutable data point arrays are serialized as ArrayIO types of Vectors.
+   */
+  public static readonly DecayRateModelIO = new IOType<DecayRateModel, IntentionalAny>( 'DecayRateModelIO', {
+    valueType: DecayRateModel,
+    supertype: NuclearDecayModel.NuclearDecayModelIO,
+    documentation: 'The model for decay rate screen, containing data points of decay throughout time.',
+    stateSchema: {
+      undecayedDataPoints: ArrayIO( Vector2.Vector2IO ),
+      decayedDataPoints: ArrayIO( Vector2.Vector2IO )
+    },
+    applyState: ( model, stateObject ) => {
+
+      DecayRateModel.DecayRateModelIO.supertype?.applyState( model, stateObject );
+
+      model.undecayedDataPoints.length = 0;
+      model.undecayedDataPoints.push( ...ArrayIO( Vector2.Vector2IO ).fromStateObject( stateObject.undecayedDataPoints ) );
+
+      model.decayedDataPoints.length = 0;
+      model.decayedDataPoints.push( ...ArrayIO( Vector2.Vector2IO ).fromStateObject( stateObject.decayedDataPoints ) );
+    }
+  } );
 }

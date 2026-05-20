@@ -7,6 +7,7 @@
  * @author Agustín Vallejo
  */
 
+import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import { clamp } from '../../../../dot/js/util/clamp.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import Shape from '../../../../kite/js/Shape.js';
@@ -62,7 +63,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
   private readonly graphHeight: number;
   private readonly dataProbePanel: DataProbePanel;
   private readonly decayRateModel: DecayRateModel;
-  private probeGraphX: number;
+  private readonly dataProbeXProperty: NumberProperty;
 
   public constructor(
     model: DecayRateModel,
@@ -336,15 +337,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       tandem: Tandem.OPT_OUT,
       drag: event => {
         const localX = graphArea.globalToLocalPoint( event.pointer.point ).x;
-        dataProbeNode.centerX = clamp( localX, 0, GRAPH_WIDTH );
-
-        // Extra pixels to add to the positions to avoid visual artifacts
-        const dataProbeOvershoot = 1;
-        dataProbePanel.centerX = clamp( localX,
-          dataProbePanel.width / 2 - dataProbeOvershoot,
-          GRAPH_WIDTH - dataProbePanel.width / 2 + dataProbeOvershoot );
-        this.probeGraphX = dataProbeNode.centerX;
-        this.updateProbeReadouts();
+        this.dataProbeXProperty.value = clamp( localX, 0, GRAPH_WIDTH );
       }
     } ) );
 
@@ -382,13 +375,22 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     this.graphHeight = GRAPH_HEIGHT;
     this.dataProbePanel = dataProbePanel;
     this.decayRateModel = model;
-    this.probeGraphX = dataProbeNode.centerX;
+    this.dataProbeXProperty = new NumberProperty( dataProbeNode.centerX, {
+      tandem: options.tandem.createTandem( 'dataProbeXProperty' )
+    } );
 
     // Freeze the graph's local bounds so moving children like the Grabber won't affect its bounds.
     graphArea.localBounds = graphArea.localBounds.copy();
 
-    this.updateProbeReadouts();
-
+    this.dataProbeXProperty.link( position => {
+      dataProbeNode.centerX = clamp( position, 0, GRAPH_WIDTH );
+      // Extra pixels to add to the positions to avoid visual artifacts
+      const dataProbeOvershoot = 1;
+      dataProbePanel.centerX = clamp( position,
+        dataProbePanel.width / 2 - dataProbeOvershoot,
+        GRAPH_WIDTH - dataProbePanel.width / 2 + dataProbeOvershoot );
+      this.updateProbeReadouts();
+    } );
   }
 
   /**
@@ -406,14 +408,14 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
   }
 
   private updateProbeReadouts(): void {
-    const time = ( this.probeGraphX / this.graphWidth ) * MAX_TIME;
+    const time = ( this.dataProbeXProperty.value / this.graphWidth ) * MAX_TIME;
     const undecayedPercent = DecayRateGraphPanel.getPercentageAtTime( this.decayRateModel.undecayedDataPoints, time );
     const decayedPercent = DecayRateGraphPanel.getPercentageAtTime( this.decayRateModel.decayedDataPoints, time );
     this.dataProbePanel.updateReadouts( undecayedPercent, decayedPercent, time );
 
     if ( undecayedPercent !== null ) {
       this.undecayedDataCircle.visible = true;
-      this.undecayedDataCircle.center = new Vector2( this.probeGraphX, this.graphHeight * ( 1 - undecayedPercent ) );
+      this.undecayedDataCircle.center = new Vector2( this.dataProbeXProperty.value, this.graphHeight * ( 1 - undecayedPercent ) );
     }
     else {
       this.undecayedDataCircle.visible = false;
@@ -421,7 +423,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
 
     if ( decayedPercent !== null ) {
       this.decayedDataCircle.visible = true;
-      this.decayedDataCircle.center = new Vector2( this.probeGraphX, this.graphHeight * ( 1 - decayedPercent ) );
+      this.decayedDataCircle.center = new Vector2( this.dataProbeXProperty.value, this.graphHeight * ( 1 - decayedPercent ) );
     }
     else {
       this.decayedDataCircle.visible = false;
