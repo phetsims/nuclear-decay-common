@@ -129,10 +129,10 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     } );
 
     // Half-Lives checkbox: label + dotted line sample
-    const halfLifeLineSample = new Line( 0, 0, LINE_SAMPLE_LENGTH, 0, {
+    const halfLifeLineSample = new Line( 0, 0, 0, LINE_SAMPLE_LENGTH, {
       stroke: NuclearDecayCommonColors.halfLifeColorProperty,
       lineWidth: 2,
-      lineDash: [ 2, 4 ]
+      lineDash: [ 2, 2 ]
     } );
     const halfLivesCheckboxContent = new HBox( {
       spacing: 6,

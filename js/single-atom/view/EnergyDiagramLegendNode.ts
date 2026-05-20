@@ -66,8 +66,8 @@ export default class EnergyDiagramLegendNode extends VBox {
 
     const finalEnergyLegendLine = new Line( 0, 0, LEGEND_LINE_LENGTH, 0, {
         stroke: NuclearDecayCommonColors.finalEnergyProperty,
-        lineWidth: 4,
-        lineDash: [ 7, 7 ],
+        lineWidth: 2,
+        lineDash: [ 4, 4 ],
         visibleProperty: hasDecayOccurredProperty
       }
     );

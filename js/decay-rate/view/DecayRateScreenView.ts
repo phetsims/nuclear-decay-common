@@ -158,7 +158,7 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
 
     const rightButtonsBox = new VBox( {
       children: [ resetButton, sortButton ],
-      spacing: 20,
+      spacing: 10,
       right: playAreaBounds.right,
       centerY: playAreaBounds.centerY
     } );
