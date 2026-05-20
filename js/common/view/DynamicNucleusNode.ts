@@ -74,7 +74,6 @@ class DynamicNucleusNode extends Node {
 
         // Check whether the atom's decay state has changed and update the nucleon nodes if so.
         if ( atomHasDecayed !== atom.hasDecayed ) {
-          console.log( 'atom decay state changed' );
           this.updateNucleons();
           atomHasDecayed = atom.hasDecayed;
         }
