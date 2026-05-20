@@ -12,6 +12,7 @@ import stepTimer from '../../../../axon/js/stepTimer.js';
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import dotRandom from '../../../../dot/js/dotRandom.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
+import { roundSymmetric } from '../../../../dot/js/util/roundSymmetric.js';
 import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 import ShadedSphereNode from '../../../../scenery-phet/js/ShadedSphereNode.js';
@@ -29,6 +30,15 @@ type DynamicNucleusNodeOptions = SelfOptions & NodeOptions;
 class DynamicNucleusNode extends Node {
 
   private readonly nucleusDiameter: number;
+  private readonly nucleonDiameter: number;
+
+  // The model atom that this node visualizes and uses for particle configuration data.
+  private readonly atom: NuclearDecayAtom;
+
+  // Separate particle collections are stored as fields so member methods can manipulate them directly.
+  private readonly protonNodes: ShadedSphereNode[] = [];
+  private readonly neutronNodes: ShadedSphereNode[] = [];
+  private readonly alphaParticleNodes: Node[] = [];
 
   public constructor(
     atom: NuclearDecayAtom,
@@ -40,52 +50,18 @@ class DynamicNucleusNode extends Node {
       nucleonRadius: 5
     }, providedOptions );
 
-    // Decide how many nucleons to display based on the number within the supplied atom. Note that for larger numbers of
-    // nucleons, a smaller proportion of them will be shown since many will be behind other nucleons.
-    let numberOfNucleonsToDisplay;
     // JPB REVIEW - this will need to be dynamically updated based on decay state.
-    const totalNucleonCount = atom.atomConfigBeforeDecay.protonCount + atom.atomConfigAfterDecay.neutronCount;
-    if ( totalNucleonCount < 5 ) {
-
-      // Show them all for smaller numbers.
-      numberOfNucleonsToDisplay = totalNucleonCount;
-    }
-    else {
-
-      // For larger numbers, show a subset. This value is determined in part by the equation for tightly packed
-      // particles in a spherical volume, with the multiplier empirically tweaked.
-      numberOfNucleonsToDisplay = Math.ceil( 4.8 * Math.pow( totalNucleonCount, 2 / 3 ) );
-    }
-
-    // the nodes used to represent the individual nucleons
-    const nucleonNodes: ShadedSphereNode[] = [];
-
-    const alphaParticleNodes: Node[] = [];
+    const totalNucleonCount = atom.atomConfigBeforeDecay.protonCount + atom.atomConfigBeforeDecay.neutronCount;
 
     super( options );
 
+    this.atom = atom;
+    this.nucleonDiameter = 2 * options.nucleonRadius;
+
     // Calculate the diameter of the nucleus based on the number of nucleons.
-    this.nucleusDiameter = calculateNucleusDiameter( totalNucleonCount, 2 * options.nucleonRadius );
+    this.nucleusDiameter = calculateNucleusDiameter( totalNucleonCount, this.nucleonDiameter );
 
-    // Add the nucleon nodes.
-    _.times( numberOfNucleonsToDisplay, count => {
-      const nucleonNode = count < atom.atomConfigBeforeDecay.protonCount ?
-                          DynamicNucleusNode.createProtonNode( 2 * options.nucleonRadius ) :
-                          DynamicNucleusNode.createNeutronNode( 2 * options.nucleonRadius );
-      nucleonNodes.push( nucleonNode );
-    } );
-
-    _.times( 5, () => {
-      const alphaParticleNode = DynamicNucleusNode.createAlphaParticle(
-        2 * options.nucleonRadius,
-        dotRandom.nextDouble() * 2 * Math.PI
-      );
-      alphaParticleNodes.push( alphaParticleNode );
-      this.addChild( alphaParticleNode );
-    } );
-
-    const shuffledNucleonNodes = dotRandom.shuffle( nucleonNodes );
-    shuffledNucleonNodes.forEach( nucleonNode => this.addChild( nucleonNode ) );
+    this.updateNucleons();
 
     // Add a listener to the step timer that implements the dynamic motion of the particles in the nucleus.
     let timeAccumulator = 0;
@@ -96,15 +72,104 @@ class DynamicNucleusNode extends Node {
         timeAccumulator += dt;
         if ( timeAccumulator > 0.1 ) {
           timeAccumulator = 0;
-          nucleonNodes.forEach( node => {
+          [ ...this.protonNodes, ...this.neutronNodes ].forEach( node => {
             node.center = this.getRandomNucleonOffsetVector();
           } );
-          alphaParticleNodes.forEach( node => {
+          this.alphaParticleNodes.forEach( node => {
             node.center = this.getRandomAlphaParticleOffsetVector();
           } );
         }
       }
     } );
+  }
+
+  /**
+   * Rebuild all proton, neutron, and alpha nodes.
+   */
+  private updateNucleons(): void {
+
+    // Remove existing nodes.
+    [ ...this.protonNodes, ...this.neutronNodes, ...this.alphaParticleNodes ].forEach( node => {
+      this.removeChild( node );
+    } );
+    this.protonNodes.length = 0;
+    this.neutronNodes.length = 0;
+    this.alphaParticleNodes.length = 0;
+
+    const protonCount = this.atom.atomConfigBeforeDecay.protonCount;
+    const neutronCount = this.atom.atomConfigBeforeDecay.neutronCount;
+    const {
+      individualProtonCount,
+      individualNeutronCount,
+      alphaParticleCount
+    } = DynamicNucleusNode.getDisplayedParticleCounts( protonCount, neutronCount );
+
+    _.times( individualProtonCount, () => {
+      const protonNode = DynamicNucleusNode.createProtonNode( this.nucleonDiameter );
+      this.protonNodes.push( protonNode );
+    } );
+
+    _.times( individualNeutronCount, () => {
+      const neutronNode = DynamicNucleusNode.createNeutronNode( this.nucleonDiameter );
+      this.neutronNodes.push( neutronNode );
+    } );
+
+    _.times( alphaParticleCount, () => {
+      const alphaParticleNode = DynamicNucleusNode.createAlphaParticle(
+        this.nucleonDiameter,
+        dotRandom.nextDouble() * 2 * Math.PI
+      );
+      this.alphaParticleNodes.push( alphaParticleNode );
+    } );
+
+    const shuffledNucleonNodes = dotRandom.shuffle( [ ...this.protonNodes, ...this.neutronNodes ] );
+    shuffledNucleonNodes.forEach( nucleonNode => this.addChild( nucleonNode ) );
+    this.alphaParticleNodes.forEach( alphaParticleNode => this.addChild( alphaParticleNode ) );
+
+    [ ...this.protonNodes, ...this.neutronNodes ].forEach( node => {
+      node.center = this.getRandomNucleonOffsetVector();
+    } );
+    this.alphaParticleNodes.forEach( node => {
+      node.center = this.getRandomAlphaParticleOffsetVector();
+    } );
+  }
+
+  /**
+   * Determine how many individual protons/neutrons and alpha particles to render.
+   */
+  private static getDisplayedParticleCounts( protonCount: number, neutronCount: number ): {
+    individualProtonCount: number;
+    individualNeutronCount: number;
+    alphaParticleCount: number;
+  } {
+    const totalNucleonCount = protonCount + neutronCount;
+    if ( totalNucleonCount === 0 ) {
+      return {
+        individualProtonCount: 0,
+        individualNeutronCount: 0,
+        alphaParticleCount: 0
+      };
+    }
+
+    const numberOfNucleonsToDisplay = totalNucleonCount < 5 ?
+                                      totalNucleonCount :
+                                      Math.ceil( 4.8 * Math.pow( totalNucleonCount, 2 / 3 ) );
+
+    const displayedProtonCount = roundSymmetric( numberOfNucleonsToDisplay * protonCount / totalNucleonCount );
+    const displayedNeutronCount = numberOfNucleonsToDisplay - displayedProtonCount;
+
+    // About half of the represented nucleons are grouped into alpha particles (4 nucleons each).
+    const alphaParticleCount = Math.min(
+      Math.floor( numberOfNucleonsToDisplay / 8 ),
+      Math.floor( displayedProtonCount / 2 ),
+      Math.floor( displayedNeutronCount / 2 )
+    );
+
+    return {
+      individualProtonCount: displayedProtonCount - 2 * alphaParticleCount,
+      individualNeutronCount: displayedNeutronCount - 2 * alphaParticleCount,
+      alphaParticleCount: alphaParticleCount
+    };
   }
 
   /**
