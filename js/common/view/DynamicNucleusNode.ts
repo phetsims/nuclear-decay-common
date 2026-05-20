@@ -78,6 +78,19 @@ class DynamicNucleusNode extends Node {
           this.alphaParticleNodes.forEach( node => {
             node.center = this.getRandomAlphaParticleOffsetVector();
           } );
+
+          // Adjust the layering to make the nodes nearer the center higher in the Z-order. This makes the nucleus look
+          // a bit more spherical.
+          const allParticleNodes = [ ...this.protonNodes, ...this.neutronNodes, ...this.alphaParticleNodes ];
+          allParticleNodes.forEach( node => {
+
+            // Use probability and some empirical math to make the inner particles more likely to appear in front of the
+            // outer particles.  This gives the nucleus and somewhat more spherical look.
+            const normalizedDistance = node.center.magnitude / ( this.nucleusDiameter / 2 );
+            if ( Math.pow( normalizedDistance, 0.4 ) > dotRandom.nextDouble() ) {
+              node.moveToBack();
+            }
+          } );
         }
       }
     } );
@@ -197,7 +210,7 @@ class DynamicNucleusNode extends Node {
     } );
   }
 
-  private static createAlphaParticle( nucleonDiameter: number, rotationalAngle: number ) : Node {
+  private static createAlphaParticle( nucleonDiameter: number, rotationalAngle: number ): Node {
     affirm( rotationalAngle >= 0 && rotationalAngle <= Math.PI * 2, 'out of range rotation angle' );
     const p1 = DynamicNucleusNode.createProtonNode( nucleonDiameter );
     const p2 = DynamicNucleusNode.createProtonNode( nucleonDiameter );
