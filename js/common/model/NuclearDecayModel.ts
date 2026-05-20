@@ -627,6 +627,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
    * The number of columns scales with the total atom count to fill the available play area.
    */
   public sort(): void {
+    this.isPlayingProperty.value = false;
     const bounds = this.atomPlacementAreaProperty.value.bounds.erodedX( 100 );
     const n = this.activeAtoms.length;
     if ( n === 0 ) { return; }
@@ -639,8 +640,40 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     const aspectRatio = bounds.width / bounds.height;
 
     // Initial estimate of cols and rows, we'll try some up and down to see if there are exact solutions
-    const cols = Math.ceil( Math.sqrt( n * aspectRatio ) );
-    const rows = Math.ceil( n / cols );
+    let cols = Math.ceil( Math.sqrt( n * aspectRatio ) );
+    let rows = Math.ceil( n / cols );
+
+    // If the division is not exact, try values around the estimate
+    if ( n % cols !== 0 ) {
+
+      // How many values to try
+      const exactSolutionAttempts = 20;
+      const minimumDivisor = 5;
+      let exactSolutionFound = false;
+
+      _.times( exactSolutionAttempts, i => {
+
+        i += 1; // Start at 1
+
+        if ( exactSolutionFound ) { return; }
+
+        // Try one up, one down, two up, two down, etc.
+        const potentialCols = cols + i * Math.pow( -1, i );
+
+        // Below these rows or columns it's no longer worth to search for visual purposes
+        if ( potentialCols < minimumDivisor || n / potentialCols < minimumDivisor ) { return; }
+
+        if ( n % potentialCols === 0 ) {
+          const potentialRows = n / potentialCols;
+          rows = Math.min( potentialRows, potentialCols );
+          cols = Math.max( potentialCols, potentialRows );
+          console.log( `Solution for  ${n}: ${cols}x${rows}` );
+          exactSolutionFound = true;
+        }
+      } );
+
+      if ( !exactSolutionFound ) { console.log( 'No solution' ); }
+    }
 
     const spacingX = bounds.width / cols;
     const spacingY = bounds.height / rows;
