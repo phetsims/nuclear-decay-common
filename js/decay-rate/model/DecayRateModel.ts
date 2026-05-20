@@ -51,7 +51,7 @@ export default class DecayRateModel extends NuclearDecayModel {
   public override step( dt: number ): void {
     super.step( dt );
 
-    if ( this.activeAtoms.length > 0 ) {
+    if ( this.activeAtoms.length > 0 && this.timeProperty.value !== 0 ) {
       // Accumulate data points for the graph lines.
       const time = this.timeProperty.value;
       this.undecayedDataPoints.push( new Vector2( time, this.percentageOfUndecayedProperty.value ) );
@@ -75,10 +75,16 @@ export default class DecayRateModel extends NuclearDecayModel {
     this.resetDataPoints();
   }
 
+  public override activateMultipleAtoms( n: number ): void {
+    super.activateMultipleAtoms( n );
+
+    // Adding the initial datapoints for 100% and 0%
+    this.undecayedDataPoints.push( new Vector2( 0, 1 ) );
+    this.decayedDataPoints.push( new Vector2( 0, 0 ) );
+  }
+
   public resetDataPoints(): void {
     this.undecayedDataPoints.length = 0;
     this.decayedDataPoints.length = 0;
-    this.undecayedDataPoints.push( new Vector2( 0, 1 ) );
-    this.decayedDataPoints.push( new Vector2( 0, 0 ) );
   }
 }

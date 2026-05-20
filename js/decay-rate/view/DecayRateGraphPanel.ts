@@ -277,8 +277,10 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     visibleProperties.showUndecayedProperty.link( visible => { undecayedLinePath.visible = visible; } );
     visibleProperties.showDecayedProperty.link( visible => { decayedLinePath.visible = visible; } );
 
+    // Extra pixels to extend the line to avoid visual artifacts (Not connecting to the panel due to the corner radius)
+    const dataProbeLineOvershoot = 10;
     const dataProbeLine = new Path(
-      new Shape().moveTo( 0, 0 ).lineTo( 0, GRAPH_HEIGHT + 20 ),
+      new Shape().moveTo( 0, -dataProbeLineOvershoot ).lineTo( 0, GRAPH_HEIGHT + 20 ),
       {
         stroke: NuclearDecayCommonColors.dataProbeColorProperty,
         lineWidth: 2,
@@ -307,7 +309,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       NuclearDecayCommonColors.undecayedProperty,
       {
         centerX: dataProbeNode.centerX,
-        bottom: dataProbeNode.top,
+        bottom: dataProbeNode.top + dataProbeLineOvershoot,
         visibleProperty: visibleProperties.showDataProbeProperty
       }
     );
@@ -335,7 +337,12 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       drag: event => {
         const localX = graphArea.globalToLocalPoint( event.pointer.point ).x;
         dataProbeNode.centerX = clamp( localX, 0, GRAPH_WIDTH );
-        dataProbePanel.centerX = clamp( localX, dataProbePanel.width / 2, GRAPH_WIDTH - dataProbePanel.width / 2 );
+
+        // Extra pixels to add to the positions to avoid visual artifacts
+        const dataProbeOvershoot = 1;
+        dataProbePanel.centerX = clamp( localX,
+          dataProbePanel.width / 2 - dataProbeOvershoot,
+          GRAPH_WIDTH - dataProbePanel.width / 2 + dataProbeOvershoot );
         this.probeGraphX = dataProbeNode.centerX;
         this.updateProbeReadouts();
       }
