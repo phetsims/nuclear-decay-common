@@ -96,7 +96,8 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     model: NuclearDecayModel,
     providedOptions: DecayTimeHistogramPanelOptions ) {
 
-    const options = optionize<DecayTimeHistogramPanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {}, providedOptions );
+    const options = optionize<DecayTimeHistogramPanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {
+    }, providedOptions );
 
     // Y-axis rotated label: "Isotope"
 

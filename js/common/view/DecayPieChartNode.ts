@@ -30,7 +30,8 @@ export class DecayPieChartNode extends VBox {
     providedOptions: DecayPieChartNodeOptions ) {
     const options = optionize<DecayPieChartNodeOptions, SelfOptions, VBoxOptions>()( {
       spacing: 10,
-      radius: 30
+      radius: 30,
+      resize: false
     }, providedOptions );
 
     const undecayedIsotope = model.selectedIsotopeProperty.value;

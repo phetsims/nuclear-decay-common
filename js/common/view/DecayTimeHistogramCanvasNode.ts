@@ -47,6 +47,9 @@ export default class DecayTimeHistogramCanvasNode extends CanvasNode {
       this.addChild( this.undecayedCountLabel );
     }
 
+    // To prevent spurious resizing of the panel
+    this.localBounds = this.localBounds.copy();
+
   }
 
   /**
