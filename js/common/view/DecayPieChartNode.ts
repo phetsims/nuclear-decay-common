@@ -61,8 +61,10 @@ export class DecayPieChartNode extends VBox {
     } );
 
     const undecayedBackgroundCircle = new Circle( options.radius, {
-      stroke: 'black',
-      fill: NuclearDecayCommonColors.undecayedProperty
+      stroke: 'black'
+    } );
+    model.undecayedCountProperty.link( count => {
+      undecayedBackgroundCircle.fill = count !== 0 ? NuclearDecayCommonColors.undecayedProperty : null;
     } );
 
     const decayedArc = new Path( null, {

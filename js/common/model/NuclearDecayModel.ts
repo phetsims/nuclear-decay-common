@@ -408,23 +408,36 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
       this.stopwatch?.step( timeStep );
 
-      this.activeAtoms.forEach( ( atom: NuclearDecayAtom ) => {
-        const hadDecayed = atom.hasDecayed;
-        atom.step( dt, timeStep );
-
-        if ( !hadDecayed && atom.hasDecayed ) {
-          this.lastDecayTimeProperty.value = this.timeProperty.value;
-          this.decayedAtoms.push( atom.copy() );
-
-          // Update the count inside this loop is important to trigger the sound in the view
-          this.decayedCountProperty.value = this.decayedAtoms.length;
-        }
-      } );
-
-      // Update several variables used to control and present the view.
-      this.undecayedAtoms = this.activeAtoms.filter( atom => !atom.hasDecayed );
-      this.undecayedCountProperty.value = this.undecayedAtoms.length;
+      this.updateAtoms( dt, timeStep );
     }
+  }
+
+  /**
+   * Updates the atom lists. They are not stepped by default unless provided with dt.
+   * @param dt - delta time, in seconds
+   * @param [decayDt] - an optional separate time used in the decay calculation
+   */
+  public updateAtoms( dt = 0, decayDt = 0 ): void {
+    this.activeAtoms.forEach( ( atom: NuclearDecayAtom ) => {
+      const hadDecayed = atom.hasDecayed;
+      if ( dt && decayDt ) {
+        atom.step( dt, decayDt );
+      }
+
+      if ( !hadDecayed && atom.hasDecayed ) {
+        this.lastDecayTimeProperty.value = this.timeProperty.value;
+        this.decayedAtoms.push( atom.copy() );
+
+        // Update the count inside this loop is important to trigger the sound in the view
+        this.decayedCountProperty.value = this.decayedAtoms.length;
+      }
+    } );
+
+    // Update several variables used to control and present the view.
+    this.undecayedAtoms = this.activeAtoms.filter( atom => !atom.hasDecayed );
+    this.undecayedCountProperty.value = this.undecayedAtoms.length;
+
+    this.isPlayAreaEmptyProperty.value = this.activeAtoms.length === 0;
   }
 
   /**
@@ -494,7 +507,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     this.resetTimes();
     // Activate multiple atoms with random positions
     _.times( n, () => this.activateAtom( true ) );
-    this.manualStep();
+    this.updateAtoms();
   }
 
   /**
@@ -519,7 +532,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     if ( this.isSingleAtomMode ) {
 
       // Step the model to update the screen with the new atom. But not if we're activating multiple atoms
-      this.manualStep();
+      this.updateAtoms();
     }
   }
 
@@ -540,7 +553,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
         atom.deriveHalfLife();
       }
     } );
-    this.manualStep();
+    this.updateAtoms();
   }
 
   /**
@@ -647,7 +660,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     if ( n % cols !== 0 ) {
 
       // How many values to try
-      const exactSolutionAttempts = 20;
+      const exactSolutionAttempts = 20; // Half of this above and half below
       const minimumDivisor = 5;
       let exactSolutionFound = false;
 
