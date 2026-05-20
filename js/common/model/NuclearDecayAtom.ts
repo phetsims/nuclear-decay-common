@@ -100,13 +100,13 @@ export default class NuclearDecayAtom {
   public readonly ejectedDecayParticles: EjectedDecayParticle[] = [];
 
   // Whether the angles at which ejected decay particles are restricted to a limited range.
-  private restrictEjectionAngles: boolean;
+  private readonly restrictEjectionAngles: boolean;
 
   // The speed at which ejected particles move away from the decayed atom.
-  private particleEjectionSpeed: number;
+  private readonly particleEjectionSpeed: number;
 
   // See related options for description of this field.
-  private ejectParticlesOnDecay: boolean;
+  private readonly ejectParticlesOnDecay: boolean;
 
   // The type of decay that this nucleus will undergo.
   private decayType: DecayType;

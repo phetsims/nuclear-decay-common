@@ -11,8 +11,8 @@
 import stepTimer from '../../../../axon/js/stepTimer.js';
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import dotRandom from '../../../../dot/js/dotRandom.js';
-import Vector2 from '../../../../dot/js/Vector2.js';
 import { roundSymmetric } from '../../../../dot/js/util/roundSymmetric.js';
+import Vector2 from '../../../../dot/js/Vector2.js';
 import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 import ShadedSphereNode from '../../../../scenery-phet/js/ShadedSphereNode.js';
@@ -61,14 +61,25 @@ class DynamicNucleusNode extends Node {
     // Calculate the diameter of the nucleus based on the number of nucleons.
     this.nucleusDiameter = calculateNucleusDiameter( totalNucleonCount, this.nucleonDiameter );
 
+    // Set up the initial batch of nucleon nodes.  These may change if the atom decays.
     this.updateNucleons();
 
     // Add a listener to the step timer that implements the dynamic motion of the particles in the nucleus.
     let timeAccumulator = 0;
+    let atomHasDecayed = atom.hasDecayed;
     stepTimer.addListener( dt => {
 
       // Only do the work for this if the nucleus is current visible and playing.
       if ( this.isVisible() && isPlayingProperty.value ) {
+
+        // Check whether the atom's decay state has changed and update the nucleon nodes if so.
+        if ( atomHasDecayed !== atom.hasDecayed ) {
+          console.log( 'atom decay state changed' );
+          this.updateNucleons();
+          atomHasDecayed = atom.hasDecayed;
+        }
+
+        // Move the particles around if enough time has passed since the last position update.
         timeAccumulator += dt;
         if ( timeAccumulator > 0.1 ) {
           timeAccumulator = 0;
