@@ -29,10 +29,16 @@ type DynamicNucleusNodeOptions = SelfOptions & NodeOptions;
 
 class DynamicNucleusNode extends Node {
 
-  private readonly nucleusDiameter: number;
+  // The overall diameter of the nucleus, in screen coordinates.  The nucleons will move around within this diameter.
+  // The value assigned here is arbitrary, it will be updated during initialization and potentially whenever the atom's
+  // decay state changes.
+  private nucleusDiameter = 0;
+
+  // The diameter of the individual nucleons that comprise the nucleus.  All nucleons are depicted as spheres with this
+  // diameter.
   private readonly nucleonDiameter: number;
 
-  // The model atom that this node visualizes and uses for particle configuration data.
+  // The model atom that this Node depicts and uses for particle configuration data.
   private readonly atom: NuclearDecayAtom;
 
   // Separate particle collections are stored as fields so member methods can manipulate them directly.
@@ -50,16 +56,10 @@ class DynamicNucleusNode extends Node {
       nucleonRadius: 5
     }, providedOptions );
 
-    // JPB REVIEW - this will need to be dynamically updated based on decay state.
-    const totalNucleonCount = atom.atomConfigBeforeDecay.protonCount + atom.atomConfigBeforeDecay.neutronCount;
-
     super( options );
 
     this.atom = atom;
     this.nucleonDiameter = 2 * options.nucleonRadius;
-
-    // Calculate the diameter of the nucleus based on the number of nucleons.
-    this.nucleusDiameter = calculateNucleusDiameter( totalNucleonCount, this.nucleonDiameter );
 
     // Set up the initial batch of nucleon nodes.  These may change if the atom decays.
     this.updateNucleons();
@@ -121,6 +121,11 @@ class DynamicNucleusNode extends Node {
 
     const protonCount = this.atom.atomConfigBeforeDecay.protonCount;
     const neutronCount = this.atom.atomConfigBeforeDecay.neutronCount;
+    const totalNucleonCount = protonCount + neutronCount;
+
+    // Calculate the diameter of the nucleus based on the number of nucleons.
+    this.nucleusDiameter = calculateNucleusDiameter( totalNucleonCount, this.nucleonDiameter );
+
     const {
       individualProtonCount,
       individualNeutronCount,
