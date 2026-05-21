@@ -30,6 +30,15 @@ type SelfOptions = {
 };
 type DynamicNucleusNodeOptions = SelfOptions & NodeOptions;
 
+// The frequency at which position updates occur for the constituent particles.
+const UPDATE_FREQUENCY = 10; // in updates per second
+
+// This constant defines the number of update cycles that are required for all individual particles (protons, neutrons,
+// alpha) to have their positions updated. It's used to stagger which ones are updated during each cycle.  Adjust this
+// in conjunction with the update period to get the desired level of dynamicism. Values should be greater than zero, and
+// significantly less than the minimum expected number of particles.
+const CYCLES_FOR_FULL_UPDATE = 3;
+
 class DynamicNucleusNode extends Node {
 
   // The overall radius of the nucleus, in screen coordinates.  The nucleons will move around within this radius.
@@ -73,6 +82,10 @@ class DynamicNucleusNode extends Node {
     // Set up the initial batch of nucleon nodes.
     this.updateNucleons();
 
+    // Variable used to stagger position updates for particles.
+    let nucleonUpdateStartIndex = 0;
+    let alphaParticleUpdateStartIndex = 0;
+
     // Add a listener to the step timer that implements the dynamic motion of the particles in the nucleus.
     let timeAccumulator = 0;
     let atomHasDecayed = atom.hasDecayed;
@@ -89,14 +102,25 @@ class DynamicNucleusNode extends Node {
 
         // Move the particles around if enough time has passed since the last position update.
         timeAccumulator += dt;
-        if ( timeAccumulator > 0.1 ) {
+        if ( timeAccumulator > 1 / UPDATE_FREQUENCY ) {
           timeAccumulator = 0;
-          [ ...this.protonNodes, ...this.neutronNodes ].forEach( node => {
-            node.center = this.getRandomNucleonOffsetVector();
-          } );
-          this.alphaParticleNodes.forEach( node => {
-            node.center = this.getRandomAlphaParticleOffsetVector();
-          } );
+          // [ ...this.protonNodes, ...this.neutronNodes ].forEach( node => {
+          //   node.center = this.getRandomNucleonOffsetVector();
+          // } );
+          // Update nucleon and alpha particle positions, but stagger which ones are updated each cycle to create a more
+          // dynamic effect.
+          const nucleons = [ ...this.protonNodes, ...this.neutronNodes ];
+          for ( let i = nucleonUpdateStartIndex; i < nucleons.length; i += CYCLES_FOR_FULL_UPDATE ) {
+            nucleons[ i ].center = this.getRandomNucleonOffsetVector();
+          }
+          nucleonUpdateStartIndex = ( nucleonUpdateStartIndex + 1 ) % CYCLES_FOR_FULL_UPDATE;
+          // this.alphaParticleNodes.forEach( node => {
+          //   node.center = this.getRandomAlphaParticleOffsetVector();
+          // } );
+          for ( let i = alphaParticleUpdateStartIndex; i < this.alphaParticleNodes.length; i += CYCLES_FOR_FULL_UPDATE ) {
+            this.alphaParticleNodes[ i ].center = this.getRandomAlphaParticleOffsetVector();
+          }
+          alphaParticleUpdateStartIndex = ( alphaParticleUpdateStartIndex + 1 ) % CYCLES_FOR_FULL_UPDATE;
 
           // Adjust the layering to make the nodes nearer the center higher in the Z-order. This makes the nucleus look
           // a bit more spherical.
