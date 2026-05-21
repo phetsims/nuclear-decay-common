@@ -29,14 +29,14 @@ type DynamicNucleusNodeOptions = SelfOptions & NodeOptions;
 
 class DynamicNucleusNode extends Node {
 
-  // The overall diameter of the nucleus, in screen coordinates.  The nucleons will move around within this diameter.
+  // The overall radius of the nucleus, in screen coordinates.  The nucleons will move around within this radius.
   // The value assigned here is arbitrary, it will be updated during initialization and potentially whenever the atom's
   // decay state changes.
-  private nucleusDiameter = 0;
+  private nucleusRadius = 0;
 
-  // The diameter of the individual nucleons that comprise the nucleus.  All nucleons are depicted as spheres with this
-  // diameter.
-  private readonly nucleonDiameter: number;
+  // The radius of the individual nucleons that comprise the nucleus.  All nucleons are depicted as spheres with this
+  // radius.
+  private readonly nucleonRadius: number;
 
   // The model atom that this Node depicts and uses for particle configuration data.
   private readonly atom: NuclearDecayAtom;
@@ -59,7 +59,7 @@ class DynamicNucleusNode extends Node {
     super( options );
 
     this.atom = atom;
-    this.nucleonDiameter = 2 * options.nucleonRadius;
+    this.nucleonRadius = options.nucleonRadius;
 
     // Set up the initial batch of nucleon nodes.  These may change if the atom decays.
     this.updateNucleons();
@@ -89,18 +89,18 @@ class DynamicNucleusNode extends Node {
             node.center = this.getRandomAlphaParticleOffsetVector();
           } );
 
-          // Adjust the layering to make the nodes nearer the center higher in the Z-order. This makes the nucleus look
-          // a bit more spherical.
-          const allParticleNodes = [ ...this.protonNodes, ...this.neutronNodes, ...this.alphaParticleNodes ];
-          allParticleNodes.forEach( node => {
+           // Adjust the layering to make the nodes nearer the center higher in the Z-order. This makes the nucleus look
+           // a bit more spherical.
+           const allParticleNodes = [ ...this.protonNodes, ...this.neutronNodes, ...this.alphaParticleNodes ];
+           allParticleNodes.forEach( node => {
 
-            // Use probability and some empirical math to make the inner particles more likely to appear in front of the
-            // outer particles.  This gives the nucleus and somewhat more spherical look.
-            const normalizedDistance = node.center.magnitude / ( this.nucleusDiameter / 2 );
-            if ( Math.pow( normalizedDistance, 0.4 ) > dotRandom.nextDouble() ) {
-              node.moveToBack();
-            }
-          } );
+             // Use probability and some empirical math to make the inner particles more likely to appear in front of the
+             // outer particles.  This gives the nucleus and somewhat more spherical look.
+             const normalizedDistance = node.center.magnitude / this.nucleusRadius;
+             if ( Math.pow( normalizedDistance, 0.4 ) > dotRandom.nextDouble() ) {
+               node.moveToBack();
+             }
+           } );
         }
       }
     } );
@@ -123,8 +123,8 @@ class DynamicNucleusNode extends Node {
     const neutronCount = this.atom.atomConfigBeforeDecay.neutronCount;
     const totalNucleonCount = protonCount + neutronCount;
 
-    // Calculate the diameter of the nucleus based on the number of nucleons.
-    this.nucleusDiameter = calculateNucleusDiameter( totalNucleonCount, this.nucleonDiameter );
+    // Calculate the radius of the nucleus based on the number of nucleons.
+    this.nucleusRadius = calculateNucleusRadius( totalNucleonCount, this.nucleonRadius );
 
     const {
       individualProtonCount,
@@ -133,18 +133,18 @@ class DynamicNucleusNode extends Node {
     } = DynamicNucleusNode.getDisplayedParticleCounts( protonCount, neutronCount );
 
     _.times( individualProtonCount, () => {
-      const protonNode = DynamicNucleusNode.createProtonNode( this.nucleonDiameter );
+      const protonNode = DynamicNucleusNode.createProtonNode( this.nucleonRadius );
       this.protonNodes.push( protonNode );
     } );
 
     _.times( individualNeutronCount, () => {
-      const neutronNode = DynamicNucleusNode.createNeutronNode( this.nucleonDiameter );
+      const neutronNode = DynamicNucleusNode.createNeutronNode( this.nucleonRadius );
       this.neutronNodes.push( neutronNode );
     } );
 
     _.times( alphaParticleCount, () => {
       const alphaParticleNode = DynamicNucleusNode.createAlphaParticle(
-        this.nucleonDiameter,
+        this.nucleonRadius,
         dotRandom.nextDouble() * 2 * Math.PI
       );
       this.alphaParticleNodes.push( alphaParticleNode );
@@ -204,34 +204,34 @@ class DynamicNucleusNode extends Node {
    * Get a random offset from the center of the nucleus for a nucleon.
    */
   private getRandomNucleonOffsetVector(): Vector2 {
-    const length = ( dotRandom.nextDouble() - 0.5 ) * this.nucleusDiameter * 0.75;
+    const length = ( dotRandom.nextDouble() - 0.5 ) * this.nucleusRadius * 1.5;
     return new Vector2( length, 0 ).rotated( dotRandom.nextDouble() * 2 * Math.PI );
   }
 
   private getRandomAlphaParticleOffsetVector(): Vector2 {
-    const length = ( dotRandom.nextDouble() - 0.5 ) * this.nucleusDiameter;
+    const length = ( dotRandom.nextDouble() - 0.5 ) * this.nucleusRadius * 2;
     return new Vector2( length, 0 ).rotated( dotRandom.nextDouble() * 2 * Math.PI );
   }
 
-  private static createProtonNode( diameter: number ): ShadedSphereNode {
-    return new ShadedSphereNode( diameter, {
+  private static createProtonNode( nucleonRadius: number ): ShadedSphereNode {
+    return new ShadedSphereNode( 2 * nucleonRadius, {
       mainColor: ShredColors.protonColorProperty
     } );
   }
 
-  private static createNeutronNode( diameter: number ): ShadedSphereNode {
-    return new ShadedSphereNode( diameter, {
+  private static createNeutronNode( nucleonRadius: number ): ShadedSphereNode {
+    return new ShadedSphereNode( 2 * nucleonRadius, {
       mainColor: ShredColors.neutronColorProperty
     } );
   }
 
-  private static createAlphaParticle( nucleonDiameter: number, rotationalAngle: number ): Node {
+  private static createAlphaParticle( nucleonRadius: number, rotationalAngle: number ): Node {
     affirm( rotationalAngle >= 0 && rotationalAngle <= Math.PI * 2, 'out of range rotation angle' );
-    const p1 = DynamicNucleusNode.createProtonNode( nucleonDiameter );
-    const p2 = DynamicNucleusNode.createProtonNode( nucleonDiameter );
-    const n1 = DynamicNucleusNode.createNeutronNode( nucleonDiameter );
-    const n2 = DynamicNucleusNode.createNeutronNode( nucleonDiameter );
-    const nucleonPositioningVector = new Vector2( -nucleonDiameter / 2, 0 ).rotated( rotationalAngle );
+    const p1 = DynamicNucleusNode.createProtonNode( nucleonRadius );
+    const p2 = DynamicNucleusNode.createProtonNode( nucleonRadius );
+    const n1 = DynamicNucleusNode.createNeutronNode( nucleonRadius );
+    const n2 = DynamicNucleusNode.createNeutronNode( nucleonRadius );
+    const nucleonPositioningVector = new Vector2( -nucleonRadius, 0 ).rotated( rotationalAngle );
     n1.center = nucleonPositioningVector.copy();
     nucleonPositioningVector.rotate( Math.PI );
     n2.center = nucleonPositioningVector.copy();
@@ -246,12 +246,12 @@ class DynamicNucleusNode extends Node {
 }
 
 /**
- * Helper function to calculate the diameter of the nucleus given the number of nucleons and their diameter.  The
+ * Helper function to calculate the radius of the nucleus given the number of nucleons and their radius.  The
  * calculation is based on sphere packing approximations, with the multiplier empirically tweaked to produce visually
  * appealing results. Adjust as needed.
  */
-const calculateNucleusDiameter = ( numberOfNucleons: number, nucleonDiameter: number ): number => {
-  return nucleonDiameter * Math.pow( numberOfNucleons / 0.6, 1 / 3 );
+const calculateNucleusRadius = ( numberOfNucleons: number, nucleonRadius: number ): number => {
+  return nucleonRadius * Math.pow( numberOfNucleons / 0.6, 1 / 3 );
 };
 
 export default DynamicNucleusNode;
