@@ -245,8 +245,12 @@ class DynamicNucleusNode extends Node {
     let maxLength;
     if ( !this.atom.hasDecayed && this.escapeRadiusProperty ) {
 
-      // An escape radius was provided during construction. Use it as the maximum length for the alpha particle offset.
-      maxLength = this.escapeRadiusProperty.value;
+      // An escape radius was provided during construction. We don't want to use this value every time for the max
+      // length because it can look too chaotic, so use it for a subset. Adjust the threshold here as needed to get the
+      // desired effect.
+      maxLength = dotRandom.nextDouble() > 0.95 ?
+                  this.escapeRadiusProperty.value - this.nucleonRadius * 2 :
+                  this.nucleusRadius;
     }
     else {
 
