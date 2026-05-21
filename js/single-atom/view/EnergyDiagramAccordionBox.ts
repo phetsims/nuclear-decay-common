@@ -52,6 +52,7 @@ const LEGEND_Y = 25;
 // Potential energy curve parameters (screen coordinates: negative Y = higher energy)
 export const WELL_HALF_WIDTH = 45; // half-width of the flat-bottomed well
 export const MAX_ESCAPE_DISTANCE = 1000; // used when initial energy is above the barrier, so the intersection point is off the graph
+const INTERSECTION_THRESHOLD = -0.4; // Below this, the intersection between curves might accidentally land in the well
 const COULOMB_MIN_Y = 0; // asymptotic Coulomb energy at large distance (just above x-axis)
 const ENERGY_PEAK_Y = -GRAPH_HEIGHT * 0.4; // top of the Coulomb barrier (above initial energy line)
 const WELL_BOTTOM_Y = GRAPH_HEIGHT * 0.4; // bottom of the nuclear potential well (below x-axis)
@@ -257,7 +258,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
           const intersections = potentialEnergyGraphCurve.shape.intersection( initialEnergyRay );
           if ( intersections.length !== 0 ) {
             const point = intersections[ 0 ].point;
-            if ( point.y < COULOMB_MIN_Y ) {
+            if ( point.y < INTERSECTION_THRESHOLD ) {
 
               // Make sure the intersection is above the X axis, otherwise it could be intersecting the walls of the well
               energyIntersectionPointProperty.value = new Vector2(
@@ -270,7 +271,18 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
             }
           }
           else {
-            energyIntersectionPointProperty.value = new Vector2( WELL_HALF_WIDTH, 0 );
+            // No intersection cases
+
+            if ( initialEnergyGraphLine.y < ENERGY_PEAK_Y ) {
+
+              // No intersection and energy above well. Dotted circle assumes the size of the well.
+              energyIntersectionPointProperty.value = new Vector2( WELL_HALF_WIDTH, 0 );
+            }
+            else {
+
+              // No intersection and energy is negative. Assume max escape distance
+              energyIntersectionPointProperty.value = new Vector2( MAX_ESCAPE_DISTANCE, 0 );
+            }
           }
         }
       } );
