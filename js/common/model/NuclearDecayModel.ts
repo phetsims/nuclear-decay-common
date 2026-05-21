@@ -253,7 +253,10 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
     // When the custom half-life changes, push the new value to all atoms in the pool.
     this.customHalfLifeProperty.lazyLink( customHalfLife => {
-      // this.clearAtomLists();
+
+      this.resetTimes();
+      this.clearAtomLists( false, true );
+      this.resetAtomsDecay();
 
       if ( this.selectedIsotopeProperty.value === 'custom' ) {
         this.atomPool.forEach( atom => {
@@ -563,24 +566,38 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
    */
   public clearAtomLists( clearUndecayed = true, clearDecayed = true ): void {
 
+    if ( clearDecayed ) {
+      this.decayedAtoms.length = 0;
+      this.decayedCountProperty.reset();
+    }
+
     if ( clearUndecayed ) {
       this.resetTimes();
       this.resetAtoms();
       this.undecayedAtoms.length = 0;
       this.undecayedCountProperty.reset();
     }
-
-    if ( clearDecayed ) {
-      this.decayedAtoms.length = 0;
-      this.decayedCountProperty.reset();
+    else {
+      this.undecayedAtoms = this.activeAtoms.filter( atom => !atom.hasDecayed );
     }
+
 
     this.histogramData.reset();
   }
 
+  /**
+   * Resets all atoms and empties the active atoms list
+   */
   public resetAtoms(): void {
     this.atomPool.forEach( atom => atom.reset() );
     this.activeAtoms.length = 0;
+  }
+
+  /**
+   * Resets all atoms to their original undecayed state
+   */
+  public resetAtomsDecay(): void {
+    this.atomPool.forEach( atom => atom.resetDecay() );
   }
 
   private resetTimes(): void {

@@ -52,7 +52,7 @@ export default class NuclearDecayCommonConstants {
   public static readonly CUSTOM_DECAYED = new AtomConfig( 198, 198, 198 );
 
   // Screen view margins
-  public static readonly SCREEN_VIEW_X_MARGIN = 30;
+  public static readonly SCREEN_VIEW_X_MARGIN = 15;
   public static readonly SCREEN_VIEW_Y_MARGIN = 15;
 
   // Text constants

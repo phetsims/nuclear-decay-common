@@ -326,6 +326,12 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       drag: event => {
         const localX = graphAreaNode.globalToLocalPoint( event.pointer.point ).x;
         model.customHalfLifeProperty.value = clamp( normalizedFromLocalX( localX ), 0, 1 );
+      },
+      start: () => {
+        model.isPlayingProperty.value = false;
+      },
+      end: () => {
+        model.isPlayingProperty.value = true;
       }
     } ) );
 

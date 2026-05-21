@@ -361,6 +361,12 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         const localY = contentsNode.globalToLocalPoint( event.pointer.point ).y;
         const value = localY / ENERGY_PEAK_Y;
         model.initialEnergyProperty.value = clamp( value, model.initialEnergyProperty.range.min, model.initialEnergyProperty.range.max );
+      },
+      start: () => {
+        model.isPlayingProperty.value = false;
+      },
+      end: () => {
+        model.isPlayingProperty.value = true;
       }
     } ) );
 
@@ -376,6 +382,12 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         const localY = contentsNode.globalToLocalPoint( event.pointer.point ).y;
         const value = ( localY - COULOMB_MIN_Y ) / ENERGY_PEAK_Y * model.potentialEnergyProperty.range.max;
         model.potentialEnergyProperty.value = clamp( value, model.potentialEnergyProperty.range.min, model.potentialEnergyProperty.range.max );
+      },
+      start: () => {
+        model.isPlayingProperty.value = false;
+      },
+      end: () => {
+        model.isPlayingProperty.value = true;
       }
     } ) );
 
