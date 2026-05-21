@@ -24,6 +24,9 @@ type SelfOptions = {
 
   // The radius to use for nucleons, in screen coordinates.
   nucleonRadius?: number;
+
+  // If provided, nucleons will escape the nucleus when they reach this radius, in screen coordinates.
+  escapeRadiusProperty?: TReadOnlyProperty<number> | null;
 };
 type DynamicNucleusNodeOptions = SelfOptions & NodeOptions;
 
@@ -46,6 +49,10 @@ class DynamicNucleusNode extends Node {
   private readonly neutronNodes: ShadedSphereNode[] = [];
   private readonly alphaParticleNodes: Node[] = [];
 
+  // If non-null, the radius to which alpha particles should move.  Should generally be bigger than the calculated
+  // nucleus radius.
+  private readonly escapeRadiusProperty: TReadOnlyProperty<number> | null;
+
   public constructor(
     atom: NuclearDecayAtom,
     isPlayingProperty: TReadOnlyProperty<boolean>,
@@ -53,15 +60,17 @@ class DynamicNucleusNode extends Node {
   ) {
 
     const options = optionize<DynamicNucleusNodeOptions, SelfOptions, NodeOptions>()( {
-      nucleonRadius: 5
+      nucleonRadius: 5,
+      escapeRadiusProperty: null
     }, providedOptions );
 
     super( options );
 
     this.atom = atom;
     this.nucleonRadius = options.nucleonRadius;
+    this.escapeRadiusProperty = options.escapeRadiusProperty;
 
-    // Set up the initial batch of nucleon nodes.  These may change if the atom decays.
+    // Set up the initial batch of nucleon nodes.
     this.updateNucleons();
 
     // Add a listener to the step timer that implements the dynamic motion of the particles in the nucleus.
@@ -89,18 +98,18 @@ class DynamicNucleusNode extends Node {
             node.center = this.getRandomAlphaParticleOffsetVector();
           } );
 
-           // Adjust the layering to make the nodes nearer the center higher in the Z-order. This makes the nucleus look
-           // a bit more spherical.
-           const allParticleNodes = [ ...this.protonNodes, ...this.neutronNodes, ...this.alphaParticleNodes ];
-           allParticleNodes.forEach( node => {
+          // Adjust the layering to make the nodes nearer the center higher in the Z-order. This makes the nucleus look
+          // a bit more spherical.
+          const allParticleNodes = [ ...this.protonNodes, ...this.neutronNodes, ...this.alphaParticleNodes ];
+          allParticleNodes.forEach( node => {
 
-             // Use probability and some empirical math to make the inner particles more likely to appear in front of the
-             // outer particles.  This gives the nucleus and somewhat more spherical look.
-             const normalizedDistance = node.center.magnitude / this.nucleusRadius;
-             if ( Math.pow( normalizedDistance, 0.4 ) > dotRandom.nextDouble() ) {
-               node.moveToBack();
-             }
-           } );
+            // Use probability and some empirical math to make the inner particles more likely to appear in front of the
+            // outer particles.  This gives the nucleus and somewhat more spherical look.
+            const normalizedDistance = node.center.magnitude / this.nucleusRadius;
+            if ( Math.pow( normalizedDistance, 0.4 ) > dotRandom.nextDouble() ) {
+              node.moveToBack();
+            }
+          } );
         }
       }
     } );
@@ -150,7 +159,7 @@ class DynamicNucleusNode extends Node {
       this.alphaParticleNodes.push( alphaParticleNode );
     } );
 
-    const shuffledNucleonNodes = dotRandom.shuffle( [ ...this.protonNodes, ...this.neutronNodes ] );
+    const shuffledNucleonNodes = [ ...this.protonNodes, ...this.neutronNodes ];
     shuffledNucleonNodes.forEach( nucleonNode => this.addChild( nucleonNode ) );
     this.alphaParticleNodes.forEach( alphaParticleNode => this.addChild( alphaParticleNode ) );
 
@@ -209,7 +218,18 @@ class DynamicNucleusNode extends Node {
   }
 
   private getRandomAlphaParticleOffsetVector(): Vector2 {
-    const length = ( dotRandom.nextDouble() - 0.5 ) * this.nucleusRadius * 2;
+    let maxLength;
+    if ( !this.atom.hasDecayed && this.escapeRadiusProperty ) {
+
+      // An escape radius was provided during construction. Use it as the maximum length for the alpha particle offset.
+      maxLength = this.escapeRadiusProperty.value;
+    }
+    else {
+
+      // No escape radius was provided, use the nucleus radius to control alpha particle movement.
+      maxLength = this.nucleusRadius;
+    }
+    const length = dotRandom.nextDouble() * maxLength;
     return new Vector2( length, 0 ).rotated( dotRandom.nextDouble() * 2 * Math.PI );
   }
 
