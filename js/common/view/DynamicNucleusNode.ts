@@ -8,7 +8,6 @@
  * @author John Blanco (PhET Interactive Simulations)
  */
 
-import stepTimer from '../../../../axon/js/stepTimer.js';
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import dotRandom from '../../../../dot/js/dotRandom.js';
 import { roundSymmetric } from '../../../../dot/js/util/roundSymmetric.js';
@@ -19,6 +18,7 @@ import ShadedSphereNode from '../../../../scenery-phet/js/ShadedSphereNode.js';
 import Node, { NodeOptions } from '../../../../scenery/js/nodes/Node.js';
 import ShredColors from '../../../../shred/js/ShredColors.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
+import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 
 type SelfOptions = {
 
@@ -62,11 +62,17 @@ class DynamicNucleusNode extends Node {
   // nucleus radius.
   private readonly escapeRadiusProperty: TReadOnlyProperty<number> | null;
 
-  public constructor(
-    atom: NuclearDecayAtom,
-    isPlayingProperty: TReadOnlyProperty<boolean>,
-    providedOptions?: DynamicNucleusNodeOptions
-  ) {
+  // Accumulates the scaled time between particle updates.
+  private timeAccumulator = 0;
+
+  // Used to detect when the atom decays so the nucleus can be rebuilt.
+  private atomHasDecayed: boolean;
+
+  // Variable used to stagger position updates for particles.
+  private nucleonUpdateStartIndex = 0;
+  private alphaParticleUpdateStartIndex = 0;
+
+  public constructor( atom: NuclearDecayAtom, providedOptions?: DynamicNucleusNodeOptions ) {
 
     const options = optionize<DynamicNucleusNodeOptions, SelfOptions, NodeOptions>()( {
       nucleonRadius: 5,
@@ -78,65 +84,63 @@ class DynamicNucleusNode extends Node {
     this.atom = atom;
     this.nucleonRadius = options.nucleonRadius;
     this.escapeRadiusProperty = options.escapeRadiusProperty;
+    this.atomHasDecayed = atom.hasDecayed;
 
     // Set up the initial batch of nucleon nodes.
     this.updateNucleons();
 
-    // Variable used to stagger position updates for particles.
-    let nucleonUpdateStartIndex = 0;
-    let alphaParticleUpdateStartIndex = 0;
-
-    // Add a listener to the step timer that implements the dynamic motion of the particles in the nucleus.
-    let timeAccumulator = 0;
-    let atomHasDecayed = atom.hasDecayed;
-    stepTimer.addListener( dt => {
-
-      // Only do the work for this if the nucleus is current visible and playing.
-      if ( this.isVisible() && isPlayingProperty.value ) {
-
-        // Check whether the atom's decay state has changed and update the nucleon nodes if so.
-        if ( atomHasDecayed !== atom.hasDecayed ) {
-          this.updateNucleons();
-          atomHasDecayed = atom.hasDecayed;
-        }
-
-        // Move the particles around if enough time has passed since the last position update.
-        timeAccumulator += dt;
-        if ( timeAccumulator > 1 / UPDATE_FREQUENCY ) {
-          timeAccumulator = 0;
-          // [ ...this.protonNodes, ...this.neutronNodes ].forEach( node => {
-          //   node.center = this.getRandomNucleonOffsetVector();
-          // } );
-          // Update nucleon and alpha particle positions, but stagger which ones are updated each cycle to create a more
-          // dynamic effect.
-          const nucleons = [ ...this.protonNodes, ...this.neutronNodes ];
-          for ( let i = nucleonUpdateStartIndex; i < nucleons.length; i += CYCLES_FOR_FULL_UPDATE ) {
-            nucleons[ i ].center = this.getRandomNucleonOffsetVector();
-          }
-          nucleonUpdateStartIndex = ( nucleonUpdateStartIndex + 1 ) % CYCLES_FOR_FULL_UPDATE;
-          // this.alphaParticleNodes.forEach( node => {
-          //   node.center = this.getRandomAlphaParticleOffsetVector();
-          // } );
-          for ( let i = alphaParticleUpdateStartIndex; i < this.alphaParticleNodes.length; i += CYCLES_FOR_FULL_UPDATE ) {
-            this.alphaParticleNodes[ i ].center = this.getRandomAlphaParticleOffsetVector();
-          }
-          alphaParticleUpdateStartIndex = ( alphaParticleUpdateStartIndex + 1 ) % CYCLES_FOR_FULL_UPDATE;
-
-          // Adjust the layering to make the nodes nearer the center higher in the Z-order. This makes the nucleus look
-          // a bit more spherical.
-          const allParticleNodes = [ ...this.protonNodes, ...this.neutronNodes, ...this.alphaParticleNodes ];
-          allParticleNodes.forEach( node => {
-
-            // Use probability and some empirical math to make the inner particles more likely to appear in front of the
-            // outer particles.  This gives the nucleus and somewhat more spherical look.
-            const normalizedDistance = node.center.magnitude / this.nucleusRadius;
-            if ( Math.pow( normalizedDistance, 0.4 ) > dotRandom.nextDouble() ) {
-              node.moveToBack();
-            }
-          } );
-        }
-      }
+    // Add a listener to the atom's step emitter that implements the dynamic motion of the particles in the nucleus.
+    atom.steppedEmitter.addListener( dt => {
+      this.step( dt );
     } );
+  }
+
+  /**
+   * Advance the dynamic particle motion using real-time dt. The atom model emits a scaled dt, so rescale it here
+   * back to real time using the same speed constant that the model uses to slow time on the graph.
+   */
+  public step( dt: number ): void {
+
+    // Scale the dt back to real time using the same speed constant that the model uses to slow time on the graph, so
+    // that we can use "real" time values for the constants in this file.
+    const realDt = dt / NuclearDecayCommonConstants.NORMAL_SPEED_SCALE;
+
+    // Check whether the atom's decay state has changed and update the nucleon nodes if so.
+    if ( this.atomHasDecayed !== this.atom.hasDecayed ) {
+      this.updateNucleons();
+      this.atomHasDecayed = this.atom.hasDecayed;
+    }
+
+    // Move the particles around if enough time has passed since the last position update.
+    this.timeAccumulator += realDt;
+    if ( this.timeAccumulator > 1 / UPDATE_FREQUENCY ) {
+      this.timeAccumulator = 0;
+
+      // Update nucleon and alpha particle positions, but stagger which ones are updated each cycle to create a more
+      // dynamic effect.
+      const nucleons = [ ...this.protonNodes, ...this.neutronNodes ];
+      for ( let i = this.nucleonUpdateStartIndex; i < nucleons.length; i += CYCLES_FOR_FULL_UPDATE ) {
+        nucleons[ i ].center = this.getRandomNucleonOffsetVector();
+      }
+      this.nucleonUpdateStartIndex = ( this.nucleonUpdateStartIndex + 1 ) % CYCLES_FOR_FULL_UPDATE;
+      for ( let i = this.alphaParticleUpdateStartIndex; i < this.alphaParticleNodes.length; i += CYCLES_FOR_FULL_UPDATE ) {
+        this.alphaParticleNodes[ i ].center = this.getRandomAlphaParticleOffsetVector();
+      }
+      this.alphaParticleUpdateStartIndex = ( this.alphaParticleUpdateStartIndex + 1 ) % CYCLES_FOR_FULL_UPDATE;
+
+      // Adjust the layering to make the nodes nearer the center higher in the Z-order. This makes the nucleus look
+      // a bit more spherical.
+      const allParticleNodes = [ ...this.protonNodes, ...this.neutronNodes, ...this.alphaParticleNodes ];
+      allParticleNodes.forEach( node => {
+
+        // Use probability and some empirical math to make the inner particles more likely to appear in front of the
+        // outer particles.  This gives the nucleus a somewhat more spherical look.
+        const normalizedDistance = node.center.magnitude / this.nucleusRadius;
+        if ( Math.pow( normalizedDistance, 0.4 ) > dotRandom.nextDouble() ) {
+          node.moveToBack();
+        }
+      } );
+    }
   }
 
   /**

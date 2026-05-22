@@ -8,6 +8,7 @@
  * @author John Blanco (PhET Interactive Simulations)
  */
 
+import Emitter from '../../../../axon/js/Emitter.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import dotRandom from '../../../../dot/js/dotRandom.js';
 import Range from '../../../../dot/js/Range.js';
@@ -98,6 +99,12 @@ export default class NuclearDecayAtom {
   // seem a bit odd, but having things always around instead of dynamically created and destroyed works better for
   // phet-io.
   public readonly ejectedDecayParticles: EjectedDecayParticle[] = [];
+
+  // An emitter that view elements can use to listen for when step function is called and catch updates.  This fires
+  // at the end of the step function, so that all updates to the atom's state have already been made when this fires.
+  public readonly steppedEmitter: Emitter<[ number ]> = new Emitter<[ number ]>( {
+    parameters: [ { valueType: 'number' } ]
+  } );
 
   // Whether the angles at which ejected decay particles are restricted to a limited range.
   private readonly restrictEjectionAngles: boolean;
@@ -290,6 +297,8 @@ export default class NuclearDecayAtom {
         particle.step( dt );
       } );
     }
+
+    this.steppedEmitter.emit( dt );
   }
 
   /**
