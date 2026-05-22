@@ -36,7 +36,7 @@ type SelfOptions = EmptySelfOptions;
 
 export type EnergyDiagramAccordionBoxOptions = SelfOptions & NuclearDecayAccordionBoxOptions;
 
-const CONTENT_X_MARGIN = 50;
+const CONTENT_X_MARGIN = 10;
 const CONTENT_Y_MARGIN = 20;
 
 // Height of the graph region (y-axis length). Kept constant; width is derived from provided bounds.
@@ -73,8 +73,16 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     modelViewTransformProperty: TReadOnlyProperty<ModelViewTransform2>,
     providedOptions?: EnergyDiagramAccordionBoxOptions
   ) {
+
+    const titleNode = new Text( NuclearDecayCommonFluent.energyDiagramStringProperty, {
+      font: NuclearDecayCommonConstants.TITLE_BOLD_FONT,
+      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
+    } );
+
     const options = optionize<EnergyDiagramAccordionBoxOptions, SelfOptions, NuclearDecayAccordionBoxOptions>()( {
-      contentAlign: 'left',
+      titleNode: titleNode,
+      showTitleWhenExpanded: false,
+      contentAlign: 'center',
       contentVerticalAlign: 'top',
       contentXMargin: CONTENT_X_MARGIN,
       contentYMargin: CONTENT_Y_MARGIN,
@@ -89,8 +97,9 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
 
     const graphRightX = 600;
 
-    // Left edge inside which WELL_CENTER_X can sit without pushing the curve out of the graph region.
+    // Left edge inside which wellCenterX can sit without pushing the curve out of the graph region.
     const wellCenterMinX = WELL_HALF_WIDTH + POINTINESS_FACTOR;
+    const wellCenterMaxX = graphRightX - WELL_HALF_WIDTH - POINTINESS_FACTOR;
 
     // Y-axis: upward arrow
 
@@ -166,41 +175,6 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         } )
     } );
 
-    Multilink.multilink(
-      [ modelViewTransformProperty, model.potentialEnergyProperty ],
-      ( mvt, value ) => {
-
-        // Convert model x=0 into the content's local coordinate system: box.left + contentXMargin positions the
-        // content, and the leftmost drawn element (x-axis) starts at local -GRAPH_X_OFFSET, so local x=0 is
-        // (CONTENT_X_MARGIN + GRAPH_X_OFFSET) to the right of bounds.left. Clamp so the curve stays within graph.
-        const wellCenterMaxX = graphRightX - WELL_HALF_WIDTH - POINTINESS_FACTOR;
-        const wellCenterX = clamp(
-          mvt.modelToViewX( 0 ) - bounds.left - CONTENT_X_MARGIN - GRAPH_X_OFFSET,
-          wellCenterMinX, wellCenterMaxX
-        );
-
-        const peakY = ENERGY_PEAK_Y * value / model.potentialEnergyProperty.range.max + COULOMB_MIN_Y;
-
-        potentialEnergyGrabber.centerY = peakY;
-
-        potentialEnergyHeightIndicator.setLine( wellCenterX + WELL_HALF_WIDTH, peakY, potentialEnergyGrabber.x + 20, peakY );
-
-        potentialEnergyGraphCurve.shape = new Shape()
-          .moveTo( -GRAPH_X_OFFSET, COULOMB_MIN_Y )
-          .quadraticCurveTo(
-            wellCenterX - WELL_HALF_WIDTH - POINTINESS_FACTOR, CURVINESS_FACTOR * peakY,
-            wellCenterX - WELL_HALF_WIDTH, peakY
-          )
-          .lineTo( wellCenterX - WELL_HALF_WIDTH, WELL_BOTTOM_Y )
-          .lineTo( wellCenterX + WELL_HALF_WIDTH, WELL_BOTTOM_Y )
-          .lineTo( wellCenterX + WELL_HALF_WIDTH, peakY )
-          .quadraticCurveTo(
-            wellCenterX + WELL_HALF_WIDTH + POINTINESS_FACTOR, CURVINESS_FACTOR * peakY,
-            graphRightX, COULOMB_MIN_Y
-          );
-      }
-    );
-
     // Double-headed vertical arrow for dragging the initial energy level.
     // Only visible in custom isotope mode. Dragging up increases initialEnergyProperty.
     const initialEnergyGrabber = new EnergyGrabberNode( model.initialEnergyProperty, model, {
@@ -216,13 +190,6 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       visibleProperty: model.isPlayAreaEmptyProperty.derived( isEmpty => !isEmpty )
     } );
 
-    // Higher initial-energy value raises the line (screen-Y is inverted).
-    model.initialEnergyProperty.link( value => {
-      const height = value * ENERGY_PEAK_Y;
-      initialEnergyGraphLine.y = height;
-      initialEnergyGrabber.centerY = height;
-    } );
-
     const finalEnergyGraphLine = new Line( -GRAPH_X_OFFSET, FINAL_ENERGY_HEIGHT, graphRightX, FINAL_ENERGY_HEIGHT, {
       stroke: NuclearDecayCommonColors.finalEnergyProperty,
       lineWidth: 2,
@@ -233,59 +200,6 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     const energyIntersectionPointProperty = new Vector2Property( Vector2.ZERO, {
       tandem: Tandem.OPT_OUT
     } );
-
-    Multilink.multilink(
-      [ modelViewTransformProperty, model.potentialEnergyProperty, model.initialEnergyProperty ],
-      mvt => {
-
-        // Get the center of the well in local coordinates
-        const wellCenterMaxX = graphRightX - WELL_HALF_WIDTH - POINTINESS_FACTOR;
-        const wellCenterX = clamp(
-          mvt.modelToViewX( 0 ) - bounds.left - CONTENT_X_MARGIN - GRAPH_X_OFFSET,
-          wellCenterMinX, wellCenterMaxX
-        );
-
-        if ( potentialEnergyGraphCurve.shape ) {
-
-          // A ray that is positioned at the height of the initial energy and is directed horizontally at the
-          // potential energy curve. This is to use Shape's intersection algorithm.
-          const initialEnergyRay = new Ray2(
-            new Vector2( 0, initialEnergyGraphLine.y ),
-            new Vector2( 1, 0 )
-          );
-
-          // Multiple intersections are found due to the shape of the well. We only use the first one, leftmost.
-          const intersections = potentialEnergyGraphCurve.shape.intersection( initialEnergyRay );
-          if ( intersections.length !== 0 ) {
-            const point = intersections[ 0 ].point;
-            if ( point.y < INTERSECTION_THRESHOLD ) {
-
-              // Make sure the intersection is above the X axis, otherwise it could be intersecting the walls of the well
-              energyIntersectionPointProperty.value = new Vector2(
-                Math.abs( point.x - wellCenterX ), point.y );
-            }
-            else {
-
-              // Make the escape distance very huge
-              energyIntersectionPointProperty.value = new Vector2( MAX_ESCAPE_DISTANCE, 0 );
-            }
-          }
-          else {
-            // No intersection cases
-
-            if ( initialEnergyGraphLine.y < ENERGY_PEAK_Y ) {
-
-              // No intersection and energy above well. Dotted circle assumes the size of the well.
-              energyIntersectionPointProperty.value = new Vector2( WELL_HALF_WIDTH, 0 );
-            }
-            else {
-
-              // No intersection and energy is negative. Assume max escape distance
-              energyIntersectionPointProperty.value = new Vector2( MAX_ESCAPE_DISTANCE, 0 );
-            }
-          }
-        }
-      } );
 
     // Static accessible description, always visible when the accordion box is expanded.
     const staticDescriptionNode = new Node( {
@@ -406,5 +320,80 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     super( contentsNode, options );
 
     this.energyIntersectionPointProperty = energyIntersectionPointProperty;
+
+    const contentOriginX = this.x + contentsNode.x;
+
+    const wellCenterXProperty = modelViewTransformProperty.derived( mvt => {
+      return clamp( mvt.modelToViewX( 0 ) - contentOriginX, wellCenterMinX, wellCenterMaxX );
+    } );
+
+    // Multilink to update the energy shapes and find their intersection
+    Multilink.multilink(
+      [ wellCenterXProperty, model.potentialEnergyProperty, model.initialEnergyProperty ],
+      ( wellCenterX: number, potentialEnergy: number, initialEnergy: number ) => {
+
+        const peakY = ENERGY_PEAK_Y * potentialEnergy / model.potentialEnergyProperty.range.max + COULOMB_MIN_Y;
+
+        potentialEnergyGrabber.centerY = peakY;
+
+        potentialEnergyHeightIndicator.setLine( wellCenterX + WELL_HALF_WIDTH, peakY, potentialEnergyGrabber.x + 20, peakY );
+
+        potentialEnergyGraphCurve.shape = new Shape()
+          .moveTo( -GRAPH_X_OFFSET, COULOMB_MIN_Y )
+          .quadraticCurveTo(
+            wellCenterX - WELL_HALF_WIDTH - POINTINESS_FACTOR, CURVINESS_FACTOR * peakY,
+            wellCenterX - WELL_HALF_WIDTH, peakY
+          )
+          .lineTo( wellCenterX - WELL_HALF_WIDTH, WELL_BOTTOM_Y )
+          .lineTo( wellCenterX + WELL_HALF_WIDTH, WELL_BOTTOM_Y )
+          .lineTo( wellCenterX + WELL_HALF_WIDTH, peakY )
+          .quadraticCurveTo(
+            wellCenterX + WELL_HALF_WIDTH + POINTINESS_FACTOR, CURVINESS_FACTOR * peakY,
+            graphRightX, COULOMB_MIN_Y
+          );
+
+        // Higher initial-energy value raises the line (screen-Y is inverted).
+        const initialEnergyHeight = initialEnergy * ENERGY_PEAK_Y;
+        initialEnergyGraphLine.y = initialEnergyHeight;
+        initialEnergyGrabber.centerY = initialEnergyHeight;
+
+        // A ray at the height of the initial energy, directed horizontally into the potential energy curve.
+        const initialEnergyRay = new Ray2(
+          new Vector2( 0, initialEnergyHeight ),
+          new Vector2( 1, 0 )
+        );
+
+        // Multiple intersections found due to the well shape; only the first (leftmost) is used.
+        const intersections = potentialEnergyGraphCurve.shape.intersection( initialEnergyRay );
+        if ( intersections.length !== 0 ) {
+          const point = intersections[ 0 ].point;
+          if ( point.y < INTERSECTION_THRESHOLD ) {
+
+            // Make sure the intersection is above the X axis, otherwise it could be inside the well walls
+            energyIntersectionPointProperty.value = new Vector2(
+              Math.abs( point.x - wellCenterX ), point.y );
+          }
+          else {
+
+            // Make the escape distance very huge
+            energyIntersectionPointProperty.value = new Vector2( MAX_ESCAPE_DISTANCE, 0 );
+          }
+        }
+        else {
+          // No intersection cases
+
+          if ( initialEnergyGraphLine.y < ENERGY_PEAK_Y ) {
+
+            // No intersection and energy above well — dotted circle assumes the size of the well.
+            energyIntersectionPointProperty.value = new Vector2( WELL_HALF_WIDTH, 0 );
+          }
+          else {
+
+            // No intersection and energy is negative — assume max escape distance
+            energyIntersectionPointProperty.value = new Vector2( MAX_ESCAPE_DISTANCE, 0 );
+          }
+        }
+      }
+    );
   }
 }

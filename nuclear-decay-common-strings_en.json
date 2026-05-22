@@ -44,6 +44,9 @@
   "energy": {
     "value": "Energy"
   },
+  "energyDiagram": {
+    "value": "Energy Diagram"
+  },
   "custom": {
     "value": "Custom"
   },

@@ -5,7 +5,7 @@
 /* eslint-disable */
 /* @formatter:off */
 
-import { TReadOnlyProperty } from '../../axon/js/TReadOnlyProperty.js';
+import {TReadOnlyProperty} from '../../axon/js/TReadOnlyProperty.js';
 import FluentLibrary from '../../chipper/js/browser-and-node/FluentLibrary.js';
 import FluentConstant from '../../chipper/js/browser/FluentConstant.js';
 import FluentContainer from '../../chipper/js/browser/FluentContainer.js';
@@ -42,6 +42,7 @@ addToMapIfDefined( 'potentialEnergy', 'potentialEnergyStringProperty' );
 addToMapIfDefined( 'finalEnergy', 'finalEnergyStringProperty' );
 addToMapIfDefined( 'distance', 'distanceStringProperty' );
 addToMapIfDefined( 'energy', 'energyStringProperty' );
+addToMapIfDefined( 'energyDiagram', 'energyDiagramStringProperty' );
 addToMapIfDefined( 'custom', 'customStringProperty' );
 addToMapIfDefined( 'decayTime', 'decayTimeStringProperty' );
 addToMapIfDefined( 'proton', 'protonStringProperty' );
@@ -141,6 +142,7 @@ const NuclearDecayCommonFluent = {
   finalEnergyStringProperty: _.get( NuclearDecayCommonStrings, 'finalEnergyStringProperty' ),
   distanceStringProperty: _.get( NuclearDecayCommonStrings, 'distanceStringProperty' ),
   energyStringProperty: _.get( NuclearDecayCommonStrings, 'energyStringProperty' ),
+  energyDiagramStringProperty: _.get( NuclearDecayCommonStrings, 'energyDiagramStringProperty' ),
   customStringProperty: _.get( NuclearDecayCommonStrings, 'customStringProperty' ),
   decayTimeStringProperty: _.get( NuclearDecayCommonStrings, 'decayTimeStringProperty' ),
   protonStringProperty: _.get( NuclearDecayCommonStrings, 'protonStringProperty' ),
