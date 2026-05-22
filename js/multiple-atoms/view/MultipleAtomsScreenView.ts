@@ -81,7 +81,7 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
           } )
         ]
       } ), {
-      tandem: providedOptions.tandem.createTandem( 'electronCloudCheckbox' )
+        tandem: providedOptions.tandem.createTandem( 'electronCloudCheckbox' )
       }
     );
     const stopwatchCheckbox = new Checkbox( visibleProperties.stopwatchVisibleProperty,
@@ -172,8 +172,9 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
       visibleProperty: visibleProperties.stopwatchVisibleProperty,
       numberDisplayOptions: {
         numberFormatter: StopwatchNode.createRichTextNumberFormatter( {
-            showAsMinutesAndSeconds: false,
-            numberOfDecimalPlaces: 2
+          units: 's',
+          showAsMinutesAndSeconds: false,
+          numberOfDecimalPlaces: 2
         } )
       },
       visiblePropertyOptions: {
