@@ -82,6 +82,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     const options = optionize<EnergyDiagramAccordionBoxOptions, SelfOptions, NuclearDecayAccordionBoxOptions>()( {
       titleNode: titleNode,
       showTitleWhenExpanded: false,
+      titleBarExpandCollapse: false,
       contentAlign: 'center',
       contentVerticalAlign: 'top',
       contentXMargin: CONTENT_X_MARGIN,
