@@ -46,8 +46,8 @@ export type NuclearDecayAtomStateObject = {
 };
 
 // Isotopes that could be selected in the alpha decay or beta decay sim
-export const SelectableIsotopesValues = [ 'polonium-211', 'hydrogen-3', 'carbon-14', 'custom' ] as const;
-export type SelectableIsotopes = ( typeof SelectableIsotopesValues )[ number ];
+export const StartingIsotopesValues = [ 'polonium-211', 'hydrogen-3', 'carbon-14', 'custom' ] as const;
+export type StartingIsotopes = ( typeof StartingIsotopesValues )[ number ];
 
 // Decay products that could be produced in the alpha decay or beta decay sim.
 // These are not selectable by the user, but are used for internal logic and for display purposes.
@@ -55,7 +55,7 @@ export const DecayProductValues = [ 'lead-207', 'nitrogen-14', 'helium-3', 'cust
 export type DecayProducts = ( typeof DecayProductValues )[ number ];
 
 // All isotopes that are valid in the sim, whether selectable or decay products.
-export const ValidIsotopeValues = [ ...SelectableIsotopesValues, ...DecayProductValues ] as const;
+export const ValidIsotopeValues = [ ...StartingIsotopesValues, ...DecayProductValues ] as const;
 export type ValidIsotopes = ( typeof ValidIsotopeValues )[ number ];
 
 const ISOTOPE_TO_ATOM_CONFIG = new Map<ValidIsotopes, AtomConfig>( [
@@ -311,7 +311,7 @@ export default class NuclearDecayAtom {
    * e.g. Polonium-211
    */
   public static createDynamicIsotopeNameAndMassStringProperty(
-    selectedIsotopeProperty: TReadOnlyProperty<SelectableIsotopes>,
+    selectedIsotopeProperty: TReadOnlyProperty<StartingIsotopes>,
     customStringProperty: TReadOnlyProperty<string>
   ): TReadOnlyProperty<string> {
     const currentStringProperty = new Property<TReadOnlyProperty<string>>( customStringProperty );
@@ -342,7 +342,7 @@ export default class NuclearDecayAtom {
    * modeled in this simulation. It may not be generally true for all isotopes in physical reality, since different
    * decay paths are sometimes possible.
    */
-  public static getDecayProduct( isotope: SelectableIsotopes ): ValidIsotopes {
+  public static getDecayProduct( isotope: StartingIsotopes ): ValidIsotopes {
     let decayProduct: ValidIsotopes | null = null;
     if ( isotope === 'custom' ) {
       decayProduct = 'custom-decayed';

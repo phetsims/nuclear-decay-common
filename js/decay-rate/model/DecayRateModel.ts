@@ -15,7 +15,7 @@ import { DecayType } from '../../../../shred/js/AtomInfoUtils.js';
 import ArrayIO from '../../../../tandem/js/types/ArrayIO.js';
 import IOType from '../../../../tandem/js/types/IOType.js';
 import NumberIO from '../../../../tandem/js/types/NumberIO.js';
-import { SelectableIsotopes } from '../../common/model/NuclearDecayAtom.js';
+import { StartingIsotopes } from '../../common/model/NuclearDecayAtom.js';
 import NuclearDecayModel, { NuclearDecayModelOptions } from '../../common/model/NuclearDecayModel.js';
 
 type SelfOptions = EmptySelfOptions;
@@ -32,7 +32,7 @@ export default class DecayRateModel extends NuclearDecayModel {
   public readonly decayedDataPoints: Vector2[] = [];
 
   public constructor(
-    selectableIsotopes: SelectableIsotopes[],
+    StartingIsotopes: StartingIsotopes[],
     decayType: DecayType,
     providedOptions?: DecayRateModelOptions
   ) {
@@ -42,7 +42,7 @@ export default class DecayRateModel extends NuclearDecayModel {
       phetioType: DecayRateModel.DecayRateModelIO
     }, providedOptions );
 
-    super( selectableIsotopes, decayType, options );
+    super( StartingIsotopes, decayType, options );
 
     this.elapsedHalfLivesProperty = new DerivedProperty(
       [ this.timeProperty, this.halfLifeProperty ],

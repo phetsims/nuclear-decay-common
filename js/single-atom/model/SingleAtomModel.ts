@@ -11,7 +11,7 @@ import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import Range from '../../../../dot/js/Range.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import { DecayType } from '../../../../shred/js/AtomInfoUtils.js';
-import NuclearDecayAtom, { SelectableIsotopes } from '../../common/model/NuclearDecayAtom.js';
+import NuclearDecayAtom, { StartingIsotopes } from '../../common/model/NuclearDecayAtom.js';
 import NuclearDecayModel, { NuclearDecayModelOptions } from '../../common/model/NuclearDecayModel.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 
@@ -41,7 +41,7 @@ export default class SingleAtomModel extends NuclearDecayModel {
   public mappingInProgress = false;
 
   public constructor(
-    selectableIsotopes: SelectableIsotopes[],
+    StartingIsotopes: StartingIsotopes[],
     decayType: DecayType,
     providedOptions?: SingleAtomDecayModelOptions
   ) {
@@ -49,7 +49,7 @@ export default class SingleAtomModel extends NuclearDecayModel {
       maxNumberOfAtoms: 1
     }, providedOptions );
 
-    super( selectableIsotopes, decayType, options );
+    super( StartingIsotopes, decayType, options );
 
     this.hasDecayOccurredProperty = new BooleanProperty( false, {
       tandem: options.tandem.createTandem( 'hasDecayOccurredProperty' ),

@@ -36,7 +36,7 @@ import NumberIO from '../../../../tandem/js/types/NumberIO.js';
 import StringUnionIO from '../../../../tandem/js/types/StringUnionIO.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import HistogramData from './HistogramData.js';
-import NuclearDecayAtom, { SelectableIsotopes, SelectableIsotopesValues } from './NuclearDecayAtom.js';
+import NuclearDecayAtom, { StartingIsotopes, StartingIsotopesValues } from './NuclearDecayAtom.js';
 
 // Bounds where the atoms can be placed, in model coordinates.  Decay products are allowed to move outside of these
 // bounds.
@@ -59,11 +59,11 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   public readonly isSingleAtomMode: boolean;
 
   // List of the selectable isotopes in the sim. Provided by subclasses
-  public readonly selectableIsotopes: SelectableIsotopes[];
+  public readonly StartingIsotopes: StartingIsotopes[];
 
   // What isotope is currently selected in the sim.
   // 'polonium-211' vs 'custom' in Alpha Decay, or 'carbon-14' vs 'hydrogen-3' vs 'custom' in Beta Decay.
-  public readonly selectedIsotopeProperty: Property<SelectableIsotopes>;
+  public readonly selectedIsotopeProperty: Property<StartingIsotopes>;
 
   // The user-editable half-life for custom isotopes, in normalized value [0,1] to be mapped according to other factors.
   public readonly customHalfLifeProperty: NumberProperty;
@@ -143,7 +143,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   public readonly stopwatch: Stopwatch | null;
 
   protected constructor(
-    selectableIsotopes: SelectableIsotopes[],
+    StartingIsotopes: StartingIsotopes[],
     decayType: DecayType,
     providedOptions?: NuclearDecayModelOptions
   ) {
@@ -162,12 +162,12 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
     this.isSingleAtomMode = options.maxNumberOfAtoms === 1;
 
-    this.selectableIsotopes = selectableIsotopes;
+    this.StartingIsotopes = StartingIsotopes;
 
-    this.selectedIsotopeProperty = new Property<SelectableIsotopes>( 'custom', {
+    this.selectedIsotopeProperty = new Property<StartingIsotopes>( 'custom', {
       tandem: options.tandem.createTandem( 'selectedIsotopeProperty' ),
-      phetioValueType: StringUnionIO( SelectableIsotopesValues ),
-      validValues: SelectableIsotopesValues,
+      phetioValueType: StringUnionIO( StartingIsotopesValues ),
+      validValues: StartingIsotopesValues,
       phetioFeatured: true
     } );
 
@@ -460,7 +460,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     }
   }
 
-  public getHalfLife( isotope: SelectableIsotopes ): number {
+  public getHalfLife( isotope: StartingIsotopes ): number {
     if ( isotope === 'custom' ) {
       return this.getCustomHalfLife();
     }
@@ -507,7 +507,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     }
   }
 
-  private setNewIsotope( newIsotope: SelectableIsotopes ): void {
+  private setNewIsotope( newIsotope: StartingIsotopes ): void {
     this.clearAtomLists();
     this.resetTimes();
 

@@ -19,7 +19,7 @@ import TextPushButton from '../../../../sun/js/buttons/TextPushButton.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
-import NuclearDecayAtom, { SelectableIsotopes } from '../model/NuclearDecayAtom.js';
+import NuclearDecayAtom, { StartingIsotopes } from '../model/NuclearDecayAtom.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
 
 type SelfOptions = {
@@ -31,7 +31,7 @@ export type AddAtomsControlPanelOptions = SelfOptions & WithRequired<NuclearDeca
 export default class AddAtomsControlPanel extends NuclearDecayPanel {
   public constructor(
     atomsToAddProperty: NumberProperty,
-    selectedIsotopeProperty: TReadOnlyProperty<SelectableIsotopes>,
+    selectedIsotopeProperty: TReadOnlyProperty<StartingIsotopes>,
     addAtomsCallback: ( n: number ) => void,
     providedOptions?: AddAtomsControlPanelOptions
   ) {

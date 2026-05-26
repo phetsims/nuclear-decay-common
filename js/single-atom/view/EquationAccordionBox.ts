@@ -12,7 +12,7 @@ import StringUtils from '../../../../phetcommon/js/util/StringUtils.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
 import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
-import NuclearDecayAtom, { SelectableIsotopes } from '../../common/model/NuclearDecayAtom.js';
+import NuclearDecayAtom, { StartingIsotopes } from '../../common/model/NuclearDecayAtom.js';
 import NuclearDecayAccordionBox, { NuclearDecayAccordionBoxOptions } from '../../common/view/NuclearDecayAccordionBox.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
@@ -25,7 +25,7 @@ export type EquationAccordionBoxOptions = SelfOptions & NuclearDecayAccordionBox
 export default class EquationAccordionBox extends NuclearDecayAccordionBox {
 
   public constructor(
-    isotopeProperty: TReadOnlyProperty<SelectableIsotopes>,
+    isotopeProperty: TReadOnlyProperty<StartingIsotopes>,
     isPlayAreaEmptyProperty: TReadOnlyProperty<boolean>,
     hasDecayOcurredProperty: TReadOnlyProperty<boolean>,
     isCustomProperty: TReadOnlyProperty<boolean>,

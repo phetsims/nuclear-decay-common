@@ -16,7 +16,7 @@ Shared code library for **Alpha Decay**, **Beta Decay**, and **Radioactive Datin
 
 ### Key Model Properties
 
-- **`selectedIsotopeProperty`** — `Property<SelectableIsotopes>` where `SelectableIsotopes = 'custom' | 'polonium-211' | 'hydrogen-3' | 'carbon-14'`. Sim subclasses may restrict which values are available.
+- **`selectedIsotopeProperty`** — `Property<StartingIsotopes>` where `StartingIsotopes = 'custom' | 'polonium-211' | 'hydrogen-3' | 'carbon-14'`. Sim subclasses may restrict which values are available.
 - **`selectedHalfLifeProperty`** — `NumberProperty`, auto-set from the selected isotope's known half-life. When `'custom'` is selected, this can be freely changed by the user (e.g., via a slider).
 - **`timeProperty`** — Elapsed simulation time.
 - **`timeSpeedProperty`** — `EnumerationProperty<TimeSpeed>` for playback speed.

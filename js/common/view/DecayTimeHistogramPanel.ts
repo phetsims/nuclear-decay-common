@@ -35,7 +35,7 @@ import Tandem from '../../../../tandem/js/Tandem.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
-import NuclearDecayAtom, { SelectableIsotopes } from '../model/NuclearDecayAtom.js';
+import NuclearDecayAtom, { StartingIsotopes } from '../model/NuclearDecayAtom.js';
 import NuclearDecayModel, { Timescale } from '../model/NuclearDecayModel.js';
 import { DecayPieChartNode } from './DecayPieChartNode.js';
 import DecayTimeHistogramCanvasNode from './DecayTimeHistogramCanvasNode.js';
@@ -117,11 +117,11 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
     // Isotope symbols
 
-    const selectedIsotopeSymbolProperty = model.selectedIsotopeProperty.derived( ( isotope: SelectableIsotopes ) => {
+    const selectedIsotopeSymbolProperty = model.selectedIsotopeProperty.derived( ( isotope: StartingIsotopes ) => {
       return NuclearDecayAtom.getIsotopeMassAndSymbolString( isotope, 'A' );
     } );
 
-    const decayProductSymbolProperty = model.selectedIsotopeProperty.derived( ( isotope: SelectableIsotopes ) => {
+    const decayProductSymbolProperty = model.selectedIsotopeProperty.derived( ( isotope: StartingIsotopes ) => {
       const decayProduct = NuclearDecayAtom.getDecayProduct( isotope );
       return NuclearDecayAtom.getIsotopeMassAndSymbolString( decayProduct, 'B' );
     } );
