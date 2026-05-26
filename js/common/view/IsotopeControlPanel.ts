@@ -18,7 +18,8 @@ import type { AquaRadioButtonGroupItem } from '../../../../sun/js/AquaRadioButto
 import VerticalAquaRadioButtonGroup from '../../../../sun/js/VerticalAquaRadioButtonGroup.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
-import NuclearDecayModel, { ValidIsotopes } from '../model/NuclearDecayModel.js';
+import NuclearDecayAtom, { ValidIsotopes } from '../model/NuclearDecayAtom.js';
+import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
 
 type SelfOptions = {
@@ -45,7 +46,7 @@ export default class IsotopeControlPanel extends NuclearDecayPanel {
     // Creating first the radio buttons for the normal isotopes and leaving custom for last
     const nonCustomIsotopes = model.selectableIsotopes.filter( isotope => isotope !== 'custom' );
     const radioButtonItems: AquaRadioButtonGroupItem<ValidIsotopes>[] = nonCustomIsotopes.map( isotope => {
-      const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
+      const atomConfig = NuclearDecayAtom.getIsotopeAtomConfig( isotope );
       return {
         value: isotope,
         tandemName: AtomNameUtils.getNonLocalizedName( atomConfig.protonCount ) + 'RadioButton',

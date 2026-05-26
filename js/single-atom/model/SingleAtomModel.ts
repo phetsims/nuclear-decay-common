@@ -11,7 +11,8 @@ import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import Range from '../../../../dot/js/Range.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import { DecayType } from '../../../../shred/js/AtomInfoUtils.js';
-import NuclearDecayModel, { NuclearDecayModelOptions, SelectableIsotopes } from '../../common/model/NuclearDecayModel.js';
+import NuclearDecayAtom, { SelectableIsotopes } from '../../common/model/NuclearDecayAtom.js';
+import NuclearDecayModel, { NuclearDecayModelOptions } from '../../common/model/NuclearDecayModel.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 
 type SelfOptions = EmptySelfOptions;
@@ -85,9 +86,9 @@ export default class SingleAtomModel extends NuclearDecayModel {
         this.selectedIsotopeProperty,
         this.hasDecayOccurredProperty
       ], ( isotope, hasDecayOccurred ) => {
-        const decayProduct = NuclearDecayModel.getDecayProduct( isotope );
-        const isotopeAtomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
-        const decayAtomConfig = NuclearDecayModel.getIsotopeAtomConfig( decayProduct );
+        const decayProduct = NuclearDecayAtom.getDecayProduct( isotope );
+        const isotopeAtomConfig = NuclearDecayAtom.getIsotopeAtomConfig( isotope );
+        const decayAtomConfig = NuclearDecayAtom.getIsotopeAtomConfig( decayProduct );
         this.protonCountProperty.value = hasDecayOccurred ? decayAtomConfig.protonCount : isotopeAtomConfig.protonCount;
         this.neutronCountProperty.value = hasDecayOccurred ? decayAtomConfig.neutronCount : isotopeAtomConfig.neutronCount;
       }

@@ -27,7 +27,7 @@ import Text from '../../../../scenery/js/nodes/Text.js';
 import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
 import Checkbox from '../../../../sun/js/Checkbox.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
-import NuclearDecayModel from '../../common/model/NuclearDecayModel.js';
+import NuclearDecayAtom from '../../common/model/NuclearDecayAtom.js';
 import { DecayPieChartNode } from '../../common/view/DecayPieChartNode.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from '../../common/view/NuclearDecayPanel.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
@@ -74,10 +74,12 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     }, providedOptions );
 
     const undecayedIsotope = model.selectedIsotopeProperty.value;
-    const decayedIsotope = NuclearDecayModel.getDecayProduct( undecayedIsotope );
+    const decayedIsotope = NuclearDecayAtom.getDecayProduct( undecayedIsotope );
 
-    const undecayedAtomConfig = NuclearDecayModel.getIsotopeAtomConfig( undecayedIsotope );
-    const decayedAtomConfig = NuclearDecayModel.getIsotopeAtomConfig( decayedIsotope );
+
+    // TODO: We can simplify getting the atom config for mass and symbol, just get it from the isotope directly! https://github.com/phetsims/shred/issues/47
+    const undecayedAtomConfig = NuclearDecayAtom.getIsotopeAtomConfig( undecayedIsotope );
+    const decayedAtomConfig = NuclearDecayAtom.getIsotopeAtomConfig( decayedIsotope );
 
     // Get isotope display strings
     const undecayedSymbol = AtomNameUtils.getMassAndSymbol( undecayedAtomConfig.protonCount, undecayedAtomConfig.neutronCount );

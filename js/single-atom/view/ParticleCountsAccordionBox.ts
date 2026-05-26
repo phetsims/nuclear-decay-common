@@ -15,7 +15,7 @@ import Node from '../../../../scenery/js/nodes/Node.js';
 import RichText from '../../../../scenery/js/nodes/RichText.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
 import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
-import NuclearDecayModel from '../../common/model/NuclearDecayModel.js';
+import NuclearDecayAtom from '../../common/model/NuclearDecayAtom.js';
 import NuclearDecayAccordionBox, { NuclearDecayAccordionBoxOptions } from '../../common/view/NuclearDecayAccordionBox.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
@@ -60,8 +60,8 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
           else if ( selectedIsotope === 'custom' ) {
             return !hasDecayOccurred ? isotopeA : isotopeB;
           }
-          const isotope = hasDecayOccurred ? NuclearDecayModel.getDecayProduct( selectedIsotope ) : selectedIsotope;
-          const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
+          const isotope = hasDecayOccurred ? NuclearDecayAtom.getDecayProduct( selectedIsotope ) : selectedIsotope;
+          const atomConfig = NuclearDecayAtom.getIsotopeAtomConfig( isotope );
           return StringUtils.fillIn( pattern, {
             nameAndNumber: AtomNameUtils.getName( atomConfig.protonCount ),
             numberSymbol: AtomNameUtils.getMassAndSymbol( atomConfig.protonCount, atomConfig.neutronCount )
@@ -97,8 +97,8 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
           // p or p minus 2
           return StringUtils.fillIn( pattern, { protons: !hasDecayOccurred ? 'p' : 'p\u22122' } );
         }
-        const isotope = hasDecayOccurred ? NuclearDecayModel.getDecayProduct( selectedIsotope ) : selectedIsotope;
-        const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
+        const isotope = hasDecayOccurred ? NuclearDecayAtom.getDecayProduct( selectedIsotope ) : selectedIsotope;
+        const atomConfig = NuclearDecayAtom.getIsotopeAtomConfig( isotope );
         return StringUtils.fillIn( pattern, { protons: atomConfig.protonCount } );
       } );
 
@@ -116,8 +116,8 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
           // n or n minus 2
           return StringUtils.fillIn( pattern, { neutrons: !hasDecayOccurred ? 'n' : 'n\u22122' } );
         }
-        const isotope = hasDecayOccurred ? NuclearDecayModel.getDecayProduct( selectedIsotope ) : selectedIsotope;
-        const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
+        const isotope = hasDecayOccurred ? NuclearDecayAtom.getDecayProduct( selectedIsotope ) : selectedIsotope;
+        const atomConfig = NuclearDecayAtom.getIsotopeAtomConfig( isotope );
         return StringUtils.fillIn( pattern, { neutrons: atomConfig.neutronCount } );
       } );
 
@@ -141,8 +141,8 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
         if ( isPlayAreaEmpty ) {
           return noDataString;
         }
-        const isotope = hasDecayOccurred ? NuclearDecayModel.getDecayProduct( selectedIsotope ) : selectedIsotope;
-        const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
+        const isotope = hasDecayOccurred ? NuclearDecayAtom.getDecayProduct( selectedIsotope ) : selectedIsotope;
+        const atomConfig = NuclearDecayAtom.getIsotopeAtomConfig( isotope );
         const isotopeName = selectedIsotope === 'custom'
           ? ( hasDecayOccurred ? isotopeBName : isotopeAName )
           : AtomNameUtils.getNameAndMass( atomConfig.protonCount, atomConfig.neutronCount ).value;

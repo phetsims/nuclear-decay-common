@@ -8,14 +8,18 @@
  * @author John Blanco (PhET Interactive Simulations)
  */
 
+import DynamicProperty from '../../../../axon/js/DynamicProperty.js';
 import Emitter from '../../../../axon/js/Emitter.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
+import Property from '../../../../axon/js/Property.js';
+import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import dotRandom from '../../../../dot/js/dotRandom.js';
 import Range from '../../../../dot/js/Range.js';
 import Vector2, { Vector2StateObject } from '../../../../dot/js/Vector2.js';
 import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 import AtomInfoUtils, { DecayType, decayTypeValues } from '../../../../shred/js/AtomInfoUtils.js';
+import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
 import AtomConfig, { AtomConfigStateObject } from '../../../../shred/js/model/AtomConfig.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
 import ArrayIO from '../../../../tandem/js/types/ArrayIO.js';
@@ -40,6 +44,31 @@ export type NuclearDecayAtomStateObject = {
   position: Vector2StateObject;
   ejectParticlesOnDecay: boolean;
 };
+
+// Isotopes that could be selected in the alpha decay or beta decay sim
+export const SelectableIsotopesValues = [ 'polonium-211', 'hydrogen-3', 'carbon-14', 'custom' ] as const;
+export type SelectableIsotopes = ( typeof SelectableIsotopesValues )[ number ];
+
+// Decay products that could be produced in the alpha decay or beta decay sim.
+// These are not selectable by the user, but are used for internal logic and for display purposes.
+export const DecayProductValues = [ 'lead-207', 'nitrogen-14', 'helium-3', 'custom-decayed' ];
+export type DecayProducts = ( typeof DecayProductValues )[ number ];
+
+// All isotopes that are valid in the sim, whether selectable or decay products.
+export const ValidIsotopeValues = [ ...SelectableIsotopesValues, ...DecayProductValues ] as const;
+export type ValidIsotopes = ( typeof ValidIsotopeValues )[ number ];
+
+const ISOTOPE_TO_ATOM_CONFIG = new Map<ValidIsotopes, AtomConfig>( [
+  [ 'polonium-211', NuclearDecayCommonConstants.POLONIUM_211 ],
+  [ 'lead-207', NuclearDecayCommonConstants.LEAD_207 ],
+  [ 'carbon-14', NuclearDecayCommonConstants.CARBON_14 ],
+  [ 'nitrogen-14', NuclearDecayCommonConstants.NITROGEN_14 ],
+  [ 'hydrogen-3', NuclearDecayCommonConstants.HYDROGEN_3 ],
+  [ 'helium-3', NuclearDecayCommonConstants.HELIUM_3 ],
+  [ 'helium-2', NuclearDecayCommonConstants.ALPHA_PARTICLE ],
+  [ 'custom', NuclearDecayCommonConstants.CUSTOM_UNDECAYED ],
+  [ 'custom-decayed', NuclearDecayCommonConstants.CUSTOM_DECAYED ]
+] );
 
 type SelfOptions = {
 
@@ -265,6 +294,72 @@ export default class NuclearDecayAtom {
       'halfLife can only be set directly on custom atoms' );
     this._halfLife = value;
   }
+
+
+  /**
+   * Get the atom config of an arbitrary isotope
+   */
+  public static getIsotopeAtomConfig( isotope: ValidIsotopes ): AtomConfig {
+    affirm( ISOTOPE_TO_ATOM_CONFIG.has( isotope ), `No AtomConfig found for selected isotope: ${isotope}` );
+    return ISOTOPE_TO_ATOM_CONFIG.get( isotope )!;
+  }
+
+  /**
+   * Creates a reactive string property that tracks the name-and-mass of the currently selected isotope.
+   * Callers pass a customStringProperty for the 'custom' case so this method stays free of i18n imports.
+   * Similar to AtomNameUtils.createDynamicNameProperty but with name and mass.
+   * e.g. Polonium-211
+   */
+  public static createDynamicIsotopeNameAndMassStringProperty(
+    selectedIsotopeProperty: TReadOnlyProperty<SelectableIsotopes>,
+    customStringProperty: TReadOnlyProperty<string>
+  ): TReadOnlyProperty<string> {
+    const currentStringProperty = new Property<TReadOnlyProperty<string>>( customStringProperty );
+    const dynamicNameProperty = new DynamicProperty<string, string, TReadOnlyProperty<string>>( currentStringProperty );
+    selectedIsotopeProperty.link( isotope => {
+      if ( isotope === 'custom' ) {
+        currentStringProperty.value = customStringProperty;
+      }
+      else {
+        const atomConfig = NuclearDecayAtom.getIsotopeAtomConfig( isotope );
+        currentStringProperty.value = AtomNameUtils.getNameAndMass( atomConfig.protonCount, atomConfig.neutronCount );
+      }
+    } );
+    return dynamicNameProperty;
+  }
+
+  /**
+   * Get a string with the mass and symbol of an isotope (211-Pb) for example, or a custom string if 'custom' is selected.
+   */
+  public static getIsotopeMassAndSymbolString( isotope: ValidIsotopes, customAnswer = '' ): string {
+    if ( isotope === 'custom' || isotope === 'custom-decayed' ) { return customAnswer; }
+    const atomConfig = NuclearDecayAtom.getIsotopeAtomConfig( isotope );
+    return AtomNameUtils.getMassAndSymbol( atomConfig.protonCount, atomConfig.neutronCount );
+  }
+
+  /**
+   * Get the decay product for the provided isotope. The provided product is a single isotope, and is the decay that is
+   * modeled in this simulation. It may not be generally true for all isotopes in physical reality, since different
+   * decay paths are sometimes possible.
+   */
+  public static getDecayProduct( isotope: SelectableIsotopes ): ValidIsotopes {
+    let decayProduct: ValidIsotopes | null = null;
+    if ( isotope === 'custom' ) {
+      decayProduct = 'custom-decayed';
+    }
+    else if ( isotope === 'polonium-211' ) {
+      decayProduct = 'lead-207';
+    }
+    else if ( isotope === 'hydrogen-3' ) {
+      decayProduct = 'helium-3';
+    }
+    else if ( isotope === 'carbon-14' ) {
+      decayProduct = 'nitrogen-14';
+    }
+    affirm( decayProduct !== null, 'Unhandled isotope type' );
+    return decayProduct;
+  }
+
 
   /**
    * Step the atom forward in time.  This step function supports a separate, optional parameter for decay time so that

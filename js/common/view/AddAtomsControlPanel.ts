@@ -19,7 +19,7 @@ import TextPushButton from '../../../../sun/js/buttons/TextPushButton.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
-import NuclearDecayModel, { SelectableIsotopes } from '../model/NuclearDecayModel.js';
+import NuclearDecayAtom, { SelectableIsotopes } from '../model/NuclearDecayAtom.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
 
 type SelfOptions = {
@@ -39,7 +39,7 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
       stepSize: 10
     }, providedOptions );
 
-    const isotopeDynamicNameProperty = NuclearDecayModel.createDynamicIsotopeNameAndMassStringProperty(
+    const isotopeDynamicNameProperty = NuclearDecayAtom.createDynamicIsotopeNameAndMassStringProperty(
       selectedIsotopeProperty,
       NuclearDecayCommonFluent.customStringProperty
     );

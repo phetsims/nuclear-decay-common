@@ -9,7 +9,6 @@
 
 import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
 import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
-import DynamicProperty from '../../../../axon/js/DynamicProperty.js';
 import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import Property from '../../../../axon/js/Property.js';
@@ -27,7 +26,6 @@ import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
 import Stopwatch from '../../../../scenery-phet/js/Stopwatch.js';
 import TimeSpeed from '../../../../scenery-phet/js/TimeSpeed.js';
 import AtomInfoUtils, { DecayType } from '../../../../shred/js/AtomInfoUtils.js';
-import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
 import AtomConfig from '../../../../shred/js/model/AtomConfig.js';
 import PhetioObject, { PhetioObjectOptions } from '../../../../tandem/js/PhetioObject.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
@@ -38,32 +36,7 @@ import NumberIO from '../../../../tandem/js/types/NumberIO.js';
 import StringUnionIO from '../../../../tandem/js/types/StringUnionIO.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import HistogramData from './HistogramData.js';
-import NuclearDecayAtom from './NuclearDecayAtom.js';
-
-// Isotopes that could be selected in the alpha decay or beta decay sim
-export const SelectableIsotopesValues = [ 'polonium-211', 'hydrogen-3', 'carbon-14', 'custom' ] as const;
-export type SelectableIsotopes = ( typeof SelectableIsotopesValues )[ number ];
-
-// Decay products that could be produced in the alpha decay or beta decay sim.
-// These are not selectable by the user, but are used for internal logic and for display purposes.
-export const DecayProductValues = [ 'lead-207', 'nitrogen-14', 'helium-3', 'custom-decayed' ];
-export type DecayProducts = ( typeof DecayProductValues )[ number ];
-
-// All isotopes that are valid in the sim, whether selectable or decay products.
-export const ValidIsotopeValues = [ ...SelectableIsotopesValues, ...DecayProductValues ] as const;
-export type ValidIsotopes = ( typeof ValidIsotopeValues )[ number ];
-
-const ISOTOPE_TO_ATOM_CONFIG = new Map<ValidIsotopes, AtomConfig>( [
-  [ 'polonium-211', NuclearDecayCommonConstants.POLONIUM_211 ],
-  [ 'lead-207', NuclearDecayCommonConstants.LEAD_207 ],
-  [ 'carbon-14', NuclearDecayCommonConstants.CARBON_14 ],
-  [ 'nitrogen-14', NuclearDecayCommonConstants.NITROGEN_14 ],
-  [ 'hydrogen-3', NuclearDecayCommonConstants.HYDROGEN_3 ],
-  [ 'helium-3', NuclearDecayCommonConstants.HELIUM_3 ],
-  [ 'helium-2', NuclearDecayCommonConstants.ALPHA_PARTICLE ],
-  [ 'custom', NuclearDecayCommonConstants.CUSTOM_UNDECAYED ],
-  [ 'custom-decayed', NuclearDecayCommonConstants.CUSTOM_DECAYED ]
-] );
+import NuclearDecayAtom, { SelectableIsotopes, SelectableIsotopesValues } from './NuclearDecayAtom.js';
 
 // Bounds where the atoms can be placed, in model coordinates.  Decay products are allowed to move outside of these
 // bounds.
@@ -221,7 +194,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
         if ( selectedIsotope === 'custom' ) {
           return this.expandNormalizedTime( customHalfLife, this.timescaleProperty.value === 'exponential' );
         }
-        const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( selectedIsotope );
+        const atomConfig = NuclearDecayAtom.getIsotopeAtomConfig( selectedIsotope );
         const halfLife = AtomInfoUtils.getNuclideHalfLife( atomConfig.protonCount, atomConfig.neutronCount );
         affirm( halfLife !== null, 'Should provide a valid isotope with a known half-life' );
         return halfLife;
@@ -240,7 +213,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     } );
 
     const selectedIsotope = this.selectedIsotopeProperty.value;
-    const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( selectedIsotope );
+    const atomConfig = NuclearDecayAtom.getIsotopeAtomConfig( selectedIsotope );
 
     // Prepopulate all the atoms
     _.times( this.maxNumberOfAtoms, () => {
@@ -468,71 +441,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   public getSelectedIsotopeAtomConfig(): AtomConfig {
     const selectedIsotope = this.selectedIsotopeProperty.value;
     affirm( selectedIsotope !== 'custom', 'Should not be called when custom is selected' );
-    return NuclearDecayModel.getIsotopeAtomConfig( selectedIsotope );
-  }
-
-  /**
-   * Get the atom config of an arbitrary isotope
-   */
-  public static getIsotopeAtomConfig( isotope: ValidIsotopes ): AtomConfig {
-    affirm( ISOTOPE_TO_ATOM_CONFIG.has( isotope ), `No AtomConfig found for selected isotope: ${isotope}` );
-    return ISOTOPE_TO_ATOM_CONFIG.get( isotope )!;
-  }
-
-  /**
-   * Creates a reactive string property that tracks the name-and-mass of the currently selected isotope.
-   * Callers pass a customStringProperty for the 'custom' case so this method stays free of i18n imports.
-   * Similar to AtomNameUtils.createDynamicNameProperty but with name and mass.
-   * e.g. Polonium-211
-   */
-  public static createDynamicIsotopeNameAndMassStringProperty(
-    selectedIsotopeProperty: TReadOnlyProperty<SelectableIsotopes>,
-    customStringProperty: TReadOnlyProperty<string>
-  ): TReadOnlyProperty<string> {
-    const currentStringProperty = new Property<TReadOnlyProperty<string>>( customStringProperty );
-    const dynamicNameProperty = new DynamicProperty<string, string, TReadOnlyProperty<string>>( currentStringProperty );
-    selectedIsotopeProperty.link( isotope => {
-      if ( isotope === 'custom' ) {
-        currentStringProperty.value = customStringProperty;
-      }
-      else {
-        const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
-        currentStringProperty.value = AtomNameUtils.getNameAndMass( atomConfig.protonCount, atomConfig.neutronCount );
-      }
-    } );
-    return dynamicNameProperty;
-  }
-
-  /**
-   * Get a string with the mass and symbol of an isotope (211-Pb) for example, or a custom string if 'custom' is selected.
-   */
-  public static getIsotopeMassAndSymbolString( isotope: ValidIsotopes, customAnswer = '' ): string {
-    if ( isotope === 'custom' || isotope === 'custom-decayed' ) { return customAnswer; }
-    const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
-    return AtomNameUtils.getMassAndSymbol( atomConfig.protonCount, atomConfig.neutronCount );
-  }
-
-  /**
-   * Get the decay product for the provided isotope. The provided product is a single isotope, and is the decay that is
-   * modeled in this simulation. It may not be generally true for all isotopes in physical reality, since different
-   * decay paths are sometimes possible.
-   */
-  public static getDecayProduct( isotope: SelectableIsotopes ): ValidIsotopes {
-    let decayProduct: ValidIsotopes | null = null;
-    if ( isotope === 'custom' ) {
-      decayProduct = 'custom-decayed';
-    }
-    else if ( isotope === 'polonium-211' ) {
-      decayProduct = 'lead-207';
-    }
-    else if ( isotope === 'hydrogen-3' ) {
-      decayProduct = 'helium-3';
-    }
-    else if ( isotope === 'carbon-14' ) {
-      decayProduct = 'nitrogen-14';
-    }
-    affirm( decayProduct !== null, 'Unhandled isotope type' );
-    return decayProduct;
+    return NuclearDecayAtom.getIsotopeAtomConfig( selectedIsotope );
   }
 
   /**
@@ -555,7 +464,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     if ( isotope === 'custom' ) {
       return this.getCustomHalfLife();
     }
-    const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
+    const atomConfig = NuclearDecayAtom.getIsotopeAtomConfig( isotope );
     const halfLife = AtomInfoUtils.getNuclideHalfLife( atomConfig.protonCount, atomConfig.neutronCount );
     affirm( halfLife !== null, 'Should provide a valid isotope with a known half-life' );
     return halfLife;
@@ -602,7 +511,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     this.clearAtomLists();
     this.resetTimes();
 
-    const newAtomConfig = NuclearDecayModel.getIsotopeAtomConfig( newIsotope );
+    const newAtomConfig = NuclearDecayAtom.getIsotopeAtomConfig( newIsotope );
 
     this.atomPool.forEach( atom => {
       atom.reset();

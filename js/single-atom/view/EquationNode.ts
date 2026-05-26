@@ -11,7 +11,7 @@ import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.
 import ArrowNode from '../../../../scenery-phet/js/ArrowNode.js';
 import PlusNode from '../../../../scenery-phet/js/PlusNode.js';
 import HBox, { HBoxOptions } from '../../../../scenery/js/layout/nodes/HBox.js';
-import NuclearDecayModel, { SelectableIsotopes } from '../../common/model/NuclearDecayModel.js';
+import NuclearDecayAtom, { SelectableIsotopes } from '../../common/model/NuclearDecayAtom.js';
 import EquationElementNode from './EquationElementNode.js';
 
 type SelfOptions = EmptySelfOptions;
@@ -32,7 +32,7 @@ export default class EquationNode extends HBox {
     }, providedOptions );
 
     const undecayedIsotope = isotopeProperty.value;
-    const decayedIsotope = NuclearDecayModel.getDecayProduct( undecayedIsotope );
+    const decayedIsotope = NuclearDecayAtom.getDecayProduct( undecayedIsotope );
     const firstTermIsotope = EquationElementNode.createFromIsotope( undecayedIsotope, {
       isActiveProperty: isPlayAreaEmptyProperty.derived( isEmpty => !isEmpty ),
       visibleProperty: isCustomProperty.derived( isCustom => !isCustom )

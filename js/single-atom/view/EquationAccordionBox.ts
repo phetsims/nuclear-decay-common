@@ -12,7 +12,7 @@ import StringUtils from '../../../../phetcommon/js/util/StringUtils.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
 import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
-import NuclearDecayModel, { SelectableIsotopes } from '../../common/model/NuclearDecayModel.js';
+import NuclearDecayAtom, { SelectableIsotopes } from '../../common/model/NuclearDecayAtom.js';
 import NuclearDecayAccordionBox, { NuclearDecayAccordionBoxOptions } from '../../common/view/NuclearDecayAccordionBox.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
@@ -65,9 +65,9 @@ export default class EquationAccordionBox extends NuclearDecayAccordionBox {
         if ( isPlayAreaEmpty ) {
           return noEquation;
         }
-        const decayProduct = NuclearDecayModel.getDecayProduct( isotope );
-        const parentConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
-        const daughterConfig = NuclearDecayModel.getIsotopeAtomConfig( decayProduct );
+        const decayProduct = NuclearDecayAtom.getDecayProduct( isotope );
+        const parentConfig = NuclearDecayAtom.getIsotopeAtomConfig( isotope );
+        const daughterConfig = NuclearDecayAtom.getIsotopeAtomConfig( decayProduct );
         const parentIsotopeName = isotope === 'custom' ? isotopeAName :
           AtomNameUtils.getNameAndMass( parentConfig.protonCount, parentConfig.neutronCount ).value;
 

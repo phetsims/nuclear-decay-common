@@ -15,7 +15,8 @@ import { DecayType } from '../../../../shred/js/AtomInfoUtils.js';
 import ArrayIO from '../../../../tandem/js/types/ArrayIO.js';
 import IOType from '../../../../tandem/js/types/IOType.js';
 import NumberIO from '../../../../tandem/js/types/NumberIO.js';
-import NuclearDecayModel, { NuclearDecayModelOptions, SelectableIsotopes } from '../../common/model/NuclearDecayModel.js';
+import { SelectableIsotopes } from '../../common/model/NuclearDecayAtom.js';
+import NuclearDecayModel, { NuclearDecayModelOptions } from '../../common/model/NuclearDecayModel.js';
 
 type SelfOptions = EmptySelfOptions;
 

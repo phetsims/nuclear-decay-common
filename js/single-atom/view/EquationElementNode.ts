@@ -13,7 +13,7 @@ import Node, { NodeOptions } from '../../../../scenery/js/nodes/Node.js';
 import RichText from '../../../../scenery/js/nodes/RichText.js';
 import type TPaint from '../../../../scenery/js/util/TPaint.js';
 import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
-import NuclearDecayModel, { ValidIsotopes } from '../../common/model/NuclearDecayModel.js';
+import NuclearDecayAtom, { ValidIsotopes } from '../../common/model/NuclearDecayAtom.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 
 type SelfOptions = {
@@ -81,7 +81,7 @@ export default class EquationElementNode extends Node {
   }
 
   public static createFromIsotope( isotope: ValidIsotopes, providedOptions: EquationElementNodeOptions ): EquationElementNode {
-    const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
+    const atomConfig = NuclearDecayAtom.getIsotopeAtomConfig( isotope );
     return new EquationElementNode(
       AtomNameUtils.getSymbol( atomConfig.protonCount ),
       `${atomConfig.protonCount + atomConfig.neutronCount}`,

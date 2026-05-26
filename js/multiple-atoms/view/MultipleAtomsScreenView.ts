@@ -35,7 +35,7 @@ import undoSolidShape from '../../../../sherpa/js/fontawesome-5/undoSolidShape.j
 import RectangularPushButton from '../../../../sun/js/buttons/RectangularPushButton.js';
 import Checkbox from '../../../../sun/js/Checkbox.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
-import NuclearDecayModel from '../../common/model/NuclearDecayModel.js';
+import NuclearDecayAtom from '../../common/model/NuclearDecayAtom.js';
 import IsotopeSelectionPanel from '../../common/view/IsotopeSelectionPanel.js';
 import SingleAndMultipleAtomsScreenView, { DecayHistogramScreenViewOptions } from '../../common/view/SingleAndMultipleAtomsScreenView.js';
 import MultipleAtomsModel from '../model/MultipleAtomsModel.js';
@@ -214,7 +214,7 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     // ---- PDOM description nodes ----
 
     // Dynamic isotope name used in accessible descriptions.
-    const isotopeNameProperty = NuclearDecayModel.createDynamicIsotopeNameAndMassStringProperty(
+    const isotopeNameProperty = NuclearDecayAtom.createDynamicIsotopeNameAndMassStringProperty(
       model.selectedIsotopeProperty,
       NuclearDecayCommonFluent.isotopeAStringProperty
     );
