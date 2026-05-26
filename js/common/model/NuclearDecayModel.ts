@@ -98,6 +98,9 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   // nuclide database; for custom isotopes it reflects the user-controlled customHalfLifeProperty.
   public readonly halfLifeProperty: TReadOnlyProperty<number>;
 
+  // Whether the nucleus is stable. Derived for when the half-life is above a certain threshold.
+  public readonly isNucleusStableProperty: TReadOnlyProperty<boolean>;
+
   // Whether ths model is running or paused.
   public readonly isPlayingProperty: BooleanProperty;
 
@@ -109,6 +112,9 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
   // The time experienced by the model when playing.
   public readonly timeProperty: NumberProperty;
+
+  // Whether the elapsed time has passed the threshold to be considered infinite
+  public readonly isTimeInfiniteProperty: TReadOnlyProperty<boolean>;
 
   // The linear time experienced by the model since the last reset or clearing of decays.
   private accumulatedLinearTime = 0;
@@ -224,6 +230,10 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       }
     );
 
+    this.isNucleusStableProperty = this.halfLifeProperty.derived( halfLife => {
+      return Math.log10( halfLife ) > NuclearDecayCommonConstants.MAX_HALF_LIFE_EXPONENT;
+    } );
+
     this.atomPlacementAreaProperty = new Property<Shape>( Shape.bounds( DEFAULT_ATOM_AREA_BOUNDS ), {
       tandem: Tandem.OPT_OUT
     } );
@@ -252,15 +262,15 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     } );
 
     // When the custom half-life changes, push the new value to all atoms in the pool.
-    this.customHalfLifeProperty.lazyLink( customHalfLife => {
-
+    this.customHalfLifeProperty.lazyLink( () => {
       this.resetTimes();
       this.clearAtomLists( false, true );
       this.resetAtomsDecay();
 
-      if ( this.selectedIsotopeProperty.value === 'custom' ) {
+      const selectedIsotope = this.selectedIsotopeProperty.value;
+      if ( selectedIsotope === 'custom' ) {
         this.atomPool.forEach( atom => {
-          atom.halfLife = this.expandNormalizedTime( customHalfLife, this.timescaleProperty.value === 'exponential' );
+          atom.halfLife = this.getHalfLife( selectedIsotope );
         } );
       }
     } );
@@ -346,6 +356,14 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       phetioFeatured: true
     } );
 
+    this.isTimeInfiniteProperty = this.timeProperty.derived( time => {
+      if ( Math.log10( time ) > 1.1 * NuclearDecayCommonConstants.MAX_HALF_LIFE_EXPONENT ) {
+        this.continueAddingTimeProperty.value = false;
+        return true;
+      }
+      return false;
+    } );
+
     this.stopwatch = options.useStopwatch ? new Stopwatch( {
       isVisible: false,
       tandem: options.tandem.createTandem( 'stopwatch' )
@@ -355,7 +373,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   public expandNormalizedTime( normalizedTime: number, exponential: boolean ): number {
     return exponential ?
            NuclearDecayCommonConstants.EXPONENTIAL_TIME(
-             NuclearDecayCommonConstants.EXPONENTIAL_HALF_LIFE_EXPONENT.expandNormalizedValue( normalizedTime ) ) :
+             NuclearDecayCommonConstants.EXPONENTIAL_HALF_LIFE_EXPONENT_RANGE.expandNormalizedValue( normalizedTime ) ) :
            NuclearDecayCommonConstants.LINEAR_HALF_LIFE.expandNormalizedValue( normalizedTime );
   }
 
@@ -492,9 +510,25 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     return decayProduct;
   }
 
+  /**
+   * Convert the [0,1] custom half-life to the proper number value.
+   *   If it is beyond a certain threshold we consider it to be infinity.
+   *   However, the infinity is only used within the atoms; the model will still use a number
+   *   in order to place it easily in the line.
+   */
+  public getCustomHalfLife(): number {
+    const halfLife = this.expandNormalizedTime( this.customHalfLifeProperty.value, this.timescaleProperty.value === 'exponential' );
+    if ( Math.log10( halfLife ) > NuclearDecayCommonConstants.MAX_HALF_LIFE_EXPONENT ) {
+      return Infinity;
+    }
+    else {
+      return halfLife;
+    }
+  }
+
   public getHalfLife( isotope: SelectableIsotopes ): number {
     if ( isotope === 'custom' ) {
-      return this.expandNormalizedTime( this.customHalfLifeProperty.value, this.timescaleProperty.value === 'exponential' );
+      return this.getCustomHalfLife();
     }
     const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
     const halfLife = AtomInfoUtils.getNuclideHalfLife( atomConfig.protonCount, atomConfig.neutronCount );

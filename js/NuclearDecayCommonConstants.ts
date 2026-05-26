@@ -11,7 +11,7 @@ import { clamp } from '../../dot/js/util/clamp.js';
 import PhetFont from '../../scenery-phet/js/PhetFont.js';
 import AtomConfig from '../../shred/js/model/AtomConfig.js';
 
-const EXPONENTIAL_HALF_LIFE_EXPONENT = new Range( -3, 18 );
+const EXPONENTIAL_HALF_LIFE_EXPONENT_RANGE = new Range( -3, 19 );
 
 export default class NuclearDecayCommonConstants {
   public constructor() {
@@ -25,7 +25,10 @@ export default class NuclearDecayCommonConstants {
   public static readonly LINEAR_HALF_LIFE = new Range( 0.1, 3 ); // seconds
 
   // Time exponent ranges for custom half-life in exponential time mode. The actual half-life will be 10^x.
-  public static readonly EXPONENTIAL_HALF_LIFE_EXPONENT = EXPONENTIAL_HALF_LIFE_EXPONENT;
+  public static readonly EXPONENTIAL_HALF_LIFE_EXPONENT_RANGE = EXPONENTIAL_HALF_LIFE_EXPONENT_RANGE;
+
+  // Value above which the half-life is considered infinite
+  public static readonly MAX_HALF_LIFE_EXPONENT = 18;
 
   // Function for getting exponential time based with the proper clamps
   public static readonly EXPONENTIAL_TIME = ( exponent: number ): number => {

@@ -141,7 +141,7 @@ export default class NuclearDecayAtom {
       atomConfigBeforeDecay.protonCount,
       atomConfigBeforeDecay.neutronCount
     );
-    this._halfLife = halfLife ? halfLife : Infinity; // Default to a half-life of INFINITY if the nuclide is not found in the data, which means it will decay immediately upon activation.
+    this._halfLife = halfLife ? halfLife : Infinity; // Default to a half-life of INFINITY if the nuclide is not found in the data, which means it will never decay
 
     // Make sure the code handles the specified decay type.
     affirm( decayType === 'alphaDecay' || decayType === 'betaMinusDecay', `unhandled decay type: ${decayType}` );
@@ -278,6 +278,9 @@ export default class NuclearDecayAtom {
 
       // Increment the time experienced by the atom.
       this.time += decayDt;
+
+      // If half-life is infinity, only step the atom but not calculate for any decay
+      if ( this._halfLife === Infinity ) { return; }
 
       // Decide whether the atom will decay in this particular time interval.
       const probabilityOfDecay = NuclearDecayAtom.decayProbabilityOverInterval( this._halfLife, decayDt );

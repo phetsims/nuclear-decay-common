@@ -29,6 +29,7 @@ import RichText from '../../../../scenery/js/nodes/RichText.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
 import Color from '../../../../scenery/js/util/Color.js';
 import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
+import InfinityNode from '../../../../shred/js/view/InfinityNode.js';
 import Checkbox from '../../../../sun/js/Checkbox.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
@@ -96,8 +97,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     model: NuclearDecayModel,
     providedOptions: DecayTimeHistogramPanelOptions ) {
 
-    const options = optionize<DecayTimeHistogramPanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {
-    }, providedOptions );
+    const options = optionize<DecayTimeHistogramPanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {}, providedOptions );
 
     // Y-axis rotated label: "Isotope"
 
@@ -290,10 +290,29 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       bottom: model.isSingleAtomMode ? GRAPH_HEIGHT : GRAPH_HEIGHT + halfLifeNumberDisplay.height + 2
     } );
 
+    const infinityIndicator = new VBox( {
+      visibleProperty: model.isNucleusStableProperty,
+      spacing: 2,
+      top: halfLifeText.bottom,
+      children: [
+        new InfinityNode( {
+          stroke: NuclearDecayCommonColors.halfLifeColorProperty,
+          radius: 3
+        } ),
+        new ArrowNode( 0, 0, 20, 0, {
+          fill: NuclearDecayCommonColors.halfLifeColorProperty,
+          stroke: NuclearDecayCommonColors.halfLifeColorProperty,
+          headHeight: 5,
+          headWidth: 5,
+          tailWidth: 1
+        } )
+      ]
+    } );
+
     model.selectedIsotopeProperty.link( isotope => {
       halfLifeLine.setLine( 0, 0, 0,
         isotope !== 'custom' ? GRAPH_HEIGHT :
-          model.isSingleAtomMode ? GRAPH_HEIGHT + SECONDARY_AXIS_SHIFT + 6 : GRAPH_HEIGHT - 3
+        model.isSingleAtomMode ? GRAPH_HEIGHT + SECONDARY_AXIS_SHIFT + 6 : GRAPH_HEIGHT - 3
       );
     } );
 
@@ -306,10 +325,10 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     // Exponential: x = (log10(time) − LOG_MIN_POWER) / LOG_POWER_INTERVAL * LOG_TICK_INTERVAL_WIDTH + GRAPH_X_OFFSET
     //              → normalized = (log10(time) − expRange.min) / expRange.length
     const normalizedFromLocalX = ( localX: number ): number => {
-      const clampedX = clamp( localX, GRAPH_X_OFFSET, GRAPH_X_OFFSET + 0.9 * GRAPH_WIDTH );
+      const clampedX = clamp( localX, GRAPH_X_OFFSET, GRAPH_X_OFFSET + GRAPH_WIDTH );
       if ( model.timescaleProperty.value === 'exponential' ) {
         const logTime = ( clampedX - GRAPH_X_OFFSET ) / LOG_TICK_INTERVAL_WIDTH * LOG_POWER_INTERVAL + LOG_MIN_POWER;
-        const expRange = NuclearDecayCommonConstants.EXPONENTIAL_HALF_LIFE_EXPONENT;
+        const expRange = NuclearDecayCommonConstants.EXPONENTIAL_HALF_LIFE_EXPONENT_RANGE;
         return ( clamp( logTime, expRange.min, expRange.max ) - expRange.min ) / expRange.getLength();
       }
       else {
@@ -345,6 +364,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
     Multilink.multilink( [ model.halfLifeProperty, model.timescaleProperty ], ( halfLife: number, timescale: Timescale ) => {
       halfLifeIndicator.centerX = getXForTime( halfLife, timescale );
+      infinityIndicator.left = halfLifeIndicator.centerX + 10;
     } );
 
     // eraser button (top-right corner, aligned with half-life label)
@@ -424,7 +444,8 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
         timeText,
         eraserButton,
         histogramCanvasNode,
-        halfLifeIndicator
+        halfLifeIndicator,
+        infinityIndicator
       ]
     } );
 
