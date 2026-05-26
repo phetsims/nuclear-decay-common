@@ -72,7 +72,11 @@ class DynamicNucleusNode extends Node {
   private nucleonUpdateStartIndex = 0;
   private alphaParticleUpdateStartIndex = 0;
 
-  public constructor( atom: NuclearDecayAtom, providedOptions?: DynamicNucleusNodeOptions ) {
+  public constructor(
+    atom: NuclearDecayAtom,
+    isModelPlayingProperty: TReadOnlyProperty<boolean>,
+    providedOptions?: DynamicNucleusNodeOptions
+  ) {
 
     const options = optionize<DynamicNucleusNodeOptions, SelfOptions, NodeOptions>()( {
       nucleonRadius: 5,
@@ -91,6 +95,13 @@ class DynamicNucleusNode extends Node {
 
     // Add a listener to the atom's step emitter that implements the dynamic motion of the particles in the nucleus.
     atom.steppedEmitter.addListener( dt => {
+      if ( !isModelPlayingProperty.value ) {
+
+        // Force an update to the particle positions on every step when the model is paused so that its appearance will
+        // change whenever the "step forward" button is pressed.
+        this.timeAccumulator = 1 / UPDATE_FREQUENCY;
+      }
+
       this.step( dt );
     } );
   }
@@ -114,33 +125,41 @@ class DynamicNucleusNode extends Node {
     // Move the particles around if enough time has passed since the last position update.
     this.timeAccumulator += realDt;
     if ( this.timeAccumulator > 1 / UPDATE_FREQUENCY ) {
+      this.updateParticlePositions();
       this.timeAccumulator = 0;
-
-      // Update nucleon and alpha particle positions, but stagger which ones are updated each cycle to create a more
-      // dynamic effect.
-      const nucleons = [ ...this.protonNodes, ...this.neutronNodes ];
-      for ( let i = this.nucleonUpdateStartIndex; i < nucleons.length; i += CYCLES_FOR_FULL_UPDATE ) {
-        nucleons[ i ].center = this.getRandomNucleonOffsetVector();
-      }
-      this.nucleonUpdateStartIndex = ( this.nucleonUpdateStartIndex + 1 ) % CYCLES_FOR_FULL_UPDATE;
-      for ( let i = this.alphaParticleUpdateStartIndex; i < this.alphaParticleNodes.length; i += CYCLES_FOR_FULL_UPDATE ) {
-        this.alphaParticleNodes[ i ].center = this.getRandomAlphaParticleOffsetVector();
-      }
-      this.alphaParticleUpdateStartIndex = ( this.alphaParticleUpdateStartIndex + 1 ) % CYCLES_FOR_FULL_UPDATE;
-
-      // Adjust the layering to make the nodes nearer the center higher in the Z-order. This makes the nucleus look
-      // a bit more spherical.
-      const allParticleNodes = [ ...this.protonNodes, ...this.neutronNodes, ...this.alphaParticleNodes ];
-      allParticleNodes.forEach( node => {
-
-        // Use probability and some empirical math to make the inner particles more likely to appear in front of the
-        // outer particles.  This gives the nucleus a somewhat more spherical look.
-        const normalizedDistance = node.center.magnitude / this.nucleusRadius;
-        if ( Math.pow( normalizedDistance, 0.4 ) > dotRandom.nextDouble() ) {
-          node.moveToBack();
-        }
-      } );
     }
+  }
+
+  /**
+   * Updates a staggered subset of particle positions and then adjusts their layering so inner particles are more
+   * likely to appear in front.
+   */
+  private updateParticlePositions(): void {
+
+    // Update nucleon and alpha particle positions, but stagger which ones are updated each cycle to create an effect
+    // that appears dynamic but not too jumpy.
+    const nucleons = [ ...this.protonNodes, ...this.neutronNodes ];
+    for ( let i = this.nucleonUpdateStartIndex; i < nucleons.length; i += CYCLES_FOR_FULL_UPDATE ) {
+      nucleons[ i ].center = this.getRandomNucleonOffsetVector();
+    }
+    this.nucleonUpdateStartIndex = ( this.nucleonUpdateStartIndex + 1 ) % CYCLES_FOR_FULL_UPDATE;
+    for ( let i = this.alphaParticleUpdateStartIndex; i < this.alphaParticleNodes.length; i += CYCLES_FOR_FULL_UPDATE ) {
+      this.alphaParticleNodes[ i ].center = this.getRandomAlphaParticleOffsetVector();
+    }
+    this.alphaParticleUpdateStartIndex = ( this.alphaParticleUpdateStartIndex + 1 ) % CYCLES_FOR_FULL_UPDATE;
+
+    // Adjust the layering to make the nodes nearer the center higher in the Z-order. This makes the nucleus look
+    // a bit more spherical.
+    const allParticleNodes = [ ...this.protonNodes, ...this.neutronNodes, ...this.alphaParticleNodes ];
+    allParticleNodes.forEach( node => {
+
+      // Use probability and some empirical math to make the inner particles more likely to appear in front of the
+      // outer particles.  This gives the nucleus a somewhat more spherical look.
+      const normalizedDistance = node.center.magnitude / this.nucleusRadius;
+      if ( Math.pow( normalizedDistance, 0.4 ) > dotRandom.nextDouble() ) {
+        node.moveToBack();
+      }
+    } );
   }
 
   /**
