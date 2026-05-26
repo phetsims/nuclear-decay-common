@@ -86,25 +86,29 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
     const doubleLeftArrowButton = new ArrowButton( 'left', () => {
       atomsToAddProperty.value = Math.max( 1, atomsToAddProperty.value - options.stepSize );
     }, combineOptions<ArrowButtonOptions>( DOUBLE_ARROW_BUTTON_OPTIONS, {
-      tandem: options.tandem.createTandem( 'doubleLeftArrowButton' )
+      tandem: options.tandem.createTandem( 'doubleLeftArrowButton' ),
+      enabledProperty: atomsToAddProperty.derived( atoms => atoms > atomsToAddProperty.rangeProperty.value.min )
     } ) );
 
     const singleLeftArrowButton = new ArrowButton( 'left', () => {
       atomsToAddProperty.value = Math.max( 1, atomsToAddProperty.value - 1 );
     }, combineOptions<ArrowButtonOptions>( ARROW_BUTTON_OPTIONS, {
-      tandem: options.tandem.createTandem( 'singleLeftArrowButton' )
+      tandem: options.tandem.createTandem( 'singleLeftArrowButton' ),
+      enabledProperty: atomsToAddProperty.derived( atoms => atoms > atomsToAddProperty.rangeProperty.value.min )
     } ) );
 
     const singleRightArrowButton = new ArrowButton( 'right', () => {
       atomsToAddProperty.value = Math.min( maxAtoms, atomsToAddProperty.value + 1 );
     }, combineOptions<ArrowButtonOptions>( ARROW_BUTTON_OPTIONS, {
-      tandem: options.tandem.createTandem( 'singleRightArrowButton' )
+      tandem: options.tandem.createTandem( 'singleRightArrowButton' ),
+      enabledProperty: atomsToAddProperty.derived( atoms => atoms < atomsToAddProperty.rangeProperty.value.max )
     } ) );
 
     const doubleRightArrowButton = new ArrowButton( 'right', () => {
       atomsToAddProperty.value = Math.min( maxAtoms, atomsToAddProperty.value + options.stepSize );
     }, combineOptions<ArrowButtonOptions>( DOUBLE_ARROW_BUTTON_OPTIONS, {
-      tandem: options.tandem.createTandem( 'doubleRightArrowButton' )
+      tandem: options.tandem.createTandem( 'doubleRightArrowButton' ),
+      enabledProperty: atomsToAddProperty.derived( atoms => atoms < atomsToAddProperty.rangeProperty.value.max )
     } ) );
 
     // Number display showing atom count
