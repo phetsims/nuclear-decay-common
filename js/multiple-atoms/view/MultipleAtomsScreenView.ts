@@ -7,20 +7,26 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
+import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
+import Property from '../../../../axon/js/Property.js';
+import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
 import Range from '../../../../dot/js/Range.js';
+import { roundSymmetric } from '../../../../dot/js/util/roundSymmetric.js';
+import { toFixed } from '../../../../dot/js/util/toFixed.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import AddAtomsControlPanel from '../../../../nuclear-decay-common/js/common/view/AddAtomsControlPanel.js';
 import NuclearDecayCommonColors from '../../../../nuclear-decay-common/js/NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../../../nuclear-decay-common/js/NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../../../nuclear-decay-common/js/NuclearDecayCommonFluent.js';
 import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
-import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import optionize from '../../../../phet-core/js/optionize.js';
 import Stopwatch from '../../../../scenery-phet/js/Stopwatch.js';
 import StopwatchNode from '../../../../scenery-phet/js/StopwatchNode.js';
 import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
 import Circle from '../../../../scenery/js/nodes/Circle.js';
+import Node from '../../../../scenery/js/nodes/Node.js';
 import Path from '../../../../scenery/js/nodes/Path.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
 import RadialGradient from '../../../../scenery/js/util/RadialGradient.js';
@@ -29,12 +35,19 @@ import undoSolidShape from '../../../../sherpa/js/fontawesome-5/undoSolidShape.j
 import RectangularPushButton from '../../../../sun/js/buttons/RectangularPushButton.js';
 import Checkbox from '../../../../sun/js/Checkbox.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
+import NuclearDecayModel from '../../common/model/NuclearDecayModel.js';
 import IsotopeSelectionPanel from '../../common/view/IsotopeSelectionPanel.js';
 import SingleAndMultipleAtomsScreenView, { DecayHistogramScreenViewOptions } from '../../common/view/SingleAndMultipleAtomsScreenView.js';
 import MultipleAtomsModel from '../model/MultipleAtomsModel.js';
+import MultipleAtomsScreenSummaryContent from './MultipleAtomsScreenSummaryContent.js';
 import MultipleAtomsVisibleProperties from './MultipleAtomsVisibleProperties.js';
 
-type SelfOptions = EmptySelfOptions;
+type SelfOptions = {
+
+  // Sim-specific name for the decay particle type, e.g. "Alpha" for alpha decay.
+  // Interpolated into the radioactive sample description when atoms are decaying.
+  decayParticleStringProperty?: TReadOnlyProperty<string>;
+};
 
 export type MultipleAtomsScreenViewOptions = SelfOptions & DecayHistogramScreenViewOptions;
 
@@ -81,6 +94,8 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
           } )
         ]
       } ), {
+        accessibleName: NuclearDecayCommonFluent.a11y.multipleAtoms.electronCloudCheckbox.accessibleNameStringProperty,
+        accessibleHelpText: NuclearDecayCommonFluent.a11y.multipleAtoms.electronCloudCheckbox.accessibleHelpTextStringProperty,
         tandem: providedOptions.tandem.createTandem( 'electronCloudCheckbox' )
       }
     );
@@ -92,13 +107,17 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
           stopwatchIcon
         ]
       } ), {
+        accessibleName: NuclearDecayCommonFluent.a11y.multipleAtoms.stopwatchCheckbox.accessibleNameStringProperty,
+        accessibleHelpText: NuclearDecayCommonFluent.a11y.multipleAtoms.stopwatchCheckbox.accessibleHelpTextStringProperty,
         tandem: providedOptions.tandem.createTandem( 'stopwatchCheckbox' )
       }
     );
 
     const options = optionize<MultipleAtomsScreenViewOptions, SelfOptions, DecayHistogramScreenViewOptions>()( {
+      screenSummaryContent: new MultipleAtomsScreenSummaryContent( model ),
       isotopePanelMiddleContent: [ electronCloudCheckbox, stopwatchCheckbox ],
-      numberOfAtomsInPlayAreaWidth: 40
+      numberOfAtomsInPlayAreaWidth: 40,
+      decayParticleStringProperty: new Property( '' )
     }, providedOptions );
 
     super( model, options );
@@ -142,6 +161,7 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
       },
       right: playAreaBounds.right,
       top: playAreaBounds.top,
+      accessibleName: NuclearDecayCommonFluent.a11y.multipleAtoms.resetSampleButton.accessibleNameStringProperty,
       tandem: options.tandem.createTandem( 'resetButton' ),
       enabledProperty: model.isPlayAreaEmptyProperty.derived( empty => !empty )
     } );
@@ -184,6 +204,105 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     this.addChild( stopwatchNode );
 
     this.children = [ this.playAreaBoundsRectangle, ...this.children ];
+
+    // ---- PDOM description nodes ----
+
+    // Dynamic isotope name used in accessible descriptions.
+    const isotopeNameProperty = NuclearDecayModel.createDynamicIsotopeNameAndMassStringProperty(
+      model.selectedIsotopeProperty,
+      NuclearDecayCommonFluent.isotopeAStringProperty
+    );
+
+    // State 1: No atoms in play area.
+    const noAtomsDescNode = new Node( {
+      visibleProperty: model.isPlayAreaEmptyProperty,
+      accessibleParagraph: NuclearDecayCommonFluent.a11y.multipleAtoms.radioactiveSample.noAtoms.createProperty( {
+        isotope: isotopeNameProperty
+      } )
+    } );
+
+    // State 2: Atoms added but none have decayed yet.
+    const readyToDecayDescNode = new Node( {
+      visibleProperty: new DerivedProperty(
+        [ model.isPlayAreaEmptyProperty, model.decayedCountProperty ],
+        ( isEmpty, decayedCount ) => !isEmpty && decayedCount === 0
+      ),
+      accessibleParagraph: NuclearDecayCommonFluent.a11y.multipleAtoms.radioactiveSample.readyToDecay.createProperty( {
+        addedAtoms: model.activeAtomsCountProperty,
+        isotope: isotopeNameProperty
+      } )
+    } );
+
+    // State 3: Atoms added and at least one has decayed.
+    const decayOccurringDescNode = new Node( {
+      visibleProperty: model.decayedCountProperty.derived( count => count > 0 ),
+      accessibleParagraph: NuclearDecayCommonFluent.a11y.multipleAtoms.radioactiveSample.decayOccurring.createProperty( {
+        addedAtoms: model.activeAtomsCountProperty,
+        isotope: isotopeNameProperty,
+        decayParticle: options.decayParticleStringProperty,
+        time: model.timeProperty.derived( t => toFixed( t, 2 ) ),
+        percentageUndecayed: model.percentageOfUndecayedProperty.derived( p => `${roundSymmetric( p * 100 )}` ),
+        undecayedCount: model.undecayedCountProperty,
+        decayedCount: model.decayedCountProperty
+      } )
+    } );
+
+    // Heading that groups radioactive sample content for screen readers.
+    const radioactiveSampleHeadingNode = new Node( {
+      accessibleHeading: NuclearDecayCommonFluent.a11y.multipleAtoms.radioactiveSampleHeadingStringProperty
+    } );
+    radioactiveSampleHeadingNode.pdomOrder = [
+      noAtomsDescNode,
+      readyToDecayDescNode,
+      decayOccurringDescNode,
+      addAtomsPanel,
+      resetButton
+    ];
+    this.addChild( noAtomsDescNode );
+    this.addChild( readyToDecayDescNode );
+    this.addChild( decayOccurringDescNode );
+    this.addChild( radioactiveSampleHeadingNode );
+
+    // At-half-life paragraph: appears once the elapsed sample time has reached the half-life.
+    const halfLifeReachedProperty = new DerivedProperty(
+      [ model.timeProperty, model.halfLifeProperty, model.isPlayAreaEmptyProperty ],
+      ( time, halfLife, isEmpty ) => !isEmpty && time > 0 && time >= halfLife
+    );
+    const atHalfLifeDescNode = new Node( {
+      visibleProperty: halfLifeReachedProperty,
+      accessibleParagraph: NuclearDecayCommonFluent.a11y.multipleAtoms.decayTimeHistogramAtHalfLife.createProperty( {
+        halfLifePercentageUndecayed: model.percentageOfUndecayedProperty.derived( p => `${roundSymmetric( p * 100 )}` )
+      } )
+    } );
+    this.addChild( atHalfLifeDescNode );
+
+    // Heading that groups the decay data panel content for screen readers.
+    const decayDataHeadingNode = new Node( {
+      accessibleHeading: NuclearDecayCommonFluent.a11y.multipleAtoms.decayDataHeadingStringProperty
+    } );
+    decayDataHeadingNode.pdomOrder = [
+      this.decayTimeHistogramPanel,
+      atHalfLifeDescNode
+    ];
+    this.addChild( decayDataHeadingNode );
+
+    // Play Area pdomOrder:
+    //   Radioactive Sample heading → Decay Data heading → Particle legend → Isotope panel
+    this.pdomPlayAreaNode.pdomOrder = [
+      radioactiveSampleHeadingNode,
+      decayDataHeadingNode,
+      this.particleLegendPanel,
+      this.isotopePanel
+    ];
+
+    // Control Area pdomOrder:
+    //   Electron cloud checkbox → Stopwatch checkbox → Time controls → Reset All button
+    this.pdomControlAreaNode.pdomOrder = [
+      electronCloudCheckbox,
+      stopwatchCheckbox,
+      this.timeControlNode,
+      this.resetAllButton
+    ];
   }
 
   public override reset(): void {

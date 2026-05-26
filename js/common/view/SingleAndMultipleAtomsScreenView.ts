@@ -42,6 +42,9 @@ export default class SingleAndMultipleAtomsScreenView extends NuclearDecayScreen
   // Controls on the right side of the view.
   protected readonly rightColumnControls: Node;
 
+  // Exposed so subclasses can set accessibleParagraph for the particle legend.
+  protected readonly particleLegendPanel: ParticlesLegendPanel;
+
   // Time controls in the bottom-right corner; exposed so subclasses can lay out relative to it.
   protected readonly timeControlNode: TimeControlNode;
 
@@ -72,7 +75,7 @@ export default class SingleAndMultipleAtomsScreenView extends NuclearDecayScreen
 
     // Right column panels
 
-    const particleLegendPanel = new ParticlesLegendPanel();
+    this.particleLegendPanel = new ParticlesLegendPanel();
 
     this.isotopePanel = new IsotopeControlPanel( model, {
       middleContent: options.isotopePanelMiddleContent,
@@ -83,7 +86,7 @@ export default class SingleAndMultipleAtomsScreenView extends NuclearDecayScreen
       spacing: PANEL_SPACING,
       right: this.layoutBounds.maxX - MARGIN_X,
       top: this.layoutBounds.minY + MARGIN_Y,
-      children: [ particleLegendPanel, this.isotopePanel ]
+      children: [ this.particleLegendPanel, this.isotopePanel ]
     } );
     this.addChild( this.rightColumnControls );
 

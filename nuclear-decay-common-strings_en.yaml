@@ -119,3 +119,46 @@ a11y:
     accessibleHelpText: Restart time just before last decay.
   speedControls:
     accessibleHelpText: For closer observations play sim on slower speed.
+  multipleAtoms:
+    screenSummary:
+      playArea: >-
+        You can add atoms to a radioactive sample and watch them decay. As time passes, you can track how much
+        remains and reset the sample to repeat your experiment. A timeline shows the moment of each decay
+        relative to the half-life. With a custom isotope, you can also experiment with the half-life time.
+      controlArea: >-
+        Checkboxes let you show or hide the electron cloud and stopwatch. You can control how fast the action
+        happens including buttons to pause and step forward. Reset sim to start over.
+      currentDetails:
+        select_atom:
+          noAtoms: Currently, there are no atoms in sample.
+          withAtoms: 'Currently { $percentage } percent radioactive sample remaining.'
+      interactionHint:
+        addAtoms: Add atoms to begin observations.
+        afterDecay: Reset sample to continue observations.
+    radioactiveSampleHeading: Radioactive Sample
+    radioactiveSample:
+      noAtoms: 'No atoms in sample. Look for { $isotope } atoms control to get started.'
+      readyToDecay: 'Original sample contains { $addedAtoms } { $isotope } atoms, ready to decay.'
+      decayOccurring: >-
+        Original sample contains { $addedAtoms } { $isotope } atoms. { $decayParticle } particles are emitted from
+        decaying atoms and move away. Currently, sample is { $time } seconds old and { $percentageUndecayed }
+        percent remains. { $undecayedCount } { $isotope } atoms undecayed. { $decayedCount } { $isotope } atoms decayed.
+    numberOfAtomsControl:
+      accessibleName: '{ $isotope } Atoms'
+      accessibleHelpText: Choose number of atoms for radioactive sample. Then look for add atoms button.
+      decreaseSampleByOne: Decrease sample by 1
+      increaseSampleByOne: Increase sample by 1
+      decreaseSampleByStepSize: 'Decrease sample by { $stepSize }'
+      increaseSampleByStepSize: 'Increase sample by { $stepSize }'
+    addAtomsButton:
+      accessibleName: Add Atoms
+    resetSampleButton:
+      accessibleName: Reset Sample
+    decayDataHeading: Decay Data
+    decayTimeHistogramAtHalfLife: 'At half-life, { $halfLifePercentageUndecayed } percent of sample remains.'
+    electronCloudCheckbox:
+      accessibleName: Electron Cloud
+      accessibleHelpText: Show or hide electron clouds for atoms.
+    stopwatchCheckbox:
+      accessibleName: Stopwatch
+      accessibleHelpText: Show or hide stopwatch.

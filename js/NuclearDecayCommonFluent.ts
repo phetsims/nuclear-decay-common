@@ -5,7 +5,7 @@
 /* eslint-disable */
 /* @formatter:off */
 
-import { TReadOnlyProperty } from '../../axon/js/TReadOnlyProperty.js';
+import {TReadOnlyProperty} from '../../axon/js/TReadOnlyProperty.js';
 import FluentLibrary from '../../chipper/js/browser-and-node/FluentLibrary.js';
 import FluentConstant from '../../chipper/js/browser/FluentConstant.js';
 import FluentContainer from '../../chipper/js/browser/FluentContainer.js';
@@ -112,6 +112,29 @@ addToMapIfDefined( 'a11y_timeControls_accessibleHeading', 'a11y.timeControls.acc
 addToMapIfDefined( 'a11y_replayDecay_accessibleName', 'a11y.replayDecay.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_replayDecay_accessibleHelpText', 'a11y.replayDecay.accessibleHelpTextStringProperty' );
 addToMapIfDefined( 'a11y_speedControls_accessibleHelpText', 'a11y.speedControls.accessibleHelpTextStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_screenSummary_playArea', 'a11y.multipleAtoms.screenSummary.playAreaStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_screenSummary_controlArea', 'a11y.multipleAtoms.screenSummary.controlAreaStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_screenSummary_currentDetails', 'a11y.multipleAtoms.screenSummary.currentDetailsStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_screenSummary_interactionHint_addAtoms', 'a11y.multipleAtoms.screenSummary.interactionHint.addAtomsStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_screenSummary_interactionHint_afterDecay', 'a11y.multipleAtoms.screenSummary.interactionHint.afterDecayStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_radioactiveSampleHeading', 'a11y.multipleAtoms.radioactiveSampleHeadingStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_radioactiveSample_noAtoms', 'a11y.multipleAtoms.radioactiveSample.noAtomsStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_radioactiveSample_readyToDecay', 'a11y.multipleAtoms.radioactiveSample.readyToDecayStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_radioactiveSample_decayOccurring', 'a11y.multipleAtoms.radioactiveSample.decayOccurringStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_numberOfAtomsControl_accessibleName', 'a11y.multipleAtoms.numberOfAtomsControl.accessibleNameStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_numberOfAtomsControl_accessibleHelpText', 'a11y.multipleAtoms.numberOfAtomsControl.accessibleHelpTextStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_numberOfAtomsControl_decreaseSampleByOne', 'a11y.multipleAtoms.numberOfAtomsControl.decreaseSampleByOneStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_numberOfAtomsControl_increaseSampleByOne', 'a11y.multipleAtoms.numberOfAtomsControl.increaseSampleByOneStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_numberOfAtomsControl_decreaseSampleByStepSize', 'a11y.multipleAtoms.numberOfAtomsControl.decreaseSampleByStepSizeStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_numberOfAtomsControl_increaseSampleByStepSize', 'a11y.multipleAtoms.numberOfAtomsControl.increaseSampleByStepSizeStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_addAtomsButton_accessibleName', 'a11y.multipleAtoms.addAtomsButton.accessibleNameStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_resetSampleButton_accessibleName', 'a11y.multipleAtoms.resetSampleButton.accessibleNameStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_decayDataHeading', 'a11y.multipleAtoms.decayDataHeadingStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_decayTimeHistogramAtHalfLife', 'a11y.multipleAtoms.decayTimeHistogramAtHalfLifeStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_electronCloudCheckbox_accessibleName', 'a11y.multipleAtoms.electronCloudCheckbox.accessibleNameStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_electronCloudCheckbox_accessibleHelpText', 'a11y.multipleAtoms.electronCloudCheckbox.accessibleHelpTextStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_stopwatchCheckbox_accessibleName', 'a11y.multipleAtoms.stopwatchCheckbox.accessibleNameStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_stopwatchCheckbox_accessibleHelpText', 'a11y.multipleAtoms.stopwatchCheckbox.accessibleHelpTextStringProperty' );
 
 // A function that creates contents for a new Fluent file, which will be needed if any string changes.
 const createFluentFile = (): string => {
@@ -256,6 +279,47 @@ const NuclearDecayCommonFluent = {
     },
     speedControls: {
       accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_speedControls_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.speedControls.accessibleHelpTextStringProperty' ) )
+    },
+    multipleAtoms: {
+      screenSummary: {
+        playAreaStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_screenSummary_playArea', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.screenSummary.playAreaStringProperty' ) ),
+        controlAreaStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_screenSummary_controlArea', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.screenSummary.controlAreaStringProperty' ) ),
+        currentDetails: new FluentPattern<{ atom: 'noAtoms' | 'withAtoms' | TReadOnlyProperty<'noAtoms' | 'withAtoms'>, percentage: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_multipleAtoms_screenSummary_currentDetails', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.screenSummary.currentDetailsStringProperty' ), [{"name":"atom","variants":["noAtoms","withAtoms"]},{"name":"percentage"}] ),
+        interactionHint: {
+          addAtomsStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_screenSummary_interactionHint_addAtoms', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.screenSummary.interactionHint.addAtomsStringProperty' ) ),
+          afterDecayStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_screenSummary_interactionHint_afterDecay', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.screenSummary.interactionHint.afterDecayStringProperty' ) )
+        }
+      },
+      radioactiveSampleHeadingStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_radioactiveSampleHeading', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.radioactiveSampleHeadingStringProperty' ) ),
+      radioactiveSample: {
+        noAtoms: new FluentPattern<{ isotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_multipleAtoms_radioactiveSample_noAtoms', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.radioactiveSample.noAtomsStringProperty' ), [{"name":"isotope"}] ),
+        readyToDecay: new FluentPattern<{ addedAtoms: FluentVariable, isotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_multipleAtoms_radioactiveSample_readyToDecay', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.radioactiveSample.readyToDecayStringProperty' ), [{"name":"addedAtoms"},{"name":"isotope"}] ),
+        decayOccurring: new FluentPattern<{ addedAtoms: FluentVariable, decayedCount: FluentVariable, decayParticle: FluentVariable, isotope: FluentVariable, percentageUndecayed: FluentVariable, time: FluentVariable, undecayedCount: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_multipleAtoms_radioactiveSample_decayOccurring', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.radioactiveSample.decayOccurringStringProperty' ), [{"name":"addedAtoms"},{"name":"decayedCount"},{"name":"decayParticle"},{"name":"isotope"},{"name":"percentageUndecayed"},{"name":"time"},{"name":"undecayedCount"}] )
+      },
+      numberOfAtomsControl: {
+        accessibleName: new FluentPattern<{ isotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_multipleAtoms_numberOfAtomsControl_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.numberOfAtomsControl.accessibleNameStringProperty' ), [{"name":"isotope"}] ),
+        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_numberOfAtomsControl_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.numberOfAtomsControl.accessibleHelpTextStringProperty' ) ),
+        decreaseSampleByOneStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_numberOfAtomsControl_decreaseSampleByOne', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.numberOfAtomsControl.decreaseSampleByOneStringProperty' ) ),
+        increaseSampleByOneStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_numberOfAtomsControl_increaseSampleByOne', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.numberOfAtomsControl.increaseSampleByOneStringProperty' ) ),
+        decreaseSampleByStepSize: new FluentPattern<{ stepSize: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_multipleAtoms_numberOfAtomsControl_decreaseSampleByStepSize', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.numberOfAtomsControl.decreaseSampleByStepSizeStringProperty' ), [{"name":"stepSize"}] ),
+        increaseSampleByStepSize: new FluentPattern<{ stepSize: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_multipleAtoms_numberOfAtomsControl_increaseSampleByStepSize', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.numberOfAtomsControl.increaseSampleByStepSizeStringProperty' ), [{"name":"stepSize"}] )
+      },
+      addAtomsButton: {
+        accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_addAtomsButton_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.addAtomsButton.accessibleNameStringProperty' ) )
+      },
+      resetSampleButton: {
+        accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_resetSampleButton_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.resetSampleButton.accessibleNameStringProperty' ) )
+      },
+      decayDataHeadingStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_decayDataHeading', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.decayDataHeadingStringProperty' ) ),
+      decayTimeHistogramAtHalfLife: new FluentPattern<{ halfLifePercentageUndecayed: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_multipleAtoms_decayTimeHistogramAtHalfLife', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.decayTimeHistogramAtHalfLifeStringProperty' ), [{"name":"halfLifePercentageUndecayed"}] ),
+      electronCloudCheckbox: {
+        accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_electronCloudCheckbox_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.electronCloudCheckbox.accessibleNameStringProperty' ) ),
+        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_electronCloudCheckbox_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.electronCloudCheckbox.accessibleHelpTextStringProperty' ) )
+      },
+      stopwatchCheckbox: {
+        accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_stopwatchCheckbox_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.stopwatchCheckbox.accessibleNameStringProperty' ) ),
+        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_stopwatchCheckbox_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.stopwatchCheckbox.accessibleHelpTextStringProperty' ) )
+      }
     }
   }
 };

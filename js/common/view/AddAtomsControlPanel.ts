@@ -7,7 +7,6 @@
  * @author Agustín Vallejo
  */
 
-import DynamicProperty from '../../../../axon/js/DynamicProperty.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import Property from '../../../../axon/js/Property.js';
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
@@ -17,7 +16,6 @@ import NumberDisplay from '../../../../scenery-phet/js/NumberDisplay.js';
 import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
 import RichText from '../../../../scenery/js/nodes/RichText.js';
-import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
 import ArrowButton, { ArrowButtonOptions } from '../../../../sun/js/buttons/ArrowButton.js';
 import TextPushButton from '../../../../sun/js/buttons/TextPushButton.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
@@ -45,22 +43,10 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
 
     const maxAtoms = atomsToAddProperty.rangeProperty.value.max;
 
-    // Title showing the selected isotope name with a colored background
-    // Similar to AtomNameUtils.createDynamicNameProperty but taylored for this sim
-    // It sets a property that will listen to the current translation value of either 'Custom' or the element name
-    const currentElementStringProperty = new Property<TReadOnlyProperty<string>>( NuclearDecayCommonFluent.customStringProperty );
-    const isotopeDynamicNameProperty = new DynamicProperty<string, number, TReadOnlyProperty<string>>( currentElementStringProperty );
-
-    // Update the element name based on the selected isotope
-    selectedIsotopeProperty.link( isotope => {
-      if ( isotope === 'custom' ) {
-        currentElementStringProperty.value = NuclearDecayCommonFluent.customStringProperty;
-      }
-      else {
-        const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
-        currentElementStringProperty.value = AtomNameUtils.getNameAndMass( atomConfig.protonCount, atomConfig.neutronCount );
-      }
-    } );
+    const isotopeDynamicNameProperty = NuclearDecayModel.createDynamicIsotopeNameAndMassStringProperty(
+      selectedIsotopeProperty,
+      NuclearDecayCommonFluent.customStringProperty
+    );
 
     const titleText = new RichText( isotopeDynamicNameProperty, {
       font: NuclearDecayCommonConstants.CONTROL_FONT,
@@ -83,9 +69,14 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
       numberOfArrows: 2,
       arrowSpacing: -7
     };
+    const stepSizeStringProperty = new Property( `${options.stepSize}` );
+
     const doubleLeftArrowButton = new ArrowButton( 'left', () => {
       atomsToAddProperty.value = Math.max( 1, atomsToAddProperty.value - options.stepSize );
     }, combineOptions<ArrowButtonOptions>( DOUBLE_ARROW_BUTTON_OPTIONS, {
+      accessibleName: NuclearDecayCommonFluent.a11y.multipleAtoms.numberOfAtomsControl.decreaseSampleByStepSize.createProperty( {
+        stepSize: stepSizeStringProperty
+      } ),
       tandem: options.tandem.createTandem( 'doubleLeftArrowButton' ),
       enabledProperty: atomsToAddProperty.derived( atoms => atoms > atomsToAddProperty.rangeProperty.value.min )
     } ) );
@@ -93,6 +84,7 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
     const singleLeftArrowButton = new ArrowButton( 'left', () => {
       atomsToAddProperty.value = Math.max( 1, atomsToAddProperty.value - 1 );
     }, combineOptions<ArrowButtonOptions>( ARROW_BUTTON_OPTIONS, {
+      accessibleName: NuclearDecayCommonFluent.a11y.multipleAtoms.numberOfAtomsControl.decreaseSampleByOneStringProperty,
       tandem: options.tandem.createTandem( 'singleLeftArrowButton' ),
       enabledProperty: atomsToAddProperty.derived( atoms => atoms > atomsToAddProperty.rangeProperty.value.min )
     } ) );
@@ -100,6 +92,7 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
     const singleRightArrowButton = new ArrowButton( 'right', () => {
       atomsToAddProperty.value = Math.min( maxAtoms, atomsToAddProperty.value + 1 );
     }, combineOptions<ArrowButtonOptions>( ARROW_BUTTON_OPTIONS, {
+      accessibleName: NuclearDecayCommonFluent.a11y.multipleAtoms.numberOfAtomsControl.increaseSampleByOneStringProperty,
       tandem: options.tandem.createTandem( 'singleRightArrowButton' ),
       enabledProperty: atomsToAddProperty.derived( atoms => atoms < atomsToAddProperty.rangeProperty.value.max )
     } ) );
@@ -107,6 +100,9 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
     const doubleRightArrowButton = new ArrowButton( 'right', () => {
       atomsToAddProperty.value = Math.min( maxAtoms, atomsToAddProperty.value + options.stepSize );
     }, combineOptions<ArrowButtonOptions>( DOUBLE_ARROW_BUTTON_OPTIONS, {
+      accessibleName: NuclearDecayCommonFluent.a11y.multipleAtoms.numberOfAtomsControl.increaseSampleByStepSize.createProperty( {
+        stepSize: stepSizeStringProperty
+      } ),
       tandem: options.tandem.createTandem( 'doubleRightArrowButton' ),
       enabledProperty: atomsToAddProperty.derived( atoms => atoms < atomsToAddProperty.rangeProperty.value.max )
     } ) );
@@ -121,6 +117,7 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
       listener: () => {
         addAtomsCallback( atomsToAddProperty.value );
       },
+      accessibleName: NuclearDecayCommonFluent.a11y.multipleAtoms.addAtomsButton.accessibleNameStringProperty,
       tandem: options.tandem.createTandem( 'addButton' )
     } );
 

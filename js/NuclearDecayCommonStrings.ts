@@ -236,6 +236,70 @@ type StringsType = {
     'speedControls': {
       'accessibleHelpText': string;
       'accessibleHelpTextStringProperty': LocalizedStringProperty;
+    };
+    'multipleAtoms': {
+      'screenSummary': {
+        'playArea': string;
+        'playAreaStringProperty': LocalizedStringProperty;
+        'controlArea': string;
+        'controlAreaStringProperty': LocalizedStringProperty;
+        'currentDetails': string;
+        'currentDetailsStringProperty': LocalizedStringProperty;
+        'interactionHint': {
+          'addAtoms': string;
+          'addAtomsStringProperty': LocalizedStringProperty;
+          'afterDecay': string;
+          'afterDecayStringProperty': LocalizedStringProperty;
+        }
+      };
+      'radioactiveSampleHeading': string;
+      'radioactiveSampleHeadingStringProperty': LocalizedStringProperty;
+      'radioactiveSample': {
+        'noAtoms': string;
+        'noAtomsStringProperty': LocalizedStringProperty;
+        'readyToDecay': string;
+        'readyToDecayStringProperty': LocalizedStringProperty;
+        'decayOccurring': string;
+        'decayOccurringStringProperty': LocalizedStringProperty;
+      };
+      'numberOfAtomsControl': {
+        'accessibleName': string;
+        'accessibleNameStringProperty': LocalizedStringProperty;
+        'accessibleHelpText': string;
+        'accessibleHelpTextStringProperty': LocalizedStringProperty;
+        'decreaseSampleByOne': string;
+        'decreaseSampleByOneStringProperty': LocalizedStringProperty;
+        'increaseSampleByOne': string;
+        'increaseSampleByOneStringProperty': LocalizedStringProperty;
+        'decreaseSampleByStepSize': string;
+        'decreaseSampleByStepSizeStringProperty': LocalizedStringProperty;
+        'increaseSampleByStepSize': string;
+        'increaseSampleByStepSizeStringProperty': LocalizedStringProperty;
+      };
+      'addAtomsButton': {
+        'accessibleName': string;
+        'accessibleNameStringProperty': LocalizedStringProperty;
+      };
+      'resetSampleButton': {
+        'accessibleName': string;
+        'accessibleNameStringProperty': LocalizedStringProperty;
+      };
+      'decayDataHeading': string;
+      'decayDataHeadingStringProperty': LocalizedStringProperty;
+      'decayTimeHistogramAtHalfLife': string;
+      'decayTimeHistogramAtHalfLifeStringProperty': LocalizedStringProperty;
+      'electronCloudCheckbox': {
+        'accessibleName': string;
+        'accessibleNameStringProperty': LocalizedStringProperty;
+        'accessibleHelpText': string;
+        'accessibleHelpTextStringProperty': LocalizedStringProperty;
+      };
+      'stopwatchCheckbox': {
+        'accessibleName': string;
+        'accessibleNameStringProperty': LocalizedStringProperty;
+        'accessibleHelpText': string;
+        'accessibleHelpTextStringProperty': LocalizedStringProperty;
+      }
     }
   }
 };

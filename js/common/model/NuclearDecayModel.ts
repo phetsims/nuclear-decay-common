@@ -9,6 +9,7 @@
 
 import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
 import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
+import DynamicProperty from '../../../../axon/js/DynamicProperty.js';
 import EnumerationProperty from '../../../../axon/js/EnumerationProperty.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import Property from '../../../../axon/js/Property.js';
@@ -476,6 +477,30 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   public static getIsotopeAtomConfig( isotope: ValidIsotopes ): AtomConfig {
     affirm( ISOTOPE_TO_ATOM_CONFIG.has( isotope ), `No AtomConfig found for selected isotope: ${isotope}` );
     return ISOTOPE_TO_ATOM_CONFIG.get( isotope )!;
+  }
+
+  /**
+   * Creates a reactive string property that tracks the name-and-mass of the currently selected isotope.
+   * Callers pass a customStringProperty for the 'custom' case so this method stays free of i18n imports.
+   * Similar to AtomNameUtils.createDynamicNameProperty but with name and mass.
+   * e.g. Polonium-211
+   */
+  public static createDynamicIsotopeNameAndMassStringProperty(
+    selectedIsotopeProperty: TReadOnlyProperty<SelectableIsotopes>,
+    customStringProperty: TReadOnlyProperty<string>
+  ): TReadOnlyProperty<string> {
+    const currentStringProperty = new Property<TReadOnlyProperty<string>>( customStringProperty );
+    const dynamicNameProperty = new DynamicProperty<string, string, TReadOnlyProperty<string>>( currentStringProperty );
+    selectedIsotopeProperty.link( isotope => {
+      if ( isotope === 'custom' ) {
+        currentStringProperty.value = customStringProperty;
+      }
+      else {
+        const atomConfig = NuclearDecayModel.getIsotopeAtomConfig( isotope );
+        currentStringProperty.value = AtomNameUtils.getNameAndMass( atomConfig.protonCount, atomConfig.neutronCount );
+      }
+    } );
+    return dynamicNameProperty;
   }
 
   /**
