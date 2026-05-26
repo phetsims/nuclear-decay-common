@@ -203,6 +203,12 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     } );
     this.addChild( stopwatchNode );
 
+    // Making stopwatch run when activated, for better user experience reasons.
+    // This is fine because sim won't actually run until atoms are added.
+    stopwatchNode.visibleProperty.link( visible => {
+      stopwatch.isRunningProperty.value = visible;
+    } );
+
     this.children = [ this.playAreaBoundsRectangle, ...this.children ];
 
     // ---- PDOM description nodes ----
