@@ -59,6 +59,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   public readonly isSingleAtomMode: boolean;
 
   // List of the selectable isotopes in the sim. Provided by subclasses
+  // JPB REVIEW: Why is field name capitalized?
   public readonly StartingIsotopes: StartingIsotopes[];
 
   // What isotope is currently selected in the sim.

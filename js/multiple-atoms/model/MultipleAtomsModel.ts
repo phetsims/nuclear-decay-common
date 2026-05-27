@@ -17,6 +17,7 @@ export type MultipleAtomDecayModelOptions = SelfOptions & NuclearDecayModelOptio
 export default class MultipleAtomsModel extends NuclearDecayModel {
 
   public constructor(
+    // JPB REVIEW: Why is this param capitalized?
     StartingIsotopes: StartingIsotopes[],
     decayType: DecayType,
     providedOptions?: MultipleAtomDecayModelOptions

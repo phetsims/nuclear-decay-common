@@ -49,6 +49,7 @@ export default class MinimalAtomNode extends Circle {
   public update(): void {
     this.updatePosition();
     this.visible = this.decayingAtom.isActive;
+    // JPB REVIEW: This seems short term. Hook up color scheme.
     this.fill = this.decayingAtom.hasDecayed ? 'grey' : 'magenta';
   }
 }

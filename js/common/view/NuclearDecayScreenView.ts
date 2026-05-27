@@ -27,6 +27,7 @@ import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import AlphaParticleNode from './AlphaParticleNode.js';
 import AtomLabelNode from './AtomLabelNode.js';
 import MinimalAtomNode from './MinimalAtomNode.js';
+import VibratingDecayingNucleusNode from './VibratingDecayingNucleusNode.js';
 
 type SelfOptions = {
   // Additional content to add to the isotope panel
@@ -47,7 +48,10 @@ export default class NuclearDecayScreenView extends ScreenView {
   // How many atoms will fit visually within the width of the play area
   private readonly numberOfAtomsInPlayAreaWidth: number;
 
-  protected atomNodesMap: Map<NuclearDecayAtom, MinimalAtomNode>;
+  // TODO: See https://github.com/phetsims/alpha-decay/issues/10.  Consider a common base class or interface for the
+  //       type that is being mapped to.  And why a map and not just a list? Or maybe use the stepEmitter for this
+  //       functionality.
+  protected atomNodesMap: Map<NuclearDecayAtom, MinimalAtomNode | VibratingDecayingNucleusNode>;
 
   protected atomLabelsMap: Map<NuclearDecayAtom, AtomLabelNode>;
 
@@ -79,9 +83,20 @@ export default class NuclearDecayScreenView extends ScreenView {
     this.atomNodesMap = new Map<NuclearDecayAtom, MinimalAtomNode>();
     this.atomLabelsMap = new Map<NuclearDecayAtom, AtomLabelNode>();
 
-    // Single atom screen is in charge of creating its own atom
-    if ( !model.isSingleAtomMode ) {
+    // Single atom screen is in charge of creating its own atom, the models with multiple atoms are handled here.
+    // TODO: See https://github.com/phetsims/alpha-decay/issues/10. Why is single atom handled uniquely?  Seems like we
+    //       should do all of there here or in subclasses.
+    // TODO: See https://github.com/phetsims/alpha-decay/issues/10. Also, if we keep this, the constants shouldn't be
+    //       hard coded.
+    if ( model.atomPool.length === 100 ) {
 
+      model.atomPool.forEach( atom => {
+        const atomNode = new VibratingDecayingNucleusNode( atom, this.modelViewTransformProperty );
+        this.atomNodesMap.set( atom, atomNode );
+        this.addChild( atomNode );
+      } );
+    }
+    else if ( model.atomPool.length === 1000 ) {
       model.atomPool.forEach( atom => {
         const atomNode = new MinimalAtomNode( atom, this.modelViewTransformProperty, {
         } );
@@ -95,6 +110,9 @@ export default class NuclearDecayScreenView extends ScreenView {
           this.addChild( atomLabelNode );
         }
       } );
+    }
+    else {
+      affirm( model.atomPool.length === 1, 'unexpected number of atoms' );
     }
 
     phetioStateSetEmitter.addListener( () => {
