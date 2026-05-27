@@ -118,12 +118,12 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     // Isotope symbols
 
     const selectedIsotopeSymbolProperty = model.selectedIsotopeProperty.derived( ( isotope: StartingIsotopes ) => {
-      return NuclearDecayAtom.getIsotopeMassAndSymbolString( isotope, 'A' );
+      return NuclearDecayAtom.getIsotopeMassAndSymbolString( isotope );
     } );
 
     const decayProductSymbolProperty = model.selectedIsotopeProperty.derived( ( isotope: StartingIsotopes ) => {
       const decayProduct = NuclearDecayAtom.getDecayProduct( isotope );
-      return NuclearDecayAtom.getIsotopeMassAndSymbolString( decayProduct, 'B' );
+      return NuclearDecayAtom.getIsotopeMassAndSymbolString( decayProduct );
     } );
 
     const initialIsotopeSymbol = new RichText( selectedIsotopeSymbolProperty, {

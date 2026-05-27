@@ -79,6 +79,9 @@ export default class NuclearDecayCommonConstants {
   // Particle sizes
   public static readonly NUCLEON_DIAMETER = 13;
 
+  // Separation between atom border and atom label
+  public static readonly LABEL_ATOM_GAP = 10;
+
   // Time control constants
   public static readonly MANUAL_STEP_DT = 1 / 60; // seconds, one frame
   public static readonly NORMAL_SPEED_SCALE = 0.25;

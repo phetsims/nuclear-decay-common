@@ -25,6 +25,7 @@ import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import AlphaParticleNode from './AlphaParticleNode.js';
+import AtomLabelNode from './AtomLabelNode.js';
 import MinimalAtomNode from './MinimalAtomNode.js';
 
 type SelfOptions = {
@@ -47,6 +48,8 @@ export default class NuclearDecayScreenView extends ScreenView {
   private readonly numberOfAtomsInPlayAreaWidth: number;
 
   protected atomNodesMap: Map<NuclearDecayAtom, MinimalAtomNode>;
+
+  protected atomLabelsMap: Map<NuclearDecayAtom, AtomLabelNode>;
 
   protected readonly playAreaBoundsProperty: Property<Bounds2>;
 
@@ -74,14 +77,23 @@ export default class NuclearDecayScreenView extends ScreenView {
 
     // Prepopulating all atom nodes and pairing them with their respective model atoms.
     this.atomNodesMap = new Map<NuclearDecayAtom, MinimalAtomNode>();
+    this.atomLabelsMap = new Map<NuclearDecayAtom, AtomLabelNode>();
 
     // Single atom screen is in charge of creating its own atom
     if ( !model.isSingleAtomMode ) {
 
       model.atomPool.forEach( atom => {
-        const atomNode = new MinimalAtomNode( atom, this.modelViewTransformProperty );
+        const atomNode = new MinimalAtomNode( atom, this.modelViewTransformProperty, {
+        } );
         this.atomNodesMap.set( atom, atomNode );
         this.addChild( atomNode );
+
+        if ( model.maxNumberOfAtoms <= 100 ) {
+          const atomLabelNode = new AtomLabelNode(
+            atom, model.selectedIsotopeProperty, { visibleProperty: atomNode.visibleProperty } );
+          this.atomLabelsMap.set( atom, atomLabelNode );
+          this.addChild( atomLabelNode );
+        }
       } );
     }
 
@@ -185,6 +197,12 @@ export default class NuclearDecayScreenView extends ScreenView {
         const atomNode = this.atomNodesMap.get( atom );
         affirm( atomNode, 'Atom Node should exist for active atom' );
         atomNode.update();
+
+        // No affirmation because we won't have labels in the third screen
+        const atomLabel = this.atomLabelsMap.get( atom );
+        if ( atomLabel ) {
+          atomLabel.updatePosition( atomNode.bounds );
+        }
       } );
     }
   }

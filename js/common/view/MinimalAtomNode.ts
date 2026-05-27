@@ -29,7 +29,6 @@ export default class MinimalAtomNode extends Circle {
     const options = optionize<MinimalAtomNodeOptions, SelfOptions, MinimalAtomNodeOptions>()( {
       showElectronCloud: false,
       visible: decayingAtom.isActive,
-
       fill: NuclearDecayCommonColors.undecayedProperty
     }, providedOptions );
 

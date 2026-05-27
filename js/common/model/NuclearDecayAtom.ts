@@ -20,7 +20,7 @@ import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 import AtomInfoUtils, { DecayType, decayTypeValues } from '../../../../shred/js/AtomInfoUtils.js';
 import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
-import AtomConfig, { AtomConfigStateObject } from '../../../../shred/js/model/AtomConfig.js';
+import AtomConfig from '../../../../shred/js/model/AtomConfig.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
 import ArrayIO from '../../../../tandem/js/types/ArrayIO.js';
 import BooleanIO from '../../../../tandem/js/types/BooleanIO.js';
@@ -32,9 +32,8 @@ import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import EjectedDecayParticle, { EjectedDecayParticleStateObject } from './EjectedDecayParticle.js';
 
 export type NuclearDecayAtomStateObject = {
+  isotope: ValidIsotopes;
   ejectedDecayParticles: EjectedDecayParticleStateObject[];
-  atomConfigBeforeDecay: AtomConfigStateObject;
-  atomConfigAfterDecay: AtomConfigStateObject;
   decayType: DecayType;
   halfLife: number;
   isActive: boolean;
@@ -99,6 +98,8 @@ const EJECTED_PARTICLE_ANGLE_RANGES = [
 
 export default class NuclearDecayAtom {
 
+  public isotope: ValidIsotopes;
+
   // Number of protons, neutrons and electrons before the decay.
   public atomConfigBeforeDecay: AtomConfig;
 
@@ -148,7 +149,7 @@ export default class NuclearDecayAtom {
   private decayType: DecayType;
 
   public constructor(
-    atomConfigBeforeDecay: AtomConfig,
+    isotope: ValidIsotopes,
     decayType: DecayType,
     providedOptions?: NuclearDecayAtomOptions
   ) {
@@ -159,6 +160,9 @@ export default class NuclearDecayAtom {
       particleEjectionSpeed: DEFAULT_PARTICLE_EJECTION_SPEED
     }, providedOptions );
 
+    this.isotope = isotope;
+
+    const atomConfigBeforeDecay = NuclearDecayAtom.getIsotopeAtomConfig( isotope );
     this.atomConfigBeforeDecay = atomConfigBeforeDecay;
     this.atomConfigAfterDecay = NuclearDecayAtom.deriveAtomConfigAfterDecay( atomConfigBeforeDecay, decayType );
     this.ejectParticlesOnDecay = options.ejectParticlesOnDecay;
@@ -226,10 +230,14 @@ export default class NuclearDecayAtom {
     } );
     this.time = 0;
     this.decayTime = null;
+
+    if ( DecayProductValues.includes( this.isotope ) ) {
+      this.setIsotope( NuclearDecayAtom.getDecayOrigin( this.isotope ) );
+    }
   }
 
   public copy(): NuclearDecayAtom {
-    const newAtom = new NuclearDecayAtom( this.atomConfigBeforeDecay, this.decayType, {
+    const newAtom = new NuclearDecayAtom( this.isotope, this.decayType, {
       ejectParticlesOnDecay: this.ejectParticlesOnDecay,
       restrictEjectionAngles: this.restrictEjectionAngles,
       particleEjectionSpeed: this.particleEjectionSpeed
@@ -246,6 +254,8 @@ export default class NuclearDecayAtom {
    * Sets values for this atom based on a reference atom, used for serialization
    */
   public set( referenceAtom: NuclearDecayAtom ): void {
+    this.isotope = referenceAtom.isotope;
+    this.setAtomConfigBeforeDecay( referenceAtom.atomConfigBeforeDecay );
     this.isActive = referenceAtom.isActive;
     this.time = referenceAtom.time;
     this.decayTime = referenceAtom.decayTime;
@@ -266,6 +276,12 @@ export default class NuclearDecayAtom {
     referenceParticles.forEach( ( particleState, i ) => {
       this.ejectedDecayParticles[ i ].set( particleState );
     } );
+  }
+
+  public setIsotope( newIsotope: StartingIsotopes ): void {
+    this.isotope = newIsotope;
+    const newAtomConfig = NuclearDecayAtom.getIsotopeAtomConfig( newIsotope );
+    this.setAtomConfigBeforeDecay( newAtomConfig );
   }
 
   /**
@@ -331,8 +347,9 @@ export default class NuclearDecayAtom {
   /**
    * Get a string with the mass and symbol of an isotope (211-Pb) for example, or a custom string if 'custom' is selected.
    */
-  public static getIsotopeMassAndSymbolString( isotope: ValidIsotopes, customAnswer = '' ): string {
-    if ( isotope === 'custom' || isotope === 'custom-decayed' ) { return customAnswer; }
+  public static getIsotopeMassAndSymbolString( isotope: ValidIsotopes ): string {
+    if ( isotope === 'custom' ) { return 'A'; }
+    if ( isotope === 'custom-decayed' ) { return 'B';}
     const atomConfig = NuclearDecayAtom.getIsotopeAtomConfig( isotope );
     return AtomNameUtils.getMassAndSymbol( atomConfig.protonCount, atomConfig.neutronCount );
   }
@@ -342,8 +359,8 @@ export default class NuclearDecayAtom {
    * modeled in this simulation. It may not be generally true for all isotopes in physical reality, since different
    * decay paths are sometimes possible.
    */
-  public static getDecayProduct( isotope: StartingIsotopes ): ValidIsotopes {
-    let decayProduct: ValidIsotopes | null = null;
+  public static getDecayProduct( isotope: StartingIsotopes ): DecayProducts {
+    let decayProduct: DecayProducts | null = null;
     if ( isotope === 'custom' ) {
       decayProduct = 'custom-decayed';
     }
@@ -358,6 +375,24 @@ export default class NuclearDecayAtom {
     }
     affirm( decayProduct !== null, 'Unhandled isotope type' );
     return decayProduct;
+  }
+
+  public static getDecayOrigin( isotope: DecayProducts ): StartingIsotopes {
+    let decayOrigin: StartingIsotopes | null = null;
+    if ( isotope === 'custom-decayed' ) {
+      decayOrigin = 'custom';
+    }
+    else if ( isotope === 'lead-207' ) {
+      decayOrigin = 'polonium-211';
+    }
+    else if ( isotope === 'helium-3' ) {
+      decayOrigin = 'hydrogen-3';
+    }
+    else if ( isotope === 'nitrogen-14' ) {
+      decayOrigin = 'carbon-14';
+    }
+    affirm( decayOrigin !== null, 'Unhandled isotope type' );
+    return decayOrigin;
   }
 
 
@@ -381,6 +416,9 @@ export default class NuclearDecayAtom {
       const probabilityOfDecay = NuclearDecayAtom.decayProbabilityOverInterval( this._halfLife, decayDt );
       if ( dotRandom.nextDouble() < probabilityOfDecay ) {
         this.decayTime = this.time;
+
+        affirm( !DecayProductValues.includes( this.isotope ), 'Atom must not have a decayed isotope type before decaying' );
+        this.isotope = NuclearDecayAtom.getDecayProduct( this.isotope as StartingIsotopes );
 
         // Activate and position the ejected decay particles.
         this.ejectedDecayParticles.forEach( particle => {
@@ -469,9 +507,8 @@ export default class NuclearDecayAtom {
   public static readonly NuclearDecayAtomIO = new IOType<NuclearDecayAtom, NuclearDecayAtomStateObject>( 'NuclearDecayAtomIO', {
     valueType: NuclearDecayAtom,
     stateSchema: {
-      atomConfigBeforeDecay: AtomConfig.AtomConfigIO,
+      isotope: StringUnionIO( StartingIsotopesValues ),
       decayType: StringUnionIO( decayTypeValues ),
-      atomConfigAfterDecay: AtomConfig.AtomConfigIO,
       halfLife: NumberIO,
       isActive: BooleanIO,
       hasDecayed: BooleanIO,
@@ -483,11 +520,9 @@ export default class NuclearDecayAtom {
     },
     fromStateObject: ( stateObject: NuclearDecayAtomStateObject ) => {
       const atom = new NuclearDecayAtom(
-        new AtomConfig( stateObject.atomConfigBeforeDecay.protonCount, stateObject.atomConfigBeforeDecay.neutronCount, stateObject.atomConfigBeforeDecay.electronCount ),
+        stateObject.isotope,
         stateObject.decayType,
-        {
-          ejectParticlesOnDecay: stateObject.ejectParticlesOnDecay
-        }
+        { ejectParticlesOnDecay: stateObject.ejectParticlesOnDecay }
       );
       atom.isActive = stateObject.isActive;
       atom._halfLife = stateObject.halfLife;
