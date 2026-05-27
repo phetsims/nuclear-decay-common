@@ -27,10 +27,22 @@ export type VibratingDecayingNucleusNodeOptions = SelfOptions & NodeOptions;
 // Constant for the radius of individual nucleons, in screen coordinates (unitless).
 const NUCLEON_RADIUS = 5;
 
+// Period between vibration updates for undecayed nuclei, in seconds.
+const VIBRATION_UPDATE_PERIOD = 0.032;
+
+// Maximum offset for vibration, in screen coordinates.
+const MAX_VIBRATION_OFFSET = 4;
+
 export default class VibratingDecayingNucleusNode extends Node {
 
   // Used to detect when the atom decays so the nucleus can be rebuilt.
   private atomHasDecayed: boolean;
+
+  // View-only offset used to create a vibration effect for the nucleus before it decays.
+  private viewOffset: Vector2 = Vector2.ZERO;
+
+  // Accumulates time between vibration updates. Initialized to a random value to desynchronize multiple nuclei.
+  private vibrationTimeAccumulator = dotRandom.nextDouble() * VIBRATION_UPDATE_PERIOD;
 
   public constructor(
     private readonly decayingAtom: NuclearDecayAtom,
@@ -53,10 +65,52 @@ export default class VibratingDecayingNucleusNode extends Node {
       this.setScaleMagnitude( desiredAtomWidth / originalAtomWidth );
       this.center = mvt.modelToViewPosition( decayingAtom.position );
     } );
+
+    decayingAtom.steppedEmitter.addListener( dt => {
+
+      if ( !this.decayingAtom.hasDecayed ) {
+
+        // Atom has not yet decayed, so accumulate time for vibration updates.
+        this.vibrationTimeAccumulator += dt;
+
+        // Check if it's time to update the vibration offset.
+        if ( this.vibrationTimeAccumulator >= VIBRATION_UPDATE_PERIOD ) {
+
+          if ( this.viewOffset.equals( Vector2.ZERO ) ) {
+
+            // Currently at center, so jump away to a random offset.
+            const randomAngle = dotRandom.nextDouble() * 2 * Math.PI;
+            const randomLength = dotRandom.nextDouble() * MAX_VIBRATION_OFFSET;
+            this.viewOffset = Vector2.createPolar( randomLength, randomAngle );
+          }
+          else {
+
+            // Currently away from center, so jump back to center.
+            this.viewOffset = Vector2.ZERO;
+          }
+
+
+          // Reset the accumulator.
+          this.vibrationTimeAccumulator = 0;
+
+          // Update the position with the new offset.
+          this.updatePosition();
+        }
+      }
+      else {
+
+        // Atom has decayed, so set the offset to zero and update position.
+        if ( !this.viewOffset.equals( Vector2.ZERO ) ) {
+          this.viewOffset = Vector2.ZERO;
+          this.updatePosition();
+        }
+      }
+    } );
   }
 
   public updatePosition(): void {
-    this.center = this.modelViewTransformProperty.value.modelToViewPosition( this.decayingAtom.position );
+    const modelPosition = this.modelViewTransformProperty.value.modelToViewPosition( this.decayingAtom.position );
+    this.center = modelPosition.plus( this.viewOffset );
   }
 
   /**
