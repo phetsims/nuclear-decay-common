@@ -1,8 +1,8 @@
 // Copyright 2026, University of Colorado Boulder
 
 /**
- * MinimalAtomNode is the minimal representation of an atom, for simplicity to avoid rendering
- * many atoms and their nucleons.
+ * MinimalAtomNode is the minimal representation of an atom, for simplicity to avoid rendering many atoms and their
+ * nucleons.
  *
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
@@ -33,7 +33,6 @@ export default class MinimalAtomNode extends Circle {
       fill: NuclearDecayCommonColors.undecayedProperty
     }, providedOptions );
 
-    // Create the ParticleAtomNode to render the nucleus.
     super( 1, options );
 
     const originalAtomWidth = this.width;
@@ -42,7 +41,6 @@ export default class MinimalAtomNode extends Circle {
       this.setScaleMagnitude( desiredAtomWidth / originalAtomWidth );
       this.center = mvt.modelToViewPosition( decayingAtom.position );
     } );
-
   }
 
   public updatePosition(): void {
