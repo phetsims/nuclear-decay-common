@@ -147,11 +147,6 @@ a11y:
         percent remains. { $undecayedCount } { $isotope } atoms undecayed. { $decayedCount } { $isotope } atoms decayed.
     numberOfAtomsControl:
       accessibleName: '{ $isotope } Atoms'
-      accessibleHelpText: Choose number of atoms for radioactive sample. Then look for add atoms button.
-      decreaseSampleByOne: Decrease sample by 1
-      increaseSampleByOne: Increase sample by 1
-      decreaseSampleByStepSize: 'Decrease sample by { $stepSize }'
-      increaseSampleByStepSize: 'Increase sample by { $stepSize }'
     addAtomsButton:
       accessibleName: Add Atoms
     resetSampleButton:

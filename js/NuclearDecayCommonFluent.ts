@@ -123,11 +123,6 @@ addToMapIfDefined( 'a11y_multipleAtoms_radioactiveSample_noAtoms', 'a11y.multipl
 addToMapIfDefined( 'a11y_multipleAtoms_radioactiveSample_readyToDecay', 'a11y.multipleAtoms.radioactiveSample.readyToDecayStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_radioactiveSample_decayOccurring', 'a11y.multipleAtoms.radioactiveSample.decayOccurringStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_numberOfAtomsControl_accessibleName', 'a11y.multipleAtoms.numberOfAtomsControl.accessibleNameStringProperty' );
-addToMapIfDefined( 'a11y_multipleAtoms_numberOfAtomsControl_accessibleHelpText', 'a11y.multipleAtoms.numberOfAtomsControl.accessibleHelpTextStringProperty' );
-addToMapIfDefined( 'a11y_multipleAtoms_numberOfAtomsControl_decreaseSampleByOne', 'a11y.multipleAtoms.numberOfAtomsControl.decreaseSampleByOneStringProperty' );
-addToMapIfDefined( 'a11y_multipleAtoms_numberOfAtomsControl_increaseSampleByOne', 'a11y.multipleAtoms.numberOfAtomsControl.increaseSampleByOneStringProperty' );
-addToMapIfDefined( 'a11y_multipleAtoms_numberOfAtomsControl_decreaseSampleByStepSize', 'a11y.multipleAtoms.numberOfAtomsControl.decreaseSampleByStepSizeStringProperty' );
-addToMapIfDefined( 'a11y_multipleAtoms_numberOfAtomsControl_increaseSampleByStepSize', 'a11y.multipleAtoms.numberOfAtomsControl.increaseSampleByStepSizeStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_addAtomsButton_accessibleName', 'a11y.multipleAtoms.addAtomsButton.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_resetSampleButton_accessibleName', 'a11y.multipleAtoms.resetSampleButton.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_decayDataHeading', 'a11y.multipleAtoms.decayDataHeadingStringProperty' );
@@ -301,12 +296,7 @@ const NuclearDecayCommonFluent = {
         decayOccurring: new FluentPattern<{ addedAtoms: FluentVariable, decayedCount: FluentVariable, decayParticle: FluentVariable, isotope: FluentVariable, percentageUndecayed: FluentVariable, time: FluentVariable, undecayedCount: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_multipleAtoms_radioactiveSample_decayOccurring', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.radioactiveSample.decayOccurringStringProperty' ), [{"name":"addedAtoms"},{"name":"decayedCount"},{"name":"decayParticle"},{"name":"isotope"},{"name":"percentageUndecayed"},{"name":"time"},{"name":"undecayedCount"}] )
       },
       numberOfAtomsControl: {
-        accessibleName: new FluentPattern<{ isotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_multipleAtoms_numberOfAtomsControl_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.numberOfAtomsControl.accessibleNameStringProperty' ), [{"name":"isotope"}] ),
-        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_numberOfAtomsControl_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.numberOfAtomsControl.accessibleHelpTextStringProperty' ) ),
-        decreaseSampleByOneStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_numberOfAtomsControl_decreaseSampleByOne', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.numberOfAtomsControl.decreaseSampleByOneStringProperty' ) ),
-        increaseSampleByOneStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_numberOfAtomsControl_increaseSampleByOne', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.numberOfAtomsControl.increaseSampleByOneStringProperty' ) ),
-        decreaseSampleByStepSize: new FluentPattern<{ stepSize: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_multipleAtoms_numberOfAtomsControl_decreaseSampleByStepSize', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.numberOfAtomsControl.decreaseSampleByStepSizeStringProperty' ), [{"name":"stepSize"}] ),
-        increaseSampleByStepSize: new FluentPattern<{ stepSize: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_multipleAtoms_numberOfAtomsControl_increaseSampleByStepSize', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.numberOfAtomsControl.increaseSampleByStepSizeStringProperty' ), [{"name":"stepSize"}] )
+        accessibleName: new FluentPattern<{ isotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_multipleAtoms_numberOfAtomsControl_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.numberOfAtomsControl.accessibleNameStringProperty' ), [{"name":"isotope"}] )
       },
       addAtomsButton: {
         accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_addAtomsButton_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.addAtomsButton.accessibleNameStringProperty' ) )

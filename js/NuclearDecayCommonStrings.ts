@@ -269,16 +269,6 @@ type StringsType = {
       'numberOfAtomsControl': {
         'accessibleName': string;
         'accessibleNameStringProperty': LocalizedStringProperty;
-        'accessibleHelpText': string;
-        'accessibleHelpTextStringProperty': LocalizedStringProperty;
-        'decreaseSampleByOne': string;
-        'decreaseSampleByOneStringProperty': LocalizedStringProperty;
-        'increaseSampleByOne': string;
-        'increaseSampleByOneStringProperty': LocalizedStringProperty;
-        'decreaseSampleByStepSize': string;
-        'decreaseSampleByStepSizeStringProperty': LocalizedStringProperty;
-        'increaseSampleByStepSize': string;
-        'increaseSampleByStepSizeStringProperty': LocalizedStringProperty;
       };
       'addAtomsButton': {
         'accessibleName': string;

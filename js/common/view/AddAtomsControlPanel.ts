@@ -52,6 +52,9 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
     const numberOfAtomsSpinner = new FineCoarseSpinner( atomsToAddProperty, {
       deltaFine: 1,
       deltaCoarse: options.stepSize,
+      accessibleName: NuclearDecayCommonFluent.a11y.multipleAtoms.numberOfAtomsControl.accessibleName.createProperty( {
+        isotope: isotopeDynamicNameProperty
+      } ),
       tandem: options.tandem.createTandem( 'numberOfAtomsSpinner' )
     } );
 

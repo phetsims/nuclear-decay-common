@@ -357,21 +357,6 @@
       "numberOfAtomsControl": {
         "accessibleName": {
           "value": "{ $isotope } Atoms"
-        },
-        "accessibleHelpText": {
-          "value": "Choose number of atoms for radioactive sample. Then look for add atoms button."
-        },
-        "decreaseSampleByOne": {
-          "value": "Decrease sample by 1"
-        },
-        "increaseSampleByOne": {
-          "value": "Increase sample by 1"
-        },
-        "decreaseSampleByStepSize": {
-          "value": "Decrease sample by { $stepSize }"
-        },
-        "increaseSampleByStepSize": {
-          "value": "Increase sample by { $stepSize }"
         }
       },
       "addAtomsButton": {
