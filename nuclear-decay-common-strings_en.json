@@ -245,6 +245,11 @@
         "value": "Initial energy { $initialEProgress }, alpha particle escape distance { $distanceProgress }."
       }
     },
+    "dataProbeSlider": {
+      "accessibleHelpText": {
+        "value": "Adjust data probe to read decay percentages at a point in time."
+      }
+    },
     "timeScaleCheckbox": {
       "accessibleHelpText": {
         "value": "Show or hide time scale ranging from milliseconds to billions of years."

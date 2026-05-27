@@ -8,6 +8,7 @@
  */
 
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
+import Range from '../../../../dot/js/Range.js';
 import { clamp } from '../../../../dot/js/util/clamp.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import Shape from '../../../../kite/js/Shape.js';
@@ -291,7 +292,13 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       }
     );
 
-    const dataProbeGrabber = new DataProbeGrabberNode( model, {
+    // Create the property before the grabber so it can be wired as the AccessibleSlider value.
+    const dataProbeXProperty = new NumberProperty( GRAPH_WIDTH / 2, {
+      range: new Range( 0, GRAPH_WIDTH ),
+      tandem: options.tandem.createTandem( 'dataProbeXProperty' )
+    } );
+
+    const dataProbeGrabber = new DataProbeGrabberNode( dataProbeXProperty, GRAPH_WIDTH, {
       centerX: dataProbeLine.centerX,
       top: dataProbeLine.bottom
     } );
@@ -377,9 +384,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     this.graphHeight = GRAPH_HEIGHT;
     this.dataProbePanel = dataProbePanel;
     this.decayRateModel = model;
-    this.dataProbeXProperty = new NumberProperty( dataProbeNode.centerX, {
-      tandem: options.tandem.createTandem( 'dataProbeXProperty' )
-    } );
+    this.dataProbeXProperty = dataProbeXProperty;
 
     // Freeze the graph's local bounds so moving children like the Grabber won't affect its bounds.
     graphArea.localBounds = graphArea.localBounds.copy();

@@ -185,6 +185,10 @@ type StringsType = {
       'accessibleContextResponse': string;
       'accessibleContextResponseStringProperty': LocalizedStringProperty;
     };
+    'dataProbeSlider': {
+      'accessibleHelpText': string;
+      'accessibleHelpTextStringProperty': LocalizedStringProperty;
+    };
     'timeScaleCheckbox': {
       'accessibleHelpText': string;
       'accessibleHelpTextStringProperty': LocalizedStringProperty;

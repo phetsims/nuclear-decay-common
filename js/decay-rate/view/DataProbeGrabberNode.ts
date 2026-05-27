@@ -7,15 +7,17 @@
  * @author Agustín Vallejo
  */
 
+import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import { toFixed } from '../../../../dot/js/util/toFixed.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import Orientation from '../../../../phet-core/js/Orientation.js';
 import StrictOmit from '../../../../phet-core/js/types/StrictOmit.js';
-import StringUtils from '../../../../phetcommon/js/util/StringUtils.js';
 import ShadedSphereNode, { ShadedSphereNodeOptions } from '../../../../scenery-phet/js/ShadedSphereNode.js';
 import AccessibleSlider, { type AccessibleSliderOptions } from '../../../../sun/js/accessibility/AccessibleSlider.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
-import DecayRateModel from '../model/DecayRateModel.js';
+
+// The maximum time displayed on the x-axis (seconds), mirrored from DecayRateGraphPanel.
+const MAX_TIME = 3.5;
 
 type SelfOptions = EmptySelfOptions;
 
@@ -26,41 +28,26 @@ export type DataProbeGrabberNodeOptions = SelfOptions & StrictOmit<ParentOptions
 
 export default class DataProbeGrabberNode extends AccessibleSlider( ShadedSphereNode, 1 ) {
   public constructor(
-    model: DecayRateModel,
+    dataProbeXProperty: NumberProperty,
+    graphWidth: number,
     providedOptions?: DataProbeGrabberNodeOptions
   ) {
     const options = optionize<DataProbeGrabberNodeOptions, SelfOptions, ParentOptions>()( {
 
-      valueProperty: model.customHalfLifeProperty,
-      enabledRangeProperty: model.customHalfLifeProperty.rangeProperty,
+      valueProperty: dataProbeXProperty,
+      enabledRangeProperty: dataProbeXProperty.rangeProperty,
 
       mainColor: 'grey',
       cursor: 'w-resize',
 
       // Keyboard accessibility: makes the sphere focusable and reachable via Tab.
       focusable: true,
-      accessibleName: NuclearDecayCommonFluent.halfLifeStringProperty,
-      accessibleHelpText: NuclearDecayCommonFluent.a11y.halfLifeSlider.accessibleHelpTextStringProperty,
+      accessibleName: NuclearDecayCommonFluent.dataProbeStringProperty,
+      accessibleHelpText: NuclearDecayCommonFluent.a11y.dataProbeSlider.accessibleHelpTextStringProperty,
       ariaOrientation: Orientation.HORIZONTAL,
       createAriaValueText: ( _formattedValue: number, value: number ) => {
-        const isLogarithmic = model.timescaleProperty.value === 'exponential';
-        const realTime = model.expandNormalizedTime( value, isLogarithmic );
-        const shownTime = isLogarithmic ?
-                          `10<sup>${toFixed( Math.log10( realTime ), 1 )}</sup>` :
-                          toFixed( value, 2 );
-        return StringUtils.fillIn( NuclearDecayCommonFluent.timeSecondsStringProperty.value, { time: shownTime } );
-      },
-      createContextResponseAlert: ( newValue: number, oldValue: number ) => {
-        const increased = oldValue !== null && newValue > oldValue;
-        const initialEProgress = increased
-                                 ? NuclearDecayCommonFluent.a11y.qualitative.progressLowerStringProperty.value
-                                 : NuclearDecayCommonFluent.a11y.qualitative.progressHigherStringProperty.value;
-        const distanceProgress = increased
-                                 ? NuclearDecayCommonFluent.a11y.qualitative.progressSmallerStringProperty.value
-                                 : NuclearDecayCommonFluent.a11y.qualitative.progressLargerStringProperty.value;
-        return NuclearDecayCommonFluent.a11y.halfLifeSlider.accessibleContextResponse.format( {
-          initialEProgress: initialEProgress, distanceProgress: distanceProgress
-        } );
+        const time = ( value / graphWidth ) * MAX_TIME;
+        return toFixed( time, 2 );
       }
     }, providedOptions );
 

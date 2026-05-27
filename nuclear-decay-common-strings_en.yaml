@@ -90,6 +90,8 @@ a11y:
   halfLifeSlider:
     accessibleHelpText: Adjust time for isotope A to undergo one half-life.
     accessibleContextResponse: 'Initial energy { $initialEProgress }, alpha particle escape distance { $distanceProgress }.'
+  dataProbeSlider:
+    accessibleHelpText: Adjust data probe to read decay percentages at a point in time.
   timeScaleCheckbox:
     accessibleHelpText: Show or hide time scale ranging from milliseconds to billions of years.
     accessibleContextResponseChecked: Time scale shown.
