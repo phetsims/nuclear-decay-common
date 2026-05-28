@@ -131,6 +131,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   // A boolean Property that indicates whether there are any atoms in the play area.
   public readonly isPlayAreaEmptyProperty: BooleanProperty;
 
+  // The maximum number of atoms that can be
   public readonly maxNumberOfAtoms: number;
 
   // Data that can be presented in a histogram in the view that represents the decay state of the atoms.
@@ -327,6 +328,8 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       phetioFeatured: true
     } );
 
+    // JBP REVIEW: Whoa, wait, what? A derived property is modifying another property? That doesn't seem right. Why not
+    //             just have a max time value and stop there?
     this.isTimeInfiniteProperty = this.timeProperty.derived( time => {
       if ( Math.log10( time ) > 1.1 * NuclearDecayCommonConstants.MAX_HALF_LIFE_EXPONENT ) {
         this.continueAddingTimeProperty.value = false;
@@ -543,7 +546,6 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     else {
       this.undecayedAtoms = this.activeAtoms.filter( atom => !atom.hasDecayed );
     }
-
 
     this.histogramData.reset();
   }

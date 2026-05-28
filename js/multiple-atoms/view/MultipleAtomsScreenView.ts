@@ -152,21 +152,27 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     );
     this.setPlayAreaBounds( playAreaBounds );
 
-    // Reset button — top-right
-    const resetButton = new RectangularPushButton( {
+    // Create the button that can be used to reset the decay state of the sample of atomic nuclei currently present in
+    // the model.
+    const resetSampleButton = new RectangularPushButton( {
       content: new Path( undoSolidShape, { scale: 0.038, fill: 'black' } ),
       baseColor: NuclearDecayCommonColors.resetButtonProperty,
       listener: () => {
-        model.clearAtomLists();
-        this.activateMultipleAtomNodes( atomsToAddProperty.value );
+        model.resetAtomDecayStates();
+
+        // Clear the decayed atoms array and histogram data. The first parameter (false) keeps the undecayed atoms
+        // list intact, while the second parameter (true) clears the decayed atoms and histogram.
+        // JPB REVIEW: This API was hard for me to figure out, and feels very awkward. We should revisit the lists and
+        //             the way this works to see if we can come up with something more discoverable and maintainable.
+        model.clearAtomLists( false, true );
       },
       right: playAreaBounds.right,
       top: playAreaBounds.top,
       accessibleName: NuclearDecayCommonFluent.a11y.multipleAtoms.resetSampleButton.accessibleNameStringProperty,
-      tandem: options.tandem.createTandem( 'resetButton' ),
+      tandem: options.tandem.createTandem( 'resetSampleButton' ),
       enabledProperty: model.isPlayAreaEmptyProperty.derived( empty => !empty )
     } );
-    this.addChild( resetButton );
+    this.addChild( resetSampleButton );
 
     const isotopesLegendPanel = new IsotopeSelectionPanel(
       [ NuclearDecayCommonConstants.POLONIUM_211, NuclearDecayCommonConstants.LEAD_207 ],
@@ -263,7 +269,7 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
       readyToDecayDescNode,
       decayOccurringDescNode,
       addAtomsPanel,
-      resetButton
+      resetSampleButton
     ];
     this.addChild( noAtomsDescNode );
     this.addChild( readyToDecayDescNode );
