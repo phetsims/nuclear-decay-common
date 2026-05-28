@@ -5,6 +5,8 @@
  * @author Agustín Vallejo
  */
 
+import Multilink from '../../../../axon/js/Multilink.js';
+import StringProperty from '../../../../axon/js/StringProperty.js';
 import Shape from '../../../../kite/js/Shape.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
@@ -13,7 +15,6 @@ import Circle from '../../../../scenery/js/nodes/Circle.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Path from '../../../../scenery/js/nodes/Path.js';
 import RichText from '../../../../scenery/js/nodes/RichText.js';
-import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
@@ -31,28 +32,25 @@ export class DecayPieChartNode extends VBox {
     providedOptions: DecayPieChartNodeOptions ) {
     const options = optionize<DecayPieChartNodeOptions, SelfOptions, VBoxOptions>()( {
       spacing: 10,
-      radius: 30,
-      resize: false
+      radius: 30
     }, providedOptions );
 
-    const undecayedIsotope = model.selectedIsotopeProperty.value;
-    const decayedIsotope = NuclearDecayAtom.getDecayProduct( undecayedIsotope );
+    const undecayedCountStringProperty = new StringProperty( '' );
+    const decayedCountStringProperty = new StringProperty( '' );
 
-    // TODO: We can simplify getting the atom config for mass and symbol, just get it from the isotope directly! https://github.com/phetsims/shred/issues/47
-    const undecayedAtomConfig = NuclearDecayAtom.getIsotopeAtomConfig( undecayedIsotope );
-    const decayedAtomConfig = NuclearDecayAtom.getIsotopeAtomConfig( decayedIsotope );
-
-    // Get isotope display strings
-    const undecayedSymbol = AtomNameUtils.getMassAndSymbol( undecayedAtomConfig.protonCount, undecayedAtomConfig.neutronCount );
-    const decayedSymbol = AtomNameUtils.getMassAndSymbol( decayedAtomConfig.protonCount, decayedAtomConfig.neutronCount );
-
-    const undecayedCountStringProperty = model.undecayedCountProperty.derived( count => {
-      return `${undecayedSymbol}: ${count}`;
-    } );
-
-    const decayedCountStringProperty = model.decayedCountProperty.derived( count => {
-      return `${decayedSymbol}: ${count}`;
-    } );
+    Multilink.multilink(
+      [
+        model.selectedIsotopeProperty,
+        model.undecayedCountProperty,
+        model.decayedCountProperty
+      ], ( undecayedIsotope, undecayedCount, decayedCount ) => {
+        const decayedIsotope = NuclearDecayAtom.getDecayProduct( undecayedIsotope );
+        const undecayedSymbol = NuclearDecayAtom.getIsotopeMassAndSymbolString( undecayedIsotope );
+        const decayedSymbol = NuclearDecayAtom.getIsotopeMassAndSymbolString( decayedIsotope );
+        undecayedCountStringProperty.value = `${undecayedSymbol}: ${undecayedCount}`;
+        decayedCountStringProperty.value = `${decayedSymbol}: ${decayedCount}`;
+      }
+    );
 
     // Isotope count labels at the top
     const undecayedCountLabel = new RichText( undecayedCountStringProperty, {
