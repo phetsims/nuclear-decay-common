@@ -1,4 +1,5 @@
 // Copyright 2026, University of Colorado Boulder
+
 /**
  * Class that controls the visibility of UI elements for the second screens of the Decay suite.
  *
@@ -16,7 +17,7 @@ export default class MultipleAtomsVisibleProperties {
 
   public constructor( tandem: Tandem ) {
 
-    this.electronCloudVisibleProperty = new BooleanProperty( false, {
+    this.electronCloudVisibleProperty = new BooleanProperty( true, {
       tandem: tandem.createTandem( 'electronCloudVisibleProperty' ),
       phetioFeatured: true
     } );

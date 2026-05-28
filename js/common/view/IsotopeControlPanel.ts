@@ -1,7 +1,7 @@
 // Copyright 2026, University of Colorado Boulder
 /**
- * Panel that holds the isotope selector as well as a legend for the particles in the nucleus,
- * showing the different types of particles and their colors.
+ * Panel that holds the isotope selector as well as a legend for the particles in the nucleus, showing the different
+ * types of particles and their colors.
  *
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
@@ -23,14 +23,17 @@ import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
 
 type SelfOptions = {
-  // The second screen has additional checkboxes in the middle of the panel
+
+  // The second screen has additional checkboxes in the middle of the panel.
   middleContent?: Node[] | null;
 };
 
 export type IsotopeControlPanelOptions = SelfOptions & WithRequired<NuclearDecayPanelOptions, 'tandem'>;
 
 export default class IsotopeControlPanel extends NuclearDecayPanel {
+
   public constructor( model: NuclearDecayModel, providedOptions?: IsotopeControlPanelOptions ) {
+
     const options = optionize<IsotopeControlPanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {
       minWidth: NuclearDecayCommonConstants.RIGHT_PANEL_WIDTH,
 
@@ -43,7 +46,7 @@ export default class IsotopeControlPanel extends NuclearDecayPanel {
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
-    // Creating first the radio buttons for the normal isotopes and leaving custom for last
+    // Create the radio buttons for the normal isotopes first, leave custom for last.
     const nonCustomIsotopes = model.StartingIsotopes.filter( isotope => isotope !== 'custom' );
     const radioButtonItems: AquaRadioButtonGroupItem<ValidIsotopes>[] = nonCustomIsotopes.map( isotope => {
       const atomConfig = NuclearDecayAtom.getIsotopeAtomConfig( isotope );
@@ -58,7 +61,6 @@ export default class IsotopeControlPanel extends NuclearDecayPanel {
           maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
         } )
       };
-
     } );
 
     // Adding custom at the end of the options

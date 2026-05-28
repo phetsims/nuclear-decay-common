@@ -15,23 +15,29 @@ import Vector2 from '../../../../dot/js/Vector2.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import ModelViewTransform2 from '../../../../phetcommon/js/view/ModelViewTransform2.js';
 import ShadedSphereNode from '../../../../scenery-phet/js/ShadedSphereNode.js';
+import Circle from '../../../../scenery/js/nodes/Circle.js';
 import Node, { NodeOptions } from '../../../../scenery/js/nodes/Node.js';
+import RadialGradient from '../../../../scenery/js/util/RadialGradient.js';
 import { rasterizeNode } from '../../../../scenery/js/util/rasterizeNode.js';
 import ShredColors from '../../../../shred/js/ShredColors.js';
-import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 
 type SelfOptions = EmptySelfOptions;
 export type VibratingDecayingNucleusNodeOptions = SelfOptions & NodeOptions;
 
 // Constant for the radius of individual nucleons, in screen coordinates (unitless).
-const NUCLEON_RADIUS = 5;
+const NUCLEON_RADIUS = 1.5;
 
 // Period between vibration updates for undecayed nuclei, in seconds.
 const VIBRATION_UPDATE_PERIOD = 0.032;
 
 // Maximum offset for vibration, in screen coordinates.
 const MAX_VIBRATION_OFFSET = 4;
+
+const ELECTRON_CLOUD_RADIUS = NUCLEON_RADIUS * 20;
+const ELECTRON_CLOUD_GRADIENT = new RadialGradient( 0, 0, 0, 0, 0, ELECTRON_CLOUD_RADIUS )
+  .addColorStop( 0, 'rgba( 0, 0, 255, 200 )' )
+  .addColorStop( 0.9, 'rgba( 0, 0, 255, 0 )' );
 
 export default class VibratingDecayingNucleusNode extends Node {
 
@@ -44,9 +50,15 @@ export default class VibratingDecayingNucleusNode extends Node {
   // Accumulates time between vibration updates. Initialized to a random value to desynchronize multiple nuclei.
   private vibrationTimeAccumulator = dotRandom.nextDouble() * VIBRATION_UPDATE_PERIOD;
 
+  // The node that represents the atom's nucleus, which is updated as the atom decays.
+  private readonly nucleusNode: Node;
+
+  private readonly electronCloudNode: Node;
+
   public constructor(
     private readonly decayingAtom: NuclearDecayAtom,
     private readonly modelViewTransformProperty: TReadOnlyProperty<ModelViewTransform2>,
+    private readonly electronCloudVisibleProperty: TReadOnlyProperty<boolean>,
     providedOptions?: VibratingDecayingNucleusNodeOptions
   ) {
 
@@ -57,14 +69,15 @@ export default class VibratingDecayingNucleusNode extends Node {
     super( options );
 
     this.atomHasDecayed = decayingAtom.hasDecayed;
-    this.addChild( this.createNucleusNode() );
+    this.nucleusNode = new Node( { children: [ this.createNucleusNode() ] } );
+    this.addChild( this.nucleusNode );
 
-    const originalAtomWidth = this.width;
-    modelViewTransformProperty.link( mvt => {
-      const desiredAtomWidth = mvt.modelToViewDeltaX( 2 * NuclearDecayCommonConstants.ATOM_RADIUS );
-      this.setScaleMagnitude( desiredAtomWidth / originalAtomWidth );
-      this.center = mvt.modelToViewPosition( decayingAtom.position );
+    this.electronCloudNode = new Circle( ELECTRON_CLOUD_RADIUS, {
+      fill: ELECTRON_CLOUD_GRADIENT,
+      visibleProperty: electronCloudVisibleProperty
     } );
+    this.addChild( this.electronCloudNode );
+    this.electronCloudNode.moveToBack();
 
     decayingAtom.steppedEmitter.addListener( dt => {
 
@@ -123,8 +136,8 @@ export default class VibratingDecayingNucleusNode extends Node {
     if ( this.atomHasDecayed !== this.decayingAtom.hasDecayed ) {
 
       // Decay state changed, so rebuild the nucleus node.
-      this.removeAllChildren();
-      this.addChild( this.createNucleusNode() );
+      this.nucleusNode.removeAllChildren();
+      this.nucleusNode.addChild( this.createNucleusNode() );
       this.atomHasDecayed = this.decayingAtom.hasDecayed;
     }
 

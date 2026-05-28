@@ -117,7 +117,8 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
       screenSummaryContent: new MultipleAtomsScreenSummaryContent( model ),
       isotopePanelMiddleContent: [ electronCloudCheckbox, stopwatchCheckbox ],
       numberOfAtomsInPlayAreaWidth: 40,
-      decayParticleStringProperty: new Property( '' )
+      decayParticleStringProperty: new Property( '' ),
+      electronCloudVisibleProperty: visibleProperties.electronCloudVisibleProperty
     }, providedOptions );
 
     super( model, options );

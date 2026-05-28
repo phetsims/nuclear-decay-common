@@ -32,6 +32,7 @@ type SelfOptions = {
   numberOfAtomsInPlayAreaWidth?: number;
 };
 
+// JBP REVIEW: This option name seems wrong.  Is it?
 export type DecayHistogramScreenViewOptions = SelfOptions & WithRequired<NuclearDecayScreenViewOptions, 'tandem'>;
 
 export default class SingleAndMultipleAtomsScreenView extends NuclearDecayScreenView {

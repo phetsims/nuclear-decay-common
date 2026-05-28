@@ -6,6 +6,7 @@
  */
 
 import Property from '../../../../axon/js/Property.js';
+import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import ScreenView, { ScreenViewOptions } from '../../../../joist/js/ScreenView.js';
@@ -35,6 +36,9 @@ type SelfOptions = {
 
   // How many atoms will fit visually within the width of the play area
   numberOfAtomsInPlayAreaWidth?: number;
+
+  // Property to control visibility of electron clouds around nuclei. Optional - only used in multiple-atoms screens.
+  electronCloudVisibleProperty?: TReadOnlyProperty<boolean> | null;
 };
 
 export type NuclearDecayScreenViewOptions = SelfOptions & WithRequired<ScreenViewOptions, 'tandem'>;
@@ -69,7 +73,9 @@ export default class NuclearDecayScreenView extends ScreenView {
       // Self Options
       isotopePanelMiddleContent: null,
 
-      numberOfAtomsInPlayAreaWidth: 10
+      numberOfAtomsInPlayAreaWidth: 10,
+
+      electronCloudVisibleProperty: null
     }, providedOptions );
 
     super( options );
@@ -90,16 +96,22 @@ export default class NuclearDecayScreenView extends ScreenView {
     //       hard coded.
     if ( model.atomPool.length === 100 ) {
 
+      // For screens that use VibratingDecayingNucleusNode, electronCloudVisibleProperty must be provided.
+      affirm( options.electronCloudVisibleProperty, 'electronCloudVisibleProperty is required for multiple-atoms screens' );
+
       model.atomPool.forEach( atom => {
-        const atomNode = new VibratingDecayingNucleusNode( atom, this.modelViewTransformProperty );
+        const atomNode = new VibratingDecayingNucleusNode(
+          atom,
+          this.modelViewTransformProperty,
+          options.electronCloudVisibleProperty!
+        );
         this.atomNodesMap.set( atom, atomNode );
         this.addChild( atomNode );
       } );
     }
     else if ( model.atomPool.length === 1000 ) {
       model.atomPool.forEach( atom => {
-        const atomNode = new MinimalAtomNode( atom, this.modelViewTransformProperty, {
-        } );
+        const atomNode = new MinimalAtomNode( atom, this.modelViewTransformProperty, {} );
         this.atomNodesMap.set( atom, atomNode );
         this.addChild( atomNode );
 
