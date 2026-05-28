@@ -17,14 +17,13 @@ export type MultipleAtomDecayModelOptions = SelfOptions & NuclearDecayModelOptio
 export default class MultipleAtomsModel extends NuclearDecayModel {
 
   public constructor(
-    // JPB REVIEW: Why is this param capitalized?
-    StartingIsotopes: StartingIsotopes[],
+    startingIsotopes: StartingIsotopes[],
     decayType: DecayType,
     providedOptions?: MultipleAtomDecayModelOptions
   ) {
     const options = optionize<MultipleAtomDecayModelOptions, SelfOptions, NuclearDecayModelOptions>()( {
     }, providedOptions );
 
-    super( StartingIsotopes, decayType, options );
+    super( startingIsotopes, decayType, options );
   }
 }

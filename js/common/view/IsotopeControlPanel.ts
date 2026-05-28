@@ -47,7 +47,7 @@ export default class IsotopeControlPanel extends NuclearDecayPanel {
     } );
 
     // Create the radio buttons for the normal isotopes first, leave custom for last.
-    const nonCustomIsotopes = model.StartingIsotopes.filter( isotope => isotope !== 'custom' );
+    const nonCustomIsotopes = model.selectableIsotopes.filter( isotope => isotope !== 'custom' );
     const radioButtonItems: AquaRadioButtonGroupItem<ValidIsotopes>[] = nonCustomIsotopes.map( isotope => {
       const atomConfig = NuclearDecayAtom.getIsotopeAtomConfig( isotope );
       return {

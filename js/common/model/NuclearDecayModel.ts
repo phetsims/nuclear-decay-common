@@ -59,8 +59,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   public readonly isSingleAtomMode: boolean;
 
   // List of the selectable isotopes in the sim. Provided by subclasses
-  // JPB REVIEW: Why is field name capitalized?
-  public readonly StartingIsotopes: StartingIsotopes[];
+  public readonly selectableIsotopes: StartingIsotopes[];
 
   // What isotope is currently selected in the sim.
   // 'polonium-211' vs 'custom' in Alpha Decay, or 'carbon-14' vs 'hydrogen-3' vs 'custom' in Beta Decay.
@@ -163,7 +162,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
     this.isSingleAtomMode = options.maxNumberOfAtoms === 1;
 
-    this.StartingIsotopes = StartingIsotopes;
+    this.selectableIsotopes = StartingIsotopes;
 
     this.selectedIsotopeProperty = new Property<StartingIsotopes>( 'custom', {
       tandem: options.tandem.createTandem( 'selectedIsotopeProperty' ),

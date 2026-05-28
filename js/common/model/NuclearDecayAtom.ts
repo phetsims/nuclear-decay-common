@@ -183,10 +183,7 @@ export default class NuclearDecayAtom {
     if ( options.ejectParticlesOnDecay ) {
       if ( decayType === 'alphaDecay' ) {
         const particle = new EjectedDecayParticle( 'alpha', {
-
           animationSpeedProperty: new NumberProperty( options.particleEjectionSpeed ),
-
-          // JPB REVIEW: Uh-oh. If we aren't providing tandems, what do we do here?
           tandem: Tandem.OPT_OUT
         } );
         this.ejectedDecayParticles.push( particle );
