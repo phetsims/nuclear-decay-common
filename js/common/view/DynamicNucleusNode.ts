@@ -17,8 +17,8 @@ import optionize from '../../../../phet-core/js/optionize.js';
 import ShadedSphereNode from '../../../../scenery-phet/js/ShadedSphereNode.js';
 import Node, { NodeOptions } from '../../../../scenery/js/nodes/Node.js';
 import ShredColors from '../../../../shred/js/ShredColors.js';
-import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 
 type SelfOptions = {
 
@@ -104,6 +104,11 @@ class DynamicNucleusNode extends Node {
 
       this.step( dt );
     } );
+  }
+
+  public update(): void {
+    // TODO Get rid of this https://github.com/phetsims/alpha-decay/issues/10
+    // no-op
   }
 
   /**

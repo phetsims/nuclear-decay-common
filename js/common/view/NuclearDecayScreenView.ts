@@ -27,6 +27,7 @@ import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import AlphaParticleNode from './AlphaParticleNode.js';
 import AtomLabelNode from './AtomLabelNode.js';
+import DynamicNucleusNode from './DynamicNucleusNode.js';
 import MinimalAtomNode from './MinimalAtomNode.js';
 import VibratingDecayingNucleusNode from './VibratingDecayingNucleusNode.js';
 
@@ -55,7 +56,7 @@ export default class NuclearDecayScreenView extends ScreenView {
   // TODO: See https://github.com/phetsims/alpha-decay/issues/10.  Consider a common base class or interface for the
   //       type that is being mapped to.  And why a map and not just a list? Or maybe use the stepEmitter for this
   //       functionality.
-  protected atomNodesMap: Map<NuclearDecayAtom, MinimalAtomNode | VibratingDecayingNucleusNode>;
+  protected atomNodesMap: Map<NuclearDecayAtom, MinimalAtomNode | VibratingDecayingNucleusNode | DynamicNucleusNode>;
 
   protected atomLabelsMap: Map<NuclearDecayAtom, AtomLabelNode>;
 
@@ -86,15 +87,27 @@ export default class NuclearDecayScreenView extends ScreenView {
     this.modelViewTransformProperty = new Property( ModelViewTransform2.createIdentity() );
 
     // Prepopulating all atom nodes and pairing them with their respective model atoms.
-    this.atomNodesMap = new Map<NuclearDecayAtom, MinimalAtomNode>();
+    this.atomNodesMap = new Map<NuclearDecayAtom, MinimalAtomNode | VibratingDecayingNucleusNode | DynamicNucleusNode>();
     this.atomLabelsMap = new Map<NuclearDecayAtom, AtomLabelNode>();
 
     // Single atom screen is in charge of creating its own atom, the models with multiple atoms are handled here.
-    // TODO: See https://github.com/phetsims/alpha-decay/issues/10. Why is single atom handled uniquely?  Seems like we
-    //       should do all of there here or in subclasses.
-    // TODO: See https://github.com/phetsims/alpha-decay/issues/10. Also, if we keep this, the constants shouldn't be
+    // TODO: See https://github.com/phetsims/alpha-decay/issues/10. If we keep this, the constants shouldn't be
     //       hard coded.
-    if ( model.atomPool.length === 100 ) {
+    if ( model.atomPool.length === 1 ) {
+      const atom = model.atomPool[ 0 ];
+      const atomNode = new DynamicNucleusNode( atom, model.isPlayingProperty, {
+        visibleProperty: model.isPlayAreaEmptyProperty.derived( isEmpty => !isEmpty )
+        // escapeRadiusProperty: energyIntersectionPointProperty.derived( point => point.x )
+      } );
+      this.atomNodesMap.set( atom, atomNode );
+
+      this.modelViewTransformProperty.link( mvt => {
+        atomNode.center = mvt.modelToViewPosition( Vector2.ZERO );
+      } );
+
+      this.addChild( atomNode );
+    }
+    else if ( model.atomPool.length === 100 ) {
 
       // For screens that use VibratingDecayingNucleusNode, electronCloudVisibleProperty must be provided.
       affirm( options.electronCloudVisibleProperty, 'electronCloudVisibleProperty is required for multiple-atoms screens' );
