@@ -125,7 +125,7 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
 
     this.visibleProperties = visibleProperties;
 
-    const defaultAtomsToAdd = 100;
+    const defaultAtomsToAdd = 10;
     const atomsToAddProperty = new NumberProperty(
       Math.min( model.maxNumberOfAtoms, defaultAtomsToAdd ), {
         range: new Range( 1, model.maxNumberOfAtoms ),

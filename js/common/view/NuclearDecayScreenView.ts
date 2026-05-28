@@ -107,6 +107,11 @@ export default class NuclearDecayScreenView extends ScreenView {
         );
         this.atomNodesMap.set( atom, atomNode );
         this.addChild( atomNode );
+
+        const atomLabelNode = new AtomLabelNode(
+          atom, model.selectedIsotopeProperty, { visibleProperty: atomNode.visibleProperty } );
+        this.atomLabelsMap.set( atom, atomLabelNode );
+        this.addChild( atomLabelNode );
       } );
     }
     else if ( model.atomPool.length === 1000 ) {
@@ -114,13 +119,6 @@ export default class NuclearDecayScreenView extends ScreenView {
         const atomNode = new MinimalAtomNode( atom, this.modelViewTransformProperty, {} );
         this.atomNodesMap.set( atom, atomNode );
         this.addChild( atomNode );
-
-        if ( model.maxNumberOfAtoms <= 100 ) {
-          const atomLabelNode = new AtomLabelNode(
-            atom, model.selectedIsotopeProperty, { visibleProperty: atomNode.visibleProperty } );
-          this.atomLabelsMap.set( atom, atomLabelNode );
-          this.addChild( atomLabelNode );
-        }
       } );
     }
     else {
@@ -207,13 +205,6 @@ export default class NuclearDecayScreenView extends ScreenView {
 
   public reset(): void {
     this.model.reset();
-    this.resetAtomNodes();
-  }
-
-  public resetAtomNodes(): void {
-    this.atomNodesMap.forEach( atomNode => {
-      atomNode.visible = false;
-    } );
   }
 
   /**
@@ -238,7 +229,6 @@ export default class NuclearDecayScreenView extends ScreenView {
   }
 
   public activateMultipleAtomNodes( n: number ): void {
-    this.resetAtomNodes();
     this.model.activateMultipleAtoms( n );
     this.updateAtomNodes();
   }
