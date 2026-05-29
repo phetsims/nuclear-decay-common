@@ -29,7 +29,7 @@ import AlphaParticleNode from './AlphaParticleNode.js';
 import AtomLabelNode from './AtomLabelNode.js';
 import DynamicNucleusNode from './DynamicNucleusNode.js';
 import MinimalAtomNode from './MinimalAtomNode.js';
-import VibratingDecayingNucleusNode from './VibratingDecayingNucleusNode.js';
+import VibratingDecayingAtomNode from './VibratingDecayingAtomNode.js';
 
 type SelfOptions = {
   // Additional content to add to the isotope panel
@@ -56,7 +56,7 @@ export default class NuclearDecayScreenView extends ScreenView {
   // TODO: See https://github.com/phetsims/alpha-decay/issues/10.  Consider a common base class or interface for the
   //       type that is being mapped to.  And why a map and not just a list? Or maybe use the stepEmitter for this
   //       functionality.
-  protected atomNodesMap: Map<NuclearDecayAtom, MinimalAtomNode | VibratingDecayingNucleusNode | DynamicNucleusNode>;
+  protected atomNodesMap: Map<NuclearDecayAtom, MinimalAtomNode | VibratingDecayingAtomNode | DynamicNucleusNode>;
 
   protected atomLabelsMap: Map<NuclearDecayAtom, AtomLabelNode>;
 
@@ -87,7 +87,7 @@ export default class NuclearDecayScreenView extends ScreenView {
     this.modelViewTransformProperty = new Property( ModelViewTransform2.createIdentity() );
 
     // Prepopulating all atom nodes and pairing them with their respective model atoms.
-    this.atomNodesMap = new Map<NuclearDecayAtom, MinimalAtomNode | VibratingDecayingNucleusNode | DynamicNucleusNode>();
+    this.atomNodesMap = new Map<NuclearDecayAtom, MinimalAtomNode | VibratingDecayingAtomNode | DynamicNucleusNode>();
     this.atomLabelsMap = new Map<NuclearDecayAtom, AtomLabelNode>();
 
     // Single atom screen is in charge of creating its own atom, the models with multiple atoms are handled here.
@@ -109,11 +109,11 @@ export default class NuclearDecayScreenView extends ScreenView {
     }
     else if ( model.atomPool.length === 100 ) {
 
-      // For screens that use VibratingDecayingNucleusNode, electronCloudVisibleProperty must be provided.
+      // For screens that use VibratingDecayingAtomNode, electronCloudVisibleProperty must be provided.
       affirm( options.electronCloudVisibleProperty, 'electronCloudVisibleProperty is required for multiple-atoms screens' );
 
       model.atomPool.forEach( atom => {
-        const atomNode = new VibratingDecayingNucleusNode(
+        const atomNode = new VibratingDecayingAtomNode(
           atom,
           this.modelViewTransformProperty,
           options.electronCloudVisibleProperty!

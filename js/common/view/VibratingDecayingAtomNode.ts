@@ -1,7 +1,7 @@
 // Copyright 2026, University of Colorado Boulder
 
 /**
- * VibratingDecayingNucleusNode is a representation of an atomic nucleus that depicts individual protons and neutrons,
+ * VibratingDecayingAtomNode is a representation of an atomic nucleus that depicts individual protons and neutrons,
  * vibrates (i.e. jumps around a little big) before it decays and then is still after, and reconfigures the nucleus when
  * decay occurs.
  *
@@ -23,7 +23,7 @@ import ShredColors from '../../../../shred/js/ShredColors.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 
 type SelfOptions = EmptySelfOptions;
-export type VibratingDecayingNucleusNodeOptions = SelfOptions & NodeOptions;
+export type VibratingDecayingAtomNodeOptions = SelfOptions & NodeOptions;
 
 // Constant for the radius of individual nucleons, in screen coordinates (unitless).
 const NUCLEON_RADIUS = 1.5;
@@ -39,7 +39,7 @@ const ELECTRON_CLOUD_GRADIENT = new RadialGradient( 0, 0, 0, 0, 0, ELECTRON_CLOU
   .addColorStop( 0, 'rgba( 0, 0, 255, 200 )' )
   .addColorStop( 0.9, 'rgba( 0, 0, 255, 0 )' );
 
-export default class VibratingDecayingNucleusNode extends Node {
+export default class VibratingDecayingAtomNode extends Node {
 
   // Used to detect when the atom decays so the nucleus can be rebuilt.
   private atomHasDecayed: boolean;
@@ -59,10 +59,10 @@ export default class VibratingDecayingNucleusNode extends Node {
     private readonly decayingAtom: NuclearDecayAtom,
     private readonly modelViewTransformProperty: TReadOnlyProperty<ModelViewTransform2>,
     private readonly electronCloudVisibleProperty: TReadOnlyProperty<boolean>,
-    providedOptions?: VibratingDecayingNucleusNodeOptions
+    providedOptions?: VibratingDecayingAtomNodeOptions
   ) {
 
-    const options = optionize<VibratingDecayingNucleusNodeOptions, SelfOptions, VibratingDecayingNucleusNodeOptions>()( {
+    const options = optionize<VibratingDecayingAtomNodeOptions, SelfOptions, VibratingDecayingAtomNodeOptions>()( {
       visible: decayingAtom.isActive
     }, providedOptions );
 
