@@ -7,23 +7,32 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
+import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
+import DerivedStringProperty from '../../../../axon/js/DerivedStringProperty.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
+import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
 import Range from '../../../../dot/js/Range.js';
+import { roundSymmetric } from '../../../../dot/js/util/roundSymmetric.js';
+import { toFixed } from '../../../../dot/js/util/toFixed.js';
 import AddAtomsControlPanel from '../../../../nuclear-decay-common/js/common/view/AddAtomsControlPanel.js';
 import NuclearDecayScreenView, { NuclearDecayScreenViewOptions } from '../../../../nuclear-decay-common/js/common/view/NuclearDecayScreenView.js';
 import NuclearDecayCommonColors from '../../../../nuclear-decay-common/js/NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../../../nuclear-decay-common/js/NuclearDecayCommonConstants.js';
+import NuclearDecayCommonFluent from '../../../../nuclear-decay-common/js/NuclearDecayCommonFluent.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import ResetAllButton from '../../../../scenery-phet/js/buttons/ResetAllButton.js';
 import TimeControlNode from '../../../../scenery-phet/js/TimeControlNode.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
+import Node from '../../../../scenery/js/nodes/Node.js';
 import Path from '../../../../scenery/js/nodes/Path.js';
 import undoSolidShape from '../../../../sherpa/js/fontawesome-5/undoSolidShape.js';
 import RectangularPushButton from '../../../../sun/js/buttons/RectangularPushButton.js';
+import NuclearDecayAtom from '../../common/model/NuclearDecayAtom.js';
 import IsotopeSelectionPanel from '../../common/view/IsotopeSelectionPanel.js';
 import DecayRateModel from '../model/DecayRateModel.js';
 import DecayRateGraphPanel from './DecayRateGraphPanel.js';
+import DecayRateScreenSummaryContent from './DecayRateScreenSummaryContent.js';
 import DecayRateVisibleProperties from './DecayRateVisibleProperties.js';
 import SortButton from './SortButton.js';
 
@@ -42,7 +51,8 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
   public constructor( model: DecayRateModel, providedOptions: DecayRateScreenViewOptions ) {
 
     const options = optionize<DecayRateScreenViewOptions, SelfOptions, NuclearDecayScreenViewOptions>()( {
-      numberOfAtomsInPlayAreaWidth: 200
+      numberOfAtomsInPlayAreaWidth: 200,
+      screenSummaryContent: new DecayRateScreenSummaryContent( model )
     }, providedOptions );
 
     const MARGIN_X = NuclearDecayCommonConstants.SCREEN_VIEW_X_MARGIN;
@@ -142,6 +152,7 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
         model.clearAtomLists();
         this.activateMultipleAtomNodes( atomsToAddProperty.value );
       },
+      accessibleName: NuclearDecayCommonFluent.a11y.decayRate.resetSampleButton.accessibleNameStringProperty,
       tandem: options.tandem.createTandem( 'resetButton' ),
       enabledProperty: model.isPlayAreaEmptyProperty.derived( empty => !empty )
     } );
@@ -166,6 +177,117 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
 
     this.children = [ this.playAreaBoundsRectangle, ...this.children ];
 
+    // ---- PDOM description nodes ----
+
+    // Dynamic name for the undecayed isotope (e.g., "Polonium-211" or "Isotope A").
+    const undecayedIsotopeNameProperty: TReadOnlyProperty<string> = NuclearDecayAtom.createDynamicIsotopeNameAndMassStringProperty(
+      model.selectedIsotopeProperty, NuclearDecayCommonFluent.isotopeAStringProperty
+    );
+
+    // Dynamic name for the decay-product isotope (e.g., "Lead-207" or "Isotope B").
+    const decayedIsotopeNameProperty: TReadOnlyProperty<string> = NuclearDecayAtom.createDynamicDecayProductNameAndMassStringProperty(
+      model.selectedIsotopeProperty, NuclearDecayCommonFluent.isotopeBStringProperty
+    );
+
+    // State 1: No atoms in play area.
+    const noAtomsDescNode = new Node( {
+      visibleProperty: model.isPlayAreaEmptyProperty,
+      accessibleParagraph: NuclearDecayCommonFluent.a11y.multipleAtoms.radioactiveSample.noAtoms.createProperty( {
+        isotope: undecayedIsotopeNameProperty
+      } )
+    } );
+
+    // State 2: Atoms added but none have decayed yet.
+    const readyToDecayDescNode = new Node( {
+      visibleProperty: new DerivedProperty(
+        [ model.isPlayAreaEmptyProperty, model.decayedCountProperty ],
+        ( isEmpty, decayedCount ) => !isEmpty && decayedCount === 0
+      ),
+      accessibleParagraph: NuclearDecayCommonFluent.a11y.multipleAtoms.radioactiveSample.readyToDecay.createProperty( {
+        addedAtoms: model.activeAtomsCountProperty,
+        isotope: undecayedIsotopeNameProperty
+      } )
+    } );
+
+    // State 3: Atoms added and at least one has decayed.
+    const decayOccurringDescNode = new Node( {
+      visibleProperty: model.decayedCountProperty.derived( count => count > 0 ),
+      accessibleParagraph: NuclearDecayCommonFluent.a11y.decayRate.radioactiveSample.decayOccurring.createProperty( {
+        addedAtoms: model.activeAtomsCountProperty,
+        isotope: undecayedIsotopeNameProperty,
+        time: model.timeProperty.derived( t => toFixed( t, 2 ) ),
+        percentageUndecayed: model.percentageOfUndecayedProperty.derived( p => `${roundSymmetric( p * 100 )}` ),
+        undecayedCount: model.undecayedCountProperty,
+        decayedCount: model.decayedCountProperty
+      } )
+    } );
+
+    // Heading that groups radioactive sample content for screen readers.
+    const radioactiveSampleHeadingNode = new Node( {
+      accessibleHeading: NuclearDecayCommonFluent.a11y.multipleAtoms.radioactiveSampleHeadingStringProperty
+    } );
+    radioactiveSampleHeadingNode.pdomOrder = [
+      noAtomsDescNode,
+      readyToDecayDescNode,
+      decayOccurringDescNode,
+      addAtomsPanel,
+      resetButton,
+      sortButton
+    ];
+    this.addChild( noAtomsDescNode );
+    this.addChild( readyToDecayDescNode );
+    this.addChild( decayOccurringDescNode );
+    this.addChild( radioactiveSampleHeadingNode );
+
+    // Description of the decay graph that updates as curve visibility changes.
+    const checkedComponentsProperty = new DerivedStringProperty(
+      [
+        this.visibleProperties.showUndecayedProperty,
+        this.visibleProperties.showDecayedProperty,
+        this.visibleProperties.showHalfLivesProperty,
+        undecayedIsotopeNameProperty,
+        decayedIsotopeNameProperty
+      ],
+      ( showUndecayed, showDecayed, showHalfLives, undecayedName, decayedName ) => {
+        const parts: string[] = [];
+        if ( showUndecayed ) { parts.push( `${undecayedName} curve` ); }
+        if ( showDecayed ) { parts.push( `${decayedName} curve` ); }
+        if ( showHalfLives ) { parts.push( 'half-life markers' ); }
+        return parts.length > 0 ? parts.join( ' and ' ) : 'nothing';
+      }
+    );
+
+    const graphDescNode = new Node( {
+      accessibleParagraph: NuclearDecayCommonFluent.a11y.decayRate.decayGraphPanel.accessibleParagraph.createProperty( {
+        checkedComponents: checkedComponentsProperty
+      } )
+    } );
+    this.addChild( graphDescNode );
+
+    // Heading that groups decay graph content for screen readers.
+    const decayGraphHeadingNode = new Node( {
+      accessibleHeading: NuclearDecayCommonFluent.a11y.decayRate.decayGraphHeadingStringProperty
+    } );
+    decayGraphHeadingNode.pdomOrder = [
+      graphDescNode,
+      this.decayRateGraphPanel.dataProbeGrabber
+    ];
+    this.addChild( decayGraphHeadingNode );
+
+    // Play Area pdomOrder:
+    //   Radioactive Sample heading → Decay Graph heading → Isotopes legend
+    this.pdomPlayAreaNode.pdomOrder = [
+      radioactiveSampleHeadingNode,
+      decayGraphHeadingNode,
+      isotopesLegendPanel
+    ];
+
+    // Control Area pdomOrder:
+    //   Isotope curve checkboxes → Half-lives checkbox → Data probe checkbox → Time controls → Reset All
+    this.pdomControlAreaNode.pdomOrder = [
+      timeControlNode,
+      resetAllButton
+    ];
   }
 
   public override step( dt: number ): void {

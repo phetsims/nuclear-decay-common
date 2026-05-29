@@ -294,6 +294,66 @@ type StringsType = {
         'accessibleHelpText': string;
         'accessibleHelpTextStringProperty': LocalizedStringProperty;
       }
+    };
+    'decayRate': {
+      'screenSummary': {
+        'playArea': string;
+        'playAreaStringProperty': LocalizedStringProperty;
+        'controlArea': string;
+        'controlAreaStringProperty': LocalizedStringProperty;
+        'currentDetails': string;
+        'currentDetailsStringProperty': LocalizedStringProperty;
+        'interactionHint': {
+          'addAtoms': string;
+          'addAtomsStringProperty': LocalizedStringProperty;
+          'afterDecay': string;
+          'afterDecayStringProperty': LocalizedStringProperty;
+        }
+      };
+      'radioactiveSample': {
+        'decayOccurring': string;
+        'decayOccurringStringProperty': LocalizedStringProperty;
+      };
+      'decayGraphHeading': string;
+      'decayGraphHeadingStringProperty': LocalizedStringProperty;
+      'decayGraphPanel': {
+        'accessibleParagraph': string;
+        'accessibleParagraphStringProperty': LocalizedStringProperty;
+      };
+      'undecayedCheckbox': {
+        'accessibleName': string;
+        'accessibleNameStringProperty': LocalizedStringProperty;
+        'accessibleHelpText': string;
+        'accessibleHelpTextStringProperty': LocalizedStringProperty;
+      };
+      'decayedCheckbox': {
+        'accessibleName': string;
+        'accessibleNameStringProperty': LocalizedStringProperty;
+        'accessibleHelpText': string;
+        'accessibleHelpTextStringProperty': LocalizedStringProperty;
+      };
+      'halfLivesCheckbox': {
+        'accessibleName': string;
+        'accessibleNameStringProperty': LocalizedStringProperty;
+        'accessibleHelpText': string;
+        'accessibleHelpTextStringProperty': LocalizedStringProperty;
+      };
+      'dataProbeCheckbox': {
+        'accessibleName': string;
+        'accessibleNameStringProperty': LocalizedStringProperty;
+        'accessibleHelpText': string;
+        'accessibleHelpTextStringProperty': LocalizedStringProperty;
+      };
+      'sortButton': {
+        'accessibleName': string;
+        'accessibleNameStringProperty': LocalizedStringProperty;
+        'accessibleHelpText': string;
+        'accessibleHelpTextStringProperty': LocalizedStringProperty;
+      };
+      'resetSampleButton': {
+        'accessibleName': string;
+        'accessibleNameStringProperty': LocalizedStringProperty;
+      }
     }
   }
 };

@@ -65,6 +65,9 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
   private readonly decayRateModel: DecayRateModel;
   private readonly dataProbeXProperty: NumberProperty;
 
+  // Data probe grabber exposed for pdomOrder placement under the Decay Graph heading.
+  public readonly dataProbeGrabber: DataProbeGrabberNode;
+
   public constructor(
     model: DecayRateModel,
     visibleProperties: DecayRateVisibleProperties,
@@ -101,6 +104,12 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       ]
     } );
     const undecayedCheckbox = new Checkbox( visibleProperties.showUndecayedProperty, undecayedCheckboxContent, {
+      accessibleName: NuclearDecayCommonFluent.a11y.decayRate.undecayedCheckbox.accessibleName.createProperty( {
+        isotope: NuclearDecayAtom.createDynamicIsotopeNameAndMassStringProperty(
+          model.selectedIsotopeProperty, NuclearDecayCommonFluent.isotopeAStringProperty
+        )
+      } ),
+      accessibleHelpText: NuclearDecayCommonFluent.a11y.decayRate.undecayedCheckbox.accessibleHelpTextStringProperty,
       tandem: options.tandem.createTandem( 'undecayedCheckbox' )
     } );
 
@@ -122,6 +131,12 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       ]
     } );
     const decayedCheckbox = new Checkbox( visibleProperties.showDecayedProperty, decayedCheckboxContent, {
+      accessibleName: NuclearDecayCommonFluent.a11y.decayRate.decayedCheckbox.accessibleName.createProperty( {
+        isotope: NuclearDecayAtom.createDynamicDecayProductNameAndMassStringProperty(
+          model.selectedIsotopeProperty, NuclearDecayCommonFluent.isotopeBStringProperty
+        )
+      } ),
+      accessibleHelpText: NuclearDecayCommonFluent.a11y.decayRate.decayedCheckbox.accessibleHelpTextStringProperty,
       tandem: options.tandem.createTandem( 'decayedCheckbox' )
     } );
 
@@ -139,6 +154,8 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       ]
     } );
     const halfLivesCheckbox = new Checkbox( visibleProperties.showHalfLivesProperty, halfLivesCheckboxContent, {
+      accessibleName: NuclearDecayCommonFluent.a11y.decayRate.halfLivesCheckbox.accessibleNameStringProperty,
+      accessibleHelpText: NuclearDecayCommonFluent.a11y.decayRate.halfLivesCheckbox.accessibleHelpTextStringProperty,
       tandem: options.tandem.createTandem( 'halfLivesCheckbox' )
     } );
 
@@ -148,6 +165,8 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       maxWidth: 100
     } );
     const dataProbeCheckbox = new Checkbox( visibleProperties.showDataProbeProperty, dataProbeCheckboxContent, {
+      accessibleName: NuclearDecayCommonFluent.a11y.decayRate.dataProbeCheckbox.accessibleNameStringProperty,
+      accessibleHelpText: NuclearDecayCommonFluent.a11y.decayRate.dataProbeCheckbox.accessibleHelpTextStringProperty,
       tandem: options.tandem.createTandem( 'dataProbeCheckbox' )
     } );
 
@@ -378,6 +397,14 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     this.dataProbePanel = dataProbePanel;
     this.decayRateModel = model;
     this.dataProbeXProperty = dataProbeXProperty;
+    this.dataProbeGrabber = dataProbeGrabber;
+
+    this.pdomOrder = [
+      undecayedCheckbox,
+      decayedCheckbox,
+      halfLivesCheckbox,
+      dataProbeCheckbox
+    ];
 
     // Freeze the graph's local bounds so moving children like the Grabber won't affect its bounds.
     graphArea.localBounds = graphArea.localBounds.copy();

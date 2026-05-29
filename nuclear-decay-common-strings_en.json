@@ -247,7 +247,7 @@
     },
     "dataProbeSlider": {
       "accessibleHelpText": {
-        "value": "Adjust data probe to read decay percentages at a point in time."
+        "value": "Move probe horizontally to explore graph values."
       }
     },
     "timeScaleCheckbox": {
@@ -389,6 +389,85 @@
         },
         "accessibleHelpText": {
           "value": "Show or hide stopwatch."
+        }
+      }
+    },
+    "decayRate": {
+      "screenSummary": {
+        "playArea": {
+          "value": "There is a radioactive sample where you can add atoms and watch them decay. As time passes, you can track how much remains and reset the sample to repeat your experiment. A decay graph plots the percentage of sample remaining as a function of time."
+        },
+        "controlArea": {
+          "value": "Checkboxes let you show or hide isotope curves, half-life markers, and a data probe on the decay graph. You can also control how fast the action happens including buttons to pause and step forward. Reset sim to start over."
+        },
+        "currentDetails": {
+          "value": "{ $atom ->\n  [noAtoms] Currently, there are no atoms in sample.\n  *[withAtoms] Currently { $percentage } percent radioactive sample remaining.\n}"
+        },
+        "interactionHint": {
+          "addAtoms": {
+            "value": "Add atoms to begin observations."
+          },
+          "afterDecay": {
+            "value": "Reset sample to continue observations."
+          }
+        }
+      },
+      "radioactiveSample": {
+        "decayOccurring": {
+          "value": "Original sample contains { $addedAtoms } { $isotope } atoms, decaying. Currently, sample is { $time } seconds old and { $percentageUndecayed } percent remains. { $undecayedCount } { $isotope } atoms. { $decayedCount } { $isotope } atoms."
+        }
+      },
+      "decayGraphHeading": {
+        "value": "Decay Graph"
+      },
+      "decayGraphPanel": {
+        "accessibleParagraph": {
+          "value": "Decay graph plots percent of isotope remaining as a function of time. Currently, { $checkedComponents } visible on graph."
+        }
+      },
+      "undecayedCheckbox": {
+        "accessibleName": {
+          "value": "{ $isotope } Curve"
+        },
+        "accessibleHelpText": {
+          "value": "Show or hide decay curve."
+        }
+      },
+      "decayedCheckbox": {
+        "accessibleName": {
+          "value": "{ $isotope } Curve"
+        },
+        "accessibleHelpText": {
+          "value": "Show or hide formation curve."
+        }
+      },
+      "halfLivesCheckbox": {
+        "accessibleName": {
+          "value": "Half-Lives"
+        },
+        "accessibleHelpText": {
+          "value": "Explore decay graph with or without half-life markers."
+        }
+      },
+      "dataProbeCheckbox": {
+        "accessibleName": {
+          "value": "Data Probe"
+        },
+        "accessibleHelpText": {
+          "value": "Explore decay graph with or without values."
+        }
+      },
+      "sortButton": {
+        "accessibleName": {
+          "value": "Sort"
+        },
+        "accessibleHelpText": {
+          "value": "Group atoms by isotope."
+        }
+      },
+      "resetSampleButton": {
+        "accessibleName": {
+          "value": "Reset Sample"
         }
       }
     }

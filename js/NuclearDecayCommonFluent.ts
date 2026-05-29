@@ -5,7 +5,7 @@
 /* eslint-disable */
 /* @formatter:off */
 
-import { TReadOnlyProperty } from '../../axon/js/TReadOnlyProperty.js';
+import {TReadOnlyProperty} from '../../axon/js/TReadOnlyProperty.js';
 import FluentLibrary from '../../chipper/js/browser-and-node/FluentLibrary.js';
 import FluentConstant from '../../chipper/js/browser/FluentConstant.js';
 import FluentContainer from '../../chipper/js/browser/FluentContainer.js';
@@ -131,6 +131,25 @@ addToMapIfDefined( 'a11y_multipleAtoms_electronCloudCheckbox_accessibleName', 'a
 addToMapIfDefined( 'a11y_multipleAtoms_electronCloudCheckbox_accessibleHelpText', 'a11y.multipleAtoms.electronCloudCheckbox.accessibleHelpTextStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_stopwatchCheckbox_accessibleName', 'a11y.multipleAtoms.stopwatchCheckbox.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_stopwatchCheckbox_accessibleHelpText', 'a11y.multipleAtoms.stopwatchCheckbox.accessibleHelpTextStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_screenSummary_playArea', 'a11y.decayRate.screenSummary.playAreaStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_screenSummary_controlArea', 'a11y.decayRate.screenSummary.controlAreaStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_screenSummary_currentDetails', 'a11y.decayRate.screenSummary.currentDetailsStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_screenSummary_interactionHint_addAtoms', 'a11y.decayRate.screenSummary.interactionHint.addAtomsStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_screenSummary_interactionHint_afterDecay', 'a11y.decayRate.screenSummary.interactionHint.afterDecayStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_radioactiveSample_decayOccurring', 'a11y.decayRate.radioactiveSample.decayOccurringStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_decayGraphHeading', 'a11y.decayRate.decayGraphHeadingStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_decayGraphPanel_accessibleParagraph', 'a11y.decayRate.decayGraphPanel.accessibleParagraphStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_undecayedCheckbox_accessibleName', 'a11y.decayRate.undecayedCheckbox.accessibleNameStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_undecayedCheckbox_accessibleHelpText', 'a11y.decayRate.undecayedCheckbox.accessibleHelpTextStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_decayedCheckbox_accessibleName', 'a11y.decayRate.decayedCheckbox.accessibleNameStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_decayedCheckbox_accessibleHelpText', 'a11y.decayRate.decayedCheckbox.accessibleHelpTextStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_halfLivesCheckbox_accessibleName', 'a11y.decayRate.halfLivesCheckbox.accessibleNameStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_halfLivesCheckbox_accessibleHelpText', 'a11y.decayRate.halfLivesCheckbox.accessibleHelpTextStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_dataProbeCheckbox_accessibleName', 'a11y.decayRate.dataProbeCheckbox.accessibleNameStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_dataProbeCheckbox_accessibleHelpText', 'a11y.decayRate.dataProbeCheckbox.accessibleHelpTextStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_sortButton_accessibleName', 'a11y.decayRate.sortButton.accessibleNameStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_sortButton_accessibleHelpText', 'a11y.decayRate.sortButton.accessibleHelpTextStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_resetSampleButton_accessibleName', 'a11y.decayRate.resetSampleButton.accessibleNameStringProperty' );
 
 // A function that creates contents for a new Fluent file, which will be needed if any string changes.
 const createFluentFile = (): string => {
@@ -313,6 +332,47 @@ const NuclearDecayCommonFluent = {
       stopwatchCheckbox: {
         accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_stopwatchCheckbox_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.stopwatchCheckbox.accessibleNameStringProperty' ) ),
         accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_stopwatchCheckbox_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.stopwatchCheckbox.accessibleHelpTextStringProperty' ) )
+      }
+    },
+    decayRate: {
+      screenSummary: {
+        playAreaStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_screenSummary_playArea', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.screenSummary.playAreaStringProperty' ) ),
+        controlAreaStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_screenSummary_controlArea', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.screenSummary.controlAreaStringProperty' ) ),
+        currentDetails: new FluentPattern<{ atom: 'noAtoms' | 'withAtoms' | TReadOnlyProperty<'noAtoms' | 'withAtoms'>, percentage: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_screenSummary_currentDetails', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.screenSummary.currentDetailsStringProperty' ), [{"name":"atom","variants":["noAtoms","withAtoms"]},{"name":"percentage"}] ),
+        interactionHint: {
+          addAtomsStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_screenSummary_interactionHint_addAtoms', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.screenSummary.interactionHint.addAtomsStringProperty' ) ),
+          afterDecayStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_screenSummary_interactionHint_afterDecay', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.screenSummary.interactionHint.afterDecayStringProperty' ) )
+        }
+      },
+      radioactiveSample: {
+        decayOccurring: new FluentPattern<{ addedAtoms: FluentVariable, decayedCount: FluentVariable, isotope: FluentVariable, percentageUndecayed: FluentVariable, time: FluentVariable, undecayedCount: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_radioactiveSample_decayOccurring', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.radioactiveSample.decayOccurringStringProperty' ), [{"name":"addedAtoms"},{"name":"decayedCount"},{"name":"isotope"},{"name":"percentageUndecayed"},{"name":"time"},{"name":"undecayedCount"}] )
+      },
+      decayGraphHeadingStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_decayGraphHeading', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.decayGraphHeadingStringProperty' ) ),
+      decayGraphPanel: {
+        accessibleParagraph: new FluentPattern<{ checkedComponents: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_decayGraphPanel_accessibleParagraph', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.decayGraphPanel.accessibleParagraphStringProperty' ), [{"name":"checkedComponents"}] )
+      },
+      undecayedCheckbox: {
+        accessibleName: new FluentPattern<{ isotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_undecayedCheckbox_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.undecayedCheckbox.accessibleNameStringProperty' ), [{"name":"isotope"}] ),
+        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_undecayedCheckbox_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.undecayedCheckbox.accessibleHelpTextStringProperty' ) )
+      },
+      decayedCheckbox: {
+        accessibleName: new FluentPattern<{ isotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_decayedCheckbox_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.decayedCheckbox.accessibleNameStringProperty' ), [{"name":"isotope"}] ),
+        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_decayedCheckbox_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.decayedCheckbox.accessibleHelpTextStringProperty' ) )
+      },
+      halfLivesCheckbox: {
+        accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_halfLivesCheckbox_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.halfLivesCheckbox.accessibleNameStringProperty' ) ),
+        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_halfLivesCheckbox_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.halfLivesCheckbox.accessibleHelpTextStringProperty' ) )
+      },
+      dataProbeCheckbox: {
+        accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_dataProbeCheckbox_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.dataProbeCheckbox.accessibleNameStringProperty' ) ),
+        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_dataProbeCheckbox_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.dataProbeCheckbox.accessibleHelpTextStringProperty' ) )
+      },
+      sortButton: {
+        accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_sortButton_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.sortButton.accessibleNameStringProperty' ) ),
+        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_sortButton_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.sortButton.accessibleHelpTextStringProperty' ) )
+      },
+      resetSampleButton: {
+        accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_resetSampleButton_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.resetSampleButton.accessibleNameStringProperty' ) )
       }
     }
   }

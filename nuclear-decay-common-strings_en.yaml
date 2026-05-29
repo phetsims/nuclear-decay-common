@@ -91,7 +91,7 @@ a11y:
     accessibleHelpText: Adjust time for isotope A to undergo one half-life.
     accessibleContextResponse: 'Initial energy { $initialEProgress }, alpha particle escape distance { $distanceProgress }.'
   dataProbeSlider:
-    accessibleHelpText: Adjust data probe to read decay percentages at a point in time.
+    accessibleHelpText: Move probe horizontally to explore graph values.
   timeScaleCheckbox:
     accessibleHelpText: Show or hide time scale ranging from milliseconds to billions of years.
     accessibleContextResponseChecked: Time scale shown.
@@ -159,3 +159,45 @@ a11y:
     stopwatchCheckbox:
       accessibleName: Stopwatch
       accessibleHelpText: Show or hide stopwatch.
+  decayRate:
+    screenSummary:
+      playArea: >-
+        There is a radioactive sample where you can add atoms and watch them decay. As time passes, you can
+        track how much remains and reset the sample to repeat your experiment. A decay graph plots the
+        percentage of sample remaining as a function of time.
+      controlArea: >-
+        Checkboxes let you show or hide isotope curves, half-life markers, and a data probe on the decay
+        graph. You can also control how fast the action happens including buttons to pause and step forward.
+        Reset sim to start over.
+      currentDetails:
+        select_atom:
+          noAtoms: Currently, there are no atoms in sample.
+          withAtoms: 'Currently { $percentage } percent radioactive sample remaining.'
+      interactionHint:
+        addAtoms: Add atoms to begin observations.
+        afterDecay: Reset sample to continue observations.
+    radioactiveSample:
+      decayOccurring: >-
+        Original sample contains { $addedAtoms } { $isotope } atoms, decaying. Currently, sample is
+        { $time } seconds old and { $percentageUndecayed } percent remains. { $undecayedCount } { $isotope }
+        atoms. { $decayedCount } { $isotope } atoms.
+    decayGraphHeading: Decay Graph
+    decayGraphPanel:
+      accessibleParagraph: 'Decay graph plots percent of isotope remaining as a function of time. Currently, { $checkedComponents } visible on graph.'
+    undecayedCheckbox:
+      accessibleName: '{ $isotope } Curve'
+      accessibleHelpText: Show or hide decay curve.
+    decayedCheckbox:
+      accessibleName: '{ $isotope } Curve'
+      accessibleHelpText: Show or hide formation curve.
+    halfLivesCheckbox:
+      accessibleName: Half-Lives
+      accessibleHelpText: Explore decay graph with or without half-life markers.
+    dataProbeCheckbox:
+      accessibleName: Data Probe
+      accessibleHelpText: Explore decay graph with or without values.
+    sortButton:
+      accessibleName: Sort
+      accessibleHelpText: Group atoms by isotope.
+    resetSampleButton:
+      accessibleName: Reset Sample

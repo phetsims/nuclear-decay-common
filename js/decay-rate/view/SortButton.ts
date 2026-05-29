@@ -13,6 +13,7 @@ import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Path from '../../../../scenery/js/nodes/Path.js';
 import RectangularPushButton, { RectangularPushButtonOptions } from '../../../../sun/js/buttons/RectangularPushButton.js';
+import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 
 type SelfOptions = EmptySelfOptions;
 type SortButtonOptions = SelfOptions & WithRequired<RectangularPushButtonOptions, 'tandem'>;
@@ -28,7 +29,9 @@ export default class SortButton extends RectangularPushButton {
       content: sortedIcon,
       touchAreaXDilation: 5,
       touchAreaYDilation: 5,
-      size: new Dimension2( buttonBounds.width, buttonBounds.height )
+      size: new Dimension2( buttonBounds.width, buttonBounds.height ),
+      accessibleName: NuclearDecayCommonFluent.a11y.decayRate.sortButton.accessibleNameStringProperty,
+      accessibleHelpText: NuclearDecayCommonFluent.a11y.decayRate.sortButton.accessibleHelpTextStringProperty
     }, providedOptions );
     super( options );
   }

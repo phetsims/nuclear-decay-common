@@ -342,6 +342,30 @@ export default class NuclearDecayAtom {
   }
 
   /**
+   * Creates a reactive string property that tracks the name-and-mass of the decay product for the currently selected
+   * isotope. Callers pass a customDecayedStringProperty for the 'custom-decayed' case so this method stays free of
+   * i18n imports. e.g. Lead-207
+   */
+  public static createDynamicDecayProductNameAndMassStringProperty(
+    selectedIsotopeProperty: TReadOnlyProperty<StartingIsotopes>,
+    customDecayedStringProperty: TReadOnlyProperty<string>
+  ): TReadOnlyProperty<string> {
+    const currentStringProperty = new Property<TReadOnlyProperty<string>>( customDecayedStringProperty );
+    const dynamicNameProperty = new DynamicProperty<string, string, TReadOnlyProperty<string>>( currentStringProperty );
+    selectedIsotopeProperty.link( isotope => {
+      const decayProduct = NuclearDecayAtom.getDecayProduct( isotope );
+      if ( decayProduct === 'custom-decayed' ) {
+        currentStringProperty.value = customDecayedStringProperty;
+      }
+      else {
+        const atomConfig = NuclearDecayAtom.getIsotopeAtomConfig( decayProduct );
+        currentStringProperty.value = AtomNameUtils.getNameAndMass( atomConfig.protonCount, atomConfig.neutronCount );
+      }
+    } );
+    return dynamicNameProperty;
+  }
+
+  /**
    * Get a string with the mass and symbol of an isotope (211-Pb) for example, or a custom string if 'custom' is selected.
    */
   public static getIsotopeMassAndSymbolString( isotope: ValidIsotopes ): string {
