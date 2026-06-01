@@ -23,6 +23,7 @@ import NuclearDecayCommonFluent from '../../../../nuclear-decay-common/js/Nuclea
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import ResetAllButton from '../../../../scenery-phet/js/buttons/ResetAllButton.js';
 import TimeControlNode from '../../../../scenery-phet/js/TimeControlNode.js';
+import TimeSpeed from '../../../../scenery-phet/js/TimeSpeed.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Path from '../../../../scenery/js/nodes/Path.js';
@@ -81,6 +82,12 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
         stepForwardButtonOptions: {
           listener: () => model.manualStep()
         }
+      },
+      flowBoxSpacing: 10,
+      timeSpeedProperty: model.timeSpeedProperty,
+      timeSpeeds: [ TimeSpeed.NORMAL, TimeSpeed.SLOW ],
+      speedRadioButtonGroupOptions: {
+        accessibleHelpText: NuclearDecayCommonFluent.a11y.speedControls.accessibleHelpTextStringProperty
       },
       bottom: resetAllButton.bottom,
       right: resetAllButton.left - 5 * PANEL_SPACING,

@@ -117,6 +117,7 @@ export default class SingleAndMultipleAtomsScreenView extends NuclearDecayScreen
     this.addChild( this.resetAllButton );
 
     this.timeControlNode = new TimeControlNode( model.isPlayingProperty, {
+      flowBoxSpacing: 10,
       timeSpeedProperty: model.timeSpeedProperty,
       timeSpeeds: [ TimeSpeed.NORMAL, TimeSpeed.SLOW ],
       playPauseStepButtonOptions: {
@@ -128,10 +129,9 @@ export default class SingleAndMultipleAtomsScreenView extends NuclearDecayScreen
         accessibleHelpText: NuclearDecayCommonFluent.a11y.speedControls.accessibleHelpTextStringProperty
       },
       accessibleHeading: NuclearDecayCommonFluent.a11y.timeControls.accessibleHeadingStringProperty,
-      bottom: this.resetAllButton.top - 4 * PANEL_SPACING,
-      right: this.resetAllButton.right,
-      tandem: options.tandem.createTandem( 'timeControlNode' ),
-      flowBoxSpacing: 10
+      bottom: model.isSingleAtomMode ? this.resetAllButton.top - 4 * PANEL_SPACING : this.resetAllButton.bottom,
+      right: model.isSingleAtomMode ? this.resetAllButton.right : this.resetAllButton.left - 5 * PANEL_SPACING,
+      tandem: options.tandem.createTandem( 'timeControlNode' )
     } );
 
     if ( model.isSingleAtomMode ) {
