@@ -22,7 +22,7 @@ export default class EquationNode extends HBox {
   public constructor(
     isotopeProperty: TReadOnlyProperty<StartingIsotopes>,
     isPlayAreaEmptyProperty: TReadOnlyProperty<boolean>,
-    hasDecayOcurredProperty: TReadOnlyProperty<boolean>,
+    hasDecayOccurredProperty: TReadOnlyProperty<boolean>,
     isCustomProperty: TReadOnlyProperty<boolean>,
     providedOptions?: EquationNodeOptions
   ) {
@@ -38,7 +38,7 @@ export default class EquationNode extends HBox {
       visibleProperty: isCustomProperty.derived( isCustom => !isCustom )
     } );
     const secondTermIsotope = EquationElementNode.createFromIsotope( decayedIsotope, {
-      isActiveProperty: hasDecayOcurredProperty,
+      isActiveProperty: hasDecayOccurredProperty,
         visibleProperty: isCustomProperty.derived( isCustom => !isCustom )
     } );
 
@@ -50,13 +50,13 @@ export default class EquationNode extends HBox {
     // (p+n)-4 and p-2
     const secondTermCustom = new EquationElementNode( 'B',
       '(p+n)\u22124', 'p\u22122', {
-        isActiveProperty: hasDecayOcurredProperty,
+        isActiveProperty: hasDecayOccurredProperty,
         visibleProperty: isCustomProperty
       } );
 
 
     const thirdTerm = EquationElementNode.createFromIsotope( 'helium-2', {
-      isActiveProperty: hasDecayOcurredProperty
+      isActiveProperty: hasDecayOccurredProperty
     } );
 
     const arrowNode = new ArrowNode( 0, 0, 20, 0, {

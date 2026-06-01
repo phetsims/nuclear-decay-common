@@ -330,7 +330,11 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     } );
 
     this.isTimeInfiniteProperty = this.timeProperty.derived( time => {
-      return time === Infinity;
+      return time > NuclearDecayCommonConstants.MAX_TIME;
+    } );
+
+    this.isTimeInfiniteProperty.link( isInfinite => {
+      this.continueAddingTimeProperty.value = isInfinite;
     } );
 
     this.stopwatch = options.useStopwatch ? new Stopwatch( {
@@ -376,7 +380,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
       // Calculate the time step to feed to the model based on the time mode, either linear or exponential.
       let timeStep;
-      if ( this.timeProperty.value !== Infinity ) {
+      if ( this.continueAddingTimeProperty.value ) {
         if ( this.timescaleProperty.value === 'linear' ) {
           timeStep = dt;
           this.timeProperty.value += timeStep;
@@ -396,10 +400,9 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
         this.stopwatch?.step( timeStep );
 
         this.updateAtoms( dt, timeStep );
-
-        if ( Math.log10( this.timeProperty.value ) >= NuclearDecayCommonConstants.MAX_TIME_EXPONENT ) {
-          this.timeProperty.value = Infinity;
-        }
+      }
+      else {
+        this.updateAtoms();
       }
     }
   }

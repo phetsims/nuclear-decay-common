@@ -27,7 +27,7 @@ export default class EquationAccordionBox extends NuclearDecayAccordionBox {
   public constructor(
     isotopeProperty: TReadOnlyProperty<StartingIsotopes>,
     isPlayAreaEmptyProperty: TReadOnlyProperty<boolean>,
-    hasDecayOcurredProperty: TReadOnlyProperty<boolean>,
+    hasDecayOccurredProperty: TReadOnlyProperty<boolean>,
     isCustomProperty: TReadOnlyProperty<boolean>,
     providedOptions?: EquationAccordionBoxOptions
   ) {
@@ -48,7 +48,7 @@ export default class EquationAccordionBox extends NuclearDecayAccordionBox {
     const equationNode = new EquationNode(
       isotopeProperty,
       isPlayAreaEmptyProperty,
-      hasDecayOcurredProperty,
+      hasDecayOccurredProperty,
       isCustomProperty
     );
 
@@ -56,7 +56,7 @@ export default class EquationAccordionBox extends NuclearDecayAccordionBox {
       [
         isotopeProperty,
         isPlayAreaEmptyProperty,
-        hasDecayOcurredProperty,
+        hasDecayOccurredProperty,
         NuclearDecayCommonFluent.a11y.nuclearEquation.noEquationStringProperty,
         NuclearDecayCommonFluent.a11y.nuclearEquation.afterDecayStringProperty,
         NuclearDecayCommonFluent.isotopeAStringProperty,

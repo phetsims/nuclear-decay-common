@@ -12,6 +12,8 @@ import PhetFont from '../../scenery-phet/js/PhetFont.js';
 import AtomConfig from '../../shred/js/model/AtomConfig.js';
 
 const EXPONENTIAL_HALF_LIFE_EXPONENT_RANGE = new Range( -3, 19 );
+const MAX_HALF_LIFE_EXPONENT = 18;
+const MAX_TIME_EXPONENT = 18.5;
 
 export default class NuclearDecayCommonConstants {
   public constructor() {
@@ -28,10 +30,11 @@ export default class NuclearDecayCommonConstants {
   public static readonly EXPONENTIAL_HALF_LIFE_EXPONENT_RANGE = EXPONENTIAL_HALF_LIFE_EXPONENT_RANGE;
 
   // Value above which the half-life is considered infinite. 18 is around the age of the universe.
-  public static readonly MAX_HALF_LIFE_EXPONENT = 18;
+  public static readonly MAX_HALF_LIFE_EXPONENT = MAX_HALF_LIFE_EXPONENT;
 
   // Time at which the time counter turns into Infinity
-  public static readonly MAX_TIME_EXPONENT = 18.5;
+  public static readonly MAX_TIME_EXPONENT = MAX_TIME_EXPONENT;
+  public static readonly MAX_TIME = Math.pow( 10, MAX_TIME_EXPONENT );
 
   // Function for getting exponential time based with the proper clamps
   public static readonly EXPONENTIAL_TIME = ( exponent: number ): number => {
@@ -93,21 +96,21 @@ export default class NuclearDecayCommonConstants {
   public static readonly ENERGIES_TO_HALF_LIFE_EXPONENT_MAPPING =
     ( kineticEnergy: number, potentialEnergy: number ): number => {
 
-    // If kinetic energy is negative, return the maximum half-life
-    if ( kineticEnergy < 0 ) { return 1; }
+      // If kinetic energy is negative, return the maximum half-life
+      if ( kineticEnergy < 0 ) { return 1; }
 
-    // If kinetic energy is greater than potential energy, return the minimum half-life (immediate decay)
-    if ( kineticEnergy > potentialEnergy ) { return 0; }
+      // If kinetic energy is greater than potential energy, return the minimum half-life (immediate decay)
+      if ( kineticEnergy > potentialEnergy ) { return 0; }
 
-    // Expression obtained from the integral of the curve between the kinetic energy line and the potential energy line, normalized to the range [0, 1]
-    return clamp(
-      ( Math.sqrt( potentialEnergy ) - Math.sqrt( kineticEnergy ) ) ** 2 / Math.sqrt( potentialEnergy ), 0, 1 );
-  };
+      // Expression that roughly maps the energy difference to a normalized half-life
+      return clamp(
+        ( potentialEnergy - kineticEnergy ) / potentialEnergy, 0, 1 );
+    };
 
-  public static readonly HALF_LIFE_TO_KINETIC_ENERGY_MAPPING = ( normalizedHL: number, potentialEnergy: number ): number => {
+  public static readonly HALF_LIFE_TO_KINETIC_ENERGY_MAPPING = ( halfLife: number, potentialEnergy: number ): number => {
 
     // Inverse of the above function solving for kinetic energy
     return clamp(
-      ( Math.sqrt( potentialEnergy ) - Math.sqrt( normalizedHL * Math.sqrt( potentialEnergy ) ) ) ** 2, 0, 1 );
+      potentialEnergy - halfLife * potentialEnergy, 0, 1 );
   };
 }
