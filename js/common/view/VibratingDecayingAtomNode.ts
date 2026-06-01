@@ -34,10 +34,10 @@ const VIBRATION_UPDATE_PERIOD = 0.032;
 // Maximum offset for vibration, in screen coordinates.
 const MAX_VIBRATION_OFFSET = 4;
 
-const ELECTRON_CLOUD_RADIUS = NUCLEON_RADIUS * 20;
+const ELECTRON_CLOUD_RADIUS = NUCLEON_RADIUS * 10;
 const ELECTRON_CLOUD_GRADIENT = new RadialGradient( 0, 0, 0, 0, 0, ELECTRON_CLOUD_RADIUS )
-  .addColorStop( 0, 'rgba( 0, 0, 255, 200 )' )
-  .addColorStop( 0.9, 'rgba( 0, 0, 255, 0 )' );
+  .addColorStop( 0, 'rgba( 0, 0, 255, 0.5 )' )
+  .addColorStop( 1, 'rgba( 0, 0, 255, 0.05 )' );
 
 export default class VibratingDecayingAtomNode extends Node {
 
