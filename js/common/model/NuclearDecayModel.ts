@@ -402,7 +402,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
         this.updateAtoms( dt, timeStep );
       }
       else {
-        this.updateAtoms();
+        this.updateAtoms( dt, dt );
       }
     }
   }
