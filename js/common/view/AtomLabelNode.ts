@@ -3,7 +3,7 @@
 /**
  * AtomLabelNode displays the isotope mass and symbol above a nucleus. The text is always visible;
  * the yellow rounded-rectangle background flashes in at full opacity when the atom decays and fades
- * out to transparent over FADE_DURATION seconds.
+ * out to transparent over DISPLAY_DURATION seconds.
  *
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
@@ -22,7 +22,7 @@ type SelfOptions = EmptySelfOptions;
 
 export type AtomLabelNodeOptions = SelfOptions & NodeOptions;
 
-const FADE_DURATION = 3 * NuclearDecayCommonConstants.NORMAL_SPEED_SCALE; // seconds
+const DISPLAY_DURATION = NuclearDecayCommonConstants.NORMAL_SPEED_SCALE; // seconds
 const PADDING = 5; // px inside the background rectangle
 
 export default class AtomLabelNode extends Node {
@@ -78,9 +78,12 @@ export default class AtomLabelNode extends Node {
           this.labelBackground.opacity = 0;
         }
 
-        if ( isDecayed && this.timeSinceDecay < FADE_DURATION ) {
+        if ( isDecayed && this.timeSinceDecay < DISPLAY_DURATION ) {
           this.timeSinceDecay += dt;
-          this.labelBackground.opacity = Math.max( 0, 1 - this.timeSinceDecay / FADE_DURATION );
+          this.labelBackground.opacity = 1;
+        }
+        else {
+          this.labelBackground.opacity = 0;
         }
 
         this.wasDecayed = isDecayed;

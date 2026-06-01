@@ -452,6 +452,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
    * When adding many atoms, clear the existing atoms and then add new ones.
    */
   public activateMultipleAtoms( n: number ): void {
+    this.resetAtoms();
     this.clearAtomLists();
     this.resetTimes();
     // Activate multiple atoms with random positions

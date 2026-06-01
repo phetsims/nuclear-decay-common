@@ -9,14 +9,14 @@
 
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
-import SingleAndMultipleAtomsScreenView, { DecayHistogramScreenViewOptions } from '../../common/view/SingleAndMultipleAtomsScreenView.js';
+import SingleAndMultipleAtomsScreenView, { SingleAndMultipleAtomsScreenViewOptions } from '../../common/view/SingleAndMultipleAtomsScreenView.js';
 import SingleAtomModel from '../model/SingleAtomModel.js';
 import EquationAccordionBox from './EquationAccordionBox.js';
 import ParticleCountsAccordionBox from './ParticleCountsAccordionBox.js';
 
 type SelfOptions = EmptySelfOptions;
 
-export type SingleAtomScreenViewOptions = SelfOptions & DecayHistogramScreenViewOptions;
+export type SingleAtomScreenViewOptions = SelfOptions & SingleAndMultipleAtomsScreenViewOptions;
 
 export default class SingleAtomScreenView extends SingleAndMultipleAtomsScreenView {
 
@@ -24,9 +24,9 @@ export default class SingleAtomScreenView extends SingleAndMultipleAtomsScreenVi
 
   public readonly equationAccordionBox: Node;
 
-  public constructor( model: SingleAtomModel, providedOptions: DecayHistogramScreenViewOptions ) {
+  public constructor( model: SingleAtomModel, providedOptions: SingleAndMultipleAtomsScreenViewOptions ) {
 
-    const options = optionize<SingleAtomScreenViewOptions, SelfOptions, DecayHistogramScreenViewOptions>()( {
+    const options = optionize<SingleAtomScreenViewOptions, SelfOptions, SingleAndMultipleAtomsScreenViewOptions>()( {
       // TODO: Move from Alpha Decay to here https://github.com/phetsims/alpha-decay/issues/3
       // screenSummaryContent: new ADSingleAtomScreenSummaryContent( model )
     }, providedOptions );

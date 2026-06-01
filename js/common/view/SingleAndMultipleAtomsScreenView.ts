@@ -32,8 +32,7 @@ type SelfOptions = {
   numberOfAtomsInPlayAreaWidth?: number;
 };
 
-// JBP REVIEW: This option name seems wrong.  Is it?
-export type DecayHistogramScreenViewOptions = SelfOptions & WithRequired<NuclearDecayScreenViewOptions, 'tandem'>;
+export type SingleAndMultipleAtomsScreenViewOptions = SelfOptions & WithRequired<NuclearDecayScreenViewOptions, 'tandem'>;
 
 export default class SingleAndMultipleAtomsScreenView extends NuclearDecayScreenView {
 
@@ -57,10 +56,10 @@ export default class SingleAndMultipleAtomsScreenView extends NuclearDecayScreen
 
   public constructor(
     model: NuclearDecayModel,
-    providedOptions?: DecayHistogramScreenViewOptions
+    providedOptions?: SingleAndMultipleAtomsScreenViewOptions
   ) {
 
-    const options = optionize<DecayHistogramScreenViewOptions, SelfOptions, ScreenViewOptions>()( {
+    const options = optionize<SingleAndMultipleAtomsScreenViewOptions, SelfOptions, ScreenViewOptions>()( {
 
       // Self Options
       isotopePanelMiddleContent: null,

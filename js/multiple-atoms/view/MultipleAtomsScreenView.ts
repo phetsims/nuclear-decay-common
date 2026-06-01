@@ -37,7 +37,7 @@ import Checkbox from '../../../../sun/js/Checkbox.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
 import NuclearDecayAtom from '../../common/model/NuclearDecayAtom.js';
 import IsotopeSelectionPanel from '../../common/view/IsotopeSelectionPanel.js';
-import SingleAndMultipleAtomsScreenView, { DecayHistogramScreenViewOptions } from '../../common/view/SingleAndMultipleAtomsScreenView.js';
+import SingleAndMultipleAtomsScreenView, { SingleAndMultipleAtomsScreenViewOptions } from '../../common/view/SingleAndMultipleAtomsScreenView.js';
 import MultipleAtomsModel from '../model/MultipleAtomsModel.js';
 import MultipleAtomsScreenSummaryContent from './MultipleAtomsScreenSummaryContent.js';
 import MultipleAtomsVisibleProperties from './MultipleAtomsVisibleProperties.js';
@@ -49,7 +49,7 @@ type SelfOptions = {
   decayParticleStringProperty?: TReadOnlyProperty<string>;
 };
 
-export type MultipleAtomsScreenViewOptions = SelfOptions & DecayHistogramScreenViewOptions;
+export type MultipleAtomsScreenViewOptions = SelfOptions & SingleAndMultipleAtomsScreenViewOptions;
 
 const MARGIN_X = NuclearDecayCommonConstants.SCREEN_VIEW_X_MARGIN;
 const MARGIN_Y = NuclearDecayCommonConstants.SCREEN_VIEW_Y_MARGIN;
@@ -113,7 +113,7 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
       }
     );
 
-    const options = optionize<MultipleAtomsScreenViewOptions, SelfOptions, DecayHistogramScreenViewOptions>()( {
+    const options = optionize<MultipleAtomsScreenViewOptions, SelfOptions, SingleAndMultipleAtomsScreenViewOptions>()( {
       screenSummaryContent: new MultipleAtomsScreenSummaryContent( model ),
       isotopePanelMiddleContent: [ electronCloudCheckbox, stopwatchCheckbox ],
       numberOfAtomsInPlayAreaWidth: 40,
