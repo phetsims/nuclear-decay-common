@@ -43,8 +43,8 @@ export default class AtomLabelNode extends Node {
     } );
 
     const labelBackground = new Rectangle(
-      0, 0, 50, labelText.height + 2 * PADDING,
-      { fill: 'yellow', cornerRadius: 15, opacity: 0, stroke: 'orange' }
+      0, 0, 40, labelText.height + PADDING,
+      { fill: 'yellow', cornerRadius: 5, opacity: 0, stroke: 'orange' }
     );
 
     const options = optionize<AtomLabelNodeOptions, SelfOptions, NodeOptions>()( {
