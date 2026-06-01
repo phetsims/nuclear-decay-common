@@ -8,11 +8,12 @@
  * @author John Blanco (PhET Interactive Simulations)
  */
 
+import Property from '../../../../axon/js/Property.js';
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import dotRandom from '../../../../dot/js/dotRandom.js';
 import { roundSymmetric } from '../../../../dot/js/util/roundSymmetric.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
-import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import optionize from '../../../../phet-core/js/optionize.js';
 import ModelViewTransform2 from '../../../../phetcommon/js/view/ModelViewTransform2.js';
 import ShadedSphereNode from '../../../../scenery-phet/js/ShadedSphereNode.js';
 import Circle from '../../../../scenery/js/nodes/Circle.js';
@@ -23,7 +24,11 @@ import ShredColors from '../../../../shred/js/ShredColors.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 import AtomLabelNode from './AtomLabelNode.js';
 
-type SelfOptions = EmptySelfOptions;
+type SelfOptions = {
+
+  // Controls label visibility for this atom node; if null, labels are always visible.
+  labelsVisibleProperty?: TReadOnlyProperty<boolean> | null;
+};
 export type VibratingDecayingAtomNodeOptions = SelfOptions & NodeOptions;
 
 // Constant for the radius of individual nucleons, in screen coordinates (unitless).
@@ -67,8 +72,9 @@ export default class VibratingDecayingAtomNode extends Node {
     providedOptions?: VibratingDecayingAtomNodeOptions
   ) {
 
-    const options = optionize<VibratingDecayingAtomNodeOptions, SelfOptions, VibratingDecayingAtomNodeOptions>()( {
-      visible: decayingAtom.isActive
+    const options = optionize<VibratingDecayingAtomNodeOptions, SelfOptions, NodeOptions>()( {
+      visible: decayingAtom.isActive,
+      labelsVisibleProperty: null
     }, providedOptions );
 
     super( options );
@@ -84,9 +90,11 @@ export default class VibratingDecayingAtomNode extends Node {
     this.addChild( this.electronCloudNode );
     this.electronCloudNode.moveToBack();
 
+    const labelsVisibleProperty = options.labelsVisibleProperty ?? new Property( true );
     this.atomLabelNode = new AtomLabelNode( decayingAtom, {
       centerX: this.electronCloudNode.centerX,
-      bottom: this.electronCloudNode.top
+      bottom: this.electronCloudNode.top,
+      visibleProperty: labelsVisibleProperty
     } );
     this.addChild( this.atomLabelNode );
 

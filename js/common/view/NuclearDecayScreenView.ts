@@ -118,7 +118,10 @@ export default class NuclearDecayScreenView extends ScreenView {
         const atomNode = new VibratingDecayingAtomNode(
           atom,
           this.modelViewTransformProperty,
-          options.electronCloudVisibleProperty!
+          options.electronCloudVisibleProperty!,
+          {
+            labelsVisibleProperty: options.labelsVisibleProperty!
+          }
         );
         this.atomNodesMap.set( atom, atomNode );
         this.addChild( atomNode );
