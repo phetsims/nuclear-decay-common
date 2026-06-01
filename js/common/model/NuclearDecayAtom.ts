@@ -279,6 +279,7 @@ export default class NuclearDecayAtom {
     this.isotope = newIsotope;
     const newAtomConfig = NuclearDecayAtom.getIsotopeAtomConfig( newIsotope );
     this.setAtomConfigBeforeDecay( newAtomConfig );
+    this.deriveHalfLife();
   }
 
   /**
@@ -296,6 +297,14 @@ export default class NuclearDecayAtom {
   public deriveHalfLife(): void {
     const halfLife = AtomInfoUtils.getNuclideHalfLife( this.atomConfigBeforeDecay.protonCount, this.atomConfigBeforeDecay.neutronCount );
     this._halfLife = halfLife ? halfLife : Infinity;
+  }
+
+  /**
+   * Utility function to get the half-life of a starting isotope
+   */
+  public static getHalfLife( isotope: StartingIsotopes ): number | null {
+    const atomConfig = NuclearDecayAtom.getIsotopeAtomConfig( isotope );
+    return AtomInfoUtils.getNuclideHalfLife( atomConfig.protonCount, atomConfig.neutronCount );
   }
 
   public get halfLife(): number {

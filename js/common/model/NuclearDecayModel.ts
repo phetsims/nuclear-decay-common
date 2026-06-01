@@ -25,8 +25,7 @@ import IntentionalAny from '../../../../phet-core/js/types/IntentionalAny.js';
 import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
 import Stopwatch from '../../../../scenery-phet/js/Stopwatch.js';
 import TimeSpeed from '../../../../scenery-phet/js/TimeSpeed.js';
-import AtomInfoUtils, { DecayType } from '../../../../shred/js/AtomInfoUtils.js';
-import AtomConfig from '../../../../shred/js/model/AtomConfig.js';
+import { DecayType } from '../../../../shred/js/AtomInfoUtils.js';
 import PhetioObject, { PhetioObjectOptions } from '../../../../tandem/js/PhetioObject.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
 import ArrayIO from '../../../../tandem/js/types/ArrayIO.js';
@@ -56,6 +55,7 @@ export type NuclearDecayModelOptions = SelfOptions & WithRequired<PhetioObjectOp
 
 export default class NuclearDecayModel extends PhetioObject implements TModel {
 
+  // Flag to distinguish features that are only needed in the single atom model
   public readonly isSingleAtomMode: boolean;
 
   // List of the selectable isotopes in the sim. Provided by subclasses
@@ -65,38 +65,10 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   // 'polonium-211' vs 'custom' in Alpha Decay, or 'carbon-14' vs 'hydrogen-3' vs 'custom' in Beta Decay.
   public readonly selectedIsotopeProperty: Property<StartingIsotopes>;
 
-  // The user-editable half-life for custom isotopes, in normalized value [0,1] to be mapped according to other factors.
-  public readonly customHalfLifeProperty: NumberProperty;
+  // The maximum number of atoms that can be in a screen
+  public readonly maxNumberOfAtoms: number;
 
-  // The effective half-life for the currently selected isotope. For non-custom isotopes this is derived from the
-  // nuclide database; for custom isotopes it reflects the user-controlled customHalfLifeProperty.
-  public readonly halfLifeProperty: TReadOnlyProperty<number>;
-
-  // Whether the nucleus is stable. Derived for when the half-life is above a certain threshold.
-  public readonly isNucleusStableProperty: TReadOnlyProperty<boolean>;
-
-  // Whether ths model is running or paused.
-  public readonly isPlayingProperty: BooleanProperty;
-
-  // Whether the model is running at normal or slow speed.
-  public readonly timeSpeedProperty: EnumerationProperty<TimeSpeed>;
-
-  // Whether time progresses in a linear or exponential fashion.
-  public readonly timescaleProperty: Property<Timescale>;
-
-  // The time experienced by the model when playing.
-  public readonly timeProperty: NumberProperty;
-
-  // Whether the elapsed time has passed the threshold to be considered infinite
-  public readonly isTimeInfiniteProperty: TReadOnlyProperty<boolean>;
-
-  // The linear time experienced by the model since the last reset or clearing of decays.
-  private accumulatedLinearTime = 0;
-
-  // The time at which the last atom decayed, or null if it hasn't decayed yet.
-  public readonly lastDecayTimeProperty: Property<number | null>;
-
-  // Pool of all existing atoms originally set to inactive
+  // Pool of all existing atoms, originally set to inactive
   public readonly atomPool: NuclearDecayAtom[] = [];
 
   // Atoms currently in the play area
@@ -124,20 +96,50 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   // Current percentage of decayed atoms (0-1).
   public readonly percentageOfDecayedProperty: TReadOnlyProperty<number>;
 
-  // The area in which atoms can be placed.  This is in model coordinates and can (and should) be updated by the view
+  // The user-editable half-life for custom isotopes, in normalized value [0,1] to be mapped according to other factors.
+  public readonly customHalfLifeProperty: NumberProperty;
+
+  // The effective half-life for the currently selected isotope. For non-custom isotopes this is derived from the
+  // shred's database; for custom isotopes it reflects the user-controlled customHalfLifeProperty.
+  public readonly halfLifeProperty: TReadOnlyProperty<number>;
+
+  // Whether the nucleus is stable. Derived for when the half-life is above a certain threshold.
+  public readonly isNucleusStableProperty: TReadOnlyProperty<boolean>;
+
+  // Whether ths model is running or paused.
+  public readonly isPlayingProperty: BooleanProperty;
+
+  // Whether the model is running at normal or slow speed.
+  public readonly timeSpeedProperty: EnumerationProperty<TimeSpeed>;
+
+  // Whether time progresses in a linear or exponential fashion.
+  public readonly timescaleProperty: Property<Timescale>;
+
+  // The time experienced by the model when playing.
+  public readonly timeProperty: NumberProperty;
+
+  // Whether the elapsed time has passed the threshold to be considered infinite
+  public readonly isTimeInfiniteProperty: TReadOnlyProperty<boolean>;
+
+  // The linear time experienced by the model since the last reset or clearing of decays.
+  // Different to timeProperty since in exponential time some phenomena still behave linearly
+  // i.e. nucleus jiggling, which would be too overwhelming if it was speeding up exponentially
+  private accumulatedLinearTime = 0;
+
+  // The time at which the last atom decayed, or null if it hasn't decayed yet.
+  public readonly lastDecayTimeProperty: Property<number | null>;
+
+  // The area in which atoms can be placed. This is in model coordinates and can (and should) be updated by the view
   // once the view is constructed and therefore knows what space is available in the screen view.
   public readonly atomPlacementAreaProperty: Property<Shape>;
 
   // A boolean Property that indicates whether there are any atoms in the play area.
   public readonly isPlayAreaEmptyProperty: BooleanProperty;
 
-  // The maximum number of atoms that can be
-  public readonly maxNumberOfAtoms: number;
-
   // Data that can be presented in a histogram in the view that represents the decay state of the atoms.
   public readonly histogramData: HistogramData;
 
-  // The first screen will stop counting time once decay ocurrs, we create this here to control the stepping of time in the model.
+  // Whether to continue adding time to the clock, specially after decay has occurred.
   public readonly continueAddingTimeProperty: BooleanProperty;
 
   // Second screen will include a stopwatch, we might create it here for stepping but not on other screens.
@@ -159,9 +161,9 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
     super( options );
 
-    this.maxNumberOfAtoms = options.maxNumberOfAtoms!;
-
     this.isSingleAtomMode = options.maxNumberOfAtoms === 1;
+
+    this.maxNumberOfAtoms = options.maxNumberOfAtoms!;
 
     this.selectableIsotopes = StartingIsotopes;
 
@@ -195,8 +197,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
         if ( selectedIsotope === 'custom' ) {
           return this.expandNormalizedTime( customHalfLife, this.timescaleProperty.value === 'exponential' );
         }
-        const atomConfig = NuclearDecayAtom.getIsotopeAtomConfig( selectedIsotope );
-        const halfLife = AtomInfoUtils.getNuclideHalfLife( atomConfig.protonCount, atomConfig.neutronCount );
+        const halfLife = NuclearDecayAtom.getHalfLife( selectedIsotope );
         affirm( halfLife !== null, 'Should provide a valid isotope with a known half-life' );
         return halfLife;
       }, {
@@ -205,6 +206,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       }
     );
 
+    // If the half-life is bigger than a certain threshold, we assume the atom is stable
     this.isNucleusStableProperty = this.halfLifeProperty.derived( halfLife => {
       return Math.log10( halfLife ) > NuclearDecayCommonConstants.MAX_HALF_LIFE_EXPONENT;
     } );
@@ -239,10 +241,9 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       this.clearAtomLists( false, true );
       this.resetAtomsDecay();
 
-      const selectedIsotope = this.selectedIsotopeProperty.value;
-      if ( selectedIsotope === 'custom' ) {
+      if ( this.selectedIsotopeProperty.value === 'custom' ) {
         this.atomPool.forEach( atom => {
-          atom.halfLife = this.getHalfLife( selectedIsotope );
+          atom.halfLife = this.getCustomHalfLife();
         } );
       }
     } );
@@ -436,15 +437,6 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   }
 
   /**
-   * Function for the model to return the currently selected isotope's AtomConfig.
-   */
-  public getSelectedIsotopeAtomConfig(): AtomConfig {
-    const selectedIsotope = this.selectedIsotopeProperty.value;
-    affirm( selectedIsotope !== 'custom', 'Should not be called when custom is selected' );
-    return NuclearDecayAtom.getIsotopeAtomConfig( selectedIsotope );
-  }
-
-  /**
    * Convert the [0,1] custom half-life to the proper number value.
    *   If it is beyond a certain threshold we consider it to be infinity.
    *   However, the infinity is only used within the atoms; the model will still use a number
@@ -458,16 +450,6 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     else {
       return halfLife;
     }
-  }
-
-  public getHalfLife( isotope: StartingIsotopes ): number {
-    if ( isotope === 'custom' ) {
-      return this.getCustomHalfLife();
-    }
-    const atomConfig = NuclearDecayAtom.getIsotopeAtomConfig( isotope );
-    const halfLife = AtomInfoUtils.getNuclideHalfLife( atomConfig.protonCount, atomConfig.neutronCount );
-    affirm( halfLife !== null, 'Should provide a valid isotope with a known half-life' );
-    return halfLife;
   }
 
   /**
@@ -514,12 +496,8 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     this.atomPool.forEach( atom => {
       atom.reset();
       atom.setIsotope( newIsotope );
-
       if ( newIsotope === 'custom' ) {
-        atom.halfLife = this.getHalfLife( newIsotope );
-      }
-      else {
-        atom.deriveHalfLife();
+        atom.halfLife = this.getCustomHalfLife();
       }
     } );
     this.updateAtoms();

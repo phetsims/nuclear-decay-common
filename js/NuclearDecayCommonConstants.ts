@@ -28,7 +28,7 @@ export default class NuclearDecayCommonConstants {
   // Time exponent ranges for custom half-life in exponential time mode. The actual half-life will be 10^x.
   public static readonly EXPONENTIAL_HALF_LIFE_EXPONENT_RANGE = EXPONENTIAL_HALF_LIFE_EXPONENT_RANGE;
 
-  // Value above which the half-life is considered infinite
+  // Value above which the half-life is considered infinite. 18 is around the age of the universe.
   public static readonly MAX_HALF_LIFE_EXPONENT = 18;
 
   // Function for getting exponential time based with the proper clamps
