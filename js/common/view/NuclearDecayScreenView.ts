@@ -5,7 +5,6 @@
  * @author Agustín Vallejo
  */
 
-import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
 import Property from '../../../../axon/js/Property.js';
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
@@ -27,7 +26,6 @@ import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import AlphaParticleNode from './AlphaParticleNode.js';
-import AtomLabelNode from './AtomLabelNode.js';
 import DynamicNucleusNode from './DynamicNucleusNode.js';
 import MinimalAtomNode from './MinimalAtomNode.js';
 import VibratingDecayingAtomNode from './VibratingDecayingAtomNode.js';
@@ -62,8 +60,6 @@ export default class NuclearDecayScreenView extends ScreenView {
   //       functionality.
   protected atomNodesMap: Map<NuclearDecayAtom, MinimalAtomNode | VibratingDecayingAtomNode | DynamicNucleusNode>;
 
-  protected atomLabelsMap: Map<NuclearDecayAtom, AtomLabelNode>;
-
   protected readonly playAreaBoundsProperty: Property<Bounds2>;
 
   protected readonly playAreaBoundsRectangle: Path;
@@ -94,7 +90,6 @@ export default class NuclearDecayScreenView extends ScreenView {
 
     // Prepopulating all atom nodes and pairing them with their respective model atoms.
     this.atomNodesMap = new Map<NuclearDecayAtom, MinimalAtomNode | VibratingDecayingAtomNode | DynamicNucleusNode>();
-    this.atomLabelsMap = new Map<NuclearDecayAtom, AtomLabelNode>();
 
     // Single atom screen is in charge of creating its own atom, the models with multiple atoms are handled here.
     // TODO: See https://github.com/phetsims/alpha-decay/issues/10. If we keep this, the constants shouldn't be
@@ -127,13 +122,6 @@ export default class NuclearDecayScreenView extends ScreenView {
         );
         this.atomNodesMap.set( atom, atomNode );
         this.addChild( atomNode );
-
-        const atomLabelNode = new AtomLabelNode(
-          atom, model.selectedIsotopeProperty, {
-            visibleProperty: DerivedProperty.and( [ atomNode.visibleProperty, options.labelsVisibleProperty! ] )
-          } );
-        this.atomLabelsMap.set( atom, atomLabelNode );
-        this.addChild( atomLabelNode );
       } );
     }
     else if ( model.atomPool.length === 1000 ) {
@@ -240,12 +228,6 @@ export default class NuclearDecayScreenView extends ScreenView {
         const atomNode = this.atomNodesMap.get( atom );
         affirm( atomNode, 'Atom Node should exist for active atom' );
         atomNode.update();
-
-        // No affirmation because we won't have labels in the third screen
-        const atomLabel = this.atomLabelsMap.get( atom );
-        if ( atomLabel ) {
-          atomLabel.update( atomNode.bounds );
-        }
       } );
     }
   }

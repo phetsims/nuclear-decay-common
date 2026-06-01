@@ -21,6 +21,7 @@ import RadialGradient from '../../../../scenery/js/util/RadialGradient.js';
 import { rasterizeNode } from '../../../../scenery/js/util/rasterizeNode.js';
 import ShredColors from '../../../../shred/js/ShredColors.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
+import AtomLabelNode from './AtomLabelNode.js';
 
 type SelfOptions = EmptySelfOptions;
 export type VibratingDecayingAtomNodeOptions = SelfOptions & NodeOptions;
@@ -53,7 +54,11 @@ export default class VibratingDecayingAtomNode extends Node {
   // The node that represents the atom's nucleus, which is updated as the atom decays.
   private readonly nucleusNode: Node;
 
+  // node that represents the electron cloud, which may or may not be visible based on settings
   private readonly electronCloudNode: Node;
+
+  // label of the atom
+  private readonly atomLabelNode: AtomLabelNode;
 
   public constructor(
     private readonly decayingAtom: NuclearDecayAtom,
@@ -78,6 +83,12 @@ export default class VibratingDecayingAtomNode extends Node {
     } );
     this.addChild( this.electronCloudNode );
     this.electronCloudNode.moveToBack();
+
+    this.atomLabelNode = new AtomLabelNode( decayingAtom, {
+      centerX: this.electronCloudNode.centerX,
+      bottom: this.electronCloudNode.top
+    } );
+    this.addChild( this.atomLabelNode );
 
     decayingAtom.steppedEmitter.addListener( dt => {
 
@@ -121,11 +132,16 @@ export default class VibratingDecayingAtomNode extends Node {
     } );
   }
 
-  public updatePosition(): void {
-    const modelPosition = this.modelViewTransformProperty.value.modelToViewPosition( this.decayingAtom.position );
-    this.center = modelPosition.plus( this.viewOffset );
+  /**
+   * Update the position of this node taking into account the offset used to create the vibration effect.
+   */
+  private updatePosition(): void {
+    const viewPosition = this.modelViewTransformProperty.value.modelToViewPosition( this.decayingAtom.position );
+    this.center = viewPosition.plus( this.viewOffset );
   }
 
+  // TODO: See https://github.com/phetsims/alpha-decay/issues/10. I (jbphet) think we should update the whole thing
+  //       from the step emitter instead of here and in the step emitter listener.
   /**
    * Update the node based on the current state of the atom. Only recreates the nucleus visualization when the decay
    * state has changed. Otherwise, just updates position and visibility.

@@ -1,22 +1,21 @@
 // Copyright 2026, University of Colorado Boulder
 
 /**
- * AtomLabelNode displays the isotope mass and symbol above a nucleus. The text is always visible;
- * the yellow rounded-rectangle background flashes in at full opacity when the atom decays and fades
- * out to transparent over DISPLAY_DURATION seconds.
+ * AtomLabelNode displays the atom's mass and symbol above a nucleus. The text is always visible; the yellow rounded
+ * rectangle background flashes in at full opacity when the atom decays and fades out to transparent over
+ * a specified number of seconds.
  *
  * @author Agustín Vallejo (PhET Interactive Simulations)
+ * @author John Blanco (PhET Interactive Simulations)
  */
 
-import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
-import Bounds2 from '../../../../dot/js/Bounds2.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import Node, { NodeOptions } from '../../../../scenery/js/nodes/Node.js';
 import Rectangle from '../../../../scenery/js/nodes/Rectangle.js';
 import RichText from '../../../../scenery/js/nodes/RichText.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
-import NuclearDecayAtom, { StartingIsotopes } from '../model/NuclearDecayAtom.js';
+import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 
 type SelfOptions = EmptySelfOptions;
 
@@ -26,18 +25,14 @@ const DISPLAY_DURATION = NuclearDecayCommonConstants.NORMAL_SPEED_SCALE; // seco
 const PADDING = 5; // px inside the background rectangle
 
 export default class AtomLabelNode extends Node {
+
   private readonly labelBackground: Rectangle;
   private timeSinceDecay = 0;
   private wasDecayed = false;
   private labelText: RichText;
+  private readonly updateBackground: ( dt: number ) => void;
 
-  private updateBackground: ( dt: number ) => void;
-
-  public constructor(
-    private decayingAtom: NuclearDecayAtom,
-    selectedIsotopeProperty: TReadOnlyProperty<StartingIsotopes>,
-    providedOptions?: AtomLabelNodeOptions
-  ) {
+  public constructor( private decayingAtom: NuclearDecayAtom, providedOptions?: AtomLabelNodeOptions ) {
 
     const labelText = new RichText( '', {
       font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
@@ -57,8 +52,6 @@ export default class AtomLabelNode extends Node {
 
     this.labelBackground = labelBackground;
     this.labelText = labelText;
-
-    selectedIsotopeProperty.link( () => this.updateLabelText() );
 
     this.updateBackground = dt => {
       if ( decayingAtom.isActive ) {
@@ -94,16 +87,14 @@ export default class AtomLabelNode extends Node {
       }
     };
 
-    // Since we're not using properties inside of atoms,
-    // we have to listen to the stepping to know when it decays
-    decayingAtom.steppedEmitter.addListener( this.updateBackground );
+    // Since we're not using properties inside of atoms, we have to listen to the stepping to know when it decays.
+    // decayingAtom.steppedEmitter.addListener( this.updateBackground );
+    decayingAtom.steppedEmitter.addListener( dt => this.update( dt ) );
   }
 
-  public update( position: Bounds2 ): void {
-    this.centerX = position.centerX;
-    this.bottom = position.centerY - NuclearDecayCommonConstants.LABEL_ATOM_GAP;
+  public update( dt: number ): void {
     this.updateLabelText();
-    this.updateBackground( 0 );
+    this.updateBackground( dt );
   }
 
   public updateLabelText(): void {
