@@ -99,6 +99,18 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
         tandem: providedOptions.tandem.createTandem( 'electronCloudCheckbox' )
       }
     );
+    const labelsVisibleCheckbox = new Checkbox( visibleProperties.labelsVisibleProperty,
+      new HBox( {
+        spacing: 10,
+        children: [
+          new Text( 'Labels', { font: NuclearDecayCommonConstants.CONTROL_FONT } )
+        ]
+      } ), {
+        accessibleName: NuclearDecayCommonFluent.a11y.multipleAtoms.electronCloudCheckbox.accessibleNameStringProperty,
+        accessibleHelpText: NuclearDecayCommonFluent.a11y.multipleAtoms.electronCloudCheckbox.accessibleHelpTextStringProperty,
+        tandem: providedOptions.tandem.createTandem( 'labelsVisibleCheckbox' )
+      }
+    );
     const stopwatchCheckbox = new Checkbox( visibleProperties.stopwatchVisibleProperty,
       new HBox( {
         spacing: 10,
@@ -113,12 +125,15 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
       }
     );
 
+    const isotopePanelMiddleContent = [ electronCloudCheckbox, labelsVisibleCheckbox, stopwatchCheckbox ];
+
     const options = optionize<MultipleAtomsScreenViewOptions, SelfOptions, SingleAndMultipleAtomsScreenViewOptions>()( {
       screenSummaryContent: new MultipleAtomsScreenSummaryContent( model ),
-      isotopePanelMiddleContent: [ electronCloudCheckbox, stopwatchCheckbox ],
+      isotopePanelMiddleContent: isotopePanelMiddleContent,
       numberOfAtomsInPlayAreaWidth: 40,
       decayParticleStringProperty: new Property( '' ),
-      electronCloudVisibleProperty: visibleProperties.electronCloudVisibleProperty
+      electronCloudVisibleProperty: visibleProperties.electronCloudVisibleProperty,
+      labelsVisibleProperty: visibleProperties.labelsVisibleProperty
     }, providedOptions );
 
     super( model, options );
@@ -311,8 +326,7 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     // Control Area pdomOrder:
     //   Electron cloud checkbox → Stopwatch checkbox → Time controls → Reset All button
     this.pdomControlAreaNode.pdomOrder = [
-      electronCloudCheckbox,
-      stopwatchCheckbox,
+      ...isotopePanelMiddleContent,
       this.timeControlNode,
       this.resetAllButton
     ];

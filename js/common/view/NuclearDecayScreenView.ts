@@ -5,6 +5,7 @@
  * @author Agustín Vallejo
  */
 
+import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
 import Property from '../../../../axon/js/Property.js';
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
@@ -40,6 +41,9 @@ type SelfOptions = {
 
   // Property to control visibility of electron clouds around nuclei. Optional - only used in multiple-atoms screens.
   electronCloudVisibleProperty?: TReadOnlyProperty<boolean> | null;
+
+  // Property to control visibility of labels on top of nuclei. Optional - only used in multiple-atoms screens.
+  labelsVisibleProperty?: TReadOnlyProperty<boolean> | null;
 };
 
 export type NuclearDecayScreenViewOptions = SelfOptions & WithRequired<ScreenViewOptions, 'tandem'>;
@@ -76,7 +80,9 @@ export default class NuclearDecayScreenView extends ScreenView {
 
       numberOfAtomsInPlayAreaWidth: 10,
 
-      electronCloudVisibleProperty: null
+      electronCloudVisibleProperty: null,
+
+      labelsVisibleProperty: null
     }, providedOptions );
 
     super( options );
@@ -111,6 +117,7 @@ export default class NuclearDecayScreenView extends ScreenView {
 
       // For screens that use VibratingDecayingAtomNode, electronCloudVisibleProperty must be provided.
       affirm( options.electronCloudVisibleProperty, 'electronCloudVisibleProperty is required for multiple-atoms screens' );
+      affirm( options.labelsVisibleProperty, 'labelsVisibleProperty is required for multiple-atoms screens' );
 
       model.atomPool.forEach( atom => {
         const atomNode = new VibratingDecayingAtomNode(
@@ -122,7 +129,9 @@ export default class NuclearDecayScreenView extends ScreenView {
         this.addChild( atomNode );
 
         const atomLabelNode = new AtomLabelNode(
-          atom, model.selectedIsotopeProperty, { visibleProperty: atomNode.visibleProperty } );
+          atom, model.selectedIsotopeProperty, {
+            visibleProperty: DerivedProperty.and( [ atomNode.visibleProperty, options.labelsVisibleProperty! ] )
+          } );
         this.atomLabelsMap.set( atom, atomLabelNode );
         this.addChild( atomLabelNode );
       } );

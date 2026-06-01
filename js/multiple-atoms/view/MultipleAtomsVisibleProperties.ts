@@ -13,12 +13,17 @@ import Tandem from '../../../../tandem/js/Tandem.js';
 export default class MultipleAtomsVisibleProperties {
 
   public readonly electronCloudVisibleProperty: BooleanProperty;
+  public readonly labelsVisibleProperty: BooleanProperty;
   public readonly stopwatchVisibleProperty: BooleanProperty;
 
   public constructor( tandem: Tandem ) {
 
     this.electronCloudVisibleProperty = new BooleanProperty( true, {
       tandem: tandem.createTandem( 'electronCloudVisibleProperty' ),
+      phetioFeatured: true
+    } );
+    this.labelsVisibleProperty = new BooleanProperty( true, {
+      tandem: tandem.createTandem( 'labelsVisibleProperty' ),
       phetioFeatured: true
     } );
     this.stopwatchVisibleProperty = new BooleanProperty( false, {
