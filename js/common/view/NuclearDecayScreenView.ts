@@ -244,7 +244,7 @@ export default class NuclearDecayScreenView extends ScreenView {
         // No affirmation because we won't have labels in the third screen
         const atomLabel = this.atomLabelsMap.get( atom );
         if ( atomLabel ) {
-          atomLabel.updatePosition( atomNode.bounds );
+          atomLabel.update( atomNode.bounds );
         }
       } );
     }

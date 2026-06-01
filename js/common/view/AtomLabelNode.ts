@@ -31,6 +31,8 @@ export default class AtomLabelNode extends Node {
   private wasDecayed = false;
   private labelText: RichText;
 
+  private updateBackground: ( dt: number ) => void;
+
   public constructor(
     private decayingAtom: NuclearDecayAtom,
     selectedIsotopeProperty: TReadOnlyProperty<StartingIsotopes>,
@@ -58,9 +60,7 @@ export default class AtomLabelNode extends Node {
 
     selectedIsotopeProperty.link( () => this.updateLabelText() );
 
-    // Since we're not using properties inside of atoms,
-    // we have to listen to the stepping to know when it decays
-    decayingAtom.steppedEmitter.addListener( dt => {
+    this.updateBackground = dt => {
       if ( decayingAtom.isActive ) {
         const isDecayed = decayingAtom.hasDecayed;
 
@@ -92,12 +92,18 @@ export default class AtomLabelNode extends Node {
         this.visible = false;
         this.updateLabelText();
       }
-    } );
+    };
+
+    // Since we're not using properties inside of atoms,
+    // we have to listen to the stepping to know when it decays
+    decayingAtom.steppedEmitter.addListener( this.updateBackground );
   }
 
-  public updatePosition( position: Bounds2 ): void {
+  public update( position: Bounds2 ): void {
     this.centerX = position.centerX;
     this.bottom = position.centerY - NuclearDecayCommonConstants.LABEL_ATOM_GAP;
+    this.updateLabelText();
+    this.updateBackground( 0 );
   }
 
   public updateLabelText(): void {

@@ -151,6 +151,7 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
       model.selectedIsotopeProperty,
       ( n: number ) => {
         this.activateMultipleAtomNodes( n );
+        this.updateAtomNodes();
       },
       {
         centerX: this.layoutBounds.centerX,
