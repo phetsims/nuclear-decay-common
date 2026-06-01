@@ -402,6 +402,9 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
         this.updateAtoms( dt, timeStep );
       }
       else {
+
+        // If we're not increasing time in the model (the atom already decayed or time is already technically infinite)
+        // We still update the atoms so they keep experiencing time
         this.updateAtoms( dt, dt );
       }
     }
