@@ -26,8 +26,8 @@
   "add": {
     "value": "Add"
   },
-  "alphaParticleEnergy": {
-    "value": "Alpha Particle Energy"
+  "alphaDecayEnergy": {
+    "value": "Alpha Decay Energy"
   },
   "initialEnergy": {
     "value": "Initial Energy"

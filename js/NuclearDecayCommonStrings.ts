@@ -32,8 +32,8 @@ type StringsType = {
   'addAtomStringProperty': LocalizedStringProperty;
   'add': string;
   'addStringProperty': LocalizedStringProperty;
-  'alphaParticleEnergy': string;
-  'alphaParticleEnergyStringProperty': LocalizedStringProperty;
+  'alphaDecayEnergy': string;
+  'alphaDecayEnergyStringProperty': LocalizedStringProperty;
   'initialEnergy': string;
   'initialEnergyStringProperty': LocalizedStringProperty;
   'potentialEnergy': string;

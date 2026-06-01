@@ -35,7 +35,7 @@ export default class EnergyDiagramLegendNode extends VBox {
 
     // Subtitle: "Alpha Particle Energy"
 
-    const subtitleText = new Text( NuclearDecayCommonFluent.alphaParticleEnergyStringProperty, {
+    const subtitleText = new Text( NuclearDecayCommonFluent.alphaDecayEnergyStringProperty, {
       font: NuclearDecayCommonConstants.SMALL_LABEL_BOLD_FONT,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );

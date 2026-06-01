@@ -5,7 +5,7 @@
 /* eslint-disable */
 /* @formatter:off */
 
-import { TReadOnlyProperty } from '../../axon/js/TReadOnlyProperty.js';
+import {TReadOnlyProperty} from '../../axon/js/TReadOnlyProperty.js';
 import FluentLibrary from '../../chipper/js/browser-and-node/FluentLibrary.js';
 import FluentConstant from '../../chipper/js/browser/FluentConstant.js';
 import FluentContainer from '../../chipper/js/browser/FluentContainer.js';
@@ -36,7 +36,7 @@ addToMapIfDefined( 'isotope', 'isotopeStringProperty' );
 addToMapIfDefined( 'time', 'timeStringProperty' );
 addToMapIfDefined( 'addAtom', 'addAtomStringProperty' );
 addToMapIfDefined( 'add', 'addStringProperty' );
-addToMapIfDefined( 'alphaParticleEnergy', 'alphaParticleEnergyStringProperty' );
+addToMapIfDefined( 'alphaDecayEnergy', 'alphaDecayEnergyStringProperty' );
 addToMapIfDefined( 'initialEnergy', 'initialEnergyStringProperty' );
 addToMapIfDefined( 'potentialEnergy', 'potentialEnergyStringProperty' );
 addToMapIfDefined( 'finalEnergy', 'finalEnergyStringProperty' );
@@ -174,7 +174,7 @@ const NuclearDecayCommonFluent = {
   timeStringProperty: _.get( NuclearDecayCommonStrings, 'timeStringProperty' ),
   addAtomStringProperty: _.get( NuclearDecayCommonStrings, 'addAtomStringProperty' ),
   addStringProperty: _.get( NuclearDecayCommonStrings, 'addStringProperty' ),
-  alphaParticleEnergyStringProperty: _.get( NuclearDecayCommonStrings, 'alphaParticleEnergyStringProperty' ),
+  alphaDecayEnergyStringProperty: _.get( NuclearDecayCommonStrings, 'alphaDecayEnergyStringProperty' ),
   initialEnergyStringProperty: _.get( NuclearDecayCommonStrings, 'initialEnergyStringProperty' ),
   potentialEnergyStringProperty: _.get( NuclearDecayCommonStrings, 'potentialEnergyStringProperty' ),
   finalEnergyStringProperty: _.get( NuclearDecayCommonStrings, 'finalEnergyStringProperty' ),
