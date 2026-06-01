@@ -22,7 +22,7 @@ export default class DecayRateVisibleProperties {
       tandem: tandem.createTandem( 'showUndecayedProperty' ),
       phetioFeatured: true
     } );
-    this.showDecayedProperty = new BooleanProperty( true, {
+    this.showDecayedProperty = new BooleanProperty( false, {
       tandem: tandem.createTandem( 'showDecayedProperty' ),
       phetioFeatured: true
     } );

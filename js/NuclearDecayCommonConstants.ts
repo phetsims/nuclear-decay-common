@@ -72,7 +72,7 @@ export default class NuclearDecayCommonConstants {
 
   // Layout constants for panel sizing and spacing
   public static readonly LONG_PANEL_WIDTH = 740;
-  public static readonly RIGHT_PANEL_WIDTH = 200;
+  public static readonly RIGHT_PANEL_WIDTH = 220;
   public static readonly PANEL_X_MARGIN = 10;
   public static readonly PANEL_Y_MARGIN = 10;
   public static readonly PANEL_SPACING = 10;
