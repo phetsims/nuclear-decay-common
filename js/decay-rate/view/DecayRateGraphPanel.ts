@@ -69,8 +69,8 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
   public readonly dataProbeGrabber: DataProbeGrabberNode;
 
   public constructor(
-    model: DecayRateModel,
-    visibleProperties: DecayRateVisibleProperties,
+    private readonly model: DecayRateModel,
+    private readonly visibleProperties: DecayRateVisibleProperties,
     providedOptions?: DecayRateGraphOptions ) {
     const options = optionize<DecayRateGraphOptions, SelfOptions, NuclearDecayPanelOptions>()( {
       minWidth: NuclearDecayCommonConstants.LONG_PANEL_WIDTH
@@ -440,7 +440,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     const decayedPercent = DecayRateGraphPanel.getPercentageAtTime( this.decayRateModel.decayedDataPoints, time );
     this.dataProbePanel.updateReadouts( undecayedPercent, decayedPercent, time );
 
-    if ( undecayedPercent !== null ) {
+    if ( undecayedPercent !== null && this.visibleProperties.showUndecayedProperty.value ) {
       this.undecayedDataCircle.visible = true;
       this.undecayedDataCircle.center = new Vector2( this.dataProbeXProperty.value, this.graphHeight * ( 1 - undecayedPercent ) );
     }
@@ -448,7 +448,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       this.undecayedDataCircle.visible = false;
     }
 
-    if ( decayedPercent !== null ) {
+    if ( decayedPercent !== null && this.visibleProperties.showDecayedProperty.value ) {
       this.decayedDataCircle.visible = true;
       this.decayedDataCircle.center = new Vector2( this.dataProbeXProperty.value, this.graphHeight * ( 1 - decayedPercent ) );
     }
