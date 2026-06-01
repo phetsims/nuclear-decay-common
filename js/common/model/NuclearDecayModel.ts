@@ -329,14 +329,8 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       phetioFeatured: true
     } );
 
-    // JBP REVIEW: Whoa, wait, what? A derived property is modifying another property? That doesn't seem right. Why not
-    //             just have a max time value and stop there?
     this.isTimeInfiniteProperty = this.timeProperty.derived( time => {
-      if ( Math.log10( time ) > 1.1 * NuclearDecayCommonConstants.MAX_HALF_LIFE_EXPONENT ) {
-        this.continueAddingTimeProperty.value = false;
-        return true;
-      }
-      return false;
+      return time === Infinity;
     } );
 
     this.stopwatch = options.useStopwatch ? new Stopwatch( {
@@ -382,29 +376,31 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
       // Calculate the time step to feed to the model based on the time mode, either linear or exponential.
       let timeStep;
-      if ( this.timescaleProperty.value === 'linear' ) {
-        timeStep = dt;
-        if ( this.continueAddingTimeProperty.value ) {
+      if ( this.timeProperty.value !== Infinity ) {
+        if ( this.timescaleProperty.value === 'linear' ) {
+          timeStep = dt;
           this.timeProperty.value += timeStep;
         }
-      }
-      else {
-        affirm( this.timescaleProperty.value === 'exponential', 'unexpected time mode' );
+        else {
+          affirm( this.timescaleProperty.value === 'exponential', 'unexpected time mode' );
 
-        // The model is in exponential time mode, so calculate the size of the time step based on an exponential
-        // function.  This exponential function maps a linear time of 0 to 1 ms and adds a scale factor to get the rate
-        // of change that we want based on the design.  It also limits the max value, since this rate of exponential
-        // growth can lead to unsupported values after only a few minutes.
-        const exponentialTime = NuclearDecayCommonConstants.EXPONENTIAL_TIME( 6 * this.accumulatedLinearTime - 3 );
-        timeStep = exponentialTime - this.timeProperty.value;
-        if ( this.continueAddingTimeProperty.value ) {
+          // The model is in exponential time mode, so calculate the size of the time step based on an exponential
+          // function.  This exponential function maps a linear time of 0 to 1 ms and adds a scale factor to get the rate
+          // of change that we want based on the design.  It also limits the max value, since this rate of exponential
+          // growth can lead to unsupported values after only a few minutes.
+          const exponentialTime = NuclearDecayCommonConstants.EXPONENTIAL_TIME( 6 * this.accumulatedLinearTime - 3 );
+          timeStep = exponentialTime - this.timeProperty.value;
           this.timeProperty.value = exponentialTime;
         }
+
+        this.stopwatch?.step( timeStep );
+
+        this.updateAtoms( dt, timeStep );
+
+        if ( Math.log10( this.timeProperty.value ) >= NuclearDecayCommonConstants.MAX_TIME_EXPONENT ) {
+          this.timeProperty.value = Infinity;
+        }
       }
-
-      this.stopwatch?.step( timeStep );
-
-      this.updateAtoms( dt, timeStep );
     }
   }
 

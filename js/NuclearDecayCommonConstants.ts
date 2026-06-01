@@ -31,6 +31,9 @@ export default class NuclearDecayCommonConstants {
   // Value above which the half-life is considered infinite. 18 is around the age of the universe.
   public static readonly MAX_HALF_LIFE_EXPONENT = 18;
 
+  // Time at which the time counter turns into Infinity
+  public static readonly MAX_TIME_EXPONENT = 18.5;
+
   // Function for getting exponential time based with the proper clamps
   public static readonly EXPONENTIAL_TIME = ( exponent: number ): number => {
     return Math.min( Math.pow( 10, exponent ), Number.MAX_VALUE );
