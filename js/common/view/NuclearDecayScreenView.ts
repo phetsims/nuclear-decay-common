@@ -20,8 +20,8 @@ import Path from '../../../../scenery/js/nodes/Path.js';
 import Color from '../../../../scenery/js/util/Color.js';
 import SoundClip from '../../../../tambo/js/sound-generators/SoundClip.js';
 import soundManager from '../../../../tambo/js/soundManager.js';
-import cardPickup_mp3 from '../../../../tambo/sounds/cardPickup_mp3.js';
 import phetioStateSetEmitter from '../../../../tandem/js/phetioStateSetEmitter.js';
+import decaySound_mp3 from '../../../sounds/decaySound_mp3.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
@@ -154,7 +154,9 @@ export default class NuclearDecayScreenView extends ScreenView {
       this.setPlayAreaBounds( bounds );
     } );
 
-    const decaySoundClip = new SoundClip( cardPickup_mp3 );
+    const decaySoundClip = new SoundClip( decaySound_mp3, {
+      initialOutputLevel: 1 / Math.sqrt( model.maxNumberOfAtoms )
+    } );
     soundManager.addSoundGenerator( decaySoundClip );
 
     model.decayedCountProperty.link( ( count, previous ) => {
