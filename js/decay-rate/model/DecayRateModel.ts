@@ -17,6 +17,7 @@ import IOType from '../../../../tandem/js/types/IOType.js';
 import NumberIO from '../../../../tandem/js/types/NumberIO.js';
 import { StartingIsotopes } from '../../common/model/NuclearDecayAtom.js';
 import NuclearDecayModel, { NuclearDecayModelOptions } from '../../common/model/NuclearDecayModel.js';
+import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 
 type SelfOptions = EmptySelfOptions;
 
@@ -37,7 +38,7 @@ export default class DecayRateModel extends NuclearDecayModel {
     providedOptions?: DecayRateModelOptions
   ) {
     const options = optionize<DecayRateModelOptions, SelfOptions, NuclearDecayModelOptions>()( {
-      maxNumberOfAtoms: 1000,
+      maxNumberOfAtoms: NuclearDecayCommonConstants.MAX_ATOMS_THIRD_SCREEN,
       ejectParticlesOnDecay: false,
       phetioType: DecayRateModel.DecayRateModelIO
     }, providedOptions );

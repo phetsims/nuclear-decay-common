@@ -171,6 +171,7 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
       listener: () => {
         model.sort();
         this.updateAtomNodes();
+        model.isPlayingProperty.value = false;
       }
     } );
 

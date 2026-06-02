@@ -9,6 +9,7 @@ import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.
 import { DecayType } from '../../../../shred/js/AtomInfoUtils.js';
 import { StartingIsotopes } from '../../common/model/NuclearDecayAtom.js';
 import NuclearDecayModel, { NuclearDecayModelOptions } from '../../common/model/NuclearDecayModel.js';
+import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 
 type SelfOptions = EmptySelfOptions;
 
@@ -22,7 +23,7 @@ export default class MultipleAtomsModel extends NuclearDecayModel {
     providedOptions?: MultipleAtomDecayModelOptions
   ) {
     const options = optionize<MultipleAtomDecayModelOptions, SelfOptions, NuclearDecayModelOptions>()( {
-      maxNumberOfAtoms: 100
+      maxNumberOfAtoms: NuclearDecayCommonConstants.MAX_ATOMS_SECOND_SCREEN
     }, providedOptions );
 
     super( startingIsotopes, decayType, options );

@@ -21,7 +21,8 @@ export default class NuclearDecayCommonConstants {
   }
 
   // Max number of nucleons in the sim.
-  public static readonly MAX_ATOMS = 1000;
+  public static readonly MAX_ATOMS_SECOND_SCREEN = 100;
+  public static readonly MAX_ATOMS_THIRD_SCREEN = 1000;
 
   // Time ranges for custom half-life in linear time mode.
   public static readonly LINEAR_HALF_LIFE = new Range( 0.1, 3 ); // seconds

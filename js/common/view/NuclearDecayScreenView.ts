@@ -108,7 +108,7 @@ export default class NuclearDecayScreenView extends ScreenView {
 
       this.addChild( atomNode );
     }
-    else if ( model.atomPool.length === 100 ) {
+    else if ( model.maxNumberOfAtoms === NuclearDecayCommonConstants.MAX_ATOMS_SECOND_SCREEN ) {
 
       // For screens that use VibratingDecayingAtomNode, electronCloudVisibleProperty must be provided.
       affirm( options.electronCloudVisibleProperty, 'electronCloudVisibleProperty is required for multiple-atoms screens' );
@@ -127,7 +127,7 @@ export default class NuclearDecayScreenView extends ScreenView {
         this.addChild( atomNode );
       } );
     }
-    else if ( model.atomPool.length === 1000 ) {
+    else if ( model.maxNumberOfAtoms === NuclearDecayCommonConstants.MAX_ATOMS_THIRD_SCREEN ) {
       model.atomPool.forEach( atom => {
         const atomNode = new MinimalAtomNode( atom, this.modelViewTransformProperty, {} );
         this.atomNodesMap.set( atom, atomNode );

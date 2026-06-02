@@ -152,7 +152,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   ) {
 
     const options = optionize<NuclearDecayModelOptions, SelfOptions, PhetioObjectOptions>()( {
-      maxNumberOfAtoms: NuclearDecayCommonConstants.MAX_ATOMS,
+      maxNumberOfAtoms: 1,
       phetioType: NuclearDecayModel.NuclearDecayModelIO,
       phetioState: true,
       useStopwatch: false,
@@ -461,14 +461,24 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     this.clearAtomLists();
     this.resetTimes();
     // Activate multiple atoms with random positions
-    _.times( n, () => this.activateAtom( true ) );
+    _.times( n, () => this.activateAtom() );
+
+    // For the second screen, we want atoms to be tidy in a randomized grid fashion
+    // whereas third screen should be just shuffled
+    if ( this.maxNumberOfAtoms === NuclearDecayCommonConstants.MAX_ATOMS_SECOND_SCREEN ) {
+      this.sort();
+      this.softRandomize();
+    }
+    else if ( this.maxNumberOfAtoms === NuclearDecayCommonConstants.MAX_ATOMS_THIRD_SCREEN ) {
+      this.hardRandomize();
+    }
     this.updateAtoms();
   }
 
   /**
    * Adds exactly one instance of the selected isotope into the model.
    */
-  public activateAtom( randomizePosition = false ): void {
+  public activateAtom(): void {
     if ( this.activeAtoms.length === this.maxNumberOfAtoms ) {
       // Max number of atoms already active, do not add more.
       return;
@@ -479,9 +489,6 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     // Activate the atom.
     atom.isActive = true;
 
-    if ( randomizePosition ) {
-      atom.position = this.getRandomPositionWithinBounds();
-    }
     this.activeAtoms.push( atom );
 
     if ( this.isSingleAtomMode ) {
@@ -564,18 +571,6 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   }
 
   /**
-   * Returns a random position within the atom placement area bounds in model coordinates.
-   */
-  private getRandomPositionWithinBounds(): Vector2 {
-    const modelBounds = this.atomPlacementAreaProperty.value.bounds;
-
-    return new Vector2(
-      dotRandom.nextDoubleInRange( new Range( modelBounds.minX, modelBounds.maxX ) ),
-      dotRandom.nextDoubleInRange( new Range( modelBounds.minY, modelBounds.maxY ) )
-    );
-  }
-
-  /**
    * Resets the model.
    */
   public reset(): void {
@@ -602,8 +597,10 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
    * The number of columns scales with the total atom count to fill the available play area.
    */
   public sort(): void {
-    this.isPlayingProperty.value = false;
-    const bounds = this.atomPlacementAreaProperty.value.bounds.erodedX( 100 );
+    const originalBounds = this.atomPlacementAreaProperty.value.bounds;
+
+    // Eroding a bit the bounds so the atoms are not hitting the walls
+    const bounds = originalBounds.erodedXY( 0.1 * originalBounds.width, 0.1 * originalBounds.height );
     const n = this.activeAtoms.length;
     if ( n === 0 ) { return; }
 
@@ -660,6 +657,31 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
         bounds.minX + spacingX * col,
         bounds.maxY - spacingY * row
       );
+    } );
+  }
+
+  /**
+   * Randomizes the position of atoms by shifting them slightly in an arbitrary direction
+   */
+  private softRandomize(): void {
+
+    const bounds = this.atomPlacementAreaProperty.value.bounds;
+    const amplitude = 0.3 * bounds.height / Math.sqrt( this.activeAtoms.length );
+
+    this.activeAtoms.forEach( atom => {
+      atom.position.add( new Vector2(
+        dotRandom.nextDoubleInRange( new Range( -amplitude, amplitude ) ),
+        dotRandom.nextDoubleInRange( new Range( -amplitude, amplitude ) ) )
+      );
+    } );
+  }
+
+  /**
+   * Shuffles the atom positions within the play area bounds
+   */
+  private hardRandomize(): void {
+    this.activeAtoms.forEach( atom => {
+      atom.position = dotRandom.nextPointInBounds( this.atomPlacementAreaProperty.value.bounds );
     } );
   }
 
