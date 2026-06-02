@@ -96,15 +96,12 @@ export default class NuclearDecayScreenView extends ScreenView {
     //       hard coded.
     if ( model.atomPool.length === 1 ) {
       const atom = model.atomPool[ 0 ];
-      const atomNode = new DynamicNucleusNode( atom, model.isPlayingProperty, {
+      const atomNode = new DynamicNucleusNode( atom, this.modelViewTransformProperty, model.isPlayingProperty, {
         visibleProperty: model.isPlayAreaEmptyProperty.derived( isEmpty => !isEmpty )
         // escapeRadiusProperty: energyIntersectionPointProperty.derived( point => point.x )
       } );
       this.atomNodesMap.set( atom, atomNode );
 
-      this.modelViewTransformProperty.link( mvt => {
-        atomNode.center = mvt.modelToViewPosition( Vector2.ZERO );
-      } );
 
       this.addChild( atomNode );
     }

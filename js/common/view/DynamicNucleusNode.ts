@@ -14,11 +14,13 @@ import { roundSymmetric } from '../../../../dot/js/util/roundSymmetric.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
 import optionize from '../../../../phet-core/js/optionize.js';
+import ModelViewTransform2 from '../../../../phetcommon/js/view/ModelViewTransform2.js';
 import ShadedSphereNode from '../../../../scenery-phet/js/ShadedSphereNode.js';
 import Node, { NodeOptions } from '../../../../scenery/js/nodes/Node.js';
 import ShredColors from '../../../../shred/js/ShredColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
+import AtomLabelNode from './AtomLabelNode.js';
 
 type SelfOptions = {
 
@@ -39,6 +41,9 @@ const UPDATE_FREQUENCY = 10; // in updates per second
 // significantly less than the minimum expected number of particles.
 const CYCLES_FOR_FULL_UPDATE = 3;
 
+// Label is positioned this many nucleon radii above the nucleus center.
+const LABEL_OFFSET_IN_NUCLEON_RADII = 10;
+
 class DynamicNucleusNode extends Node {
 
   // The overall radius of the nucleus, in screen coordinates.  The nucleons will move around within this radius.
@@ -52,6 +57,9 @@ class DynamicNucleusNode extends Node {
 
   // The model atom that this Node depicts and uses for particle configuration data.
   private readonly atom: NuclearDecayAtom;
+
+  // Transform used to map the atom model position into view coordinates.
+  private readonly modelViewTransformProperty: TReadOnlyProperty<ModelViewTransform2>;
 
   // Separate particle collections are stored as fields so member methods can manipulate them directly.
   private readonly protonNodes: ShadedSphereNode[] = [];
@@ -72,8 +80,11 @@ class DynamicNucleusNode extends Node {
   private nucleonUpdateStartIndex = 0;
   private alphaParticleUpdateStartIndex = 0;
 
+  private readonly atomLabelNode: AtomLabelNode;
+
   public constructor(
     atom: NuclearDecayAtom,
+    modelViewTransformProperty: TReadOnlyProperty<ModelViewTransform2>,
     isModelPlayingProperty: TReadOnlyProperty<boolean>,
     providedOptions?: DynamicNucleusNodeOptions
   ) {
@@ -86,9 +97,18 @@ class DynamicNucleusNode extends Node {
     super( options );
 
     this.atom = atom;
+    this.modelViewTransformProperty = modelViewTransformProperty;
     this.nucleonRadius = options.nucleonRadius;
     this.escapeRadiusProperty = options.escapeRadiusProperty;
     this.atomHasDecayed = atom.hasDecayed;
+
+    this.atomLabelNode = new AtomLabelNode( atom, {
+      centerX: 0,
+      bottom: -LABEL_OFFSET_IN_NUCLEON_RADII * this.nucleonRadius
+    } );
+    this.addChild( this.atomLabelNode );
+
+    this.modelViewTransformProperty.link( () => this.updatePosition() );
 
     // Set up the initial batch of nucleon nodes.
     this.updateNucleons();
@@ -107,8 +127,14 @@ class DynamicNucleusNode extends Node {
   }
 
   public update(): void {
-    // TODO Get rid of this https://github.com/phetsims/alpha-decay/issues/10
-    // no-op
+    this.updatePosition();
+  }
+
+  /**
+   * Update this node's position from atom model coordinates.
+   */
+  private updatePosition(): void {
+    this.translation = this.modelViewTransformProperty.value.modelToViewPosition( this.atom.position );
   }
 
   /**
@@ -221,6 +247,8 @@ class DynamicNucleusNode extends Node {
     this.alphaParticleNodes.forEach( node => {
       node.center = this.getRandomAlphaParticleOffsetVector();
     } );
+
+    this.atomLabelNode.moveToFront();
   }
 
   /**
