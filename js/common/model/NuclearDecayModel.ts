@@ -334,7 +334,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     } );
 
     this.isTimeInfiniteProperty.link( isInfinite => {
-      this.continueAddingTimeProperty.value = isInfinite;
+      this.continueAddingTimeProperty.value = !isInfinite;
     } );
 
     this.stopwatch = options.useStopwatch ? new Stopwatch( {
