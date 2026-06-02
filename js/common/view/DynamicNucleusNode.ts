@@ -103,12 +103,11 @@ class DynamicNucleusNode extends Node {
     this.atomHasDecayed = atom.hasDecayed;
 
     this.atomLabelNode = new AtomLabelNode( atom, {
+      font: NuclearDecayCommonConstants.MEDIUM_LABEL_FONT,
       centerX: 0,
       bottom: -LABEL_OFFSET_IN_NUCLEON_RADII * this.nucleonRadius
     } );
     this.addChild( this.atomLabelNode );
-
-    this.modelViewTransformProperty.link( () => this.updatePosition() );
 
     // Set up the initial batch of nucleon nodes.
     this.updateNucleons();
@@ -124,6 +123,9 @@ class DynamicNucleusNode extends Node {
 
       this.step( dt );
     } );
+
+    // Update the position if the model-view transform changes. Note that this does the initial positioning too.
+    this.modelViewTransformProperty.link( () => this.updatePosition() );
   }
 
   public update(): void {

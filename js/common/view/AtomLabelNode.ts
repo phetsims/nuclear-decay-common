@@ -9,7 +9,9 @@
  * @author John Blanco (PhET Interactive Simulations)
  */
 
-import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import optionize from '../../../../phet-core/js/optionize.js';
+import StrictOmit from '../../../../phet-core/js/types/StrictOmit.js';
+import PhetFont from '../../../../scenery-phet/js/PhetFont.js';
 import Node, { NodeOptions } from '../../../../scenery/js/nodes/Node.js';
 import Rectangle from '../../../../scenery/js/nodes/Rectangle.js';
 import RichText from '../../../../scenery/js/nodes/RichText.js';
@@ -17,9 +19,11 @@ import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 
-type SelfOptions = EmptySelfOptions;
+type SelfOptions = {
+  font?: PhetFont;
+};
 
-export type AtomLabelNodeOptions = SelfOptions & NodeOptions;
+export type AtomLabelNodeOptions = SelfOptions & StrictOmit<NodeOptions, 'children'>;
 
 const DISPLAY_DURATION = NuclearDecayCommonConstants.NORMAL_SPEED_SCALE; // seconds
 const PADDING = 5; // px inside the background rectangle
@@ -34,19 +38,31 @@ export default class AtomLabelNode extends Node {
 
   public constructor( private decayingAtom: NuclearDecayAtom, providedOptions?: AtomLabelNodeOptions ) {
 
+    const options = optionize<AtomLabelNodeOptions, SelfOptions, NodeOptions>()( {
+      font: NuclearDecayCommonConstants.SMALL_LABEL_FONT
+    }, providedOptions );
+
     const labelText = new RichText( '', {
-      font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
+      font: options.font,
       fill: NuclearDecayCommonColors.undecayedProperty
     } );
 
-    const labelBackground = new Rectangle(
-      0, 0, 40, labelText.height + PADDING,
-      { fill: 'yellow', cornerRadius: 5, opacity: 0, stroke: 'orange' }
-    );
+    // Create the background.  The initial size is arbitrary and will update with the label size.
+    const labelBackground = new Rectangle( 0, 0, 1, 1, {
+      fill: 'yellow',
+      cornerRadius: 5,
+      opacity: 0,
+      stroke: 'orange'
+    } );
 
-    const options = optionize<AtomLabelNodeOptions, SelfOptions, NodeOptions>()( {
-      children: [ labelBackground, labelText ]
-    }, providedOptions );
+    // Update the background size as the text changes.
+    labelText.localBoundsProperty.link( labelTextBounds => {
+      const width = labelTextBounds.width + PADDING;
+      const height = labelTextBounds.height + PADDING;
+      labelBackground.setRect( -width / 2, -height / 2, width, height );
+    } );
+
+    options.children = [ labelBackground, labelText ];
 
     super( options );
 
