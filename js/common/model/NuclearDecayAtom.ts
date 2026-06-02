@@ -434,14 +434,12 @@ export default class NuclearDecayAtom {
    * @param [decayDt] - an optional separate time used in the decay calculation
    */
   public step( dt: number, decayDt = dt ): void {
-    if ( this._halfLife && !this.hasDecayed ) {
+    if ( this._halfLife !== Infinity && !this.hasDecayed ) {
 
       // Increment the time experienced by the atom.
       this.time += decayDt;
 
       // If half-life is infinity, only step the atom but not calculate for any decay
-      if ( this._halfLife === Infinity ) { return; }
-
       // Decide whether the atom will decay in this particular time interval.
       const probabilityOfDecay = NuclearDecayAtom.decayProbabilityOverInterval( this._halfLife, decayDt );
       if ( dotRandom.nextDouble() < probabilityOfDecay ) {

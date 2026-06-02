@@ -405,7 +405,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
         // If we're not increasing time in the model (the atom already decayed or time is already technically infinite)
         // We still update the atoms so they keep experiencing time
-        this.updateAtoms( dt, dt );
+        this.updateAtoms( dt );
       }
     }
   }
@@ -415,7 +415,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
    * @param dt - delta time, in seconds
    * @param [decayDt] - an optional separate time used in the decay calculation
    */
-  public updateAtoms( dt = 0, decayDt = 0 ): void {
+  public updateAtoms( dt = 0, decayDt = dt ): void {
     this.activeAtoms.forEach( ( atom: NuclearDecayAtom ) => {
       const hadDecayed = atom.hasDecayed;
       if ( dt && decayDt ) {
