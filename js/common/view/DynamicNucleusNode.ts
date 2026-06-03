@@ -33,24 +33,36 @@ type SelfOptions = {
 };
 type DynamicNucleusNodeOptions = SelfOptions & NodeOptions;
 
+// Type used for positioning a nucleon on a given shell.
+type LocationOnShell = {
+  angle: number;
+  particle: Node | null;
+
+  // A local perturbation from the shell's natural (radius, angle) position.
+  // Null means "no jitter" and should be treated as Vector2.ZERO.
+  jitterOffset: Vector2 | null;
+};
+
+// Type used for defining the locations in a shell within the nucleus structure.
+type ShellLocations = {
+  radius: number;
+  locations: LocationOnShell[];
+};
+
 // The frequency at which position updates occur for the constituent particles.
 const UPDATE_FREQUENCY = 10; // in updates per second
-
-// This constant defines the number of update cycles that are required for all individual particles (protons, neutrons,
-// alpha) to have their positions updated. It's used to stagger which ones are updated during each cycle.  Adjust this
-// in conjunction with the update period to get the desired level of dynamicism. Values should be greater than zero, and
-// significantly less than the minimum expected number of particles.
-const CYCLES_FOR_FULL_UPDATE = 3;
 
 // Label is positioned this many nucleon radii above the nucleus center.
 const LABEL_OFFSET_IN_NUCLEON_RADII = 10;
 
-class DynamicNucleusNode extends Node implements Updatable {
+// This factor defines how tightly the particles in the nucleus are packed. The value must be less than 1, and larger
+// values lead to a larger (i.e. less tightly packed) nucleus. Adjust as needed to get the desired visual effect.
+const NUCLEUS_ENLARGEMENT_FACTOR = 0.99;
 
-  // The overall radius of the nucleus, in screen coordinates.  The nucleons will move around within this radius.
-  // The value assigned here is arbitrary, it will be updated during initialization and potentially whenever the atom's
-  // decay state changes.
-  private nucleusRadius = 0;
+// Maximum number of particle nodes that will be supported by the trellis structure. Make this bigger if you need to.
+const MAX_PARTICLE_NODES_SUPPORTED = 200;
+
+class DynamicNucleusNode extends Node implements Updatable {
 
   // The radius of the individual nucleons that comprise the nucleus.  All nucleons are depicted as spheres with this
   // radius.
@@ -77,9 +89,10 @@ class DynamicNucleusNode extends Node implements Updatable {
   // Used to detect when the atom decays so the nucleus can be rebuilt.
   private atomHasDecayed: boolean;
 
-  // Variable used to stagger position updates for particles.
-  private nucleonUpdateStartIndex = 0;
-  private alphaParticleUpdateStartIndex = 0;
+  // The set of allowed particle positions, used to create the nucleus shape and used as the basis for the dynamic
+  // motion. It is structured as a set of shells, each with a radius and a set of angles at that radius where particles
+  // can go.
+  private readonly particleNodeTrellis: ShellLocations[];
 
   private readonly atomLabelNode: AtomLabelNode;
 
@@ -110,9 +123,6 @@ class DynamicNucleusNode extends Node implements Updatable {
     } );
     this.addChild( this.atomLabelNode );
 
-    // Set up the initial batch of nucleon nodes.
-    this.updateNucleons();
-
     // Add a listener to the atom's step emitter that implements the dynamic motion of the particles in the nucleus.
     atom.steppedEmitter.addListener( dt => {
       if ( !isModelPlayingProperty.value ) {
@@ -125,6 +135,49 @@ class DynamicNucleusNode extends Node implements Updatable {
       this.step( dt );
     } );
 
+    // Create the positional structure, which is like a trellis in a garden, that will be used to efficiently position
+    // the particle nodes that comprise this nucleus.
+    this.particleNodeTrellis = [];
+    let currentShell = 0;
+    let currentShellRadius = 0;
+    let currentAngle = 0;
+    let particlesAllowedInThisShell = 1;
+    let particlesPositionsInThisShell = 0;
+    let totalPositions = 0;
+    let done = false;
+
+    while ( !done ) {
+
+      // Add a position to the current shell. Create a new entry for this shell if there isn't one yet.
+      if ( !this.particleNodeTrellis[ currentShell ] ) {
+        this.particleNodeTrellis.push( { radius: currentShellRadius, locations: [] } );
+      }
+      this.particleNodeTrellis[ currentShell ].locations.push( { angle: currentAngle, particle: null, jitterOffset: null } );
+      totalPositions++;
+      particlesPositionsInThisShell++;
+      currentAngle += ( 2 * Math.PI ) / particlesAllowedInThisShell;
+      if ( particlesPositionsInThisShell >= particlesAllowedInThisShell ) {
+
+        if ( totalPositions < MAX_PARTICLE_NODES_SUPPORTED ) {
+
+          // Time to move to the next shell.
+          currentShell++;
+          currentShellRadius = currentShellRadius + this.nucleonRadius * ( Math.pow( NUCLEUS_ENLARGEMENT_FACTOR, currentShell ) );
+          currentAngle = 2 * Math.PI * dotRandom.nextDouble();
+          particlesAllowedInThisShell = Math.floor( 2 * Math.PI * currentShellRadius / ( this.nucleonRadius * NUCLEUS_ENLARGEMENT_FACTOR ) );
+          particlesPositionsInThisShell = 0;
+        }
+        else {
+
+          // We're done - enough positions have been created to support the max allowed number of particles.
+          done = true;
+        }
+      }
+    }
+
+    // Set up the initial batch of nucleon nodes.
+    this.updateNucleons();
+
     // Update the position if the model-view transform changes. Note that this does the initial positioning too.
     this.modelViewTransformProperty.link( () => this.update() );
   }
@@ -136,6 +189,52 @@ class DynamicNucleusNode extends Node implements Updatable {
     // TODO: Why can't this be set during construction?  See https://github.com/phetsims/alpha-decay/issues/10.
     // this.visible = this.atom.isActive;
     this.translation = this.modelViewTransformProperty.value.modelToViewPosition( this.atom.position );
+  }
+
+  /**
+   * Compute the current view position for a trellis location.
+   * The location's jitterOffset is always treated as a local perturbation from the shell's natural position.
+   */
+  private getParticlePositionForTrellisLocation( shell: ShellLocations, location: LocationOnShell ): Vector2 {
+    const basePosition = new Vector2( shell.radius, 0 ).rotated( location.angle );
+    const jitterOffset = location.jitterOffset || Vector2.ZERO;
+    return new Vector2( basePosition.x + jitterOffset.x, basePosition.y + jitterOffset.y );
+  }
+
+  /**
+   * Add the provided particle node as a child of this node and position it in an open spot on the trellis.  This is
+   * filled in from the center position outward so that the nucleus looks like a fairly solid and round thing.
+   */
+  private addAndPositionParticleNode( particleNode: Node ): void {
+    for ( const shell of this.particleNodeTrellis ) {
+      const openLocations = shell.locations.filter( location => location.particle === null );
+
+      if ( openLocations.length > 0 ) {
+        const selectedLocation = openLocations[ dotRandom.nextInt( openLocations.length ) ];
+        selectedLocation.particle = particleNode;
+
+        // Initial placement is exactly at the shell location, with no jitter.
+        selectedLocation.jitterOffset = null;
+
+        particleNode.center = this.getParticlePositionForTrellisLocation( shell, selectedLocation );
+        this.addChild( particleNode );
+        return;
+      }
+    }
+
+    affirm( false, 'No open location available in particleNodeTrellis.' );
+  }
+
+  /**
+   * Clear all particle assignments and cached offsets from the trellis so it can be reused for a fresh layout pass.
+   */
+  private clearParticleNodeTrellisOccupancy(): void {
+    this.particleNodeTrellis.forEach( shell => {
+      shell.locations.forEach( location => {
+        location.particle = null;
+        location.jitterOffset = null;
+      } );
+    } );
   }
 
   /**
@@ -152,6 +251,7 @@ class DynamicNucleusNode extends Node implements Updatable {
     if ( this.atomHasDecayed !== this.atom.hasDecayed ) {
       this.updateNucleons();
       this.atomHasDecayed = this.atom.hasDecayed;
+      this.timeAccumulator = 0;
     }
 
     // Move the particles around if enough time has passed since the last position update.
@@ -168,34 +268,89 @@ class DynamicNucleusNode extends Node implements Updatable {
    */
   private updateParticlePositions(): void {
 
-    // Update nucleon and alpha particle positions, but stagger which ones are updated each cycle to create an effect
-    // that appears dynamic but not too jumpy.
-    const nucleons = [ ...this.protonNodes, ...this.neutronNodes ];
-    for ( let i = this.nucleonUpdateStartIndex; i < nucleons.length; i += CYCLES_FOR_FULL_UPDATE ) {
-      nucleons[ i ].center = this.getRandomNucleonOffsetVector();
-    }
-    this.nucleonUpdateStartIndex = ( this.nucleonUpdateStartIndex + 1 ) % CYCLES_FOR_FULL_UPDATE;
-    for ( let i = this.alphaParticleUpdateStartIndex; i < this.alphaParticleNodes.length; i += CYCLES_FOR_FULL_UPDATE ) {
-      this.alphaParticleNodes[ i ].center = this.getRandomAlphaParticleOffsetVector();
-    }
-    this.alphaParticleUpdateStartIndex = ( this.alphaParticleUpdateStartIndex + 1 ) % CYCLES_FOR_FULL_UPDATE;
-
-    // Adjust the layering to make the nodes nearer the center higher in the Z-order. This makes the nucleus look
-    // a bit more spherical.
     const allParticleNodes = [ ...this.protonNodes, ...this.neutronNodes, ...this.alphaParticleNodes ];
-    allParticleNodes.forEach( node => {
+    if ( allParticleNodes.length === 0 ) {
+      return;
+    }
 
-      // Use probability and some empirical math to make the inner particles more likely to appear in front of the
-      // outer particles.  This gives the nucleus a somewhat more spherical look.
-      const normalizedDistance = node.center.magnitude / this.nucleusRadius;
-      if ( Math.pow( normalizedDistance, 0.4 ) > dotRandom.nextDouble() ) {
-        node.moveToBack();
+    // Randomly pick a subset of the particles to move.
+    const particleNodesToMove = dotRandom.shuffle( allParticleNodes ).slice(
+      0,
+      Math.max( 1, roundSymmetric( allParticleNodes.length * 0.1 ) )
+    );
+
+    // Move the selected particles by creating or updating their offsets.
+    particleNodesToMove.forEach( particleNode => {
+      let shellForParticle: ShellLocations | null = null;
+      let locationForParticle: LocationOnShell | null = null;
+
+      for ( const shell of this.particleNodeTrellis ) {
+        const location = shell.locations.find( locationOnShell => locationOnShell.particle === particleNode );
+        if ( location ) {
+          shellForParticle = shell;
+          locationForParticle = location;
+          break;
+        }
       }
+
+      affirm( !!shellForParticle && !!locationForParticle, 'Could not find particle in particleNodeTrellis.' );
+      if ( !shellForParticle || !locationForParticle ) {
+        return;
+      }
+
+      locationForParticle.jitterOffset = new Vector2( dotRandom.nextDouble() * this.nucleonRadius, 0 ).rotated( dotRandom.nextDouble() * 2 * Math.PI );
+      particleNode.center = this.getParticlePositionForTrellisLocation( shellForParticle, locationForParticle );
     } );
+
+    // Next, swap some of the particles' positions on the trellis to create more dynamic motion.
+    const occupiedLocations = this.particleNodeTrellis.flatMap( shell =>
+      shell.locations.filter( location => location.particle !== null ).map( location => ( {
+        shell: shell,
+        location: location
+      } ) )
+    );
+    const numberOfSwaps = Math.max( 1, roundSymmetric( allParticleNodes.length * 0.02 ) );
+
+    _.times( numberOfSwaps, () => {
+      if ( occupiedLocations.length < 2 ) {
+        return;
+      }
+
+      const firstIndex = dotRandom.nextInt( occupiedLocations.length );
+      let secondIndex = dotRandom.nextInt( occupiedLocations.length - 1 );
+      if ( secondIndex >= firstIndex ) {
+        secondIndex++;
+      }
+
+      const first = occupiedLocations[ firstIndex ];
+      const second = occupiedLocations[ secondIndex ];
+      const firstParticle = first.location.particle;
+      const secondParticle = second.location.particle;
+
+      if ( !firstParticle || !secondParticle ) {
+        return;
+      }
+
+      first.location.particle = secondParticle;
+      second.location.particle = firstParticle;
+
+      const firstBasePosition = new Vector2( first.shell.radius, 0 ).rotated( first.location.angle );
+      const secondBasePosition = new Vector2( second.shell.radius, 0 ).rotated( second.location.angle );
+      const firstJitterOffset = first.location.jitterOffset || Vector2.ZERO;
+      const secondJitterOffset = second.location.jitterOffset || Vector2.ZERO;
+
+      secondParticle.center = new Vector2( firstBasePosition.x + firstJitterOffset.x, firstBasePosition.y + firstJitterOffset.y );
+      firstParticle.center = new Vector2( secondBasePosition.x + secondJitterOffset.x, secondBasePosition.y + secondJitterOffset.y );
+    } );
+
+    // Update the layering.
+    const particleNodesSortedByDistance = [ ...allParticleNodes ].sort( ( a, b ) => b.center.magnitude - a.center.magnitude );
+    particleNodesSortedByDistance.forEach( particleNode => particleNode.moveToFront() );
+    this.atomLabelNode.moveToFront();
   }
 
   /**
-   * Rebuild all proton, neutron, and alpha nodes.
+   * Rebuild all proton, neutron, and alpha particle nodes and add them as children of the root node.
    */
   private updateNucleons(): void {
 
@@ -203,16 +358,16 @@ class DynamicNucleusNode extends Node implements Updatable {
     [ ...this.protonNodes, ...this.neutronNodes, ...this.alphaParticleNodes ].forEach( node => {
       this.removeChild( node );
     } );
+
+    // Clear occupancy in the trellis before assigning the new node set.
+    this.clearParticleNodeTrellisOccupancy();
+
     this.protonNodes.length = 0;
     this.neutronNodes.length = 0;
     this.alphaParticleNodes.length = 0;
 
     const protonCount = this.atom.atomConfigBeforeDecay.protonCount;
     const neutronCount = this.atom.atomConfigBeforeDecay.neutronCount;
-    const totalNucleonCount = protonCount + neutronCount;
-
-    // Calculate the radius of the nucleus based on the number of nucleons.
-    this.nucleusRadius = calculateNucleusRadius( totalNucleonCount, this.nucleonRadius );
 
     const {
       individualProtonCount,
@@ -238,16 +393,14 @@ class DynamicNucleusNode extends Node implements Updatable {
       this.alphaParticleNodes.push( alphaParticleNode );
     } );
 
-    const shuffledNucleonNodes = [ ...this.protonNodes, ...this.neutronNodes ];
-    shuffledNucleonNodes.forEach( nucleonNode => this.addChild( nucleonNode ) );
-    this.alphaParticleNodes.forEach( alphaParticleNode => this.addChild( alphaParticleNode ) );
+    const particleNodes = dotRandom.shuffle( [ ...this.protonNodes, ...this.neutronNodes, ...this.alphaParticleNodes ] );
 
-    [ ...this.protonNodes, ...this.neutronNodes ].forEach( node => {
-      node.center = this.getRandomNucleonOffsetVector();
-    } );
-    this.alphaParticleNodes.forEach( node => {
-      node.center = this.getRandomAlphaParticleOffsetVector();
-    } );
+    particleNodes.forEach( particleNode => this.addAndPositionParticleNode( particleNode ) );
+
+    const particleNodesSortedByDistance = [ ...particleNodes ].sort( ( a, b ) => b.center.magnitude - a.center.magnitude );
+    particleNodesSortedByDistance.forEach( particleNode => particleNode.moveToFront() );
+
+    console.log( `particleNodes.length = ${particleNodes.length}` );
 
     this.atomLabelNode.moveToFront();
   }
@@ -290,34 +443,6 @@ class DynamicNucleusNode extends Node implements Updatable {
     };
   }
 
-  /**
-   * Get a random offset from the center of the nucleus for a nucleon.
-   */
-  private getRandomNucleonOffsetVector(): Vector2 {
-    const length = ( dotRandom.nextDouble() - 0.5 ) * this.nucleusRadius * 1.5;
-    return new Vector2( length, 0 ).rotated( dotRandom.nextDouble() * 2 * Math.PI );
-  }
-
-  private getRandomAlphaParticleOffsetVector(): Vector2 {
-    let maxLength;
-    if ( !this.atom.hasDecayed && this.escapeRadiusProperty ) {
-
-      // An escape radius was provided during construction. We don't want to use this value every time for the max
-      // length because it can look too chaotic, so use it for a subset. Adjust the threshold here as needed to get the
-      // desired effect.
-      maxLength = dotRandom.nextDouble() > 0.95 ?
-                  this.escapeRadiusProperty.value - this.nucleonRadius * 2 :
-                  this.nucleusRadius;
-    }
-    else {
-
-      // No escape radius was provided, use the nucleus radius to control alpha particle movement.
-      maxLength = this.nucleusRadius;
-    }
-    const length = dotRandom.nextDouble() * maxLength;
-    return new Vector2( length, 0 ).rotated( dotRandom.nextDouble() * 2 * Math.PI );
-  }
-
   private static createProtonNode( nucleonRadius: number ): ShadedSphereNode {
     return new ShadedSphereNode( 2 * nucleonRadius, {
       mainColor: ShredColors.protonColorProperty
@@ -349,14 +474,5 @@ class DynamicNucleusNode extends Node implements Updatable {
     return new Node( { children: [ p2, n1, n2, p1 ] } );
   }
 }
-
-/**
- * Helper function to calculate the radius of the nucleus given the number of nucleons and their radius.  The
- * calculation is based on sphere packing approximations, with the multiplier empirically tweaked to produce visually
- * appealing results. Adjust as needed.
- */
-const calculateNucleusRadius = ( numberOfNucleons: number, nucleonRadius: number ): number => {
-  return nucleonRadius * Math.pow( numberOfNucleons / 0.6, 1 / 3 );
-};
 
 export default DynamicNucleusNode;
