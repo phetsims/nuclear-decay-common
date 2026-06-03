@@ -30,8 +30,6 @@ type StringsType = {
   'timeStringProperty': LocalizedStringProperty;
   'addAtom': string;
   'addAtomStringProperty': LocalizedStringProperty;
-  'add': string;
-  'addStringProperty': LocalizedStringProperty;
   'alphaDecayEnergy': string;
   'alphaDecayEnergyStringProperty': LocalizedStringProperty;
   'initialEnergy': string;

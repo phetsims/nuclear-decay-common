@@ -15,11 +15,12 @@ import FineCoarseSpinner from '../../../../scenery-phet/js/FineCoarseSpinner.js'
 import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
 import RichText from '../../../../scenery/js/nodes/RichText.js';
-import TextPushButton from '../../../../sun/js/buttons/TextPushButton.js';
+import sharedSoundPlayers from '../../../../tambo/js/sharedSoundPlayers.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import NuclearDecayAtom, { StartingIsotopes } from '../model/NuclearDecayAtom.js';
+import ArrowWithTailButton from './ArrowWithTailButton.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
 
 type SelfOptions = {
@@ -58,9 +59,10 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
       tandem: options.tandem.createTandem( 'numberOfAtomsSpinner' )
     } );
 
-    const addButton = new TextPushButton( NuclearDecayCommonFluent.addStringProperty, {
-      font: NuclearDecayCommonConstants.CONTROL_FONT,
+    const addButton = new ArrowWithTailButton( {
+      arrowRotation: Math.PI / 2,
       baseColor: NuclearDecayCommonColors.addButtonProperty,
+      soundPlayer: sharedSoundPlayers.get( 'goBack' ),
       listener: () => {
         addAtomsCallback( atomsToAddProperty.value );
       },
@@ -68,17 +70,16 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
       tandem: options.tandem.createTandem( 'addButton' )
     } );
 
-    const controlsRow = new HBox( {
-      spacing: 20,
-      align: 'center',
-      children: [ numberOfAtomsSpinner, addButton ]
+    const leftBox = new VBox( {
+      spacing: 8,
+      align: 'left',
+      children: [ titleText, numberOfAtomsSpinner ]
     } );
 
-    const contentNode = new VBox( {
-      spacing: 8,
-      xMargin: 20,
-      align: 'left',
-      children: [ titleText, controlsRow ]
+    const contentNode = new HBox( {
+      xMargin: 10,
+      align: 'center',
+      children: [ leftBox, addButton ]
     } );
 
     super( contentNode, options );
