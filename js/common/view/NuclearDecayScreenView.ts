@@ -23,8 +23,8 @@ import soundManager from '../../../../tambo/js/soundManager.js';
 import phetioStateSetEmitter from '../../../../tandem/js/phetioStateSetEmitter.js';
 import decaySound_mp3 from '../../../sounds/decaySound_mp3.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
-import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
+import Updatable from '../model/Updatable.js';
 import AlphaParticleNode from './AlphaParticleNode.js';
 import DynamicNucleusNode from './DynamicNucleusNode.js';
 import MinimalAtomNode from './MinimalAtomNode.js';
@@ -55,10 +55,8 @@ export default class NuclearDecayScreenView extends ScreenView {
   // How many atoms will fit visually within the width of the play area
   private readonly numberOfAtomsInPlayAreaWidth: number;
 
-  // TODO: See https://github.com/phetsims/alpha-decay/issues/10.  Consider a common base class or interface for the
-  //       type that is being mapped to.  And why a map and not just a list? Or maybe use the stepEmitter for this
-  //       functionality.
-  protected atomNodesMap: Map<NuclearDecayAtom, MinimalAtomNode | VibratingDecayingAtomNode | DynamicNucleusNode>;
+  // The nodes that represent the atoms in the play area.
+  protected atomNodes: Updatable[] = [];
 
   protected readonly playAreaBoundsProperty: Property<Bounds2>;
 
@@ -88,9 +86,6 @@ export default class NuclearDecayScreenView extends ScreenView {
     // Default to an identity transform.
     this.modelViewTransformProperty = new Property( ModelViewTransform2.createIdentity() );
 
-    // Prepopulating all atom nodes and pairing them with their respective model atoms.
-    this.atomNodesMap = new Map<NuclearDecayAtom, MinimalAtomNode | VibratingDecayingAtomNode | DynamicNucleusNode>();
-
     // Single atom screen is in charge of creating its own atom, the models with multiple atoms are handled here.
     // TODO: See https://github.com/phetsims/alpha-decay/issues/10. If we keep this, the constants shouldn't be
     //       hard coded.
@@ -100,8 +95,7 @@ export default class NuclearDecayScreenView extends ScreenView {
         visibleProperty: model.isPlayAreaEmptyProperty.derived( isEmpty => !isEmpty )
         // escapeRadiusProperty: energyIntersectionPointProperty.derived( point => point.x )
       } );
-      this.atomNodesMap.set( atom, atomNode );
-
+      this.atomNodes.push( atomNode );
 
       this.addChild( atomNode );
     }
@@ -120,14 +114,14 @@ export default class NuclearDecayScreenView extends ScreenView {
             labelsVisibleProperty: options.labelsVisibleProperty!
           }
         );
-        this.atomNodesMap.set( atom, atomNode );
+        this.atomNodes.push( atomNode );
         this.addChild( atomNode );
       } );
     }
     else if ( model.maxNumberOfAtoms === NuclearDecayCommonConstants.MAX_ATOMS_THIRD_SCREEN ) {
       model.atomPool.forEach( atom => {
         const atomNode = new MinimalAtomNode( atom, this.modelViewTransformProperty, {} );
-        this.atomNodesMap.set( atom, atomNode );
+        this.atomNodes.push( atomNode );
         this.addChild( atomNode );
       } );
     }
@@ -208,29 +202,24 @@ export default class NuclearDecayScreenView extends ScreenView {
     );
   }
 
-  public override step( dt: number ): void {
-    super.step( dt );
-    this.atomNodesMap.forEach( atomNode => {
-      atomNode.update();
-    } );
-  }
-
   public reset(): void {
     this.model.reset();
+
+    // Update the visibility of the atom nodes. This is necessary because the atom models don't use Properties, and only
+    // the active ones are stepped, so this makes the ones that became inactive after reset
+    this.updateAtomNodes();
   }
 
   /**
-   * Update atom nodes that are related to active atoms
+   * Update all atom nodes. The atom models don't use Properties, so this is necessary in some cases to keep the view
+   * and model in sync. This updates ALL atom nodes, so shouldn't be called frequently, such as from step functions.
    */
   public updateAtomNodes(): void {
 
     // Single atom screen updates the atom node separately
+    // JB REVIEW - Why is single atom screen different?  Can we consolidate to simplify?
     if ( !this.model.isSingleAtomMode ) {
-      this.model.activeAtoms.forEach( atom => {
-        const atomNode = this.atomNodesMap.get( atom );
-        affirm( atomNode, 'Atom Node should exist for active atom' );
-        atomNode.update();
-      } );
+      this.atomNodes.forEach( atomNode => { atomNode.update(); } );
     }
   }
 

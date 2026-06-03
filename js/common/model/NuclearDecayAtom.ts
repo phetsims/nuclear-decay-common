@@ -434,6 +434,8 @@ export default class NuclearDecayAtom {
    * @param [decayDt] - an optional separate time used in the decay calculation
    */
   public step( dt: number, decayDt = dt ): void {
+
+    // If this atom is undecayed and could decay, run the calculations to decide whether it will decay in this step.
     if ( this._halfLife !== Infinity && !this.hasDecayed ) {
 
       // Increment the time experienced by the atom.
@@ -457,6 +459,8 @@ export default class NuclearDecayAtom {
       }
     }
     else if ( this.hasDecayed && this.ejectedDecayParticles.length > 0 ) {
+
+      // Step any particles were ejected when this atom decayed.
       this.ejectedDecayParticles.forEach( particle => {
         particle.step( dt );
       } );

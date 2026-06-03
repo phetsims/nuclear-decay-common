@@ -20,6 +20,7 @@ import Node, { NodeOptions } from '../../../../scenery/js/nodes/Node.js';
 import ShredColors from '../../../../shred/js/ShredColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
+import Updatable from '../model/Updatable.js';
 import AtomLabelNode from './AtomLabelNode.js';
 
 type SelfOptions = {
@@ -44,7 +45,7 @@ const CYCLES_FOR_FULL_UPDATE = 3;
 // Label is positioned this many nucleon radii above the nucleus center.
 const LABEL_OFFSET_IN_NUCLEON_RADII = 10;
 
-class DynamicNucleusNode extends Node {
+class DynamicNucleusNode extends Node implements Updatable {
 
   // The overall radius of the nucleus, in screen coordinates.  The nucleons will move around within this radius.
   // The value assigned here is arbitrary, it will be updated during initialization and potentially whenever the atom's
@@ -125,17 +126,15 @@ class DynamicNucleusNode extends Node {
     } );
 
     // Update the position if the model-view transform changes. Note that this does the initial positioning too.
-    this.modelViewTransformProperty.link( () => this.updatePosition() );
-  }
-
-  public update(): void {
-    this.updatePosition();
+    this.modelViewTransformProperty.link( () => this.update() );
   }
 
   /**
-   * Update this node's position from atom model coordinates.
+   * Update the non-time-dependent aspects of this node.
    */
-  private updatePosition(): void {
+  public update(): void {
+    // TODO: Why can't this be set during construction?  See https://github.com/phetsims/alpha-decay/issues/10.
+    // this.visible = this.atom.isActive;
     this.translation = this.modelViewTransformProperty.value.modelToViewPosition( this.atom.position );
   }
 

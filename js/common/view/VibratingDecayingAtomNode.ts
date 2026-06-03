@@ -22,6 +22,7 @@ import RadialGradient from '../../../../scenery/js/util/RadialGradient.js';
 import { rasterizeNode } from '../../../../scenery/js/util/rasterizeNode.js';
 import ShredColors from '../../../../shred/js/ShredColors.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
+import Updatable from '../model/Updatable.js';
 import AtomLabelNode from './AtomLabelNode.js';
 
 type SelfOptions = {
@@ -45,7 +46,7 @@ const ELECTRON_CLOUD_GRADIENT = new RadialGradient( 0, 0, 0, 0, 0, ELECTRON_CLOU
   .addColorStop( 0, 'rgba( 0, 0, 255, 0.5 )' )
   .addColorStop( 1, 'rgba( 0, 0, 255, 0.05 )' );
 
-export default class VibratingDecayingAtomNode extends Node {
+export default class VibratingDecayingAtomNode extends Node implements Updatable {
 
   // Used to detect when the atom decays so the nucleus can be rebuilt.
   private atomHasDecayed: boolean;
@@ -121,12 +122,8 @@ export default class VibratingDecayingAtomNode extends Node {
             this.viewOffset = Vector2.ZERO;
           }
 
-
-          // Reset the accumulator.
+          // Reset the vibration time accumulator.
           this.vibrationTimeAccumulator = 0;
-
-          // Update the position with the new offset.
-          this.updatePosition();
         }
       }
       else {
@@ -134,9 +131,10 @@ export default class VibratingDecayingAtomNode extends Node {
         // Atom has decayed, so set the offset to zero and update position.
         if ( !this.viewOffset.equals( Vector2.ZERO ) ) {
           this.viewOffset = Vector2.ZERO;
-          this.updatePosition();
         }
       }
+
+      this.update();
     } );
   }
 
@@ -145,18 +143,16 @@ export default class VibratingDecayingAtomNode extends Node {
    */
   private updatePosition(): void {
     const viewPosition = this.modelViewTransformProperty.value.modelToViewPosition( this.decayingAtom.position );
-    this.center = viewPosition.plus( this.viewOffset );
+    this.translation = viewPosition.plus( this.viewOffset );
   }
 
-  // TODO: See https://github.com/phetsims/alpha-decay/issues/10. I (jbphet) think we should update the whole thing
-  //       from the step emitter instead of here and in the step emitter listener.
   /**
    * Update the node based on the current state of the atom. Only recreates the nucleus visualization when the decay
    * state has changed. Otherwise, just updates position and visibility.
    */
   public update(): void {
 
-    // Check if the atom's decay state has changed.
+    // Check if the atom's decay state has changed since the previous update.
     if ( this.atomHasDecayed !== this.decayingAtom.hasDecayed ) {
 
       // Decay state changed, so rebuild the nucleus node.
@@ -166,8 +162,8 @@ export default class VibratingDecayingAtomNode extends Node {
     }
 
     // Always update position and visibility.
-    this.updatePosition();
     this.visible = this.decayingAtom.isActive;
+    this.updatePosition();
   }
 
   /**

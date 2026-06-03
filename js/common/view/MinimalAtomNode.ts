@@ -14,6 +14,7 @@ import Circle, { CircleOptions } from '../../../../scenery/js/nodes/Circle.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
+import Updatable from '../model/Updatable.js';
 
 type SelfOptions = {
   showElectronCloud?: boolean;
@@ -21,7 +22,7 @@ type SelfOptions = {
 
 export type MinimalAtomNodeOptions = SelfOptions & CircleOptions;
 
-export default class MinimalAtomNode extends Circle {
+export default class MinimalAtomNode extends Circle implements Updatable {
   public constructor(
     private readonly decayingAtom: NuclearDecayAtom,
     private readonly modelViewTransformProperty: TReadOnlyProperty<ModelViewTransform2>,
@@ -32,23 +33,26 @@ export default class MinimalAtomNode extends Circle {
       fill: NuclearDecayCommonColors.undecayedProperty
     }, providedOptions );
 
-    super( 1, options );
+    super( modelViewTransformProperty.value.modelToViewDeltaX( NuclearDecayCommonConstants.ATOM_RADIUS ), options );
 
-    const originalAtomWidth = this.width;
     modelViewTransformProperty.link( mvt => {
-      const desiredAtomWidth = mvt.modelToViewDeltaX( 2 * NuclearDecayCommonConstants.ATOM_RADIUS );
-      this.setScaleMagnitude( desiredAtomWidth / originalAtomWidth );
-      this.center = mvt.modelToViewPosition( decayingAtom.position );
+      const desiredAtomRadius = mvt.modelToViewDeltaX( NuclearDecayCommonConstants.ATOM_RADIUS );
+      this.setRadius( desiredAtomRadius );
+      this.updatePosition();
+    } );
+
+    decayingAtom.steppedEmitter.addListener( () => {
+      this.update();
+      this.fill = this.decayingAtom.hasDecayed ? NuclearDecayCommonColors.decayedProperty : NuclearDecayCommonColors.undecayedProperty;
     } );
   }
 
-  public updatePosition(): void {
+  private updatePosition(): void {
     this.center = this.modelViewTransformProperty.value.modelToViewPosition( this.decayingAtom.position );
   }
 
   public update(): void {
-    this.updatePosition();
     this.visible = this.decayingAtom.isActive;
-    this.fill = this.decayingAtom.hasDecayed ? NuclearDecayCommonColors.decayedProperty : NuclearDecayCommonColors.undecayedProperty;
+    this.updatePosition();
   }
 }

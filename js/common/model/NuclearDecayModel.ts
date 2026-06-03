@@ -480,6 +480,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
    */
   public activateAtom(): void {
     if ( this.activeAtoms.length === this.maxNumberOfAtoms ) {
+
       // Max number of atoms already active, do not add more.
       return;
     }
