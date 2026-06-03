@@ -59,15 +59,15 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
       tandem: options.tandem.createTandem( 'numberOfAtomsSpinner' )
     } );
 
-    const addButton = new ArrowWithTailButton( {
+    const setSampleButton = new ArrowWithTailButton( {
       arrowRotation: Math.PI / 2,
-      baseColor: NuclearDecayCommonColors.addButtonProperty,
+      baseColor: NuclearDecayCommonColors.setSampleButtonProperty,
       soundPlayer: sharedSoundPlayers.get( 'goBack' ),
       listener: () => {
         addAtomsCallback( atomsToAddProperty.value );
       },
       accessibleName: NuclearDecayCommonFluent.a11y.multipleAtoms.addAtomsButton.accessibleNameStringProperty,
-      tandem: options.tandem.createTandem( 'addButton' )
+      tandem: options.tandem.createTandem( 'setSampleButton' )
     } );
 
     const leftBox = new VBox( {
@@ -79,7 +79,7 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
     const contentNode = new HBox( {
       xMargin: 10,
       align: 'center',
-      children: [ leftBox, addButton ]
+      children: [ leftBox, setSampleButton ]
     } );
 
     super( contentNode, options );

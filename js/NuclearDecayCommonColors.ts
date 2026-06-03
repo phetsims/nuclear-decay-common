@@ -46,7 +46,7 @@ const NuclearDecayCommonColors = {
     default: '#ec4123'
   } ),
 
-  addButtonProperty: new ProfileColorProperty( nuclearDecayCommon, 'addButton', {
+  setSampleButtonProperty: new ProfileColorProperty( nuclearDecayCommon, 'setSampleButton', {
     default: 'orange'
   } ),
 
