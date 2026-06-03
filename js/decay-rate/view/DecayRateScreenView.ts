@@ -26,11 +26,9 @@ import TimeControlNode from '../../../../scenery-phet/js/TimeControlNode.js';
 import TimeSpeed from '../../../../scenery-phet/js/TimeSpeed.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
-import Path from '../../../../scenery/js/nodes/Path.js';
-import undoSolidShape from '../../../../sherpa/js/fontawesome-5/undoSolidShape.js';
-import RectangularPushButton from '../../../../sun/js/buttons/RectangularPushButton.js';
 import NuclearDecayAtom from '../../common/model/NuclearDecayAtom.js';
 import IsotopeSelectionPanel from '../../common/view/IsotopeSelectionPanel.js';
+import ResetAtomsButton from '../../common/view/ResetAtomsButton.js';
 import DecayRateModel from '../model/DecayRateModel.js';
 import DecayRateGraphPanel from './DecayRateGraphPanel.js';
 import DecayRateScreenSummaryContent from './DecayRateScreenSummaryContent.js';
@@ -152,16 +150,13 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
     this.setPlayAreaBounds( playAreaBounds );
 
     // Reset button — top-right
-    const resetButton = new RectangularPushButton( {
-      content: new Path( undoSolidShape, { scale: 0.038, fill: 'black' } ),
-      baseColor: NuclearDecayCommonColors.resetButtonProperty,
+    const resetButton = new ResetAtomsButton( model.isPlayAreaEmptyProperty, {
       listener: () => {
-        model.clearAtomLists();
         this.activateMultipleAtomNodes( atomsToAddProperty.value );
+        this.updateAtomNodes();
       },
       accessibleName: NuclearDecayCommonFluent.a11y.decayRate.resetSampleButton.accessibleNameStringProperty,
-      tandem: options.tandem.createTandem( 'resetButton' ),
-      enabledProperty: model.isPlayAreaEmptyProperty.derived( empty => !empty )
+      tandem: options.tandem.createTandem( 'resetButton' )
     } );
 
     const sortButton = new SortButton( resetButton.bounds, {

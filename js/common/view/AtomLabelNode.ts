@@ -70,37 +70,31 @@ export default class AtomLabelNode extends Node {
     this.labelText = labelText;
 
     this.updateBackground = dt => {
-      if ( decayingAtom.isActive ) {
-        const isDecayed = decayingAtom.hasDecayed;
+      const isDecayed = decayingAtom.hasDecayed;
 
-        // If it just decayed, start the opacity counter
-        if ( isDecayed && !this.wasDecayed ) {
-          this.updateLabelText();
+      // If it just decayed, start the opacity counter
+      if ( isDecayed && !this.wasDecayed ) {
+        this.updateLabelText();
 
-          this.timeSinceDecay = 0;
-          this.labelBackground.opacity = 1;
-        }
-        if ( !isDecayed && this.wasDecayed ) {
+        this.timeSinceDecay = 0;
+        this.labelBackground.opacity = 1;
+      }
+      if ( !isDecayed && this.wasDecayed ) {
 
-          // If it undecayed (a reset for example)
-          this.updateLabelText();
-          this.labelBackground.opacity = 0;
-        }
+        // If it undecayed (a reset for example)
+        this.updateLabelText();
+        this.labelBackground.opacity = 0;
+      }
 
-        if ( isDecayed && this.timeSinceDecay < DISPLAY_DURATION ) {
-          this.timeSinceDecay += dt;
-          this.labelBackground.opacity = 1;
-        }
-        else {
-          this.labelBackground.opacity = 0;
-        }
-
-        this.wasDecayed = isDecayed;
+      if ( isDecayed && this.timeSinceDecay < DISPLAY_DURATION ) {
+        this.timeSinceDecay += dt;
+        this.labelBackground.opacity = 1;
       }
       else {
-        this.visible = false;
-        this.updateLabelText();
+        this.labelBackground.opacity = 0;
       }
+
+      this.wasDecayed = isDecayed;
     };
 
     // Since we're not using properties inside of atoms, we have to listen to the stepping to know when it decays.

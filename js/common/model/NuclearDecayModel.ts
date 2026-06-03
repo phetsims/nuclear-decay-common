@@ -229,6 +229,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     } );
 
     this.selectedIsotopeProperty.lazyLink( selectedIsotope => {
+      this.clearAtomLists();
       this.setNewIsotope( selectedIsotope );
       this.timescaleProperty.value = selectedIsotope === 'custom' && this.isSingleAtomMode ?
                                      'exponential' :
@@ -239,7 +240,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     this.customHalfLifeProperty.lazyLink( () => {
       this.resetTimes();
       this.clearAtomLists( false, true );
-      this.resetAtomsDecay();
+      this.resetAtomDecayStates();
 
       if ( this.selectedIsotopeProperty.value === 'custom' ) {
         this.atomPool.forEach( atom => {
@@ -420,6 +421,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       const hadDecayed = atom.hasDecayed;
       if ( dt && decayDt ) {
         atom.step( dt, decayDt );
+        console.log( atom );
       }
 
       if ( !hadDecayed && atom.hasDecayed ) {
@@ -484,12 +486,16 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       // Max number of atoms already active, do not add more.
       return;
     }
+
     const atom = this.atomPool.find( atom => !atom.isActive );
     affirm( atom, 'No available atoms to activate!' );
 
-    // Activate the atom.
+    atom.reset();
     atom.isActive = true;
-
+    atom.setIsotope( this.selectedIsotopeProperty.value );
+    if ( this.selectedIsotopeProperty.value === 'custom' ) {
+      atom.halfLife = this.getCustomHalfLife();
+    }
     this.activeAtoms.push( atom );
 
     if ( this.isSingleAtomMode ) {
@@ -500,7 +506,6 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   }
 
   private setNewIsotope( newIsotope: StartingIsotopes ): void {
-    this.clearAtomLists();
     this.resetTimes();
 
     this.atomPool.forEach( atom => {
@@ -521,21 +526,35 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   public clearAtomLists( clearUndecayed = true, clearDecayed = true ): void {
 
     if ( clearDecayed ) {
-      this.decayedAtoms.length = 0;
-      this.decayedCountProperty.reset();
+      this.clearDecayedAtomsList();
     }
 
     if ( clearUndecayed ) {
-      this.resetTimes();
-      this.resetAtoms();
-      this.undecayedAtoms.length = 0;
-      this.undecayedCountProperty.reset();
+      this.clearUndecayedAtoms();
     }
     else {
-      this.undecayedAtoms = this.activeAtoms.filter( atom => !atom.hasDecayed );
+      // this.undecayedAtoms = this.activeAtoms.filter( atom => !atom.hasDecayed );
     }
 
     this.histogramData.reset();
+  }
+
+  /**
+   * Reset the atoms, stop tracking time, and reset the list of undecayed atoms.
+   */
+  public clearUndecayedAtoms(): void {
+    this.resetAtoms();
+    this.resetTimes();
+    this.undecayedAtoms.length = 0;
+    this.undecayedCountProperty.reset();
+  }
+
+  /**
+   * Clear the lists of decayed atoms we had been tracking until now
+   */
+  public clearDecayedAtomsList(): void {
+    this.decayedAtoms.length = 0;
+    this.decayedCountProperty.reset();
   }
 
   /**
@@ -546,14 +565,8 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     this.activeAtoms.length = 0;
   }
 
-  /**
-   * Resets all atoms to their original undecayed state
-   */
-  public resetAtomsDecay(): void {
-    this.atomPool.forEach( atom => atom.resetDecay() );
-  }
 
-  private resetTimes(): void {
+  public resetTimes(): void {
     this.timeProperty.reset();
     this.accumulatedLinearTime = 0;
     this.lastDecayTimeProperty.reset();
@@ -566,6 +579,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
    */
   public resetAtomDecayStates(): void {
     this.atomPool.forEach( atom => atom.resetDecay() );
+    this.setNewIsotope( this.selectedIsotopeProperty.value );
 
     // Because the time may be progressing exponentially, we need to reset the time value here too.
     this.resetTimes();

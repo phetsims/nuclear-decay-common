@@ -17,7 +17,6 @@ import { roundSymmetric } from '../../../../dot/js/util/roundSymmetric.js';
 import { toFixed } from '../../../../dot/js/util/toFixed.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import AddAtomsControlPanel from '../../../../nuclear-decay-common/js/common/view/AddAtomsControlPanel.js';
-import NuclearDecayCommonColors from '../../../../nuclear-decay-common/js/NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../../../nuclear-decay-common/js/NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../../../nuclear-decay-common/js/NuclearDecayCommonFluent.js';
 import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
@@ -27,16 +26,14 @@ import StopwatchNode from '../../../../scenery-phet/js/StopwatchNode.js';
 import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
 import Circle from '../../../../scenery/js/nodes/Circle.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
-import Path from '../../../../scenery/js/nodes/Path.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
 import RadialGradient from '../../../../scenery/js/util/RadialGradient.js';
 import { rasterizeNode } from '../../../../scenery/js/util/rasterizeNode.js';
-import undoSolidShape from '../../../../sherpa/js/fontawesome-5/undoSolidShape.js';
-import RectangularPushButton from '../../../../sun/js/buttons/RectangularPushButton.js';
 import Checkbox from '../../../../sun/js/Checkbox.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
 import NuclearDecayAtom from '../../common/model/NuclearDecayAtom.js';
 import IsotopeSelectionPanel from '../../common/view/IsotopeSelectionPanel.js';
+import ResetAtomsButton from '../../common/view/ResetAtomsButton.js';
 import SingleAndMultipleAtomsScreenView, { SingleAndMultipleAtomsScreenViewOptions } from '../../common/view/SingleAndMultipleAtomsScreenView.js';
 import MultipleAtomsModel from '../model/MultipleAtomsModel.js';
 import MultipleAtomsScreenSummaryContent from './MultipleAtomsScreenSummaryContent.js';
@@ -170,23 +167,15 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
 
     // Create the button that can be used to reset the decay state of the sample of atomic nuclei currently present in
     // the model.
-    const resetSampleButton = new RectangularPushButton( {
-      content: new Path( undoSolidShape, { scale: 0.038, fill: 'black' } ),
-      baseColor: NuclearDecayCommonColors.resetButtonProperty,
+    const resetSampleButton = new ResetAtomsButton( model.isPlayAreaEmptyProperty, {
       listener: () => {
-        model.resetAtomDecayStates();
-
-        // Clear the decayed atoms array and histogram data. The first parameter (false) keeps the undecayed atoms
-        // list intact, while the second parameter (true) clears the decayed atoms and histogram.
-        // JPB REVIEW: This API was hard for me to figure out, and feels very awkward. We should revisit the lists and
-        //             the way this works to see if we can come up with something more discoverable and maintainable.
-        model.clearAtomLists( false, true );
+        model.activateMultipleAtoms( atomsToAddProperty.value );
+        this.updateAtomNodes();
       },
       right: playAreaBounds.right,
       top: playAreaBounds.top,
       accessibleName: NuclearDecayCommonFluent.a11y.multipleAtoms.resetSampleButton.accessibleNameStringProperty,
-      tandem: options.tandem.createTandem( 'resetSampleButton' ),
-      enabledProperty: model.isPlayAreaEmptyProperty.derived( empty => !empty )
+      tandem: options.tandem.createTandem( 'resetSampleButton' )
     } );
     this.addChild( resetSampleButton );
 

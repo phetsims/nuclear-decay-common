@@ -227,10 +227,6 @@ export default class NuclearDecayAtom {
     } );
     this.time = 0;
     this.decayTime = null;
-
-    if ( DecayProductValues.includes( this.isotope ) ) {
-      this.setIsotope( NuclearDecayAtom.getDecayOrigin( this.isotope ) );
-    }
   }
 
   public copy(): NuclearDecayAtom {

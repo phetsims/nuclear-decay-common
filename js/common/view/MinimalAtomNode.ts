@@ -43,7 +43,6 @@ export default class MinimalAtomNode extends Circle implements Updatable {
 
     decayingAtom.steppedEmitter.addListener( () => {
       this.update();
-      this.fill = this.decayingAtom.hasDecayed ? NuclearDecayCommonColors.decayedProperty : NuclearDecayCommonColors.undecayedProperty;
     } );
   }
 
@@ -53,6 +52,7 @@ export default class MinimalAtomNode extends Circle implements Updatable {
 
   public update(): void {
     this.visible = this.decayingAtom.isActive;
+    this.fill = this.decayingAtom.hasDecayed ? NuclearDecayCommonColors.decayedProperty : NuclearDecayCommonColors.undecayedProperty;
     this.updatePosition();
   }
 }
