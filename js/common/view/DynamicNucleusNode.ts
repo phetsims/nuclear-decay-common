@@ -29,7 +29,7 @@ type SelfOptions = {
   // The radius to use for nucleons, in screen coordinates.
   nucleonRadius?: number;
 
-  // If provided, nucleons will escape the nucleus when they reach this radius, in screen coordinates.
+  // The radius to which particles that can tunnel can move prior to tunnelling.
   escapeRadiusProperty?: TReadOnlyProperty<number> | null;
 };
 type DynamicNucleusNodeOptions = SelfOptions & NodeOptions;
@@ -387,17 +387,10 @@ class DynamicNucleusNode extends Node implements Updatable {
       const particleNodesSortedByDistance = [ ...allParticleNodes ].sort( ( a, b ) => b.center.magnitude - a.center.magnitude );
       const nucleusSize = particleNodesSortedByDistance[ 0 ].center.magnitude + this.nucleonRadius;
 
-      // JB REVIEW: Fix this when we figure out the issue with the escape radius.
-      let escapeRadius;
+      // If an escape radius was provided, randomly move some alpha particles out of the trellis and into the
+      // almost-tunneling state, where they appear to move outside the nucleus but inside the escape radius.
       if ( this.escapeRadiusProperty ) {
-        escapeRadius = this.escapeRadiusProperty.value;
-      }
-      else {
-        escapeRadius = nucleusSize * 2;
-      }
-
-      // Randomly move some alpha particles out of the trellis into the almost-tunneling state.
-      // if ( this.escapeRadiusProperty ) {
+        const escapeRadius = this.escapeRadiusProperty.value;
         const minimumAlmostTunnelingDistance = nucleusSize;
 
         if ( escapeRadius > minimumAlmostTunnelingDistance ) {
@@ -420,7 +413,7 @@ class DynamicNucleusNode extends Node implements Updatable {
             }
           } );
         }
-      // }
+      }
     }
 
     // Update the layering.

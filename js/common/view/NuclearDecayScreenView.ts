@@ -31,6 +31,7 @@ import MinimalAtomNode from './MinimalAtomNode.js';
 import VibratingDecayingAtomNode from './VibratingDecayingAtomNode.js';
 
 type SelfOptions = {
+
   // Additional content to add to the isotope panel
   isotopePanelMiddleContent?: Node[] | null;
 
@@ -42,6 +43,9 @@ type SelfOptions = {
 
   // Property to control visibility of labels on top of nuclei. Optional - only used in multiple-atoms screens.
   labelsVisibleProperty?: TReadOnlyProperty<boolean> | null;
+
+  // Property to control the escape radius of the atoms. Optional - only used in single-atom screens.
+  escapeRadiusProperty?: TReadOnlyProperty<number> | null;
 };
 
 export type NuclearDecayScreenViewOptions = SelfOptions & WithRequired<ScreenViewOptions, 'tandem'>;
@@ -74,6 +78,8 @@ export default class NuclearDecayScreenView extends ScreenView {
 
       numberOfAtomsInPlayAreaWidth: 10,
 
+      escapeRadiusProperty: null,
+
       electronCloudVisibleProperty: null,
 
       labelsVisibleProperty: null
@@ -92,8 +98,8 @@ export default class NuclearDecayScreenView extends ScreenView {
     if ( model.atomPool.length === 1 ) {
       const atom = model.atomPool[ 0 ];
       const atomNode = new DynamicNucleusNode( atom, this.modelViewTransformProperty, model.isPlayingProperty, {
-        visibleProperty: model.isPlayAreaEmptyProperty.derived( isEmpty => !isEmpty )
-        // escapeRadiusProperty: energyIntersectionPointProperty.derived( point => point.x )
+        visibleProperty: model.isPlayAreaEmptyProperty.derived( isEmpty => !isEmpty ),
+        escapeRadiusProperty: options.escapeRadiusProperty
       } );
       this.atomNodes.push( atomNode );
 
