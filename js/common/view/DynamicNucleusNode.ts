@@ -272,6 +272,21 @@ class DynamicNucleusNode extends Node implements Updatable {
   }
 
   /**
+   * Get all particle nodes that are currently assigned to a location on the trellis.
+   */
+  public getParticlesOnTrellis(): Node[] {
+    const particles: Node[] = [];
+    this.particleNodeTrellis.forEach( shell => {
+      shell.locations.forEach( location => {
+        if ( location.particle !== null ) {
+          particles.push( location.particle );
+        }
+      } );
+    } );
+    return particles;
+  }
+
+  /**
    * Advance the dynamic particle motion using real-time dt. The atom model emits a scaled dt, so rescale it here
    * back to real time using the same speed constant that the model uses to slow time on the graph.
    */
@@ -313,16 +328,13 @@ class DynamicNucleusNode extends Node implements Updatable {
    */
   private updateParticlePositions(): void {
 
-    // JB REVIEW: Extract particle nodes from trellis to avoid problem with tunnelling alphas.
-    const allParticleNodes = [ ...this.protonNodes, ...this.neutronNodes, ...this.alphaParticleNodes ];
-    if ( allParticleNodes.length === 0 ) {
-      return;
-    }
+    // Get the particles that are currently part of the nucleus.
+    const particleNodesInNucleus = this.getParticlesOnTrellis();
 
     // Randomly pick a subset of the particles to move.
-    const particleNodesToMove = dotRandom.shuffle( allParticleNodes ).slice(
+    const particleNodesToMove = dotRandom.shuffle( particleNodesInNucleus ).slice(
       0,
-      Math.max( 1, roundSymmetric( allParticleNodes.length * 0.1 ) )
+      Math.max( 1, roundSymmetric( particleNodesInNucleus.length * 0.1 ) )
     );
 
     // Move the selected particles by creating or updating their offsets.
@@ -339,8 +351,7 @@ class DynamicNucleusNode extends Node implements Updatable {
         }
       }
 
-      // JB REVIEW: Put this affirm back once things are worked out with almost tunnelling alphas.
-      // affirm( !!shellForParticle && !!locationForParticle, 'Could not find particle in particleNodeTrellis.' );
+      affirm( !!shellForParticle && !!locationForParticle, 'Could not find particle in particleNodeTrellis.' );
       if ( !shellForParticle || !locationForParticle ) {
         return;
       }
@@ -356,7 +367,7 @@ class DynamicNucleusNode extends Node implements Updatable {
         location: location
       } ) )
     );
-    const numberOfSwaps = Math.max( 1, roundSymmetric( allParticleNodes.length * 0.02 ) );
+    const numberOfSwaps = Math.max( 1, roundSymmetric( particleNodesInNucleus.length * 0.02 ) );
     _.times( numberOfSwaps, () => {
       if ( occupiedLocations.length < 2 ) {
         return;
@@ -402,7 +413,7 @@ class DynamicNucleusNode extends Node implements Updatable {
     if ( !this.atom.hasDecayed ) {
 
       // Log the calculated nucleus size: the furthest-out particle's center distance plus one nucleon radius.
-      const particleNodesSortedByDistance = [ ...allParticleNodes ].sort( ( a, b ) => b.center.magnitude - a.center.magnitude );
+      const particleNodesSortedByDistance = [ ...particleNodesInNucleus ].sort( ( a, b ) => b.center.magnitude - a.center.magnitude );
       const nucleusSize = particleNodesSortedByDistance[ 0 ].center.magnitude + this.nucleonRadius;
 
       // If an escape radius was provided, randomly move some alpha particles out of the trellis and into the
@@ -438,7 +449,7 @@ class DynamicNucleusNode extends Node implements Updatable {
     }
 
     // Update the layering.
-    const particleNodesSortedByDistance = [ ...allParticleNodes ].sort( ( a, b ) => b.center.magnitude - a.center.magnitude );
+    const particleNodesSortedByDistance = [ ...particleNodesInNucleus ].sort( ( a, b ) => b.center.magnitude - a.center.magnitude );
     particleNodesSortedByDistance.forEach( particleNode => particleNode.moveToFront() );
     this.atomLabelNode.moveToFront();
   }
