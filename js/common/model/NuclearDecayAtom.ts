@@ -148,6 +148,11 @@ export default class NuclearDecayAtom {
   // The type of decay that this nucleus will undergo.
   private decayType: DecayType;
 
+  // JB REVIEW: Discuss with AV.  Is this a reasonable way to do this?
+  // For atoms that decay in a way the uses quantum tunneling, such as alpha decay, this is the radius at which the
+  // particles should tunnel so upon decay.
+  public ejectedParticleTunnelingRadius = 0;
+
   public constructor(
     isotope: ValidIsotopes,
     decayType: DecayType,
@@ -437,8 +442,7 @@ export default class NuclearDecayAtom {
       // Increment the time experienced by the atom.
       this.time += decayDt;
 
-      // If half-life is infinity, only step the atom but not calculate for any decay
-      // Decide whether the atom will decay in this particular time interval.
+      // Decide whether the atom will decay in the current time interval.
       const probabilityOfDecay = NuclearDecayAtom.decayProbabilityOverInterval( this._halfLife, decayDt );
       if ( dotRandom.nextDouble() < probabilityOfDecay ) {
         this.decayTime = this.time;
@@ -449,8 +453,10 @@ export default class NuclearDecayAtom {
         // Activate and position the ejected decay particles.
         this.ejectedDecayParticles.forEach( particle => {
           particle.isActiveProperty.value = true;
-          particle.positionProperty.value = this.position.copy();
           particle.destinationProperty.value = this.getEjectionDestination();
+          particle.positionProperty.value = particle.destinationProperty.value.withMagnitude(
+            this.ejectedParticleTunnelingRadius
+          );
         } );
       }
     }

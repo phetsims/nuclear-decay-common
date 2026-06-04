@@ -14,6 +14,7 @@ import { clamp } from '../../../../dot/js/util/clamp.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import Vector2Property from '../../../../dot/js/Vector2Property.js';
 import Shape from '../../../../kite/js/Shape.js';
+import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import ModelViewTransform2 from '../../../../phetcommon/js/view/ModelViewTransform2.js';
 import AccessibleList from '../../../../scenery-phet/js/accessibility/AccessibleList.js';
@@ -322,6 +323,18 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
 
     this.energyIntersectionPointProperty = energyIntersectionPointProperty;
 
+    // Set the tunneling radius for the atom as the graph changes.
+    energyIntersectionPointProperty.link( point => {
+
+      // Convert intersection point x coordinate (view bounds) to model magnitude
+      model.atomPool.forEach( atom => {
+        const intersectionPointModelDeltaX = modelViewTransformProperty.value.viewToModelDeltaX( point.x );
+        atom = model.atomPool[ 0 ];
+        affirm( atom, 'there should be an atom' );
+        model.atomPool[ 0 ].ejectedParticleTunnelingRadius = intersectionPointModelDeltaX;
+      } );
+    } );
+
     const contentOriginX = this.x + contentsNode.x;
 
     const wellCenterXProperty = modelViewTransformProperty.derived( mvt => {
@@ -396,5 +409,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         }
       }
     );
+    
+    
   }
 }
