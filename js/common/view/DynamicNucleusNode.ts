@@ -433,14 +433,17 @@ class DynamicNucleusNode extends Node implements Updatable {
             if ( dotRandom.nextInt( 200 ) === 0 ) {
               this.removeParticleFromTrellis( alphaParticleNode );
 
-              const distance = minimumAlmostTunnelingDistance + dotRandom.nextDouble() * ( escapeRadius - minimumAlmostTunnelingDistance );
+              const distance = minimumAlmostTunnelingDistance +
+                               dotRandom.nextDouble() * ( escapeRadius - minimumAlmostTunnelingDistance ) * 0.9;
               alphaParticleNode.center = new Vector2( distance, 0 ).rotated( dotRandom.nextDouble() * 2 * Math.PI );
 
               // Opacity decreases linearly with distance and reaches 0.1 at the escape radius.
               alphaParticleNode.opacity = Math.max( 0.1, 1 - 0.9 * distance / escapeRadius );
               this.almostTunnelingAlphaParticles.push( {
                 alphaParticleNode: alphaParticleNode,
-                remainingTimeOutsideNucleus: ALPHA_PARTICLE_EXCURSION_TIME_RANGE.min + dotRandom.nextDouble() * ( ALPHA_PARTICLE_EXCURSION_TIME_RANGE.max - ALPHA_PARTICLE_EXCURSION_TIME_RANGE.min )
+                remainingTimeOutsideNucleus: ALPHA_PARTICLE_EXCURSION_TIME_RANGE.min +
+                                             dotRandom.nextDouble() *
+                                             ( ALPHA_PARTICLE_EXCURSION_TIME_RANGE.max - ALPHA_PARTICLE_EXCURSION_TIME_RANGE.min )
               } );
             }
           } );
