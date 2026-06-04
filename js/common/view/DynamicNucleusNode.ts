@@ -21,6 +21,7 @@ import ShredColors from '../../../../shred/js/ShredColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 import Updatable from '../model/Updatable.js';
+import AlphaParticleNode from './AlphaParticleNode.js';
 import AtomLabelNode from './AtomLabelNode.js';
 
 type SelfOptions = {
@@ -77,7 +78,7 @@ class DynamicNucleusNode extends Node implements Updatable {
   // Separate particle collections are stored as fields so member methods can manipulate them directly.
   private readonly protonNodes: ShadedSphereNode[] = [];
   private readonly neutronNodes: ShadedSphereNode[] = [];
-  private readonly alphaParticleNodes: Node[] = [];
+  private readonly alphaParticleNodes: AlphaParticleNode[] = [];
 
   // If non-null, the radius to which alpha particles should move.  Should generally be bigger than the calculated
   // nucleus radius.
@@ -93,6 +94,9 @@ class DynamicNucleusNode extends Node implements Updatable {
   // motion. It is structured as a set of shells, each with a radius and a set of angles at that radius where particles
   // can go.
   private readonly particleNodeTrellis: ShellLocations[];
+  
+  // An array of alpha particles that are outside the nucleus but not at the tunneling radius.
+  private readonly almostTunnelingAlphaParticles: AlphaParticleNode[] = [];
 
   private readonly atomLabelNode: AtomLabelNode;
 
@@ -176,7 +180,7 @@ class DynamicNucleusNode extends Node implements Updatable {
     }
 
     // Set up the initial batch of nucleon nodes.
-    this.updateNucleons();
+    this.createParticleNodes();
 
     // Update the position if the model-view transform changes. Note that this does the initial positioning too.
     this.modelViewTransformProperty.link( () => this.update() );
@@ -202,10 +206,10 @@ class DynamicNucleusNode extends Node implements Updatable {
   }
 
   /**
-   * Add the provided particle node as a child of this node and position it in an open spot on the trellis.  This is
-   * filled in from the center position outward so that the nucleus looks like a fairly solid and round thing.
+   * Add a particle to an open location on the trellis and position it accordingly.
+   * This updates only trellis bookkeeping and the particle's center; it does not add to the scene graph.
    */
-  private addAndPositionParticleNode( particleNode: Node ): void {
+  private addParticleToTrellis( particleNode: Node ): void {
     for ( const shell of this.particleNodeTrellis ) {
       const openLocations = shell.locations.filter( location => location.particle === null );
 
@@ -217,12 +221,34 @@ class DynamicNucleusNode extends Node implements Updatable {
         selectedLocation.jitterOffset = null;
 
         particleNode.center = this.getParticlePositionForTrellisLocation( shell, selectedLocation );
-        this.addChild( particleNode );
         return;
       }
     }
 
     affirm( false, 'No open location available in particleNodeTrellis.' );
+  }
+
+  /**
+   * Remove a particle from the trellis, clearing its assigned location and jitter.
+   */
+  private removeParticleFromTrellis( particleNode: Node ): void {
+    for ( const shell of this.particleNodeTrellis ) {
+      const location = shell.locations.find( locationOnShell => locationOnShell.particle === particleNode );
+      if ( location ) {
+        location.particle = null;
+        location.jitterOffset = null;
+        return;
+      }
+    }
+  }
+
+  /**
+   * Add the provided particle node as a child of this node and position it in an open spot on the trellis.  This is
+   * filled in from the center position outward so that the nucleus looks like a fairly solid and round thing.
+   */
+  private addAndPositionParticleNode( particleNode: Node ): void {
+    this.addParticleToTrellis( particleNode );
+    this.addChild( particleNode );
   }
 
   /**
@@ -249,7 +275,7 @@ class DynamicNucleusNode extends Node implements Updatable {
 
     // Check whether the atom's decay state has changed and update the nucleon nodes if so.
     if ( this.atomHasDecayed !== this.atom.hasDecayed ) {
-      this.updateNucleons();
+      this.createParticleNodes();
       this.atomHasDecayed = this.atom.hasDecayed;
       this.timeAccumulator = 0;
     }
@@ -268,6 +294,7 @@ class DynamicNucleusNode extends Node implements Updatable {
    */
   private updateParticlePositions(): void {
 
+    // JB REVIEW: Extract particle nodes from trellis to avoid problem with tunnelling alphas.
     const allParticleNodes = [ ...this.protonNodes, ...this.neutronNodes, ...this.alphaParticleNodes ];
     if ( allParticleNodes.length === 0 ) {
       return;
@@ -293,7 +320,8 @@ class DynamicNucleusNode extends Node implements Updatable {
         }
       }
 
-      affirm( !!shellForParticle && !!locationForParticle, 'Could not find particle in particleNodeTrellis.' );
+      // JB REVIEW: Put this affirm back once things are worked out with almost tunnelling alphas.
+      // affirm( !!shellForParticle && !!locationForParticle, 'Could not find particle in particleNodeTrellis.' );
       if ( !shellForParticle || !locationForParticle ) {
         return;
       }
@@ -343,6 +371,58 @@ class DynamicNucleusNode extends Node implements Updatable {
       firstParticle.center = new Vector2( secondBasePosition.x + secondJitterOffset.x, secondBasePosition.y + secondJitterOffset.y );
     } );
 
+    // Randomly return some almost-tunneling alpha particles back to open trellis locations.
+    for ( let i = this.almostTunnelingAlphaParticles.length - 1; i >= 0; i-- ) {
+      const alphaParticleNode = this.almostTunnelingAlphaParticles[ i ];
+      if ( dotRandom.nextDouble() < 0.3 ) {
+        alphaParticleNode.opacity = 1;
+        this.almostTunnelingAlphaParticles.splice( i, 1 );
+        this.addParticleToTrellis( alphaParticleNode );
+      }
+    }
+
+    if ( !this.atom.hasDecayed ) {
+
+      // Log the calculated nucleus size: the furthest-out particle's center distance plus one nucleon radius.
+      const particleNodesSortedByDistance = [ ...allParticleNodes ].sort( ( a, b ) => b.center.magnitude - a.center.magnitude );
+      const nucleusSize = particleNodesSortedByDistance[ 0 ].center.magnitude + this.nucleonRadius;
+
+      // JB REVIEW: Fix this when we figure out the issue with the escape radius.
+      let escapeRadius;
+      if ( this.escapeRadiusProperty ) {
+        escapeRadius = this.escapeRadiusProperty.value;
+      }
+      else {
+        escapeRadius = nucleusSize * 2;
+      }
+
+      // Randomly move some alpha particles out of the trellis into the almost-tunneling state.
+      // if ( this.escapeRadiusProperty ) {
+        const minimumAlmostTunnelingDistance = nucleusSize;
+
+        if ( escapeRadius > minimumAlmostTunnelingDistance ) {
+          this.alphaParticleNodes.forEach( alphaParticleNode => {
+
+            if ( this.almostTunnelingAlphaParticles.includes( alphaParticleNode ) ) {
+              return;
+            }
+
+            // Decide randomly whether to move this alpha particle out of the central nucleus and have it "almost tunnel".
+            if ( dotRandom.nextInt( 100 ) === 0 ) {
+              this.removeParticleFromTrellis( alphaParticleNode );
+
+              const distance = minimumAlmostTunnelingDistance + dotRandom.nextDouble() * ( escapeRadius - minimumAlmostTunnelingDistance );
+              alphaParticleNode.center = new Vector2( distance, 0 ).rotated( dotRandom.nextDouble() * 2 * Math.PI );
+
+              // Opacity decreases linearly with distance and reaches 0.1 at the escape radius.
+              alphaParticleNode.opacity = Math.max( 0.1, 1 - 0.9 * distance / escapeRadius );
+              this.almostTunnelingAlphaParticles.push( alphaParticleNode );
+            }
+          } );
+        }
+      // }
+    }
+
     // Update the layering.
     const particleNodesSortedByDistance = [ ...allParticleNodes ].sort( ( a, b ) => b.center.magnitude - a.center.magnitude );
     particleNodesSortedByDistance.forEach( particleNode => particleNode.moveToFront() );
@@ -352,7 +432,7 @@ class DynamicNucleusNode extends Node implements Updatable {
   /**
    * Rebuild all proton, neutron, and alpha particle nodes and add them as children of the root node.
    */
-  private updateNucleons(): void {
+  private createParticleNodes(): void {
 
     // Remove existing nodes.
     [ ...this.protonNodes, ...this.neutronNodes, ...this.alphaParticleNodes ].forEach( node => {
@@ -399,8 +479,6 @@ class DynamicNucleusNode extends Node implements Updatable {
 
     const particleNodesSortedByDistance = [ ...particleNodes ].sort( ( a, b ) => b.center.magnitude - a.center.magnitude );
     particleNodesSortedByDistance.forEach( particleNode => particleNode.moveToFront() );
-
-    console.log( `particleNodes.length = ${particleNodes.length}` );
 
     this.atomLabelNode.moveToFront();
   }

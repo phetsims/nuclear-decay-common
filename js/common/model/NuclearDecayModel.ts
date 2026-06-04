@@ -421,7 +421,6 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       const hadDecayed = atom.hasDecayed;
       if ( dt && decayDt ) {
         atom.step( dt, decayDt );
-        console.log( atom );
       }
 
       if ( !hadDecayed && atom.hasDecayed ) {
