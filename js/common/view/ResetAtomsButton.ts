@@ -1,4 +1,4 @@
-// Copyright 2025, University of Colorado Boulder
+// Copyright 2025-2026, University of Colorado Boulder
 /**
  * Rectangular button that will reset the atoms in the screen.
  * The listener should be provided because logic might vary between screens.

@@ -1,4 +1,4 @@
-// Copyright 2014-2025, University of Colorado Boulder
+// Copyright 2014-2026, University of Colorado Boulder
 
 /**
  * Button that has a bold arrow with a tail (<-) different from ArrowButton which only has the triangle.
