@@ -546,9 +546,12 @@ class DynamicNucleusNode extends Node implements Updatable {
       };
     }
 
+    // Calculate the number of nucleons to display.  This uses some "real" formulas for estimating the number of
+    // spheres that would be visible in a 2D depiction of tightly packed set, but is tweaked to get the look we wanted.
+    // Adjust as needed.
     const numberOfNucleonsToDisplay = totalNucleonCount < 5 ?
                                       totalNucleonCount :
-                                      Math.ceil( 4.8 * Math.pow( totalNucleonCount, 2 / 3 ) );
+                                      Math.ceil( 3.5 * Math.pow( totalNucleonCount, 2 / 3 ) );
 
     const displayedProtonCount = roundSymmetric( numberOfNucleonsToDisplay * protonCount / totalNucleonCount );
     const displayedNeutronCount = numberOfNucleonsToDisplay - displayedProtonCount;
