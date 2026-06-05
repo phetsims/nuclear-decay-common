@@ -454,8 +454,8 @@ export default class NuclearDecayAtom {
         this.ejectedDecayParticles.forEach( particle => {
           particle.isActiveProperty.value = true;
           particle.destinationProperty.value = this.getEjectionDestination();
-          particle.positionProperty.value = particle.destinationProperty.value.withMagnitude(
-            this.ejectedParticleTunnelingRadius
+          particle.positionProperty.value = this.position.plus(
+            particle.destinationProperty.value.withMagnitude( this.ejectedParticleTunnelingRadius )
           );
         } );
       }
