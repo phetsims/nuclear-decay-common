@@ -18,6 +18,7 @@ import optionize from '../../../../phet-core/js/optionize.js';
 import ModelViewTransform2 from '../../../../phetcommon/js/view/ModelViewTransform2.js';
 import ShadedSphereNode from '../../../../scenery-phet/js/ShadedSphereNode.js';
 import Node, { NodeOptions } from '../../../../scenery/js/nodes/Node.js';
+import AtomConfig from '../../../../shred/js/model/AtomConfig.js';
 import ShredColors from '../../../../shred/js/ShredColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
@@ -107,6 +108,10 @@ class DynamicNucleusNode extends Node implements Updatable {
 
   // See docs in the options for this class.
   private readonly escapeRadiusProperty: TReadOnlyProperty<number> | null;
+
+  // The atom configuration that is currently being shown. This is used to detect when the configuration changes, since
+  // we don't have Properties to link to.
+  private currentlyDepictedAtomConfig: AtomConfig | null = null;
 
   public constructor(
     atom: NuclearDecayAtom,
@@ -296,8 +301,9 @@ class DynamicNucleusNode extends Node implements Updatable {
     // that we can use "real" time values for the constants in this file.
     const realDt = dt / NuclearDecayCommonConstants.NORMAL_SPEED_SCALE;
 
-    // Check whether the atom's decay state has changed and update the nucleon nodes if so.
-    if ( this.atomHasDecayed !== this.atom.hasDecayed ) {
+    const activeAtomConfig = this.atom.hasDecayed ? this.atom.atomConfigAfterDecay : this.atom.atomConfigBeforeDecay;
+
+    if ( this.currentlyDepictedAtomConfig && !activeAtomConfig.equals( this.currentlyDepictedAtomConfig ) ) {
       this.createParticleNodes();
       this.atomHasDecayed = this.atom.hasDecayed;
       this.timeAccumulator = 0;
@@ -458,9 +464,14 @@ class DynamicNucleusNode extends Node implements Updatable {
   }
 
   /**
-   * Rebuild all proton, neutron, and alpha particle nodes and add them as children of the root node.
+   * Rebuild all proton, neutron, and alpha particle nodes and add them as children of the root node based on the
+   * current atom configuration.
    */
   private createParticleNodes(): void {
+
+    const activeAtomConfig = this.atom.hasDecayed ?
+                             this.atom.atomConfigAfterDecay :
+                             this.atom.atomConfigBeforeDecay;
 
     // Remove existing nodes.
     [ ...this.protonNodes, ...this.neutronNodes, ...this.alphaParticleNodes ].forEach( node => {
@@ -474,14 +485,17 @@ class DynamicNucleusNode extends Node implements Updatable {
     this.neutronNodes.length = 0;
     this.alphaParticleNodes.length = 0;
 
-    const protonCount = this.atom.atomConfigBeforeDecay.protonCount;
-    const neutronCount = this.atom.atomConfigBeforeDecay.neutronCount;
+    const protonCount = activeAtomConfig.protonCount;
+    const neutronCount = activeAtomConfig.neutronCount;
 
+    // Decide how many particles of each type to display.
     const {
       individualProtonCount,
       individualNeutronCount,
       alphaParticleCount
     } = DynamicNucleusNode.getDisplayedParticleCounts( protonCount, neutronCount );
+
+    // Create the particle nodes.
 
     _.times( individualProtonCount, () => {
       const protonNode = DynamicNucleusNode.createProtonNode( this.nucleonRadius );
@@ -501,14 +515,18 @@ class DynamicNucleusNode extends Node implements Updatable {
       this.alphaParticleNodes.push( alphaParticleNode );
     } );
 
+    // Add and position the particle nodes that were just created.
     const particleNodes = dotRandom.shuffle( [ ...this.protonNodes, ...this.neutronNodes, ...this.alphaParticleNodes ] );
-
     particleNodes.forEach( particleNode => this.addAndPositionParticleNode( particleNode ) );
 
+    // Relayer the nodes to get the desired look, with the particles in the center towards the top of the z-order.
     const particleNodesSortedByDistance = [ ...particleNodes ].sort( ( a, b ) => b.center.magnitude - a.center.magnitude );
     particleNodesSortedByDistance.forEach( particleNode => particleNode.moveToFront() );
 
+    // Make sure the label is out in front of the z-order.
     this.atomLabelNode.moveToFront();
+
+    this.currentlyDepictedAtomConfig = activeAtomConfig;
   }
 
   /**
