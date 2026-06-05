@@ -117,6 +117,35 @@ export default class SingleAtomModel extends NuclearDecayModel {
     } );
   }
 
+  /**
+   * This function rolls back time to before the decay, essentially reverting the model to right when it's
+   * going to happen. If there has been no decay it just goes back to 0.
+   */
+  public override restart(): void {
+    const atom = this.atomPool[ 0 ];
+    const rollbackTime = 0.1;
+
+    if ( atom.decayTime !== null ) {
+
+      // For linear time go back 0.1 seconds. For exponential time, go back to when it was an exponent before
+      const timeToRestart = this.timescaleProperty.value === 'linear' ?
+                            Math.max( atom.decayTime - rollbackTime, 0 ) :
+                            Math.max( atom.decayTime / 10, 1e-3 );
+      this.setTimes( timeToRestart );
+      atom.resetDecay();
+
+      this.decayedAtoms.pop();
+      this.decayedCountProperty.value = this.decayedAtoms.length;
+
+      this.hasDecayOccurredProperty.value = false;
+
+      this.updateAtoms();
+    }
+    else {
+      this.resetTimes();
+    }
+  }
+
   public override step( dt: number ): void {
     super.step( dt );
     this.hasDecayOccurredProperty.value = this.activeAtoms.some( atom => atom.hasDecayed );

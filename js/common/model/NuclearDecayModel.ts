@@ -41,6 +41,10 @@ import NuclearDecayAtom, { StartingIsotopes, StartingIsotopesValues } from './Nu
 // bounds.
 const DEFAULT_ATOM_AREA_BOUNDS = new Bounds2( -100, -100, 100, 100 );
 
+// Scaling and shifting factors for functions mapping from linear to exponential time and viceversa
+const EXP_T_SCALING = 6;
+const EXP_T_SHIFTING = -3;
+
 // a type the defines whether time grows in a linear fashion or exponentially
 export const TimescaleValues = [ 'linear', 'exponential' ] as const;
 export type Timescale = ( typeof TimescaleValues )[ number ];
@@ -174,7 +178,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       phetioFeatured: true
     } );
 
-    this.customHalfLifeProperty = new NumberProperty( 0.5, {
+    this.customHalfLifeProperty = new NumberProperty( 0.2, {
       tandem: options.tandem.createTandem( 'customHalfLifeProperty' ),
       range: new Range( 0, 1 ),
       phetioFeatured: true
@@ -192,10 +196,10 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     // user-controlled customHalfLifeProperty, allowing the half-life to be set via a slider. Because this is a
     // DerivedProperty, it automatically updates when the user switches isotopes or adjusts the custom half-life.
     this.halfLifeProperty = new DerivedProperty(
-      [ this.selectedIsotopeProperty, this.customHalfLifeProperty ],
-      ( selectedIsotope, customHalfLife ) => {
+      [ this.selectedIsotopeProperty, this.customHalfLifeProperty, this.timescaleProperty ],
+      ( selectedIsotope, customHalfLife, timeScale ) => {
         if ( selectedIsotope === 'custom' ) {
-          return this.expandNormalizedTime( customHalfLife, this.timescaleProperty.value === 'exponential' );
+          return this.expandNormalizedTime( customHalfLife, timeScale === 'exponential' );
         }
         const halfLife = NuclearDecayAtom.getHalfLife( selectedIsotope );
         affirm( halfLife !== null, 'Should provide a valid isotope with a known half-life' );
@@ -393,7 +397,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
           // function.  This exponential function maps a linear time of 0 to 1 ms and adds a scale factor to get the rate
           // of change that we want based on the design.  It also limits the max value, since this rate of exponential
           // growth can lead to unsupported values after only a few minutes.
-          const exponentialTime = NuclearDecayCommonConstants.EXPONENTIAL_TIME( 6 * this.accumulatedLinearTime - 3 );
+          const exponentialTime = NuclearDecayModel.linearTimeToExponential( this.accumulatedLinearTime );
           timeStep = exponentialTime - this.timeProperty.value;
           this.timeProperty.value = exponentialTime;
         }
@@ -409,6 +413,20 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
         this.updateAtoms( dt );
       }
     }
+  }
+
+  /**
+   * Converts accumulated linear time to exponential as well as doing some scaling and shifting
+   */
+  private static linearTimeToExponential( tLinear: number ): number {
+    return NuclearDecayCommonConstants.EXPONENTIAL_TIME( EXP_T_SCALING * tLinear + EXP_T_SHIFTING );
+  }
+
+  /**
+   * Converts exponential time to linear time, undoing the scaling and shifting from above
+   */
+  private static exponentialToLinearTime( tExp: number ): number {
+    return ( Math.log10( tExp ) - EXP_T_SHIFTING ) / EXP_T_SCALING;
   }
 
   /**
@@ -511,6 +529,8 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       atom.reset();
       atom.setIsotope( newIsotope );
       if ( newIsotope === 'custom' ) {
+
+        // If we're setting custom atom, we have to provide the custom half-life from the model
         atom.halfLife = this.getCustomHalfLife();
       }
     } );
@@ -564,12 +584,19 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     this.activeAtoms.length = 0;
   }
 
+  public setTimes( t: number ): void {
+    this.timeProperty.value = t;
+    this.accumulatedLinearTime = this.timescaleProperty.value === 'linear' || t === 0 ? t :
+                                 NuclearDecayModel.exponentialToLinearTime( t );
+    this.lastDecayTimeProperty.reset();
+    this.stopwatch?.setTime( t );
+    this.atomPool.forEach( atom => {
+      atom.time = t;
+    } );
+  }
 
   public resetTimes(): void {
-    this.timeProperty.reset();
-    this.accumulatedLinearTime = 0;
-    this.lastDecayTimeProperty.reset();
-    this.stopwatch?.setTime( 0 );
+    this.setTimes( 0 );
   }
 
   /**

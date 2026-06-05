@@ -206,9 +206,13 @@ export default class NuclearDecayAtom {
 
   /**
    * As a convenience, provide a flag that indicates whether this atom has decayed.
+   * Currently, if decayTime is different from null AND the local time is above decayTime, it means it decayed.
+   * There's two reasons for this: First, if decay time is null, it simply means decay has not happened.
+   * Alternatively, if decay happened but the user pressed restart, the atom goes back in time to before the decay,
+   * while keeping memory of it, thus this.time < this.decayTime.
    */
   public get hasDecayed(): boolean {
-    return this.decayTime !== null;
+    return this.decayTime !== null && this.time >= this.decayTime;
   }
 
   /**
@@ -216,20 +220,30 @@ export default class NuclearDecayAtom {
    * AtomConfigs and half-life don't need resetting.
    */
   public reset(): void {
-    this.resetDecay();
+    this.resetDecayAndTimes();
     this.isActive = false;
     this.position = new Vector2( 0, 0 );
+  }
+
+  /**
+   * Resets the isotope and sets the ejected particles back into position.
+   */
+  public resetDecay(): void {
+    if ( DecayProductValues.includes( this.isotope ) ) {
+      this.isotope = NuclearDecayAtom.getDecayOrigin( this.isotope );
+    }
+    this.ejectedDecayParticles.forEach( particle => {
+      particle.isActiveProperty.value = false;
+      particle.positionProperty.value = this.position.copy();
+    } );
   }
 
   /**
    * Resets the decay process, which resets the time experienced by the atom back to zero and, if the atom has decayed,
    * resets the atom back to its original state.
    */
-  public resetDecay(): void {
-    this.ejectedDecayParticles.forEach( particle => {
-      particle.isActiveProperty.value = false;
-      particle.positionProperty.value = this.position.copy();
-    } );
+  public resetDecayAndTimes(): void {
+    this.resetDecay();
     this.time = 0;
     this.decayTime = null;
   }
@@ -442,22 +456,20 @@ export default class NuclearDecayAtom {
       // Increment the time experienced by the atom.
       this.time += decayDt;
 
-      // Decide whether the atom will decay in the current time interval.
-      const probabilityOfDecay = NuclearDecayAtom.decayProbabilityOverInterval( this._halfLife, decayDt );
-      if ( dotRandom.nextDouble() < probabilityOfDecay ) {
-        this.decayTime = this.time;
+      // In the event of a restart, the atom stores its decay time but its local time is smaller.
+      // Wait until the internal time reaches the decay time and have it decay again.
+      if ( this.decayTime !== null ) {
+        if ( this.time >= this.decayTime ) {
+          this.decay();
+        }
+      }
+      else {
 
-        affirm( !DecayProductValues.includes( this.isotope ), 'Atom must not have a decayed isotope type before decaying' );
-        this.isotope = NuclearDecayAtom.getDecayProduct( this.isotope as StartingIsotopes );
-
-        // Activate and position the ejected decay particles.
-        this.ejectedDecayParticles.forEach( particle => {
-          particle.isActiveProperty.value = true;
-          particle.destinationProperty.value = this.getEjectionDestination();
-          particle.positionProperty.value = this.position.plus(
-            particle.destinationProperty.value.withMagnitude( this.ejectedParticleTunnelingRadius )
-          );
-        } );
+        // Decide whether the atom will decay in this particular time interval.
+        const probabilityOfDecay = NuclearDecayAtom.decayProbabilityOverInterval( this._halfLife, decayDt );
+        if ( dotRandom.nextDouble() < probabilityOfDecay ) {
+          this.decay();
+        }
       }
     }
     else if ( this.hasDecayed && this.ejectedDecayParticles.length > 0 ) {
@@ -469,6 +481,20 @@ export default class NuclearDecayAtom {
     }
 
     this.steppedEmitter.emit( dt );
+  }
+
+  private decay(): void {
+    this.decayTime = this.time;
+
+    affirm( !DecayProductValues.includes( this.isotope ), 'Atom must not have a decayed isotope type before decaying' );
+    this.isotope = NuclearDecayAtom.getDecayProduct( this.isotope as StartingIsotopes );
+
+    // Activate and position the ejected decay particles.
+    this.ejectedDecayParticles.forEach( particle => {
+      particle.isActiveProperty.value = true;
+      particle.positionProperty.value = this.position.copy();
+      particle.destinationProperty.value = this.getEjectionDestination();
+    } );
   }
 
   /**
