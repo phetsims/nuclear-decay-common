@@ -641,7 +641,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     const originalBounds = this.atomPlacementAreaProperty.value.bounds;
 
     // Eroding a bit the bounds so the atoms are not hitting the walls
-    const bounds = originalBounds.erodedXY( 0.1 * originalBounds.width, 0.1 * originalBounds.height );
+    const bounds = originalBounds.erodedXY( 0.05 * originalBounds.width, 0.15 * originalBounds.height );
     const n = this.activeAtoms.length;
     if ( n === 0 ) { return; }
 
@@ -688,8 +688,8 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       if ( !exactSolutionFound ) { console.log( 'No solution' ); }
     }
 
-    const spacingX = bounds.width / cols;
-    const spacingY = bounds.height / rows;
+    const spacingX = bounds.width / Math.max( cols - 1, 1 );
+    const spacingY = bounds.height / Math.max( rows - 1, 1 );
 
     sorted.forEach( ( atom, index ) => {
       const col = index % cols;
