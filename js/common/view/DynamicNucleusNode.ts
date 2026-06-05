@@ -431,20 +431,26 @@ class DynamicNucleusNode extends Node implements Updatable {
         if ( escapeRadius > minimumAlmostTunnelingDistance ) {
           this.alphaParticleNodes.forEach( alphaParticleNode => {
 
+            // Skip any alpha particles that are already outside the nucleus.
             if ( this.almostTunnelingAlphaParticles.some( info => info.alphaParticleNode === alphaParticleNode ) ) {
               return;
             }
 
-            // Decide randomly whether to move this alpha particle out of the central nucleus and have it "almost tunnel".
+            // Decide randomly whether to move this alpha particle out of the nucleus and have it "almost tunnel".
             if ( dotRandom.nextInt( 200 ) === 0 ) {
               this.removeParticleFromTrellis( alphaParticleNode );
 
-              const distance = minimumAlmostTunnelingDistance +
-                               dotRandom.nextDouble() * ( escapeRadius - minimumAlmostTunnelingDistance ) * 0.9;
+              const distanceRange = new Range( minimumAlmostTunnelingDistance, escapeRadius * 0.9 );
+
+              const randomValue = 1 - Math.sqrt( dotRandom.nextDouble() ); // Bias towards being closer to the nucleus.
+
+              const distance = distanceRange.expandNormalizedValue( randomValue );
               alphaParticleNode.center = new Vector2( distance, 0 ).rotated( dotRandom.nextDouble() * 2 * Math.PI );
 
               // Opacity decreases linearly with distance and reaches 0.1 at the escape radius.
               alphaParticleNode.opacity = Math.max( 0.1, 1 - 0.9 * distance / escapeRadius );
+
+              // Track this "almost tunneling" alpha particle so it can be returned to the nucleus after some time.
               this.almostTunnelingAlphaParticles.push( {
                 alphaParticleNode: alphaParticleNode,
                 remainingTimeOutsideNucleus: ALPHA_PARTICLE_EXCURSION_TIME_RANGE.min +
