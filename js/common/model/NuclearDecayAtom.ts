@@ -567,7 +567,7 @@ export default class NuclearDecayAtom {
   public static readonly NuclearDecayAtomIO = new IOType<NuclearDecayAtom, NuclearDecayAtomStateObject>( 'NuclearDecayAtomIO', {
     valueType: NuclearDecayAtom,
     stateSchema: {
-      isotope: StringUnionIO( StartingIsotopesValues ),
+      isotope: StringUnionIO( ValidIsotopeValues ),
       decayType: StringUnionIO( decayTypeValues ),
       halfLife: NumberIO,
       isActive: BooleanIO,
