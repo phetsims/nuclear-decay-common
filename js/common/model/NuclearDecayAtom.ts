@@ -24,6 +24,7 @@ import AtomConfig from '../../../../shred/js/model/AtomConfig.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
 import ArrayIO from '../../../../tandem/js/types/ArrayIO.js';
 import BooleanIO from '../../../../tandem/js/types/BooleanIO.js';
+import InfiniteNumberIO from '../../../../tandem/js/types/InfiniteNumberIO.js';
 import IOType from '../../../../tandem/js/types/IOType.js';
 import NullableIO from '../../../../tandem/js/types/NullableIO.js';
 import NumberIO from '../../../../tandem/js/types/NumberIO.js';
@@ -569,7 +570,7 @@ export default class NuclearDecayAtom {
     stateSchema: {
       isotope: StringUnionIO( ValidIsotopeValues ),
       decayType: StringUnionIO( decayTypeValues ),
-      halfLife: NumberIO,
+      halfLife: InfiniteNumberIO,
       isActive: BooleanIO,
       hasDecayed: BooleanIO,
       time: NumberIO,
