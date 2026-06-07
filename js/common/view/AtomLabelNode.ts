@@ -31,12 +31,13 @@ const PADDING = 5; // px inside the background rectangle
 export default class AtomLabelNode extends Node {
 
   private readonly labelBackground: Rectangle;
-  private timeSinceDecay = 0;
   private wasDecayed = false;
   private labelText: RichText;
   private readonly updateBackground: ( dt: number ) => void;
 
-  public constructor( private decayingAtom: NuclearDecayAtom, providedOptions?: AtomLabelNodeOptions ) {
+  public constructor(
+    private decayingAtom: NuclearDecayAtom,
+    providedOptions?: AtomLabelNodeOptions ) {
 
     const options = optionize<AtomLabelNodeOptions, SelfOptions, NodeOptions>()( {
       font: NuclearDecayCommonConstants.SMALL_LABEL_FONT
@@ -69,30 +70,16 @@ export default class AtomLabelNode extends Node {
     this.labelBackground = labelBackground;
     this.labelText = labelText;
 
-    this.updateBackground = dt => {
+    this.updateBackground = () => {
       const isDecayed = decayingAtom.hasDecayed;
 
       // If it just decayed, start the opacity counter
-      if ( isDecayed && !this.wasDecayed ) {
+      if ( isDecayed !== this.wasDecayed ) {
         this.updateLabelText();
-
-        this.timeSinceDecay = 0;
-        this.labelBackground.opacity = 1;
-      }
-      if ( !isDecayed && this.wasDecayed ) {
-
-        // If it undecayed (a reset for example)
-        this.updateLabelText();
-        this.labelBackground.opacity = 0;
       }
 
-      if ( isDecayed && this.timeSinceDecay < DISPLAY_DURATION ) {
-        this.timeSinceDecay += dt;
-        this.labelBackground.opacity = 1;
-      }
-      else {
-        this.labelBackground.opacity = 0;
-      }
+      const timeSinceDecay = decayingAtom.decayTime! - decayingAtom.time;
+      this.labelBackground.opacity = isDecayed && timeSinceDecay < DISPLAY_DURATION ? 1 : 0;
 
       this.wasDecayed = isDecayed;
     };
@@ -118,7 +105,6 @@ export default class AtomLabelNode extends Node {
 
   public reset(): void {
     this.labelBackground.opacity = 0;
-    this.timeSinceDecay = 0;
     this.wasDecayed = false;
     this.updateLabelText();
   }

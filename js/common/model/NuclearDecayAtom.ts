@@ -112,7 +112,7 @@ export default class NuclearDecayAtom {
   // Whether the atom is in the play area or not
   public isActive = false;
 
-  // Time experienced by the atom, in seconds. This stops advancing when the atom decays.
+  // Time experienced by the atom, in seconds.
   public time = 0;
 
   // The time at which this atom decayed, or null if it has not decayed yet.
@@ -450,11 +450,11 @@ export default class NuclearDecayAtom {
    */
   public step( dt: number, decayDt = dt ): void {
 
+    // Increment the time experienced by the atom.
+    this.time += decayDt;
+
     // If this atom is undecayed and could decay, run the calculations to decide whether it will decay in this step.
     if ( this._halfLife !== Infinity && !this.hasDecayed ) {
-
-      // Increment the time experienced by the atom.
-      this.time += decayDt;
 
       // In the event of a restart, the atom stores its decay time but its local time is smaller.
       // Wait until the internal time reaches the decay time and have it decay again.
