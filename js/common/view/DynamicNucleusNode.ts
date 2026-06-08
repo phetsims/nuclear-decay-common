@@ -197,6 +197,18 @@ class DynamicNucleusNode extends Node implements Updatable {
 
     // Update the position if the model-view transform changes. Note that this does the initial positioning too.
     this.modelViewTransformProperty.link( () => this.update() );
+
+    // Make some updates when the escape radius changes.
+    this.escapeRadiusProperty?.lazyLink( () => {
+
+      // So that alpha particles don't end up outside the tunneling radius when they aren't actually tunneling, move
+      // them back to the nucleus if the escape radius changes.
+      this.terminateAllAlphaExcursions();
+
+      // Shuffle the particles when this change occurs to signal that it is, in some sense, a different nucleus.
+      this.doMinorParticleShuffle();
+    } );
+
   }
 
   /**
@@ -327,13 +339,6 @@ class DynamicNucleusNode extends Node implements Updatable {
       this.updateParticlePositions();
       this.timeAccumulator = 0;
     }
-
-    this.escapeRadiusProperty?.lazyLink( () => {
-
-      // So that alpha particles don't end up outside the tunneling radius when they aren't actually tunneling, move
-      // them back to the nucleus if the escape radius changes.
-      this.terminateAllAlphaExcursions();
-    } );
   }
 
   /**
@@ -466,6 +471,54 @@ class DynamicNucleusNode extends Node implements Updatable {
     particleNodesSortedByDistance.forEach( particleNode => particleNode.moveToFront() );
     this.atomLabelNode.moveToFront();
   }
+
+  /**
+   * Move some particles around in an efficient way to indicate the nucleus has changed. This method is intended to be
+   * used when there are potentially a lot of changes coming in and we can't take the time for a full update of the
+   * nucleus.
+   */
+  private doMinorParticleShuffle(): void {
+
+    // Go through each shell in the trellis and swap a few particles while keeping them on the same level. That way
+    // there is no need to re-layer, which is expensive.
+
+    this.particleNodeTrellis.forEach( shell => {
+      const occupiedLocations = shell.locations.filter( location => location.particle !== null );
+
+      // Only swap if there are at least 2 particles on this shell.
+      if ( occupiedLocations.length >= 2 ) {
+
+        // Do a couple of swaps on this shell.
+        const numberOfSwaps = Math.min( 1, Math.floor( occupiedLocations.length / 2 ) );
+        _.times( numberOfSwaps, () => {
+          const firstIndex = dotRandom.nextInt( occupiedLocations.length );
+          let secondIndex = dotRandom.nextInt( occupiedLocations.length - 1 );
+          if ( secondIndex >= firstIndex ) {
+            secondIndex++;
+          }
+
+          const firstLocation = occupiedLocations[ firstIndex ];
+          const secondLocation = occupiedLocations[ secondIndex ];
+          const firstParticle = firstLocation.particle;
+          const secondParticle = secondLocation.particle;
+
+          if ( firstParticle && secondParticle ) {
+
+            // Swap the particles between the two locations.
+            firstLocation.particle = secondParticle;
+            secondLocation.particle = firstParticle;
+
+            // Update their positions.
+            const firstJitterOffset = firstLocation.jitterOffset || Vector2.ZERO;
+            const secondJitterOffset = secondLocation.jitterOffset || Vector2.ZERO;
+            secondParticle.center = new Vector2( shell.radius, 0 ).rotated( firstLocation.angle ).plus( firstJitterOffset );
+            firstParticle.center = new Vector2( shell.radius, 0 ).rotated( secondLocation.angle ).plus( secondJitterOffset );
+          }
+        } );
+      }
+    } );
+  }
+
 
   /**
    * Return the provided alpha particle node to the nucleus.
