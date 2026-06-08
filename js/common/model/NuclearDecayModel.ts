@@ -53,6 +53,9 @@ type SelfOptions = {
   maxNumberOfAtoms?: number;
   useStopwatch?: boolean;
   ejectParticlesOnDecay?: boolean;
+
+  // How many atoms will be set to add in the screens that support multiple atoms
+  defaultAtomsToAdd?: number;
 };
 
 export type NuclearDecayModelOptions = SelfOptions & WithRequired<PhetioObjectOptions, 'tandem'>;
@@ -71,6 +74,9 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
 
   // The maximum number of atoms that can be in a screen
   public readonly maxNumberOfAtoms: number;
+
+  // How many atoms to be added when activating multiple at once
+  public readonly atomsToAddProperty: NumberProperty;
 
   // Pool of all existing atoms, originally set to inactive
   public readonly atomPool: NuclearDecayAtom[] = [];
@@ -162,7 +168,8 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       phetioType: NuclearDecayModel.NuclearDecayModelIO,
       phetioState: true,
       useStopwatch: false,
-      ejectParticlesOnDecay: true
+      ejectParticlesOnDecay: true,
+      defaultAtomsToAdd: 0
     }, providedOptions );
 
     super( options );
@@ -220,6 +227,12 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     this.atomPlacementAreaProperty = new Property<Shape>( Shape.bounds( DEFAULT_ATOM_AREA_BOUNDS ), {
       tandem: Tandem.OPT_OUT
     } );
+
+    this.atomsToAddProperty = new NumberProperty(
+      Math.min( this.maxNumberOfAtoms, options.defaultAtomsToAdd ), {
+        range: new Range( 0, this.maxNumberOfAtoms ),
+        tandem: options.tandem.createTandem( 'atomsToAddProperty' )
+      } );
 
     // Prepopulate all the atoms
     _.times( this.maxNumberOfAtoms, () => {
@@ -482,11 +495,11 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   /**
    * When adding many atoms, clear the existing atoms and then add new ones.
    */
-  public activateMultipleAtoms( n: number ): void {
+  public activateMultipleAtoms(): void {
     this.clearAtomLists();
     this.resetTimes();
     // Activate multiple atoms with random positions
-    _.times( n, () => this.activateAtom() );
+    _.times( this.atomsToAddProperty.value, () => this.activateAtom() );
 
     // For the second screen, we want atoms to be tidy in a randomized grid fashion
     // whereas third screen should be just shuffled
@@ -630,6 +643,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     this.clearAtomLists();
     this.histogramData.reset();
     this.stopwatch?.reset();
+    this.atomsToAddProperty.reset();
   }
 
   /**

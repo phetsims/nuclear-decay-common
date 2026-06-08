@@ -73,27 +73,23 @@ export default class DecayRateModel extends NuclearDecayModel {
   public resetData(): void {
     this.undecayedCountProperty.reset();
     this.decayedCountProperty.reset();
-    this.resetDataPoints();
+    this.undecayedDataPoints.length = 0;
+    this.decayedDataPoints.length = 0;
   }
 
   public override clearAtomLists(): void {
     super.clearAtomLists();
-    this.resetDataPoints();
+    this.resetData();
   }
 
-  public override activateMultipleAtoms( n: number ): void {
-    super.activateMultipleAtoms( n );
+  public override activateMultipleAtoms(): void {
+    this.resetData();
+    super.activateMultipleAtoms();
 
     // Adding the initial datapoints for 100% and 0%
     this.undecayedDataPoints.push( new Vector2( 0, 1 ) );
     this.decayedDataPoints.push( new Vector2( 0, 0 ) );
   }
-
-  public resetDataPoints(): void {
-    this.undecayedDataPoints.length = 0;
-    this.decayedDataPoints.length = 0;
-  }
-
 
   /**
    * Reference-type IOType for PhET-iO serialization. The model persists for the lifetime of the sim;

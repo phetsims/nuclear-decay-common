@@ -229,8 +229,8 @@ export default class NuclearDecayScreenView extends ScreenView {
     }
   }
 
-  public activateMultipleAtomNodes( n: number ): void {
-    this.model.activateMultipleAtoms( n );
+  public activateMultipleAtomNodes(): void {
+    this.model.activateMultipleAtoms();
     this.updateAtomNodes();
   }
 }

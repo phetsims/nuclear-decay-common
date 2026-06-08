@@ -8,11 +8,9 @@
  */
 
 import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
-import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import Property from '../../../../axon/js/Property.js';
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
-import Range from '../../../../dot/js/Range.js';
 import { roundSymmetric } from '../../../../dot/js/util/roundSymmetric.js';
 import { toFixed } from '../../../../dot/js/util/toFixed.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
@@ -137,18 +135,11 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
 
     this.visibleProperties = visibleProperties;
 
-    const defaultAtomsToAdd = 10;
-    const atomsToAddProperty = new NumberProperty(
-      Math.min( model.maxNumberOfAtoms, defaultAtomsToAdd ), {
-        range: new Range( 1, model.maxNumberOfAtoms ),
-        tandem: options.tandem.createTandem( 'atomsToAddProperty' )
-      } );
     const addAtomsPanel = new AddAtomsControlPanel(
-      atomsToAddProperty,
+      model.atomsToAddProperty,
       model.selectedIsotopeProperty,
-      ( n: number ) => {
-        this.activateMultipleAtomNodes( n );
-        this.updateAtomNodes();
+      () => {
+        this.activateMultipleAtomNodes();
       },
       {
         centerX: this.layoutBounds.centerX,
@@ -169,7 +160,7 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     // the model.
     const resetSampleButton = new ResetAtomsButton( model.isPlayAreaEmptyProperty, {
       listener: () => {
-        model.activateMultipleAtoms( atomsToAddProperty.value );
+        model.activateMultipleAtoms();
         this.updateAtomNodes();
       },
       right: playAreaBounds.right,

@@ -9,10 +9,8 @@
 
 import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
 import DerivedStringProperty from '../../../../axon/js/DerivedStringProperty.js';
-import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
-import Range from '../../../../dot/js/Range.js';
 import { roundSymmetric } from '../../../../dot/js/util/roundSymmetric.js';
 import { toFixed } from '../../../../dot/js/util/toFixed.js';
 import AddAtomsControlPanel from '../../../../nuclear-decay-common/js/common/view/AddAtomsControlPanel.js';
@@ -94,19 +92,11 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
 
     this.addChild( timeControlNode );
 
-    const defaultAtomsToAdd = 500;
-    const atomsToAddProperty = new NumberProperty(
-      Math.min( model.maxNumberOfAtoms, defaultAtomsToAdd ), {
-        range: new Range( 1, model.maxNumberOfAtoms ),
-        tandem: options.tandem.createTandem( 'atomsToAddProperty' )
-      } );
-
     const addAtomsPanel = new AddAtomsControlPanel(
-      atomsToAddProperty,
+      model.atomsToAddProperty,
       model.selectedIsotopeProperty,
-      ( n: number ) => {
-        this.decayRateModel.resetData();
-        this.activateMultipleAtomNodes( n );
+      () => {
+        this.activateMultipleAtomNodes();
       },
       {
         stepSize: 100,
@@ -152,7 +142,7 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
     // Reset button — top-right
     const resetButton = new ResetAtomsButton( model.isPlayAreaEmptyProperty, {
       listener: () => {
-        this.activateMultipleAtomNodes( atomsToAddProperty.value );
+        this.activateMultipleAtomNodes();
         this.updateAtomNodes();
       },
       accessibleName: NuclearDecayCommonFluent.a11y.decayRate.resetSampleButton.accessibleNameStringProperty,
