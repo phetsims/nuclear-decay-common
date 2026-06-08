@@ -526,7 +526,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     this.resetTimes();
 
     this.atomPool.forEach( atom => {
-      atom.reset();
+      atom.resetDecayAndTimes();
       atom.setIsotope( newIsotope );
       if ( newIsotope === 'custom' ) {
 
@@ -767,6 +767,9 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       // Restore decayedAtoms (these are independent copies, not pool references).
       model.decayedAtoms.length = 0;
       model.decayedAtoms.push( ...ArrayIO( NuclearDecayAtom.NuclearDecayAtomIO ).fromStateObject( stateObject.decayedAtoms ) );
+
+      model.undecayedCountProperty.value = model.undecayedAtoms.length;
+      model.decayedCountProperty.value = model.decayedAtoms.length;
 
       model.isPlayAreaEmptyProperty.value = model.activeAtoms.length === 0;
     }
