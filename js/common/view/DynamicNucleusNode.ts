@@ -489,7 +489,7 @@ class DynamicNucleusNode extends Node implements Updatable {
       if ( occupiedLocations.length >= 2 ) {
 
         // Do a couple of swaps on this shell.
-        const numberOfSwaps = Math.min( 1, Math.floor( occupiedLocations.length / 2 ) );
+        const numberOfSwaps = Math.min( 2, Math.floor( occupiedLocations.length / 2 ) );
         _.times( numberOfSwaps, () => {
           const firstIndex = dotRandom.nextInt( occupiedLocations.length );
           let secondIndex = dotRandom.nextInt( occupiedLocations.length - 1 );
