@@ -84,6 +84,10 @@ type SelfOptions = {
 
   // The speed at which ejected decay particles move, in model units per second.
   particleEjectionSpeed?: number;
+
+  // When this value is true, the model may start the ejection decay products at a distance outside the nucleus.  When
+  // false, ejected particles will come from the center of the nucleus.
+  showQuantumTunneling?: boolean;
 };
 
 export type NuclearDecayAtomOptions = SelfOptions;
@@ -149,6 +153,9 @@ export default class NuclearDecayAtom {
   // The type of decay that this nucleus will undergo.
   private decayType: DecayType;
 
+  // See option type info for explanation.
+  private showQuantumTunneling: boolean;
+
   // JB REVIEW: Discuss with AV.  Is this a reasonable way to do this?
   // For atoms that decay in a way the uses quantum tunneling, such as alpha decay, this is the radius at which the
   // particles should tunnel so upon decay.
@@ -163,7 +170,8 @@ export default class NuclearDecayAtom {
     const options = optionize<NuclearDecayAtomOptions, SelfOptions, NuclearDecayAtomOptions>()( {
       ejectParticlesOnDecay: true,
       restrictEjectionAngles: false,
-      particleEjectionSpeed: DEFAULT_PARTICLE_EJECTION_SPEED
+      particleEjectionSpeed: DEFAULT_PARTICLE_EJECTION_SPEED,
+      showQuantumTunneling: true
     }, providedOptions );
 
     this.isotope = isotope;
@@ -175,6 +183,7 @@ export default class NuclearDecayAtom {
     this.restrictEjectionAngles = options.restrictEjectionAngles;
     this.particleEjectionSpeed = options.particleEjectionSpeed;
     this.decayType = decayType;
+    this.showQuantumTunneling = options.showQuantumTunneling;
 
     const halfLife = AtomInfoUtils.getNuclideHalfLife(
       atomConfigBeforeDecay.protonCount,
@@ -493,8 +502,17 @@ export default class NuclearDecayAtom {
     // Activate and position the ejected decay particles.
     this.ejectedDecayParticles.forEach( particle => {
       particle.isActiveProperty.value = true;
-      particle.positionProperty.value = this.position.copy();
       particle.destinationProperty.value = this.getEjectionDestination();
+
+      // If quantum tunneling is on, ejected decay particles should start from the tunneling radius.
+      if ( this.showQuantumTunneling ) {
+        particle.positionProperty.value = this.position.plus(
+          particle.destinationProperty.value.withMagnitude( this.ejectedParticleTunnelingRadius )
+        );
+      }
+      else {
+        particle.positionProperty.value = this.position.copy();
+      }
     } );
   }
 
