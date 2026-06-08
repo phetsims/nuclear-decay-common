@@ -36,5 +36,6 @@ export default class MultipleAtomsVisibleProperties {
   public reset(): void {
     this.electronCloudVisibleProperty.reset();
     this.stopwatchVisibleProperty.reset();
+    this.labelsVisibleProperty.reset();
   }
 }
