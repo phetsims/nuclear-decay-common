@@ -11,6 +11,7 @@
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import dotRandom from '../../../../dot/js/dotRandom.js';
 import Range from '../../../../dot/js/Range.js';
+import { clamp } from '../../../../dot/js/util/clamp.js';
 import { roundSymmetric } from '../../../../dot/js/util/roundSymmetric.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
@@ -57,8 +58,16 @@ type RoamingAlphaInfo = {
   remainingTimeOutsideNucleus: number;
 };
 
-// The frequency at which position updates occur for the constituent particles.
-const UPDATE_FREQUENCY = 10; // in updates per second
+// The range of update frequencies used for the atom's animation, in updates per second
+const UPDATE_FREQUENCY_RANGE = new Range( 5, 25 );
+
+// The range of allowed particle jumps, in particle radii. This is used when animating the nucleus and trying to make it
+// appear more or less agitated.
+const PARTICLE_JUMP_RANGE = new Range( 0.005, 1 );
+
+// The range of allowed particle swaps that can occur on an update. This is used when animating the nucleus and trying
+// to make it appear more or less agitated. A swap means two particles change positions in the nucleus structure.
+const PARTICLE_SWAP_PROPORTION_RANGE = new Range( 0.01, 0.03 );
 
 // Label is positioned this many nucleon radii above the nucleus center.
 const LABEL_OFFSET_IN_NUCLEON_RADII = 10;
@@ -93,8 +102,8 @@ class DynamicNucleusNode extends Node implements Updatable {
   // Accumulates the scaled time between particle updates.
   private timeAccumulator = 0;
 
-  // Used to detect when the atom decays so the nucleus can be rebuilt.
-  private atomHasDecayed: boolean;
+  // The frequency at which updates of particle positions occur. This goes up as the "agitation level" rises.
+  private updateFrequency = UPDATE_FREQUENCY_RANGE.expandNormalizedValue( 0.5 );
 
   // The set of allowed particle positions, used to create the nucleus shape and used as the basis for the dynamic
   // motion. It is structured as a set of shells, each with a radius and a set of angles at that radius where particles
@@ -112,6 +121,12 @@ class DynamicNucleusNode extends Node implements Updatable {
   // The atom configuration that is currently being shown. This is used to detect when the configuration changes, since
   // we don't have Properties to link to.
   private currentlyDepictedAtomConfig: AtomConfig | null = null;
+
+  // The max amount that a particle can jump during an update.
+  private maxParticleJump = PARTICLE_JUMP_RANGE.expandNormalizedValue( 0.5 );
+
+  // The proportion of particles that can swap positions in an update.
+  private particleSwapProportion = PARTICLE_SWAP_PROPORTION_RANGE.expandNormalizedValue( 0.5 );
 
   public constructor(
     atom: NuclearDecayAtom,
@@ -131,7 +146,6 @@ class DynamicNucleusNode extends Node implements Updatable {
     this.modelViewTransformProperty = modelViewTransformProperty;
     this.nucleonRadius = options.nucleonRadius;
     this.escapeRadiusProperty = options.escapeRadiusProperty;
-    this.atomHasDecayed = atom.hasDecayed;
 
     this.atomLabelNode = new AtomLabelNode( atom, {
       font: NuclearDecayCommonConstants.MEDIUM_LABEL_FONT,
@@ -146,7 +160,7 @@ class DynamicNucleusNode extends Node implements Updatable {
 
         // Force an update to the particle positions on every step when the model is paused so that its appearance will
         // change whenever the "step forward" button is pressed.
-        this.timeAccumulator = 1 / UPDATE_FREQUENCY;
+        this.timeAccumulator = 1 / this.updateFrequency;
       }
 
       this.step( dt );
@@ -162,6 +176,7 @@ class DynamicNucleusNode extends Node implements Updatable {
     let particlesPositionsInThisShell = 0;
     let totalPositions = 0;
     let done = false;
+    let maxShellRadius = 0;
 
     while ( !done ) {
 
@@ -180,6 +195,7 @@ class DynamicNucleusNode extends Node implements Updatable {
           // Time to move to the next shell.
           currentShell++;
           currentShellRadius = currentShellRadius + this.nucleonRadius * ( Math.pow( NUCLEUS_ENLARGEMENT_FACTOR, currentShell ) );
+          maxShellRadius = currentShellRadius; // update this each time through
           currentAngle = 2 * Math.PI * dotRandom.nextDouble();
           particlesAllowedInThisShell = Math.floor( 2 * Math.PI * currentShellRadius / ( this.nucleonRadius * NUCLEUS_ENLARGEMENT_FACTOR ) );
           particlesPositionsInThisShell = 0;
@@ -199,7 +215,7 @@ class DynamicNucleusNode extends Node implements Updatable {
     this.modelViewTransformProperty.link( () => this.update() );
 
     // Make some updates when the escape radius changes.
-    this.escapeRadiusProperty?.lazyLink( () => {
+    this.escapeRadiusProperty?.link( () => {
 
       // So that alpha particles don't end up outside the tunneling radius when they aren't actually tunneling, move
       // them back to the nucleus if the escape radius changes.
@@ -207,8 +223,33 @@ class DynamicNucleusNode extends Node implements Updatable {
 
       // Shuffle the particles when this change occurs to signal that it is, in some sense, a different nucleus.
       this.doMinorParticleShuffle();
-    } );
 
+      this.updateAgitationFactor( maxShellRadius );
+    } );
+  }
+
+  /**
+   * Update the "agitation factor" for the nucleus, meaning how much the particles are moving around. Generally
+   * speaking, the more rapidly the atom is likely to decay, the more agitated the nucleus should appear.
+   */
+  private updateAgitationFactor( maxShellRadius: number ): void {
+
+    // This is a normalized value from 0 to 1 indicating how agitated we want the nucleus to look.
+    let agitationFactor = UPDATE_FREQUENCY_RANGE.expandNormalizedValue( 0.5 );
+
+    if ( this.atom.hasDecayed ) {
+      agitationFactor = 0;
+    }
+    else {
+
+      if ( this.escapeRadiusProperty ) {
+        agitationFactor = clamp( 1 - ( this.escapeRadiusProperty.value / ( maxShellRadius + this.nucleonRadius ) / 6 ), 0, 1 );
+      }
+    }
+
+    this.updateFrequency = UPDATE_FREQUENCY_RANGE.expandNormalizedValue( agitationFactor );
+    this.maxParticleJump = PARTICLE_JUMP_RANGE.expandNormalizedValue( agitationFactor );
+    this.particleSwapProportion = PARTICLE_SWAP_PROPORTION_RANGE.expandNormalizedValue( agitationFactor );
   }
 
   /**
@@ -316,7 +357,7 @@ class DynamicNucleusNode extends Node implements Updatable {
 
     if ( this.currentlyDepictedAtomConfig && !activeAtomConfig.equals( this.currentlyDepictedAtomConfig ) ) {
       this.createParticleNodes();
-      this.atomHasDecayed = this.atom.hasDecayed;
+      this.updateAgitationFactor( this.particleNodeTrellis[ this.particleNodeTrellis.length - 1 ].radius );
       this.timeAccumulator = 0;
 
       // Put any alpha particles that are currently outside the nucleus back in.
@@ -335,7 +376,7 @@ class DynamicNucleusNode extends Node implements Updatable {
 
     // Move the particles around if enough time has passed since the last position update.
     this.timeAccumulator += realDt;
-    if ( this.timeAccumulator > 1 / UPDATE_FREQUENCY ) {
+    if ( this.timeAccumulator > 1 / this.updateFrequency ) {
       this.updateParticlePositions();
       this.timeAccumulator = 0;
     }
@@ -376,7 +417,7 @@ class DynamicNucleusNode extends Node implements Updatable {
         return;
       }
 
-      locationForParticle.jitterOffset = new Vector2( dotRandom.nextDouble() * this.nucleonRadius, 0 ).rotated( dotRandom.nextDouble() * 2 * Math.PI );
+      locationForParticle.jitterOffset = new Vector2( dotRandom.nextDouble() * this.maxParticleJump, 0 ).rotated( dotRandom.nextDouble() * 2 * Math.PI );
       particleNode.center = this.getParticlePositionForTrellisLocation( shellForParticle, locationForParticle );
     } );
 
@@ -387,7 +428,7 @@ class DynamicNucleusNode extends Node implements Updatable {
         location: location
       } ) )
     );
-    const numberOfSwaps = Math.max( 1, roundSymmetric( particleNodesInNucleus.length * 0.02 ) );
+    const numberOfSwaps = roundSymmetric( particleNodesInNucleus.length * this.particleSwapProportion );
     _.times( numberOfSwaps, () => {
       if ( occupiedLocations.length < 2 ) {
         return;
@@ -474,7 +515,7 @@ class DynamicNucleusNode extends Node implements Updatable {
 
   /**
    * Move some particles around in an efficient way to indicate the nucleus has changed. This method is intended to be
-   * used when there are potentially a lot of changes coming in and we can't take the time for a full update of the
+   * used when there are potentially a lot of changes coming in, and we can't take the time for a full update of the
    * nucleus.
    */
   private doMinorParticleShuffle(): void {
