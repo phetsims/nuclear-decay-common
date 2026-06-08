@@ -70,8 +70,8 @@ const NUCLEUS_ENLARGEMENT_FACTOR = 0.99;
 // Maximum number of particle nodes that will be supported by the trellis structure. Make this bigger if you need to.
 const MAX_PARTICLE_NODES_SUPPORTED = 200;
 
-// The range of time for an alpha particle to appear when it goes outside the nucleus but doesn't tunnel.
-const ALPHA_PARTICLE_EXCURSION_TIME_RANGE = new Range( 0.1, 0.3 );
+// The range of time for an alpha particle to appear when it goes outside the nucleus but doesn't tunnel, in seconds.
+const ALPHA_PARTICLE_EXCURSION_TIME_RANGE = new Range( 0.1, 0.2 );
 
 class DynamicNucleusNode extends Node implements Updatable {
 
@@ -309,15 +309,21 @@ class DynamicNucleusNode extends Node implements Updatable {
       this.timeAccumulator = 0;
 
       // Put any alpha particles that are currently outside the nucleus back in.
-      this.almostTunnelingAlphaParticles.forEach( atap => {
-        this.addParticleToTrellis( atap.alphaParticleNode );
+      const almostTunnelingAlphas = [ ...this.almostTunnelingAlphaParticles ];
+      almostTunnelingAlphas.forEach( atap => {
+        this.returnAlphaParticleNodeToNucleus( atap.alphaParticleNode );
       } );
       this.almostTunnelingAlphaParticles.length = 0;
     }
 
-    // Update the excursion time for any alpha particles that are outside the nucleus.
-    this.almostTunnelingAlphaParticles.forEach( atap => {
+    // Update the excursion time for any alpha particles that are outside the nucleus. If their excursion time has
+    // elapsed, put them back in the nucleus.
+    const almostTunnelingAlphas = [ ...this.almostTunnelingAlphaParticles ];
+    almostTunnelingAlphas.forEach( atap => {
       atap.remainingTimeOutsideNucleus = Math.max( atap.remainingTimeOutsideNucleus - dt, 0 );
+      if ( atap.remainingTimeOutsideNucleus <= 0 ) {
+        this.returnAlphaParticleNodeToNucleus( atap.alphaParticleNode );
+      }
     } );
 
     // Move the particles around if enough time has passed since the last position update.
@@ -330,7 +336,8 @@ class DynamicNucleusNode extends Node implements Updatable {
 
   /**
    * Updates a staggered subset of particle positions and then adjusts their layering so inner particles are more
-   * likely to appear in front.
+   * likely to appear in front. This makes the nucleus appear dynamic in that the particles that comprise it move
+   * around.
    */
   private updateParticlePositions(): void {
 
@@ -406,16 +413,6 @@ class DynamicNucleusNode extends Node implements Updatable {
       firstParticle.center = new Vector2( secondBasePosition.x + secondJitterOffset.x, secondBasePosition.y + secondJitterOffset.y );
     } );
 
-    // Check the alpha particles that are outside the nucleus and return any whose excursion time has expired.
-    for ( let i = this.almostTunnelingAlphaParticles.length - 1; i >= 0; i-- ) {
-      const roamingAlphaInfo = this.almostTunnelingAlphaParticles[ i ];
-      if ( roamingAlphaInfo.remainingTimeOutsideNucleus <= 0 ) {
-        roamingAlphaInfo.alphaParticleNode.opacity = 1;
-        this.almostTunnelingAlphaParticles.splice( i, 1 );
-        this.addParticleToTrellis( roamingAlphaInfo.alphaParticleNode );
-      }
-    }
-
     if ( !this.atom.hasDecayed ) {
 
       // Log the calculated nucleus size: the furthest-out particle's center distance plus one nucleon radius.
@@ -451,11 +448,10 @@ class DynamicNucleusNode extends Node implements Updatable {
               alphaParticleNode.opacity = Math.max( 0.1, 1 - 0.9 * distance / escapeRadius );
 
               // Track this "almost tunneling" alpha particle so it can be returned to the nucleus after some time.
+              const excursionTime = ALPHA_PARTICLE_EXCURSION_TIME_RANGE.expandNormalizedValue( dotRandom.nextDouble() );
               this.almostTunnelingAlphaParticles.push( {
                 alphaParticleNode: alphaParticleNode,
-                remainingTimeOutsideNucleus: ALPHA_PARTICLE_EXCURSION_TIME_RANGE.min +
-                                             dotRandom.nextDouble() *
-                                             ( ALPHA_PARTICLE_EXCURSION_TIME_RANGE.max - ALPHA_PARTICLE_EXCURSION_TIME_RANGE.min )
+                remainingTimeOutsideNucleus: excursionTime
               } );
             }
           } );
@@ -467,6 +463,18 @@ class DynamicNucleusNode extends Node implements Updatable {
     const particleNodesSortedByDistance = [ ...particleNodesInNucleus ].sort( ( a, b ) => b.center.magnitude - a.center.magnitude );
     particleNodesSortedByDistance.forEach( particleNode => particleNode.moveToFront() );
     this.atomLabelNode.moveToFront();
+  }
+
+  private returnAlphaParticleNodeToNucleus( alphaParticleNode: Node ): void {
+
+    // Find the corresponding roaming alpha for this particle node.
+    const index = this.almostTunnelingAlphaParticles.findIndex( info => info.alphaParticleNode === alphaParticleNode );
+    affirm( index >= 0, 'alphaParticleNode is not currently roaming outside the nucleus' );
+
+    // Update the particle node's state and the associated tracking data.
+    alphaParticleNode.opacity = 1;
+    this.almostTunnelingAlphaParticles.splice( index, 1 ); // Remove the particle node from this list.
+    this.addParticleToTrellis( alphaParticleNode ); // Add the particle node back to the nucleus.
   }
 
   /**
