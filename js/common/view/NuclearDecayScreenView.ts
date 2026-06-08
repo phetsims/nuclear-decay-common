@@ -221,12 +221,7 @@ export default class NuclearDecayScreenView extends ScreenView {
    * and model in sync. This updates ALL atom nodes, so shouldn't be called frequently, such as from step functions.
    */
   public updateAtomNodes(): void {
-
-    // Single atom screen updates the atom node separately
-    // JB REVIEW - Why is single atom screen different?  Can we consolidate to simplify?
-    if ( !this.model.isSingleAtomMode ) {
-      this.atomNodes.forEach( atomNode => { atomNode.update(); } );
-    }
+    this.atomNodes.forEach( atomNode => { atomNode.update(); } );
   }
 
   public activateMultipleAtomNodes(): void {

@@ -123,14 +123,14 @@ export default class SingleAtomModel extends NuclearDecayModel {
    */
   public override restart(): void {
     const atom = this.atomPool[ 0 ];
-    const rollbackTime = 0.1;
+    const rollbackTime = 0.05;
 
     if ( atom.decayTime !== null ) {
 
       // For linear time go back 0.1 seconds. For exponential time, go back to when it was an exponent before
       const timeToRestart = this.timescaleProperty.value === 'linear' ?
                             Math.max( atom.decayTime - rollbackTime, 0 ) :
-                            Math.max( atom.decayTime / 10, 1e-3 );
+                            Math.max( atom.decayTime / 2, 1e-3 );
       this.setTimes( timeToRestart );
       atom.resetDecay();
 

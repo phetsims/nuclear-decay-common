@@ -203,9 +203,8 @@ class DynamicNucleusNode extends Node implements Updatable {
    * Update the non-time-dependent aspects of this node.
    */
   public update(): void {
-    // TODO: Why can't this be set during construction?  See https://github.com/phetsims/alpha-decay/issues/10.
-    // this.visible = this.atom.isActive;
     this.translation = this.modelViewTransformProperty.value.modelToViewPosition( this.atom.position );
+    this.atomLabelNode.update();
   }
 
   /**

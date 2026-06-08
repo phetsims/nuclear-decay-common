@@ -459,6 +459,9 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       if ( dt && decayDt ) {
         atom.step( dt, decayDt );
       }
+      else {
+        atom.steppedEmitter.emit( dt );
+      }
 
       if ( !hadDecayed && atom.hasDecayed ) {
         this.lastDecayTimeProperty.value = this.timeProperty.value;

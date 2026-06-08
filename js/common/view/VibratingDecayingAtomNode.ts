@@ -101,7 +101,7 @@ export default class VibratingDecayingAtomNode extends Node implements Updatable
 
     decayingAtom.steppedEmitter.addListener( dt => {
 
-      this.atomLabelNode.update( dt );
+      this.atomLabelNode.update();
 
       if ( !this.decayingAtom.hasDecayed ) {
 
@@ -166,7 +166,7 @@ export default class VibratingDecayingAtomNode extends Node implements Updatable
     // Always update position and visibility.
     this.visible = this.decayingAtom.isActive;
     this.updatePosition();
-    this.atomLabelNode.update( 0 );
+    this.atomLabelNode.update();
   }
 
   /**

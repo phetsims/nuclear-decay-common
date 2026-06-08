@@ -135,8 +135,13 @@ export default class SingleAndMultipleAtomsScreenView extends NuclearDecayScreen
     } );
 
     if ( model.isSingleAtomMode ) {
+
+      // AV REVIEW: Can this be moved to SingleAtomScreenView?
       const restartButton = new RestartButton( {
-        listener: () => model.restart(),
+        listener: () => {
+          model.restart();
+          this.updateAtomNodes();
+        },
         enabledProperty: model.timeProperty.derived( time => time > 0 ),
         accessibleName: NuclearDecayCommonFluent.a11y.replayDecay.accessibleNameStringProperty,
         accessibleHelpText: NuclearDecayCommonFluent.a11y.replayDecay.accessibleHelpTextStringProperty,

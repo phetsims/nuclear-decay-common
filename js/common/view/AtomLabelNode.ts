@@ -33,7 +33,7 @@ export default class AtomLabelNode extends Node {
   private readonly labelBackground: Rectangle;
   private wasDecayed = false;
   private labelText: RichText;
-  private readonly updateBackground: ( dt: number ) => void;
+  private readonly updateBackground: () => void;
 
   public constructor(
     private decayingAtom: NuclearDecayAtom,
@@ -78,7 +78,7 @@ export default class AtomLabelNode extends Node {
         this.updateLabelText();
       }
 
-      const timeSinceDecay = decayingAtom.decayTime! - decayingAtom.time;
+      const timeSinceDecay = decayingAtom.time - decayingAtom.decayTime!;
       this.labelBackground.opacity = isDecayed && timeSinceDecay < DISPLAY_DURATION ? 1 : 0;
 
       this.wasDecayed = isDecayed;
@@ -86,12 +86,12 @@ export default class AtomLabelNode extends Node {
 
     // Since we're not using properties inside of atoms, we have to listen to the stepping to know when it decays.
     // decayingAtom.steppedEmitter.addListener( this.updateBackground );
-    decayingAtom.steppedEmitter.addListener( dt => this.update( dt ) );
+    decayingAtom.steppedEmitter.addListener( () => this.update() );
   }
 
-  public update( dt: number ): void {
+  public update(): void {
     this.updateLabelText();
-    this.updateBackground( dt );
+    this.updateBackground();
   }
 
   public updateLabelText(): void {
