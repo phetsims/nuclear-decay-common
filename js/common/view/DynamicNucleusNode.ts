@@ -71,7 +71,7 @@ const NUCLEUS_ENLARGEMENT_FACTOR = 0.99;
 const MAX_PARTICLE_NODES_SUPPORTED = 200;
 
 // The range of time for an alpha particle to appear when it goes outside the nucleus but doesn't tunnel, in seconds.
-const ALPHA_PARTICLE_EXCURSION_TIME_RANGE = new Range( 0.1, 0.2 );
+const ALPHA_PARTICLE_EXCURSION_TIME_RANGE = new Range( 0.05, 0.2 );
 
 class DynamicNucleusNode extends Node implements Updatable {
 
