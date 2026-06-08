@@ -291,10 +291,10 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         model.initialEnergyProperty.value = clamp( value, model.initialEnergyProperty.range.min, model.initialEnergyProperty.range.max );
       },
       start: () => {
-        model.isPlayingProperty.value = false;
+        model.isUserInteractingProperty.value = true;
       },
       end: () => {
-        model.isPlayingProperty.value = true;
+        model.isUserInteractingProperty.value = false;
       }
     } ) );
 
@@ -312,10 +312,10 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         model.potentialEnergyProperty.value = clamp( value, model.potentialEnergyProperty.range.min, model.potentialEnergyProperty.range.max );
       },
       start: () => {
-        model.isPlayingProperty.value = false;
+        model.isUserInteractingProperty.value = true;
       },
       end: () => {
-        model.isPlayingProperty.value = true;
+        model.isUserInteractingProperty.value = false;
       }
     } ) );
 

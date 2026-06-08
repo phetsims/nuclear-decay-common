@@ -149,6 +149,8 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   // Second screen will include a stopwatch, we might create it here for stepping but not on other screens.
   public readonly stopwatch: Stopwatch | null;
 
+  public readonly isUserInteractingProperty: BooleanProperty;
+
   protected constructor(
     StartingIsotopes: StartingIsotopes[],
     decayType: DecayType,
@@ -346,6 +348,10 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       isVisible: false,
       tandem: options.tandem.createTandem( 'stopwatch' )
     } ) : null;
+
+    this.isUserInteractingProperty = new BooleanProperty( false, {
+      tandem: Tandem.OPT_OUT
+    } );
   }
 
   public expandNormalizedTime( normalizedTime: number, exponential: boolean ): number {
@@ -361,7 +367,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
    * @param dt - time step, in seconds
    */
   public step( dt: number ): void {
-    if ( this.isPlayingProperty.value ) {
+    if ( this.isPlayingProperty.value && !this.isUserInteractingProperty.value ) {
       const timeSpeedScale = this.timeSpeedProperty.value === TimeSpeed.NORMAL ?
                              NuclearDecayCommonConstants.NORMAL_SPEED_SCALE :
                              NuclearDecayCommonConstants.SLOW_SPEED_SCALE;

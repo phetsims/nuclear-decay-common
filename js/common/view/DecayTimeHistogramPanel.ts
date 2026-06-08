@@ -348,10 +348,10 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
         model.customHalfLifeProperty.value = clamp( normalizedFromLocalX( localX ), 0, 1 );
       },
       start: () => {
-        model.isPlayingProperty.value = false;
+        model.isUserInteractingProperty.value = true;
       },
       end: () => {
-        model.isPlayingProperty.value = true;
+        model.isUserInteractingProperty.value = false;
       }
     } ) );
 
