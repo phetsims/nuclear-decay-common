@@ -309,11 +309,7 @@ class DynamicNucleusNode extends Node implements Updatable {
       this.timeAccumulator = 0;
 
       // Put any alpha particles that are currently outside the nucleus back in.
-      const almostTunnelingAlphas = [ ...this.almostTunnelingAlphaParticles ];
-      almostTunnelingAlphas.forEach( atap => {
-        this.returnAlphaParticleNodeToNucleus( atap.alphaParticleNode );
-      } );
-      this.almostTunnelingAlphaParticles.length = 0;
+      this.terminateAllAlphaExcursions();
     }
 
     // Update the excursion time for any alpha particles that are outside the nucleus. If their excursion time has
@@ -332,6 +328,13 @@ class DynamicNucleusNode extends Node implements Updatable {
       this.updateParticlePositions();
       this.timeAccumulator = 0;
     }
+
+    this.escapeRadiusProperty?.lazyLink( () => {
+
+      // So that alpha particles don't end up outside the tunneling radius when they aren't actually tunneling, move
+      // them back to the nucleus if the escape radius changes.
+      this.terminateAllAlphaExcursions();
+    } );
   }
 
   /**
@@ -465,6 +468,9 @@ class DynamicNucleusNode extends Node implements Updatable {
     this.atomLabelNode.moveToFront();
   }
 
+  /**
+   * Return the provided alpha particle node to the nucleus.
+   */
   private returnAlphaParticleNodeToNucleus( alphaParticleNode: Node ): void {
 
     // Find the corresponding roaming alpha for this particle node.
@@ -475,6 +481,17 @@ class DynamicNucleusNode extends Node implements Updatable {
     alphaParticleNode.opacity = 1;
     this.almostTunnelingAlphaParticles.splice( index, 1 ); // Remove the particle node from this list.
     this.addParticleToTrellis( alphaParticleNode ); // Add the particle node back to the nucleus.
+  }
+
+  /**
+   * Return any alpha particle nodes that are currently outside the nucleus back to being a part of it.
+   */
+  private terminateAllAlphaExcursions(): void {
+    const almostTunnelingAlphas = [ ...this.almostTunnelingAlphaParticles ];
+    almostTunnelingAlphas.forEach( atap => {
+      this.returnAlphaParticleNodeToNucleus( atap.alphaParticleNode );
+    } );
+    this.almostTunnelingAlphaParticles.length = 0;
   }
 
   /**
