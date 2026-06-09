@@ -532,5 +532,12 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         particleAnimationTimeAccumulator = 0;
       }
     } );
+
+    particleLayer.clipArea = Shape.bounds( new Bounds2(
+      xAxis.left - CONTENT_X_MARGIN,
+      yAxis.top,
+      xAxis.right + CONTENT_X_MARGIN,
+      yAxis.bottom
+    ) );
   }
 }
