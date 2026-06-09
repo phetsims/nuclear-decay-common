@@ -63,6 +63,7 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
       arrowRotation: Math.PI / 2,
       baseColor: NuclearDecayCommonColors.setSampleButtonProperty,
       soundPlayer: sharedSoundPlayers.get( 'goBack' ),
+      enabledProperty: atomsToAddProperty.derived( value => value !== 0 ),
       listener: () => {
         addAtomsCallback( atomsToAddProperty.value );
       },
