@@ -132,7 +132,7 @@ export default class SingleAtomModel extends NuclearDecayModel {
                             Math.max( atom.decayTime - rollbackTime, 0 ) :
                             Math.max( atom.decayTime / 2, 1e-3 );
       this.setTimes( timeToRestart );
-      atom.resetDecay();
+      atom.restartDecay();
 
       this.decayedAtoms.pop();
       this.decayedCountProperty.value = this.decayedAtoms.length;

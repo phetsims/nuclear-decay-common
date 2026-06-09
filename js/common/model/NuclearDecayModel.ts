@@ -548,7 +548,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     this.resetTimes();
 
     this.atomPool.forEach( atom => {
-      atom.resetDecayAndTimes();
+      atom.restartDecayAndTimes();
       atom.setIsotope( newIsotope );
       if ( newIsotope === 'custom' ) {
 
@@ -626,7 +626,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
    * pre-decayed configuration.
    */
   public resetAtomDecayStates(): void {
-    this.atomPool.forEach( atom => atom.resetDecay() );
+    this.atomPool.forEach( atom => atom.restartDecay() );
     this.setNewIsotope( this.selectedIsotopeProperty.value );
 
     // Because the time may be progressing exponentially, we need to reset the time value here too.

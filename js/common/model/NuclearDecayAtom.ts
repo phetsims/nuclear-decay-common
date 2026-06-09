@@ -196,6 +196,7 @@ export default class NuclearDecayAtom {
           animationSpeedProperty: new NumberProperty( options.particleEjectionSpeed ),
           tandem: Tandem.OPT_OUT
         } );
+        particle.destinationProperty.value = this.getEjectionDestination();
         this.ejectedDecayParticles.push( particle );
       }
       else if ( decayType === 'betaMinusDecay' ) {
@@ -225,20 +226,24 @@ export default class NuclearDecayAtom {
    * AtomConfigs and half-life don't need resetting.
    */
   public reset(): void {
-    this.resetDecayAndTimes();
+    this.restartDecayAndTimes();
     this.isActive = false;
     this.position = new Vector2( 0, 0 );
+    this.ejectedDecayParticles.forEach( particle => {
+      particle.isActiveProperty.value = false;
+    } );
   }
 
   /**
-   * Resets the isotope and sets the ejected particles back into position.
+   * Restarts the isotope to before the decay and sets the ejected particles back into position.
+   * It's not per se a hard reset because ejecta destination does not change, neither does isActive.
    */
-  public resetDecay(): void {
+  public restartDecay(): void {
     if ( DecayProductValues.includes( this.isotope ) ) {
       this.isotope = NuclearDecayAtom.getDecayOrigin( this.isotope );
     }
     this.ejectedDecayParticles.forEach( particle => {
-      particle.positionProperty.value = this.position.copy();
+      this.resetEjectedParticlesPosition( particle );
     } );
   }
 
@@ -246,8 +251,8 @@ export default class NuclearDecayAtom {
    * Resets the decay process, which resets the time experienced by the atom back to zero and, if the atom has decayed,
    * resets the atom back to its original state.
    */
-  public resetDecayAndTimes(): void {
-    this.resetDecay();
+  public restartDecayAndTimes(): void {
+    this.restartDecay();
     this.time = 0;
     this.decayTime = null;
   }
@@ -496,17 +501,20 @@ export default class NuclearDecayAtom {
     this.ejectedDecayParticles.forEach( particle => {
       particle.isActiveProperty.value = true;
       particle.destinationProperty.value = this.getEjectionDestination();
-
-      // If quantum tunneling is on, ejected decay particles should start from the tunneling radius.
-      if ( this.showQuantumTunneling ) {
-        particle.positionProperty.value = this.position.plus(
-          particle.destinationProperty.value.withMagnitude( this.ejectedParticleTunnelingRadius )
-        );
-      }
-      else {
-        particle.positionProperty.value = this.position.copy();
-      }
+      this.resetEjectedParticlesPosition( particle );
     } );
+  }
+
+  private resetEjectedParticlesPosition( particle: EjectedDecayParticle ): void {
+    // If quantum tunneling is on, ejected decay particles should start from the tunneling radius.
+    if ( this.showQuantumTunneling ) {
+      particle.positionProperty.value = this.position.plus(
+        particle.destinationProperty.value.withMagnitude( this.ejectedParticleTunnelingRadius )
+      );
+    }
+    else {
+      particle.positionProperty.value = this.position.copy();
+    }
   }
 
   /**
