@@ -209,6 +209,7 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     // Making stopwatch run when activated, for better user experience reasons.
     // This is fine because sim won't actually run until atoms are added.
     stopwatchNode.visibleProperty.link( visible => {
+      stopwatch.reset();
       stopwatch.isRunningProperty.value = visible && model.timeProperty.value === 0;
     } );
 
