@@ -465,7 +465,8 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
 
     // Now that the lines for the graph are set up, set the initial positions of the particlesInWell.
     const maxParticleXDelta = WELL_HALF_WIDTH - 2 * options.nucleonRadius;
-    const tweakFactor = -10; // JB REVIEW: Figure out why this is needed and fix the root cause.
+    const wellParticlesTweakFactor = -10; // JB REVIEW: Figure out why this is needed and fix the root cause.
+    const ejectedParticleTweakFactor = -100; // JB REVIEW: Figure out why this is needed and fix the root cause.
     model.hasDecayOccurredProperty.link( hasDecayed => {
       particlesInWell.forEach( particle => {
         particle.centerY = hasDecayed ? finalEnergyGraphLine.centerY : initialEnergyGraphLine.centerY;
@@ -483,7 +484,9 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
           if ( alphaParticleNode ) {
             const index = particlesInWell.indexOf( alphaParticleNode );
             particlesInWell.splice( index, 1 );
-            alphaParticleNode.centerX = modelViewTransformProperty.value.modelToViewX( ejectedParticle.positionProperty.value.x );
+            alphaParticleNode.centerX =
+              modelViewTransformProperty.value.modelToViewX( ejectedParticle.positionProperty.value.x ) +
+              ejectedParticleTweakFactor;
             particlesOutsideWell.push( alphaParticleNode );
           }
         }
@@ -512,9 +515,9 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         affirm( particlesOutsideWell.length = 1, 'This code currently handles only one tunneled particle' );
         const ejectedParticle = atom.ejectedDecayParticles[ 0 ];
         affirm( ejectedParticle, 'expected an ejected particle' );
-        particlesOutsideWell[ 0 ].centerX = modelViewTransformProperty.value.modelToViewX(
-          ejectedParticle.positionProperty.value.x
-        );
+        particlesOutsideWell[ 0 ].centerX =
+          modelViewTransformProperty.value.modelToViewX( ejectedParticle.positionProperty.value.x ) +
+          ejectedParticleTweakFactor;
         particlesOutsideWell[ 0 ].centerY = initialEnergyGraphLine.centerY;
       }
 
@@ -525,7 +528,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         // Randomly move the particles that are inside the well.
         particlesInWell.forEach( particle => {
           if ( dotRandom.nextDouble() > 0.25 ) {
-            particle.centerX = initialEnergyGraphLine.centerX + ( dotRandom.nextDouble() - 0.5 ) * 2 * maxParticleXDelta + tweakFactor;
+            particle.centerX = initialEnergyGraphLine.centerX + ( dotRandom.nextDouble() - 0.5 ) * 2 * maxParticleXDelta + wellParticlesTweakFactor;
           }
         } );
 
