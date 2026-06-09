@@ -21,6 +21,7 @@ export default class AlphaParticleNode extends Node {
   public constructor( providedOptions?: AlphaParticleNodeOptions ) {
 
     const options = optionize<AlphaParticleNodeOptions, SelfOptions, NodeOptions>()( {
+      // JB REVIEW: Why diameter? Don't we generally use radius in other places?
       nucleonDiameter: 20,
       particleOffsetRate: 0.7
     }, providedOptions );

@@ -1,4 +1,5 @@
 // Copyright 2026, University of Colorado Boulder
+
 /**
  * EnergyDiagramAccordionBox is an accordion box that contains the energy diagram for the alpha particles, including
  * the potential, initial, and final energy. It also includes animations of particles in the potential energy well and
@@ -12,22 +13,26 @@ import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
 import Multilink from '../../../../axon/js/Multilink.js';
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
+import dotRandom from '../../../../dot/js/dotRandom.js';
 import Ray2 from '../../../../dot/js/Ray2.js';
 import { clamp } from '../../../../dot/js/util/clamp.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import Vector2Property from '../../../../dot/js/Vector2Property.js';
 import Shape from '../../../../kite/js/Shape.js';
 import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
-import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import optionize from '../../../../phet-core/js/optionize.js';
 import ModelViewTransform2 from '../../../../phetcommon/js/view/ModelViewTransform2.js';
 import AccessibleList from '../../../../scenery-phet/js/accessibility/AccessibleList.js';
 import ArrowNode from '../../../../scenery-phet/js/ArrowNode.js';
+import ShadedSphereNode from '../../../../scenery-phet/js/ShadedSphereNode.js';
 import DragListener from '../../../../scenery/js/listeners/DragListener.js';
 import Line from '../../../../scenery/js/nodes/Line.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Path from '../../../../scenery/js/nodes/Path.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
+import ShredColors from '../../../../shred/js/ShredColors.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
+import AlphaParticleNode from '../../common/view/AlphaParticleNode.js';
 import NuclearDecayAccordionBox, { NuclearDecayAccordionBoxOptions } from '../../common/view/NuclearDecayAccordionBox.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
@@ -36,7 +41,9 @@ import SingleAtomModel from '../model/SingleAtomModel.js';
 import EnergyDiagramLegendNode from './EnergyDiagramLegendNode.js';
 import EnergyGrabberNode from './EnergyGrabberNode.js';
 
-type SelfOptions = EmptySelfOptions;
+type SelfOptions = {
+  nucleonRadius?: number; // radius of the nucleons that dance on the energy line
+};
 
 export type EnergyDiagramAccordionBoxOptions = SelfOptions & NuclearDecayAccordionBoxOptions;
 
@@ -65,6 +72,12 @@ const CURVINESS_FACTOR = 0; // how curvy the potential energy curve is at the ba
 
 const FINAL_ENERGY_HEIGHT = 18; // height of the final energy line after decay (below x-axis)
 
+const PRE_DECAY_PARTICLE_COUNTS = {
+  protons: 3,
+  neutrons: 3,
+  alphaParticles: 2
+};
+
 export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox {
 
   // This property tracks the position where initial and potential energies first intersect to the left of the well.
@@ -79,12 +92,16 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     providedOptions?: EnergyDiagramAccordionBoxOptions
   ) {
 
+    affirm( model.atomPool.length === 1, 'this graph handles only 1 atom' );
+    const atom = model.atomPool[ 0 ];
+
     const titleNode = new Text( NuclearDecayCommonFluent.energyDiagramStringProperty, {
       font: NuclearDecayCommonConstants.TITLE_BOLD_FONT,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
     const options = optionize<EnergyDiagramAccordionBoxOptions, SelfOptions, NuclearDecayAccordionBoxOptions>()( {
+      nucleonRadius: 5,
       titleNode: titleNode,
       showTitleWhenExpanded: false,
       titleBarExpandCollapse: false,
@@ -152,6 +169,8 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
 
     // Graph lines
 
+    const isAtomInPlayAreaProperty = model.isPlayAreaEmptyProperty.derived( isEmpty => !isEmpty );
+
     // Potential energy curve: Coulomb asymptote → quadratic up to barrier peak → straight down into well →
     // flat bottom → straight up → quadratic back down to Coulomb asymptote. Mirrors the Java AlphaDecayEnergyChart.
     // Well center is driven by the MVT so that it stays aligned with model x=0 (the atom position). The barrier
@@ -160,7 +179,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     const potentialEnergyGraphCurve = new Path( null, {
       stroke: NuclearDecayCommonColors.potentialEnergyProperty,
       lineWidth: 4,
-      visibleProperty: model.isPlayAreaEmptyProperty.derived( isEmpty => !isEmpty )
+      visibleProperty: isAtomInPlayAreaProperty
     } );
 
     // Double-headed vertical arrow for dragging the potential energy barrier height.
@@ -194,7 +213,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     const initialEnergyGraphLine = new Line( -GRAPH_X_OFFSET, 0, graphRightX, 0, {
       stroke: NuclearDecayCommonColors.initialEnergyColorProperty,
       lineWidth: 2,
-      visibleProperty: model.isPlayAreaEmptyProperty.derived( isEmpty => !isEmpty )
+      visibleProperty: isAtomInPlayAreaProperty
     } );
 
     const finalEnergyGraphLine = new Line( -GRAPH_X_OFFSET, FINAL_ENERGY_HEIGHT, graphRightX, FINAL_ENERGY_HEIGHT, {
@@ -227,6 +246,34 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       }
     );
 
+    // Add the particlesInWell that will move around on the graph.
+    const particlesInWell: Node[] = [];
+    affirm( PRE_DECAY_PARTICLE_COUNTS.alphaParticles >= 1, 'must have at least on alpha particle' );
+    _.times( PRE_DECAY_PARTICLE_COUNTS.protons, () => {
+      particlesInWell.push( new ShadedSphereNode( 2 * options.nucleonRadius, {
+        mainColor: ShredColors.protonColorProperty
+      } ) );
+    } );
+    _.times( PRE_DECAY_PARTICLE_COUNTS.neutrons, () => {
+      particlesInWell.push( new ShadedSphereNode( 2 * options.nucleonRadius, {
+        mainColor: ShredColors.neutronColorProperty
+      } ) );
+    } );
+    _.times( PRE_DECAY_PARTICLE_COUNTS.alphaParticles, () => {
+      particlesInWell.push( new AlphaParticleNode( {
+        nucleonDiameter: options.nucleonRadius * 2
+      } ) );
+    } );
+
+    // the layer where the particles that move around on the graph will reside
+    const particleLayer = new Node( {
+      children: [ ...particlesInWell ],
+      visibleProperty: isAtomInPlayAreaProperty
+    } );
+
+    // All particles start in the well, but some can later move out. This array is used to track that.
+    const particlesOutsideWell: Node[] = [];
+
     const contentsNode = new Node( {
       children: [
         staticDescriptionNode,
@@ -240,7 +287,8 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         initialEnergyGrabber,
         potentialEnergyHeightIndicator,
         potentialEnergyGrabber,
-        finalEnergyGraphLine
+        finalEnergyGraphLine,
+        particleLayer
       ],
       accessibleTemplate: AccessibleList.createTemplateProperty( {
         listItems: [
@@ -331,13 +379,8 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     // Set the tunneling radius for the atom as the graph changes.
     energyIntersectionPointProperty.link( point => {
 
-      // Convert intersection point x coordinate (view bounds) to model magnitude
-      model.atomPool.forEach( atom => {
-        const intersectionPointModelDeltaX = modelViewTransformProperty.value.viewToModelDeltaX( point.x );
-        atom = model.atomPool[ 0 ];
-        affirm( atom, 'there should be an atom' );
-        model.atomPool[ 0 ].ejectedParticleTunnelingRadius = intersectionPointModelDeltaX;
-      } );
+      // Convert intersection point x coordinate (view bounds) to model magnitude.
+      atom.ejectedParticleTunnelingRadius = modelViewTransformProperty.value.viewToModelDeltaX( point.x );
     } );
 
     const contentOriginX = this.x + contentsNode.x;
@@ -412,7 +455,82 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
             energyIntersectionPointProperty.value = new Vector2( MAX_ESCAPE_DISTANCE, 0 );
           }
         }
+
+        // Update the Y positions for the particles.
+        particlesInWell.forEach( particle => {
+          particle.centerY = initialEnergyHeight;
+        } );
       }
     );
+
+    // Now that the lines for the graph are set up, set the initial positions of the particlesInWell.
+    const maxParticleXDelta = WELL_HALF_WIDTH - 2 * options.nucleonRadius;
+    const tweakFactor = -10; // JB REVIEW: Figure out why this is needed and fix the root cause.
+    model.hasDecayOccurredProperty.link( hasDecayed => {
+      particlesInWell.forEach( particle => {
+        particle.centerY = hasDecayed ? finalEnergyGraphLine.centerY : initialEnergyGraphLine.centerY;
+        particle.centerX = initialEnergyGraphLine.centerX + ( dotRandom.nextDouble() - 0.5 ) * 2 * maxParticleXDelta;
+      } );
+
+      if ( hasDecayed ) {
+
+        // JB REVIEW: Does this need to be generalized to handle other types of decay?
+        const ejectedParticle = atom.ejectedDecayParticles[ 0 ];
+        if ( ejectedParticle ) {
+
+          // Grab an alpha particle from our list.
+          const alphaParticleNode = particlesInWell.find( particle => particle instanceof AlphaParticleNode );
+          if ( alphaParticleNode ) {
+            const index = particlesInWell.indexOf( alphaParticleNode );
+            particlesInWell.splice( index, 1 );
+            alphaParticleNode.centerX = modelViewTransformProperty.value.modelToViewX( ejectedParticle.positionProperty.value.x );
+            particlesOutsideWell.push( alphaParticleNode );
+          }
+        }
+      }
+      else {
+
+        // Bring back any particles that had previously tunneled.
+        if ( particlesOutsideWell.length > 0 ) {
+          particlesOutsideWell.forEach( particle => {
+            particlesInWell.push( particle );
+            particle.center = initialEnergyGraphLine.center;
+          } );
+          particlesOutsideWell.length = 0;
+        }
+      }
+    } );
+
+    // Listen to the step emitter of the atom in the model in order to animate the particles.
+    let particleAnimationTimeAccumulator = 0;
+    const updatePeriod = 0.1; // in seconds
+    atom.steppedEmitter.addListener( dt => {
+
+      // Update any particles outside the well, which generally will be moving away from the nucleus.
+      if ( particlesOutsideWell.length > 0 ) {
+
+        affirm( particlesOutsideWell.length = 1, 'This code currently handles only one tunneled particle' );
+        const ejectedParticle = atom.ejectedDecayParticles[ 0 ];
+        affirm( ejectedParticle, 'expected an ejected particle' );
+        particlesOutsideWell[ 0 ].centerX = modelViewTransformProperty.value.modelToViewX(
+          ejectedParticle.positionProperty.value.x
+        );
+        particlesOutsideWell[ 0 ].centerY = initialEnergyGraphLine.centerY;
+      }
+
+      particleAnimationTimeAccumulator += dt;
+
+      if ( particleAnimationTimeAccumulator > updatePeriod ) {
+
+        // Randomly move the particles that are inside the well.
+        particlesInWell.forEach( particle => {
+          if ( dotRandom.nextDouble() > 0.25 ) {
+            particle.centerX = initialEnergyGraphLine.centerX + ( dotRandom.nextDouble() - 0.5 ) * 2 * maxParticleXDelta + tweakFactor;
+          }
+        } );
+
+        particleAnimationTimeAccumulator = 0;
+      }
+    } );
   }
 }
