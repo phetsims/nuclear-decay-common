@@ -1,8 +1,11 @@
 // Copyright 2026, University of Colorado Boulder
 /**
- * AccordionBox that holds the EnergyDiagram title as well as the alpha particle energy diagram.
+ * EnergyDiagramAccordionBox is an accordion box that contains the energy diagram for the alpha particles, including
+ * the potential, initial, and final energy. It also includes animations of particles in the potential energy well and
+ * exiting the atomic nucleus when the atom decays.
  *
  * @author Agustín Vallejo (PhET Interactive Simulations)
+ * @author John Blanco (PhET Interactive Simulations)
  */
 
 import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
@@ -64,8 +67,9 @@ const FINAL_ENERGY_HEIGHT = 18; // height of the final energy line after decay (
 
 export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox {
 
-  // This property tracks the position where initial and potential energies first intersect to the left of the well
-  // With respect to the position ( wellCenterX, 0 ). Will be used to draw the dotted potential circle around the nucleus.
+  // This property tracks the position where initial and potential energies first intersect to the left of the well.
+  // This essentially defines the tunneling radius, and will be used to draw the dotted potential circle around the
+  // nucleus (among other things).
   public readonly energyIntersectionPointProperty: Vector2Property;
 
   public constructor(
@@ -97,6 +101,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       accessibleHelpTextCollapsed: NuclearDecayCommonFluent.a11y.energyDiagram.accessibleHelpTextCollapsedStringProperty
     }, providedOptions );
 
+    // JB REVIEW: This is a hard-coded constant and should be explained.
     const graphRightX = 600;
 
     // Left edge inside which wellCenterX can sit without pushing the curve out of the graph region.
@@ -409,7 +414,5 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         }
       }
     );
-    
-    
   }
 }
