@@ -7,8 +7,10 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
+import Multilink from '../../../../axon/js/Multilink.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
+import DynamicNucleusNode from '../../common/view/DynamicNucleusNode.js';
 import SingleAndMultipleAtomsScreenView, { SingleAndMultipleAtomsScreenViewOptions } from '../../common/view/SingleAndMultipleAtomsScreenView.js';
 import SingleAtomModel from '../model/SingleAtomModel.js';
 import EquationAccordionBox from './EquationAccordionBox.js';
@@ -23,6 +25,8 @@ export default class SingleAtomScreenView extends SingleAndMultipleAtomsScreenVi
   public readonly particleCountsAccordionBox: Node;
 
   public readonly equationAccordionBox: Node;
+
+  protected declare atomNodes: DynamicNucleusNode[];
 
   public constructor( model: SingleAtomModel, providedOptions: SingleAndMultipleAtomsScreenViewOptions ) {
 
@@ -46,6 +50,13 @@ export default class SingleAtomScreenView extends SingleAndMultipleAtomsScreenVi
       } );
     this.rightColumnControls.addChild( this.particleCountsAccordionBox );
     this.rightColumnControls.addChild( this.equationAccordionBox );
+
+    Multilink.multilink( [ model.potentialEnergyProperty, model.initialEnergyProperty ], () => {
+      model.resetAtomDecayStates();
+      this.atomNodes.forEach( atomNode => {
+        atomNode.agitateNucleus();
+      } );
+    } );
 
     // Heading node grouping the decay timeline histogram panel under "Decay Data".
     const decayDataHeadingNode = new Node( {

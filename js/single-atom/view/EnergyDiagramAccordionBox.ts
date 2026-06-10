@@ -462,7 +462,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         else {
           // No intersection cases
 
-          if ( initialEnergyGraphLine.y < ENERGY_PEAK_Y ) {
+          if ( initialEnergyGraphLine.y < 0 ) {
 
             // No intersection and energy above well — dotted circle assumes the size of the well.
             energyIntersectionPointProperty.value = new Vector2( wellHalfWidth, 0 );

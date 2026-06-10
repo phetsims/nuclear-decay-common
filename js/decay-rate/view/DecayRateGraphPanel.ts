@@ -331,8 +331,15 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       NuclearDecayCommonColors.undecayedProperty,
       {
         centerX: dataProbeNode.centerX,
-        bottom: dataProbeNode.top + dataProbeLineOvershoot,
-        visibleProperty: visibleProperties.showDataProbeProperty
+        visibleProperty: visibleProperties.showDataProbeProperty,
+        showDecayedProperty: visibleProperties.showDecayedProperty,
+        showUndecayedProperty: visibleProperties.showUndecayedProperty
+      }
+    );
+
+    // Adjust bottom of panel to layout after contents change
+    dataProbePanel.boundsProperty.link( () => {
+        dataProbePanel.bottom = dataProbeNode.top + dataProbeLineOvershoot;
       }
     );
 
@@ -406,8 +413,9 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       dataProbeCheckbox
     ];
 
+    // TODO should we uncomment this to stop the panel from moving? https://github.com/phetsims/alpha-decay/issues/3
     // Freeze the graph's local bounds so moving children like the Grabber won't affect its bounds.
-    graphArea.localBounds = graphArea.localBounds.copy();
+    // graphArea.localBounds = graphArea.localBounds.copy();
 
     this.dataProbeXProperty.link( position => {
       dataProbeNode.centerX = clamp( position, 0, GRAPH_WIDTH );

@@ -56,7 +56,7 @@ export default class SingleAtomModel extends NuclearDecayModel {
       phetioReadOnly: true
     } );
 
-    this.potentialEnergyProperty = new NumberProperty( 1, {
+    this.potentialEnergyProperty = new NumberProperty( 0.5, {
       range: new Range( 0.1, 1 ),
       tandem: options.tandem.createTandem( 'potentialEnergyProperty' ),
       phetioFeatured: true

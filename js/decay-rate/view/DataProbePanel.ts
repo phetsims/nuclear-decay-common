@@ -6,8 +6,9 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
+import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
 import { toFixed } from '../../../../dot/js/util/toFixed.js';
-import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import optionize from '../../../../phet-core/js/optionize.js';
 import StringUtils from '../../../../phetcommon/js/util/StringUtils.js';
 import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
@@ -19,7 +20,10 @@ import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 
-type SelfOptions = EmptySelfOptions;
+type SelfOptions = {
+  showUndecayedProperty?: BooleanProperty;
+  showDecayedProperty?: BooleanProperty;
+};
 export type DataProbePanelOptions = SelfOptions & PanelOptions;
 
 const FONT = NuclearDecayCommonConstants.SMALL_LABEL_FONT;
@@ -36,6 +40,17 @@ export default class DataProbePanel extends Panel {
     undecayedColorProperty: ProfileColorProperty,
     providedOptions?: DataProbePanelOptions
   ) {
+
+    const options = optionize<DataProbePanelOptions, SelfOptions, PanelOptions>()( {
+      fill: 'white',
+      stroke: '#aaaaaa',
+      cornerRadius: 4,
+      xMargin: 8,
+      yMargin: 6,
+      showUndecayedProperty: new BooleanProperty( true ),
+      showDecayedProperty: new BooleanProperty( true )
+    }, providedOptions );
+
     const undecayedValueText = new Text( `${DASH} %`, { font: FONT, fill: undecayedColorProperty } );
     const decayedValueText = new Text( `${DASH} %`, { font: FONT } );
     const timeText = new Text( `${DASH} s`, {
@@ -46,6 +61,7 @@ export default class DataProbePanel extends Panel {
 
     const undecayedRow = new HBox( {
       spacing: 4,
+      visibleProperty: options.showUndecayedProperty,
       children: [
         new RichText( `${undecayedSymbol}:`, { font: FONT, fill: undecayedColorProperty } ),
         undecayedValueText
@@ -54,6 +70,7 @@ export default class DataProbePanel extends Panel {
 
     const decayedRow = new HBox( {
       spacing: 4,
+      visibleProperty: options.showDecayedProperty,
       children: [
         new RichText( `${decayedSymbol}:`, { font: FONT } ),
         decayedValueText
@@ -65,14 +82,6 @@ export default class DataProbePanel extends Panel {
       align: 'left',
       children: [ undecayedRow, decayedRow, timeText ]
     } );
-
-    const options = optionize<DataProbePanelOptions, SelfOptions, PanelOptions>()( {
-      fill: 'white',
-      stroke: '#aaaaaa',
-      cornerRadius: 4,
-      xMargin: 8,
-      yMargin: 6
-    }, providedOptions );
 
     super( content, options );
 

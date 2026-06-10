@@ -212,15 +212,7 @@ class DynamicNucleusNode extends Node implements Updatable {
 
     // Make some updates when the escape radius changes.
     this.escapeRadiusProperty?.link( () => {
-
-      // So that alpha particles don't end up outside the tunneling radius when they aren't actually tunneling, move
-      // them back to the nucleus if the escape radius changes.
-      this.terminateAllAlphaExcursions();
-
-      // Shuffle the particles when this change occurs to signal that it is, in some sense, a different nucleus.
-      this.doMinorParticleShuffle();
-
-      this.updateAgitationFactor( this.particleNodeTrellis[ this.particleNodeTrellis.length - 1 ].radius );
+      this.agitateNucleus();
     } );
 
     // Update the nucleus radius and position if the model-view transform changes. Note that this does the initial
@@ -229,6 +221,18 @@ class DynamicNucleusNode extends Node implements Updatable {
       this.setNucleusRadius( mvt.modelToViewDeltaX( NuclearDecayCommonConstants.ATOM_RADIUS ) );
       this.update();
     } );
+  }
+
+  public agitateNucleus(): void {
+
+    // So that alpha particles don't end up outside the tunneling radius when they aren't actually tunneling, move
+    // them back to the nucleus if the escape radius changes.
+    this.terminateAllAlphaExcursions();
+
+    // Shuffle the particles when this change occurs to signal that it is, in some sense, a different nucleus.
+    this.doMinorParticleShuffle();
+
+    this.updateAgitationFactor( this.particleNodeTrellis[ this.particleNodeTrellis.length - 1 ].radius );
   }
 
   /**

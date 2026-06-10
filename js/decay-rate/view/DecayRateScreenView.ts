@@ -39,7 +39,7 @@ export type DecayRateScreenViewOptions = SelfOptions & NuclearDecayScreenViewOpt
 
 export default class DecayRateScreenView extends NuclearDecayScreenView {
 
-  // TODO: Find a way to have this be this.model without conflicts with parent class https://github.com/phetsims/alpha-decay/issues/3
+  // TODO: declare? Find a way to have this be this.model without conflicts with parent class https://github.com/phetsims/alpha-decay/issues/3
   private readonly decayRateModel: DecayRateModel;
   private readonly decayRateGraphPanel: DecayRateGraphPanel;
 

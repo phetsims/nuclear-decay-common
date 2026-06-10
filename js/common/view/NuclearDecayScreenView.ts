@@ -135,6 +135,10 @@ export default class NuclearDecayScreenView extends ScreenView {
       affirm( model.atomPool.length === 1, 'unexpected number of atoms' );
     }
 
+    model.selectedIsotopeProperty.link( () => {
+      this.updateAtomNodes();
+    } );
+
     phetioStateSetEmitter.addListener( () => {
       this.updateAtomNodes();
     } );
