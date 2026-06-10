@@ -61,7 +61,6 @@ const LEGEND_X = GRAPH_X_OFFSET + 10;
 const LEGEND_Y = 25;
 
 // Potential energy curve parameters (screen coordinates: negative Y = higher energy)
-export const WELL_HALF_WIDTH = 45; // half-width of the flat-bottomed well
 export const MAX_ESCAPE_DISTANCE = 1000; // used when initial energy is above the barrier, so the intersection point is off the graph
 const INTERSECTION_THRESHOLD = -0.4; // Below this, the intersection between curves might accidentally land in the well
 const COULOMB_MIN_Y = 0; // asymptotic Coulomb energy at large distance (just above x-axis)
@@ -124,9 +123,11 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     // JB REVIEW: This is a hard-coded constant and should be explained.
     const graphRightX = 600;
 
+    // JB REVIEW: I don't understand the following comment. Can we improve?
     // Left edge inside which wellCenterX can sit without pushing the curve out of the graph region.
-    const wellCenterMinX = WELL_HALF_WIDTH + POINTINESS_FACTOR;
-    const wellCenterMaxX = graphRightX - WELL_HALF_WIDTH - POINTINESS_FACTOR;
+    const initialWellHalfWidth = modelViewTransformProperty.value.modelToViewDeltaX( NuclearDecayCommonConstants.ATOM_RADIUS );
+    const wellCenterMinX = initialWellHalfWidth + POINTINESS_FACTOR;
+    const wellCenterMaxX = graphRightX - initialWellHalfWidth - POINTINESS_FACTOR;
 
     // Y-axis: upward arrow
 
@@ -392,16 +393,25 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       return clamp( mvt.modelToViewX( 0 ) - contentOriginX, wellCenterMinX, wellCenterMaxX );
     } );
 
+    // The max amount that a particle can move from the center of the well during non-tunneling movement.
+    let maxParticleXDelta = initialWellHalfWidth - 2 * options.nucleonRadius;
+
     // Multilink to update the energy shapes and find their intersection
     Multilink.multilink(
       [ wellCenterXProperty, model.potentialEnergyProperty, model.initialEnergyProperty, model.hasDecayOccurredProperty ],
       ( wellCenterX: number, potentialEnergy: number, initialEnergy: number, hasDecayOccurred: boolean ) => {
 
+        // JB REVIEW: Get rid of tweak factor by addressing root cause.
+        const wellWidthTweakFactor = -5;
+        const wellHalfWidth = modelViewTransformProperty.value.modelToViewDeltaX( NuclearDecayCommonConstants.ATOM_RADIUS ) + wellWidthTweakFactor;
+
+        maxParticleXDelta = wellHalfWidth - 2 * options.nucleonRadius;
+
         const peakY = ENERGY_PEAK_Y * potentialEnergy / model.potentialEnergyProperty.range.max + COULOMB_MIN_Y;
 
         potentialEnergyGrabber.centerY = peakY;
 
-        potentialEnergyHeightIndicator.setLine( wellCenterX + WELL_HALF_WIDTH, peakY, potentialEnergyGrabber.x + 20, peakY );
+        potentialEnergyHeightIndicator.setLine( wellCenterX + wellHalfWidth, peakY, potentialEnergyGrabber.x + 20, peakY );
 
         // After decay, lower the well bottom proportionally to initial energy (higher energy = deeper well).
         const wellBottomY = hasDecayOccurred
@@ -411,14 +421,14 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         potentialEnergyGraphCurve.shape = new Shape()
           .moveTo( -GRAPH_X_OFFSET, COULOMB_MIN_Y )
           .quadraticCurveTo(
-            wellCenterX - WELL_HALF_WIDTH - POINTINESS_FACTOR, CURVINESS_FACTOR * peakY,
-            wellCenterX - WELL_HALF_WIDTH, peakY
+            wellCenterX - wellHalfWidth - POINTINESS_FACTOR, CURVINESS_FACTOR * peakY,
+            wellCenterX - wellHalfWidth, peakY
           )
-          .lineTo( wellCenterX - WELL_HALF_WIDTH, wellBottomY )
-          .lineTo( wellCenterX + WELL_HALF_WIDTH, wellBottomY )
-          .lineTo( wellCenterX + WELL_HALF_WIDTH, peakY )
+          .lineTo( wellCenterX - wellHalfWidth, wellBottomY )
+          .lineTo( wellCenterX + wellHalfWidth, wellBottomY )
+          .lineTo( wellCenterX + wellHalfWidth, peakY )
           .quadraticCurveTo(
-            wellCenterX + WELL_HALF_WIDTH + POINTINESS_FACTOR, CURVINESS_FACTOR * peakY,
+            wellCenterX + wellHalfWidth + POINTINESS_FACTOR, CURVINESS_FACTOR * peakY,
             graphRightX, COULOMB_MIN_Y
           );
 
@@ -455,7 +465,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
           if ( initialEnergyGraphLine.y < ENERGY_PEAK_Y ) {
 
             // No intersection and energy above well — dotted circle assumes the size of the well.
-            energyIntersectionPointProperty.value = new Vector2( WELL_HALF_WIDTH, 0 );
+            energyIntersectionPointProperty.value = new Vector2( wellHalfWidth, 0 );
           }
           else {
 
@@ -472,7 +482,6 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     );
 
     // Now that the lines for the graph are set up, set the initial positions of the particlesInWell.
-    const maxParticleXDelta = WELL_HALF_WIDTH - 2 * options.nucleonRadius;
     const wellParticlesTweakFactor = -10; // JB REVIEW: Figure out why this is needed and fix the root cause.
     const ejectedParticleTweakFactor = -100; // JB REVIEW: Figure out why this is needed and fix the root cause.
     model.hasDecayOccurredProperty.link( hasDecayed => {

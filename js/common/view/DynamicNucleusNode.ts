@@ -167,7 +167,8 @@ class DynamicNucleusNode extends Node implements Updatable {
     } );
 
     // Create the positional structure, which is like a trellis in a garden, that will be used to efficiently position
-    // the particle nodes that comprise this nucleus.
+    // the particle nodes that comprise this nucleus.  It is initially created based on the size of the nucleons, then
+    // scaled to match the prescribed nucleus radius.
     this.particleNodeTrellis = [];
     let currentShell = 0;
     let currentShellRadius = 0;
@@ -176,7 +177,6 @@ class DynamicNucleusNode extends Node implements Updatable {
     let particlesPositionsInThisShell = 0;
     let totalPositions = 0;
     let done = false;
-    let maxShellRadius = 0;
 
     while ( !done ) {
 
@@ -195,7 +195,6 @@ class DynamicNucleusNode extends Node implements Updatable {
           // Time to move to the next shell.
           currentShell++;
           currentShellRadius = currentShellRadius + this.nucleonRadius * ( Math.pow( NUCLEUS_ENLARGEMENT_FACTOR, currentShell ) );
-          maxShellRadius = currentShellRadius; // update this each time through
           currentAngle = 2 * Math.PI * dotRandom.nextDouble();
           particlesAllowedInThisShell = Math.floor( 2 * Math.PI * currentShellRadius / ( this.nucleonRadius * NUCLEUS_ENLARGEMENT_FACTOR ) );
           particlesPositionsInThisShell = 0;
@@ -211,9 +210,6 @@ class DynamicNucleusNode extends Node implements Updatable {
     // Set up the initial batch of nucleon nodes.
     this.createParticleNodes();
 
-    // Update the position if the model-view transform changes. Note that this does the initial positioning too.
-    this.modelViewTransformProperty.link( () => this.update() );
-
     // Make some updates when the escape radius changes.
     this.escapeRadiusProperty?.link( () => {
 
@@ -224,8 +220,44 @@ class DynamicNucleusNode extends Node implements Updatable {
       // Shuffle the particles when this change occurs to signal that it is, in some sense, a different nucleus.
       this.doMinorParticleShuffle();
 
-      this.updateAgitationFactor( maxShellRadius );
+      this.updateAgitationFactor( this.particleNodeTrellis[ this.particleNodeTrellis.length - 1 ].radius );
     } );
+
+    // Update the nucleus radius and position if the model-view transform changes. Note that this does the initial
+    // positioning too.
+    modelViewTransformProperty.link( mvt => {
+      this.setNucleusRadius( mvt.modelToViewDeltaX( NuclearDecayCommonConstants.ATOM_RADIUS ) );
+      this.update();
+    } );
+  }
+
+  /**
+   * Scale the shell radii so the outer shell matches the requested nucleus radius, and reposition any occupied
+   * trellis locations to their new shell radii.
+   *
+   * @param radius - Desired overall nucleus radius in view coordinates.
+   * @returns - Nothing.
+   */
+  private setNucleusRadius( radius: number ): void {
+
+    // Determine the radius of the outer shell. Somewhat arbitrarily, the code says we have to have and outer shell of
+    // at least one nucleon radius.  This value can't be zero or the calculations won't work.
+    const outerShellRadius = Math.max( radius - this.nucleonRadius, this.nucleonRadius );
+
+    const currentOuterShellRadius = this.particleNodeTrellis[ this.particleNodeTrellis.length - 1 ].radius;
+    const scaleFactor = outerShellRadius / currentOuterShellRadius;
+
+    this.particleNodeTrellis.forEach( shell => {
+      shell.radius *= scaleFactor;
+      console.log( `shell.radius = ${shell.radius}` );
+      shell.locations.forEach( location => {
+        if ( location.particle !== null ) {
+          location.particle.center = this.getParticlePositionForTrellisLocation( shell, location );
+        }
+      } );
+    } );
+
+    this.updateAgitationFactor( outerShellRadius );
   }
 
   /**

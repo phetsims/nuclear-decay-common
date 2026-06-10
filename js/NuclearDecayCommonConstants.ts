@@ -42,7 +42,10 @@ export default class NuclearDecayCommonConstants {
     return Math.min( Math.pow( 10, exponent ), Number.MAX_VALUE );
   };
 
-  // Atom dimensions in model coordinates
+  // Atom dimensions in model coordinates. Because it's difficult to come up with any sort of reasonable real units for
+  // modeling the particle, we are using a normalized value here.
+  // JB REVIEW: I think we should rename this to something like ATOMIC_NUCLEUS_RADIUS and potentially have another for
+  //            the radius including the electron cloud.
   public static readonly ATOM_RADIUS = 1;
 
   // Isotopes

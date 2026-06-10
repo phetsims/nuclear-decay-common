@@ -64,7 +64,7 @@ export default class SingleAndMultipleAtomsScreenView extends NuclearDecayScreen
       // Self Options
       isotopePanelMiddleContent: null,
 
-      numberOfAtomsInPlayAreaWidth: 10
+      numberOfAtomsInPlayAreaWidth: 8
     }, providedOptions );
 
     super( model, options );
