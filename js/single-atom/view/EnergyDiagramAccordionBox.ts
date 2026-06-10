@@ -76,9 +76,9 @@ const FINAL_ENERGY_HEIGHT = 18; // height of the final energy line after decay (
 const WELL_BOTTOM_POST_DECAY_MAX_EXTRA_DEPTH = GRAPH_HEIGHT * 0.45;
 
 const PRE_DECAY_PARTICLE_COUNTS = {
-  protons: 3,
-  neutrons: 3,
-  alphaParticles: 2
+  protons: 6,
+  neutrons: 6,
+  alphaParticles: 4
 };
 
 export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox {
@@ -514,7 +514,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
 
     // Listen to the step emitter of the atom in the model in order to animate the particles.
     let particleAnimationTimeAccumulator = 0;
-    const updatePeriod = 0.1; // in seconds
+    const updatePeriod = 4 / 60; // in seconds
     atom.steppedEmitter.addListener( dt => {
 
       // Update any particles outside the well, which generally will be moving away from the nucleus.
