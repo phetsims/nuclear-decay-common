@@ -40,7 +40,8 @@ export default class DecayRateModel extends NuclearDecayModel {
     const options = optionize<DecayRateModelOptions, SelfOptions, NuclearDecayModelOptions>()( {
       maxNumberOfAtoms: NuclearDecayCommonConstants.MAX_ATOMS_THIRD_SCREEN,
       ejectParticlesOnDecay: false,
-      phetioType: DecayRateModel.DecayRateModelIO
+      phetioType: DecayRateModel.DecayRateModelIO,
+      defaultAtomsToAdd: 100
     }, providedOptions );
 
     super( StartingIsotopes, decayType, options );

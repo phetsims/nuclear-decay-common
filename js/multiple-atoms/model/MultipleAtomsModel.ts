@@ -23,7 +23,8 @@ export default class MultipleAtomsModel extends NuclearDecayModel {
     providedOptions?: MultipleAtomDecayModelOptions
   ) {
     const options = optionize<MultipleAtomDecayModelOptions, SelfOptions, NuclearDecayModelOptions>()( {
-      maxNumberOfAtoms: NuclearDecayCommonConstants.MAX_ATOMS_SECOND_SCREEN
+      maxNumberOfAtoms: NuclearDecayCommonConstants.MAX_ATOMS_SECOND_SCREEN,
+      defaultAtomsToAdd: 10
     }, providedOptions );
 
     super( startingIsotopes, decayType, options );
