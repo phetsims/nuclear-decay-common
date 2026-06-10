@@ -84,9 +84,6 @@ export default class NuclearDecayCommonConstants {
   public static readonly PANEL_FILL = 'rgb( 238, 238, 238 )';
   public static readonly MAIN_PANEL_FILL = '#F1FAFE';
 
-  // Particle sizes
-  public static readonly NUCLEON_DIAMETER = 13;
-
   // Separation between atom border and atom label
   public static readonly LABEL_ATOM_GAP = 10;
 

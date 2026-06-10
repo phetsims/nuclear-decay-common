@@ -24,7 +24,7 @@ type SelfOptions = EmptySelfOptions;
 export type ParticlesLegendPanelOptions = SelfOptions & NuclearDecayPanelOptions;
 
 const ITEM_SPACING = 6;
-const SPHERE_DIAMETER = NuclearDecayCommonConstants.NUCLEON_DIAMETER;
+const SPHERE_DIAMETER = 13; // Empirically determined to look good
 
 export default class ParticlesLegendPanel extends NuclearDecayPanel {
   public constructor( providedOptions?: ParticlesLegendPanelOptions ) {

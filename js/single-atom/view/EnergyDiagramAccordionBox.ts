@@ -66,11 +66,14 @@ export const MAX_ESCAPE_DISTANCE = 1000; // used when initial energy is above th
 const INTERSECTION_THRESHOLD = -0.4; // Below this, the intersection between curves might accidentally land in the well
 const COULOMB_MIN_Y = 0; // asymptotic Coulomb energy at large distance (just above x-axis)
 const ENERGY_PEAK_Y = -GRAPH_HEIGHT * 0.4; // top of the Coulomb barrier (above initial energy line)
-const WELL_BOTTOM_Y = GRAPH_HEIGHT * 0.4; // bottom of the nuclear potential well (below x-axis)
+const WELL_BOTTOM_Y = GRAPH_HEIGHT * 0.15; // bottom of the nuclear potential well (below x-axis)
 const POINTINESS_FACTOR = 25; // sharpness of the quadratic curve at the barrier peak. 0 = max pointiness, 100 least.
 const CURVINESS_FACTOR = 0; // how curvy the potential energy curve is at the barrier peak. 0 = very curvy, rapid falloff, 1 = closer to a straight line.
 
 const FINAL_ENERGY_HEIGHT = 18; // height of the final energy line after decay (below x-axis)
+
+// How much deeper the well bottom goes at maximum initial energy (initialEnergy=1) after decay.
+const WELL_BOTTOM_POST_DECAY_MAX_EXTRA_DEPTH = GRAPH_HEIGHT * 0.45;
 
 const PRE_DECAY_PARTICLE_COUNTS = {
   protons: 3,
@@ -391,8 +394,8 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
 
     // Multilink to update the energy shapes and find their intersection
     Multilink.multilink(
-      [ wellCenterXProperty, model.potentialEnergyProperty, model.initialEnergyProperty ],
-      ( wellCenterX: number, potentialEnergy: number, initialEnergy: number ) => {
+      [ wellCenterXProperty, model.potentialEnergyProperty, model.initialEnergyProperty, model.hasDecayOccurredProperty ],
+      ( wellCenterX: number, potentialEnergy: number, initialEnergy: number, hasDecayOccurred: boolean ) => {
 
         const peakY = ENERGY_PEAK_Y * potentialEnergy / model.potentialEnergyProperty.range.max + COULOMB_MIN_Y;
 
@@ -400,14 +403,19 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
 
         potentialEnergyHeightIndicator.setLine( wellCenterX + WELL_HALF_WIDTH, peakY, potentialEnergyGrabber.x + 20, peakY );
 
+        // After decay, lower the well bottom proportionally to initial energy (higher energy = deeper well).
+        const wellBottomY = hasDecayOccurred
+          ? WELL_BOTTOM_Y + clamp( initialEnergy, 0, 1 ) * WELL_BOTTOM_POST_DECAY_MAX_EXTRA_DEPTH
+          : WELL_BOTTOM_Y;
+
         potentialEnergyGraphCurve.shape = new Shape()
           .moveTo( -GRAPH_X_OFFSET, COULOMB_MIN_Y )
           .quadraticCurveTo(
             wellCenterX - WELL_HALF_WIDTH - POINTINESS_FACTOR, CURVINESS_FACTOR * peakY,
             wellCenterX - WELL_HALF_WIDTH, peakY
           )
-          .lineTo( wellCenterX - WELL_HALF_WIDTH, WELL_BOTTOM_Y )
-          .lineTo( wellCenterX + WELL_HALF_WIDTH, WELL_BOTTOM_Y )
+          .lineTo( wellCenterX - WELL_HALF_WIDTH, wellBottomY )
+          .lineTo( wellCenterX + WELL_HALF_WIDTH, wellBottomY )
           .lineTo( wellCenterX + WELL_HALF_WIDTH, peakY )
           .quadraticCurveTo(
             wellCenterX + WELL_HALF_WIDTH + POINTINESS_FACTOR, CURVINESS_FACTOR * peakY,
