@@ -249,7 +249,6 @@ class DynamicNucleusNode extends Node implements Updatable {
 
     this.particleNodeTrellis.forEach( shell => {
       shell.radius *= scaleFactor;
-      console.log( `shell.radius = ${shell.radius}` );
       shell.locations.forEach( location => {
         if ( location.particle !== null ) {
           location.particle.center = this.getParticlePositionForTrellisLocation( shell, location );
