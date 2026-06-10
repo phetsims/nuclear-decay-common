@@ -111,7 +111,7 @@ class DynamicNucleusNode extends Node implements Updatable {
   private readonly particleNodeTrellis: ShellLocations[];
 
   // An array of alpha particles that are currently outside the nucleus but not at or beyond the tunneling radius.
-  private readonly almostTunnelingAlphaParticles: RoamingAlphaInfo[] = [];
+  public readonly almostTunnelingAlphaParticles: RoamingAlphaInfo[] = [];
 
   private readonly atomLabelNode: AtomLabelNode;
 

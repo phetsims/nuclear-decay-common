@@ -33,6 +33,7 @@ import Text from '../../../../scenery/js/nodes/Text.js';
 import ShredColors from '../../../../shred/js/ShredColors.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
 import AlphaParticleNode from '../../common/view/AlphaParticleNode.js';
+import DynamicNucleusNode from '../../common/view/DynamicNucleusNode.js';
 import NuclearDecayAccordionBox, { NuclearDecayAccordionBoxOptions } from '../../common/view/NuclearDecayAccordionBox.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
@@ -89,6 +90,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
 
   public constructor(
     model: SingleAtomModel,
+    dynamicNucleusNode: DynamicNucleusNode,
     bounds: Bounds2,
     modelViewTransformProperty: TReadOnlyProperty<ModelViewTransform2>,
     providedOptions?: EnergyDiagramAccordionBoxOptions
@@ -125,9 +127,9 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
 
     // JB REVIEW: I don't understand the following comment. Can we improve?
     // Left edge inside which wellCenterX can sit without pushing the curve out of the graph region.
-    const initialWellHalfWidth = modelViewTransformProperty.value.modelToViewDeltaX( NuclearDecayCommonConstants.ATOM_RADIUS );
-    const wellCenterMinX = initialWellHalfWidth + POINTINESS_FACTOR;
-    const wellCenterMaxX = graphRightX - initialWellHalfWidth - POINTINESS_FACTOR;
+    let wellHalfWidth = modelViewTransformProperty.value.modelToViewDeltaX( NuclearDecayCommonConstants.ATOM_RADIUS );
+    const wellCenterMinX = wellHalfWidth + POINTINESS_FACTOR;
+    const wellCenterMaxX = graphRightX - wellHalfWidth - POINTINESS_FACTOR;
 
     // Y-axis: upward arrow
 
@@ -394,7 +396,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     } );
 
     // The max amount that a particle can move from the center of the well during non-tunneling movement.
-    let maxParticleXDelta = initialWellHalfWidth - 2 * options.nucleonRadius;
+    let maxParticleXDelta = wellHalfWidth - 2 * options.nucleonRadius;
 
     // Multilink to update the energy shapes and find their intersection
     Multilink.multilink(
@@ -403,7 +405,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
 
         // JB REVIEW: Get rid of tweak factor by addressing root cause.
         const wellWidthTweakFactor = -5;
-        const wellHalfWidth = modelViewTransformProperty.value.modelToViewDeltaX( NuclearDecayCommonConstants.ATOM_RADIUS ) + wellWidthTweakFactor;
+        wellHalfWidth = modelViewTransformProperty.value.modelToViewDeltaX( NuclearDecayCommonConstants.ATOM_RADIUS ) + wellWidthTweakFactor;
 
         maxParticleXDelta = wellHalfWidth - 2 * options.nucleonRadius;
 
@@ -481,13 +483,19 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       }
     );
 
+    // If the center of the well changes, the particles need to be moved within it.
+    wellCenterXProperty.link( wellCenterX => {
+      particlesInWell.forEach( particle => {
+        particle.centerX = wellCenterX + ( dotRandom.nextDouble() - 0.5 ) * 2 * maxParticleXDelta;
+      } );
+    } );
+
     // Now that the lines for the graph are set up, set the initial positions of the particlesInWell.
-    const wellParticlesTweakFactor = -10; // JB REVIEW: Figure out why this is needed and fix the root cause.
     const ejectedParticleTweakFactor = -100; // JB REVIEW: Figure out why this is needed and fix the root cause.
     model.hasDecayOccurredProperty.link( hasDecayed => {
       particlesInWell.forEach( particle => {
         particle.centerY = hasDecayed ? finalEnergyGraphLine.centerY : initialEnergyGraphLine.centerY;
-        particle.centerX = initialEnergyGraphLine.centerX + ( dotRandom.nextDouble() - 0.5 ) * 2 * maxParticleXDelta;
+        particle.centerX = wellCenterXProperty.value + ( dotRandom.nextDouble() - 0.5 ) * 2 * maxParticleXDelta;
       } );
 
       if ( hasDecayed ) {
@@ -538,14 +546,41 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         particlesOutsideWell[ 0 ].centerY = initialEnergyGraphLine.centerY;
       }
 
+      // If there are any alpha particles outside the nucleus but inside the tunneling radius in the dynamic nucleus,
+      // represent that on this graph by moving an alpha particle away from center by the same amount.
+      const localAlphaParticles: AlphaParticleNode[] = particlesInWell.filter( p => p instanceof AlphaParticleNode );
+      localAlphaParticles.forEach( ( localAlpha, index ) => {
+
+        // Is there an almost tunneled alpha in the dynamic nucleus?
+        if ( dynamicNucleusNode.almostTunnelingAlphaParticles[ index ] ) {
+
+          // Yes there is. Make sure our local alpha is positioned at the same distance from the center as the one in
+          // the dynamic nucleus.
+          const distanceFromCenter = dynamicNucleusNode.almostTunnelingAlphaParticles[ index ].alphaParticleNode.center.getMagnitude();
+          const sign = dynamicNucleusNode.almostTunnelingAlphaParticles[ index ].alphaParticleNode.x > 0 ? 1 : -1;
+          localAlpha.x = wellCenterXProperty.value + ( sign * distanceFromCenter );
+        }
+        else {
+
+          // There is no almost-tunneled alpha that corresponds to this local alpha, so make sure it's in the nucleus,
+          // i.e. within the well.
+          if ( Math.abs( localAlpha.x - wellCenterXProperty.value ) > wellHalfWidth ) {
+            localAlpha.x = wellCenterXProperty.value + ( dotRandom.nextDouble() - 0.5 ) * 2 * maxParticleXDelta;
+          }
+        }
+      } );
+
       particleAnimationTimeAccumulator += dt;
 
       if ( particleAnimationTimeAccumulator > updatePeriod ) {
 
         // Randomly move the particles that are inside the well.
         particlesInWell.forEach( particle => {
-          if ( dotRandom.nextDouble() > 0.25 ) {
-            particle.centerX = initialEnergyGraphLine.centerX + ( dotRandom.nextDouble() - 0.5 ) * 2 * maxParticleXDelta + wellParticlesTweakFactor;
+
+          // Choose randomly which particles to move, and make sure that we don't mess with alphas that are currently
+          // outside the well.
+          if ( dotRandom.nextDouble() > 0.25 && Math.abs( particle.x - wellCenterXProperty.value ) < wellHalfWidth ) {
+            particle.centerX = wellCenterXProperty.value + ( dotRandom.nextDouble() - 0.5 ) * 2 * maxParticleXDelta;
           }
         } );
 
