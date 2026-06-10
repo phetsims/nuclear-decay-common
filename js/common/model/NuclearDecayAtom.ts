@@ -236,6 +236,7 @@ export default class NuclearDecayAtom {
       this.isotope = NuclearDecayAtom.getDecayOrigin( this.isotope );
     }
     this.ejectedDecayParticles.forEach( particle => {
+      particle.isActiveProperty.value = false;
       this.resetEjectedParticlesPosition( particle );
     } );
   }
