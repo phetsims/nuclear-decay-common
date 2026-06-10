@@ -514,6 +514,9 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       this.hardRandomize();
     }
     this.updateAtoms();
+    if ( this.stopwatch ) {
+      this.stopwatch.isRunningProperty.value = true;
+    }
   }
 
   /**
@@ -618,7 +621,18 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   }
 
   public resetTimes(): void {
+    this.stopwatch && this.resetStopwatch();
     this.setTimes( 0 );
+  }
+
+  /**
+   * Reset the stopwatch but make sure that it resumes playing if it was doing so
+   */
+  private resetStopwatch(): void {
+    affirm( this.stopwatch, 'Screen must have a stopwatch to use this function' );
+    const wasPlaying = this.stopwatch.isRunningProperty.value;
+    this.stopwatch.reset();
+    this.stopwatch.isRunningProperty.value = wasPlaying;
   }
 
   /**
