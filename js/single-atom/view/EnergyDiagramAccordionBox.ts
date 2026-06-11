@@ -417,8 +417,8 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
 
         // After decay, lower the well bottom proportionally to initial energy (higher energy = deeper well).
         const wellBottomY = hasDecayOccurred
-          ? WELL_BOTTOM_Y + clamp( initialEnergy, 0, 1 ) * WELL_BOTTOM_POST_DECAY_MAX_EXTRA_DEPTH
-          : WELL_BOTTOM_Y;
+                            ? WELL_BOTTOM_Y + clamp( initialEnergy, 0, 1 ) * WELL_BOTTOM_POST_DECAY_MAX_EXTRA_DEPTH
+                            : WELL_BOTTOM_Y;
 
         potentialEnergyGraphCurve.shape = new Shape()
           .moveTo( -GRAPH_X_OFFSET, COULOMB_MIN_Y )
@@ -452,12 +452,11 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
           if ( point.y < INTERSECTION_THRESHOLD ) {
 
             // Make sure the intersection is above the X axis, otherwise it could be inside the well walls
-            energyIntersectionPointProperty.value = new Vector2(
-              Math.abs( point.x - wellCenterX ), point.y );
+            energyIntersectionPointProperty.value = new Vector2( Math.abs( point.x - wellCenterX ), point.y );
           }
           else {
 
-            // Make the escape distance very huge
+            // Make the escape distance very huge.
             energyIntersectionPointProperty.value = new Vector2( MAX_ESCAPE_DISTANCE, 0 );
           }
         }
@@ -471,7 +470,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
           }
           else {
 
-            // No intersection and energy is negative — assume max escape distance
+            // No intersection and energy is negative — assume max escape distance.
             energyIntersectionPointProperty.value = new Vector2( MAX_ESCAPE_DISTANCE, 0 );
           }
         }
@@ -552,21 +551,28 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       localAlphaParticles.forEach( ( localAlpha, index ) => {
 
         // Is there an almost tunneled alpha in the dynamic nucleus?
-        if ( dynamicNucleusNode.almostTunnelingAlphaParticles[ index ] ) {
+        const almostTunnelingAlphaParticle = dynamicNucleusNode.almostTunnelingAlphaParticles[ index ];
+        if ( almostTunnelingAlphaParticle ) {
 
           // Yes there is. Make sure our local alpha is positioned at the same distance from the center as the one in
           // the dynamic nucleus.
-          const distanceFromCenter = dynamicNucleusNode.almostTunnelingAlphaParticles[ index ].alphaParticleNode.center.getMagnitude();
-          const sign = dynamicNucleusNode.almostTunnelingAlphaParticles[ index ].alphaParticleNode.x > 0 ? 1 : -1;
+          const distanceFromCenter = almostTunnelingAlphaParticle.alphaParticleNode.center.getMagnitude();
+          const sign = almostTunnelingAlphaParticle.alphaParticleNode.x > 0 ? 1 : -1;
           localAlpha.x = wellCenterXProperty.value + ( sign * distanceFromCenter );
+          localAlpha.opacity = clamp(
+            1 - ( distanceFromCenter - wellHalfWidth ) / Math.abs( energyIntersectionPointProperty.value.x ),
+            0,
+            1
+          );
         }
         else {
 
-          // There is no almost-tunneled alpha that corresponds to this local alpha, so make sure it's in the nucleus,
-          // i.e. within the well.
+          // There is no almost-tunneled alpha particle that corresponds to this local alpha particle, so make sure it's
+          // in the nucleus, i.e. within the well.
           if ( Math.abs( localAlpha.x - wellCenterXProperty.value ) > wellHalfWidth ) {
             localAlpha.x = wellCenterXProperty.value + ( dotRandom.nextDouble() - 0.5 ) * 2 * maxParticleXDelta;
           }
+          localAlpha.opacity = 1;
         }
       } );
 
