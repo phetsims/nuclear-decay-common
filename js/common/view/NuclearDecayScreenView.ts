@@ -5,6 +5,8 @@
  * @author Agustín Vallejo
  */
 
+import Multilink from '../../../../axon/js/Multilink.js';
+import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import Property from '../../../../axon/js/Property.js';
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
@@ -57,7 +59,7 @@ export default class NuclearDecayScreenView extends ScreenView {
   protected modelViewTransformProperty: Property<ModelViewTransform2>;
 
   // How many atoms will fit visually within the width of the play area
-  private readonly numberOfAtomsInPlayAreaWidth: number;
+  protected readonly numberOfAtomsInPlayAreaWidthProperty: NumberProperty;
 
   // The nodes that represent the atoms in the play area.
   protected atomNodes: Updatable[] = [];
@@ -87,7 +89,10 @@ export default class NuclearDecayScreenView extends ScreenView {
 
     super( options );
 
-    this.numberOfAtomsInPlayAreaWidth = options.numberOfAtomsInPlayAreaWidth;
+    this.numberOfAtomsInPlayAreaWidthProperty = new NumberProperty( options.numberOfAtomsInPlayAreaWidth, {
+      tandem: options.tandem.createTandem( 'numberOfAtomsInPlayAreaWidthProperty' ),
+      phetioReadOnly: true
+    } );
 
     // Default to an identity transform.
     this.modelViewTransformProperty = new Property( ModelViewTransform2.createIdentity() );
@@ -151,9 +156,16 @@ export default class NuclearDecayScreenView extends ScreenView {
 
     this.playAreaBoundsProperty = new Property<Bounds2>( this.layoutBounds );
 
-    this.playAreaBoundsProperty.link( bounds => {
-      this.setPlayAreaBounds( bounds );
-    } );
+    // Update the play area and the MVT if we change the bounds or how many atoms fit inside
+    Multilink.multilink(
+      [
+        this.playAreaBoundsProperty,
+        this.numberOfAtomsInPlayAreaWidthProperty
+      ], ( bounds, _ ) => {
+        this.setPlayAreaBounds( bounds );
+
+      }
+    );
 
     const decaySoundClip = new SoundClip( decaySound_mp3, {
       initialOutputLevel: 1 / Math.sqrt( model.maxNumberOfAtoms )
@@ -199,7 +211,7 @@ export default class NuclearDecayScreenView extends ScreenView {
       this.playAreaBoundsRectangle.shape = Shape.bounds( playAreaBounds );
     }
 
-    const atomAreaModelWidth = 2 * NuclearDecayCommonConstants.ATOM_RADIUS * this.numberOfAtomsInPlayAreaWidth;
+    const atomAreaModelWidth = 2 * NuclearDecayCommonConstants.ATOM_RADIUS * this.numberOfAtomsInPlayAreaWidthProperty.value;
     const scale = playAreaBounds.width / atomAreaModelWidth;
     this.modelViewTransformProperty.value = ModelViewTransform2.createSinglePointScaleInvertedYMapping(
       Vector2.ZERO,
