@@ -559,11 +559,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
           const distanceFromCenter = almostTunnelingAlphaParticle.alphaParticleNode.center.getMagnitude();
           const sign = almostTunnelingAlphaParticle.alphaParticleNode.x > 0 ? 1 : -1;
           localAlpha.x = wellCenterXProperty.value + ( sign * distanceFromCenter );
-          localAlpha.opacity = clamp(
-            1 - ( distanceFromCenter - wellHalfWidth ) / Math.abs( energyIntersectionPointProperty.value.x ),
-            0,
-            1
-          );
+          localAlpha.opacity = almostTunnelingAlphaParticle.alphaParticleNode.opacity;
         }
         else {
 
