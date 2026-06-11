@@ -28,5 +28,9 @@ export default class MultipleAtomsModel extends NuclearDecayModel {
     }, providedOptions );
 
     super( startingIsotopes, decayType, options );
+
+    this.selectedIsotopeProperty.link( () => {
+      this.atomsToAddProperty.reset();
+    } );
   }
 }
