@@ -511,6 +511,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
             alphaParticleNode.centerX =
               modelViewTransformProperty.value.modelToViewX( ejectedParticle.positionProperty.value.x ) +
               ejectedParticleTweakFactor;
+            alphaParticleNode.centerY = initialEnergyGraphLine.centerY;
             particlesOutsideWell.push( alphaParticleNode );
           }
         }
