@@ -63,7 +63,7 @@ export default class SingleAtomModel extends NuclearDecayModel {
     } );
 
     this.initialEnergyProperty = new NumberProperty( 0.5, {
-      range: new Range( -1, 1 ),
+      range: new Range( -1 * NuclearDecayCommonConstants.WELL_DEPTH, 1 ),
       tandem: options.tandem.createTandem( 'initialEnergyProperty' ),
       phetioFeatured: true
     } );

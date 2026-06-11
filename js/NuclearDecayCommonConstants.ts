@@ -95,6 +95,9 @@ export default class NuclearDecayCommonConstants {
   public static readonly NORMAL_SPEED_SCALE = 0.25;
   public static readonly SLOW_SPEED_SCALE = 0.1;
 
+  // How deep the well is with respect to half the graph height. 1 corresponds to the lower end of the Y axis.
+  public static readonly WELL_DEPTH = 0.4;
+
   public static readonly ENERGIES_TO_HALF_LIFE_EXPONENT_MAPPING =
     ( kineticEnergy: number, potentialEnergy: number ): number => {
 
