@@ -38,7 +38,7 @@ export default class DataProbeGrabberNode extends AccessibleSlider( ShadedSphere
       enabledRangeProperty: dataProbeXProperty.rangeProperty,
 
       mainColor: 'grey',
-      cursor: 'w-resize',
+      cursor: 'ew-resize',
 
       // Keyboard accessibility: makes the sphere focusable and reachable via Tab.
       focusable: true,

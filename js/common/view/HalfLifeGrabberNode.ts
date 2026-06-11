@@ -34,7 +34,7 @@ export default class HalfLifeGrabberNode extends AccessibleSlider( ShadedSphereN
 
       mainColor: NuclearDecayCommonColors.halfLifeColorProperty,
       visibleProperty: model.selectedIsotopeProperty.derived( isotope => isotope === 'custom' ),
-      cursor: 'w-resize',
+      cursor: 'ew-resize',
 
       // Keyboard accessibility: makes the sphere focusable and reachable via Tab.
       focusable: true,
