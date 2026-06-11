@@ -23,7 +23,7 @@ const NuclearDecayCommonColors = {
   } ),
 
   undecayedProperty: new ProfileColorProperty( nuclearDecayCommon, 'undecayed', {
-    default: '#ff00ff'
+    default: '#B800B8'
   } ),
 
   decayedProperty: new ProfileColorProperty( nuclearDecayCommon, 'decayed', {

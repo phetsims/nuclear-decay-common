@@ -470,6 +470,7 @@ export default class NuclearDecayAtom {
         // Decide whether the atom will decay in this particular time interval.
         const probabilityOfDecay = NuclearDecayAtom.decayProbabilityOverInterval( this._halfLife, decayDt );
         if ( dotRandom.nextDouble() < probabilityOfDecay ) {
+          this.decayTime = this.time;
           this.decay( true );
         }
       }
@@ -487,8 +488,6 @@ export default class NuclearDecayAtom {
 
   private decay( randomizeEjectionDestination: boolean ): void {
     this.hasDecayed = true;
-
-    this.decayTime = this.time;
 
     affirm( !DecayProductValues.includes( this.isotope ), 'Atom must not have a decayed isotope type before decaying' );
 
