@@ -517,7 +517,8 @@ class DynamicNucleusNode extends Node implements Updatable {
             }
 
             // Decide randomly whether to move this alpha particle out of the nucleus and have it "almost tunnel".
-            if ( dotRandom.nextInt( 200 ) === 0 ) {
+            // Atoms with infinite half-lives (stable) do not even attempt to tunnel
+            if ( this.atom.halfLife !== Infinity && dotRandom.nextInt( 200 ) === 0 ) {
               this.removeParticleFromTrellis( alphaParticleNode );
 
               const distanceRange = new Range( minimumAlmostTunnelingDistance, escapeRadius * 0.9 );
