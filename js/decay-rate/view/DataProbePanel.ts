@@ -8,6 +8,7 @@
 
 import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
 import { toFixed } from '../../../../dot/js/util/toFixed.js';
+import { toFixedNumber } from '../../../../dot/js/util/toFixedNumber.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 import StringUtils from '../../../../phetcommon/js/util/StringUtils.js';
 import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
@@ -90,13 +91,16 @@ export default class DataProbePanel extends Panel {
     this.timeText = timeText;
   }
 
-  public updateReadouts( undecayedPercent: number | null, decayedPercent: number | null, time: number ): void {
-    this.undecayedValueText.string = undecayedPercent !== null
-                                     ? `${toFixed( undecayedPercent * 100, 0 )} %`
-                                     : `${DASH} %`;
-    this.decayedValueText.string = decayedPercent !== null
-                                   ? `${toFixed( decayedPercent * 100, 0 )} %`
-                                   : `${DASH} %`;
+  public updateReadouts( undecayedPercent: number | null, time: number ): void {
+    if ( undecayedPercent ) {
+      const undecayedPercentRounded = toFixedNumber( undecayedPercent * 100, 0 );
+      this.undecayedValueText.string = `${undecayedPercentRounded} %`;
+      this.decayedValueText.string = `${100 - undecayedPercentRounded} %`;
+    }
+    else {
+      this.undecayedValueText.string = `${DASH} %`;
+      this.decayedValueText.string = `${DASH} %`;
+    }
     this.timeText.string = StringUtils.fillIn(
       NuclearDecayCommonFluent.dataProbeTimePatternStringProperty.value,
       { time: toFixed( time, 2 ) }

@@ -445,30 +445,24 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
   private updateProbeReadouts(): void {
     const time = ( this.dataProbeXProperty.value / this.graphWidth ) * MAX_TIME;
     const undecayedPercent = DecayRateGraphPanel.getPercentageAtTime( this.decayRateModel.undecayedDataPoints, time );
-    const decayedPercent = DecayRateGraphPanel.getPercentageAtTime( this.decayRateModel.decayedDataPoints, time );
-    this.dataProbePanel.updateReadouts( undecayedPercent, decayedPercent, time );
+    this.dataProbePanel.updateReadouts( undecayedPercent, time );
 
-    if ( undecayedPercent !== null &&
-         this.visibleProperties.showUndecayedProperty.value &&
-         this.visibleProperties.showDataProbeProperty.value
-    ) {
-      this.undecayedDataCircle.visible = true;
-      this.undecayedDataCircle.center = new Vector2( this.dataProbeXProperty.value, this.graphHeight * ( 1 - undecayedPercent ) );
-    }
-    else {
-      this.undecayedDataCircle.visible = false;
+    this.decayedDataCircle.visible = false;
+    this.undecayedDataCircle.visible = false;
+
+    // If there's a percentage to show, make sure visible properties have the appropriate curve and data probe
+    if ( undecayedPercent ) {
+      if ( this.visibleProperties.showUndecayedProperty.value && this.visibleProperties.showDataProbeProperty.value ) {
+        this.undecayedDataCircle.visible = true;
+        this.undecayedDataCircle.center = new Vector2( this.dataProbeXProperty.value, this.graphHeight * ( 1 - undecayedPercent ) );
+      }
+
+      if ( this.visibleProperties.showDecayedProperty.value && this.visibleProperties.showDataProbeProperty.value ) {
+        this.decayedDataCircle.visible = true;
+        this.decayedDataCircle.center = new Vector2( this.dataProbeXProperty.value, this.graphHeight * ( undecayedPercent ) );
+      }
     }
 
-    if ( decayedPercent !== null &&
-         this.visibleProperties.showDecayedProperty.value &&
-         this.visibleProperties.showDataProbeProperty.value
-    ) {
-      this.decayedDataCircle.visible = true;
-      this.decayedDataCircle.center = new Vector2( this.dataProbeXProperty.value, this.graphHeight * ( 1 - decayedPercent ) );
-    }
-    else {
-      this.decayedDataCircle.visible = false;
-    }
 
   }
 
