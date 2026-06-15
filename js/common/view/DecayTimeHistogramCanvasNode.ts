@@ -77,8 +77,9 @@ export default class DecayTimeHistogramCanvasNode extends CanvasNode {
     const timescale = this.timescaleProperty.value;
 
     const BOX_WIDTH = 6;
-    const BOX_HEIGHT = data.tallestBinCount * 9 < this.graphHeight ? 9 :
-                       data.tallestBinCount * 6 < this.graphHeight ? 6 : 3;
+    const tallestBinCount = data.tallestBinCount;
+    const useBoxMode = tallestBinCount * 9 < this.graphHeight;
+    const BOX_HEIGHT = 9;
 
     context.fillStyle = 'black';
     context.strokeStyle = 'grey';
@@ -88,10 +89,24 @@ export default class DecayTimeHistogramCanvasNode extends CanvasNode {
       const x = timescale === 'linear' ?
                 this.getXForTime( bin, timescale ) :
                 this.getXForTime( Math.pow( 10, bin ), timescale );
-      for ( let n = 0; n < value; n++ ) {
-        const y = this.graphHeight - ( n + 1 ) * BOX_HEIGHT;
-        context.fillRect( x, y, BOX_WIDTH, BOX_HEIGHT );
-        context.strokeRect( x, y, BOX_WIDTH, BOX_HEIGHT );
+
+      if ( useBoxMode ) {
+
+        // Draw individual stacked squares, one per atom.
+        for ( let n = 0; n < value; n++ ) {
+          const y = this.graphHeight - ( n + 1 ) * BOX_HEIGHT;
+          context.fillRect( x, y, BOX_WIDTH, BOX_HEIGHT );
+          context.strokeRect( x, y, BOX_WIDTH, BOX_HEIGHT );
+        }
+      }
+      else {
+
+        // Too many atoms to draw individual boxes, draw a single proportional bar instead.
+        // The tallest bin fills the full graph height; all others scale accordingly.
+        const barHeight = tallestBinCount > 0 ? ( value / tallestBinCount ) * this.graphHeight : 0;
+        const y = this.graphHeight - barHeight;
+        context.fillRect( x, y, BOX_WIDTH, barHeight );
+        context.strokeRect( x, y, BOX_WIDTH, barHeight );
       }
     } );
 
