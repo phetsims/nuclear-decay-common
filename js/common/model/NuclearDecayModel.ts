@@ -187,7 +187,8 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       phetioFeatured: true
     } );
 
-    this.customHalfLifeProperty = new NumberProperty( 0.2, {
+    // Starting value empirically determined with designers
+    this.customHalfLifeProperty = new NumberProperty( 0.37, {
       tandem: options.tandem.createTandem( 'customHalfLifeProperty' ),
       range: new Range( 0, 1 ),
       phetioFeatured: true

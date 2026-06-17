@@ -12,7 +12,7 @@ import PhetFont from '../../scenery-phet/js/PhetFont.js';
 import AtomConfig from '../../shred/js/model/AtomConfig.js';
 
 const EXPONENTIAL_HALF_LIFE_EXPONENT_RANGE = new Range( -3, 19 );
-const MAX_HALF_LIFE_EXPONENT = 18;
+const MAX_HALF_LIFE_EXPONENT = 18.5;
 const MAX_TIME_EXPONENT = 19;
 
 export default class NuclearDecayCommonConstants {
