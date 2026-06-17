@@ -27,5 +27,7 @@ export default class NuclearDecayAccordionBox extends AccordionBox {
     }, providedOptions );
 
     super( contentNode, options );
+
+    this.setExpandedTitleBarPickable( false );
   }
 }

@@ -108,7 +108,6 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       nucleonRadius: 5,
       titleNode: titleNode,
       showTitleWhenExpanded: false,
-      titleBarExpandCollapse: false,
       contentAlign: 'center',
       contentVerticalAlign: 'top',
       contentXMargin: CONTENT_X_MARGIN,
