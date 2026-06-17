@@ -59,7 +59,7 @@ export default class EnergyGrabberNode extends AccessibleSlider( Path, 1 ) {
           return !isEmpty && selectedIsotope === 'custom';
         }
       ),
-      cursor: 'ns-resize',
+      cursor: 'pointer',
       stroke: 'black',
 
       fill: 'yellow',

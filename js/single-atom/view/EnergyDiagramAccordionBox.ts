@@ -410,9 +410,12 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
 
         const peakY = ENERGY_PEAK_Y * potentialEnergy / model.potentialEnergyProperty.range.max + COULOMB_MIN_Y;
 
-        potentialEnergyGrabber.centerY = peakY;
+        // The quadratic curve has a pointy end that extends beyond the actual peak, we have to adjust for that
+        const peakCorrection = -7 * potentialEnergy;
 
-        potentialEnergyHeightIndicator.setLine( wellCenterX + wellHalfWidth, peakY, potentialEnergyGrabber.x + 20, peakY );
+        potentialEnergyGrabber.centerY = peakY + peakCorrection;
+        potentialEnergyHeightIndicator.setLine( wellCenterX + wellHalfWidth, peakY + peakCorrection,
+          potentialEnergyGrabber.x + 20, peakY + peakCorrection );
 
         // After decay, lower the well bottom proportionally to initial energy (higher energy = deeper well).
         const wellBottomY = hasDecayOccurred
