@@ -76,7 +76,6 @@ export default class NuclearDecayCommonConstants {
   public static readonly TITLE_BOLD_FONT = new PhetFont( { size: 18, weight: 'bold' } );
   public static readonly CONTROL_BOLD_FONT = new PhetFont( { size: 16, weight: 'bold' } );
   public static readonly SMALL_LABEL_BOLD_FONT = new PhetFont( { size: 14, weight: 'bold' } );
-  public static readonly MEDIUM_LABEL_FONT = new PhetFont( 18 );
 
   // Layout constants for panel sizing and spacing
   public static readonly LONG_PANEL_WIDTH = 740;

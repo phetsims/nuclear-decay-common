@@ -40,7 +40,7 @@ export default class AtomLabelNode extends Node {
     providedOptions?: AtomLabelNodeOptions ) {
 
     const options = optionize<AtomLabelNodeOptions, SelfOptions, NodeOptions>()( {
-      font: NuclearDecayCommonConstants.SMALL_LABEL_FONT
+      font: NuclearDecayCommonConstants.SMALL_LABEL_BOLD_FONT
     }, providedOptions );
 
     const labelText = new RichText( '', {

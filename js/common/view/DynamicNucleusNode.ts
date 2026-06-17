@@ -148,7 +148,7 @@ class DynamicNucleusNode extends Node implements Updatable {
     this.escapeRadiusProperty = options.escapeRadiusProperty;
 
     this.atomLabelNode = new AtomLabelNode( atom, {
-      font: NuclearDecayCommonConstants.MEDIUM_LABEL_FONT,
+      font: NuclearDecayCommonConstants.TITLE_BOLD_FONT,
       centerX: 0,
       bottom: -LABEL_OFFSET_IN_NUCLEON_RADII * this.nucleonRadius
     } );
