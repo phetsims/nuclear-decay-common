@@ -154,7 +154,6 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
       this.decayTimeHistogramPanel.right,
       addAtomsPanel.top - NuclearDecayCommonConstants.SCREEN_VIEW_Y_MARGIN
     );
-    this.setPlayAreaBounds( playAreaBounds );
 
     // Create the button that can be used to reset the decay state of the sample of atomic nuclei currently present in
     // the model.
@@ -169,6 +168,10 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
       tandem: options.tandem.createTandem( 'resetSampleButton' )
     } );
     this.addChild( resetSampleButton );
+
+    // Crop the atom placement area so atoms are not placed behind the reset button.
+    this.playAreaExclusionNodes.push( resetSampleButton );
+    this.setPlayAreaBounds( playAreaBounds );
 
     const isotopesLegendPanel = new IsotopeSelectionPanel(
       [ NuclearDecayCommonConstants.POLONIUM_211, NuclearDecayCommonConstants.LEAD_207 ],

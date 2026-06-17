@@ -760,8 +760,31 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
    */
   private hardRandomize(): void {
     this.activeAtoms.forEach( atom => {
-      atom.position = dotRandom.nextPointInBounds( this.atomPlacementAreaProperty.value.bounds );
+
+      // Since we ate up a portion of the play area with UI buttons, we need to find
+      // valid positions within the shape for the atoms
+      atom.position = this.nextPointInConcaveShape( this.atomPlacementAreaProperty.value );
     } );
+  }
+
+  /**
+   * Finds a point within a shape's bounds and if it's not contained by the shape due to
+   * concavities, tries again several times until it finds it.
+   *
+   * For this sim, the concavities are a small section of the area so statistically this should always work.
+   */
+  private nextPointInConcaveShape( shape: Shape ): Vector2 {
+    let potentialPosition = dotRandom.nextPointInBounds( shape.bounds );
+    let iterations = 0;
+    const maxIterations = 10;
+    while ( !shape.containsPoint( potentialPosition ) && iterations < maxIterations ) {
+      potentialPosition = dotRandom.nextPointInBounds( shape.bounds );
+      iterations++;
+      if ( iterations === maxIterations ) {
+        affirm( false, 'Too many attempts to find random point within shape' );
+      }
+    }
+    return potentialPosition;
   }
 
   /**

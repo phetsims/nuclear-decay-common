@@ -137,9 +137,9 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
       this.layoutBounds.right - NuclearDecayCommonConstants.SCREEN_VIEW_Y_MARGIN,
       addAtomsPanel.top - NuclearDecayCommonConstants.SCREEN_VIEW_Y_MARGIN
     );
-    this.setPlayAreaBounds( playAreaBounds );
 
-    // Reset button — top-right
+    // Reset button and sort button, create before setPlayAreaBounds so their bounds can be used to crop the
+    // atom placement area, preventing atoms from appearing behind these controls.
     const resetButton = new ResetAtomsButton( model.isPlayAreaEmptyProperty, {
       listener: () => {
         this.activateMultipleAtomNodes();
@@ -167,6 +167,10 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
       centerY: playAreaBounds.centerY
     } );
     this.addChild( rightButtonsBox );
+
+    // Crop the atom placement area so atoms are not placed behind the right-side buttons.
+    this.playAreaExclusionNodes.push( rightButtonsBox );
+    this.setPlayAreaBounds( playAreaBounds );
 
     this.children = [ this.playAreaBoundsRectangle, ...this.children ];
 

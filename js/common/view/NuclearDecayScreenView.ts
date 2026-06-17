@@ -68,6 +68,11 @@ export default class NuclearDecayScreenView extends ScreenView {
 
   protected readonly playAreaBoundsRectangle: Path;
 
+  // Nodes whose view-space bounds will be cropped out of the atom placement area in setPlayAreaBounds.
+  // Subclasses push UI elements (e.g. ResetAtomsButton, SortButton) that live inside playAreaBounds so
+  // that atoms are not placed behind them.  Must be populated before calling setPlayAreaBounds.
+  protected readonly playAreaExclusionNodes: Node[] = [];
+
   public constructor(
     protected readonly model: NuclearDecayModel,
     providedOptions?: NuclearDecayScreenViewOptions
@@ -206,12 +211,6 @@ export default class NuclearDecayScreenView extends ScreenView {
    */
   public setPlayAreaBounds( playAreaBounds: Bounds2 ): void {
 
-    // Show the area where the atoms can be placed if the 'dev' query parameter is present.
-    if ( phet.chipper.queryParameters.dev ) {
-      // Green area bounds
-      this.playAreaBoundsRectangle.shape = Shape.bounds( playAreaBounds );
-    }
-
     const atomAreaModelWidth = 2 * NuclearDecayCommonConstants.ATOM_RADIUS * this.numberOfAtomsInPlayAreaWidthProperty.value;
     const scale = playAreaBounds.width / atomAreaModelWidth;
     this.modelViewTransformProperty.value = ModelViewTransform2.createSinglePointScaleInvertedYMapping(
@@ -220,9 +219,30 @@ export default class NuclearDecayScreenView extends ScreenView {
       scale
     );
 
-    this.model.atomPlacementAreaProperty.value = Shape.bounds(
-      this.modelViewTransformProperty.value.viewToModelBounds( playAreaBounds )
-    );
+    const mvt = this.modelViewTransformProperty.value;
+
+    // Start with the full model-space play area.
+    let atomPlacementShape: Shape = Shape.bounds( mvt.viewToModelBounds( playAreaBounds ) );
+
+    // Carve out a full right-side column for each exclusion node (e.g. ResetAtomsButton, SortButton).
+    // Use this.boundsOf() — which traverses globalToLocal — rather than node.bounds so that the
+    // bounds are never stale from Scenery's lazy localBounds cache.
+    this.playAreaExclusionNodes.forEach( node => {
+      const nodeViewBounds = this.boundsOf( node );
+      if ( nodeViewBounds.isValid() ) {
+
+        atomPlacementShape = atomPlacementShape.shapeDifference( Shape.bounds( mvt.viewToModelBounds( nodeViewBounds.dilated( 10 ) ) ) );
+      }
+    } );
+
+    this.model.atomPlacementAreaProperty.value = atomPlacementShape;
+
+    // Show the area where the atoms can be placed if the 'dev' query parameter is present.
+    if ( phet.chipper.queryParameters.dev ) {
+      // Green area bounds
+      this.playAreaBoundsRectangle.shape = mvt.modelToViewShape( atomPlacementShape );
+    }
+
   }
 
   public reset(): void {
