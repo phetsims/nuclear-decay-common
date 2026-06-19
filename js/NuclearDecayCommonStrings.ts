@@ -30,14 +30,10 @@ type StringsType = {
   'timeStringProperty': LocalizedStringProperty;
   'addAtom': string;
   'addAtomStringProperty': LocalizedStringProperty;
-  'alphaDecayEnergy': string;
-  'alphaDecayEnergyStringProperty': LocalizedStringProperty;
-  'initialEnergy': string;
-  'initialEnergyStringProperty': LocalizedStringProperty;
+  'alphaParticleEnergy': string;
+  'alphaParticleEnergyStringProperty': LocalizedStringProperty;
   'potentialEnergy': string;
   'potentialEnergyStringProperty': LocalizedStringProperty;
-  'finalEnergy': string;
-  'finalEnergyStringProperty': LocalizedStringProperty;
   'distance': string;
   'distanceStringProperty': LocalizedStringProperty;
   'energy': string;
@@ -144,13 +140,11 @@ type StringsType = {
       'staticDescriptionStringProperty': LocalizedStringProperty;
       'beforeDecay': {
         'initialEnergy': string;
-        'initialEnergyStringProperty': LocalizedStringProperty;
+        'alphaParticleEnergyStringProperty': LocalizedStringProperty;
         'escapeDistance': string;
         'escapeDistanceStringProperty': LocalizedStringProperty;
       };
       'afterDecay': {
-        'finalEnergy': string;
-        'finalEnergyStringProperty': LocalizedStringProperty;
         'escapeDistance': string;
         'escapeDistanceStringProperty': LocalizedStringProperty;
         'potentialWell': string;

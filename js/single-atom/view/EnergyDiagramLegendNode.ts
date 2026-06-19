@@ -32,14 +32,6 @@ export default class EnergyDiagramLegendNode extends VBox {
       align: 'left'
     }, providedOptions );
 
-
-    // Subtitle: "Alpha Particle Energy"
-
-    const subtitleText = new Text( NuclearDecayCommonFluent.alphaDecayEnergyStringProperty, {
-      font: NuclearDecayCommonConstants.SMALL_LABEL_BOLD_FONT,
-      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
-    } );
-
     // Legend lines and labels
 
     const initialEnergyLegendLine = new Line( 0, 0, LEGEND_LINE_LENGTH, 0, {
@@ -48,7 +40,7 @@ export default class EnergyDiagramLegendNode extends VBox {
       }
     );
 
-    const initialEnergyLabel = new Text( NuclearDecayCommonFluent.initialEnergyStringProperty, {
+    const initialEnergyLabel = new Text( NuclearDecayCommonFluent.alphaParticleEnergyStringProperty, {
       font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
@@ -65,7 +57,6 @@ export default class EnergyDiagramLegendNode extends VBox {
     } );
 
     options.children = [
-      subtitleText,
       new HBox( {
         spacing: 6,
         children: [ initialEnergyLegendLine, initialEnergyLabel ]

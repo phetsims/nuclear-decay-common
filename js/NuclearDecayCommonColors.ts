@@ -38,10 +38,6 @@ const NuclearDecayCommonColors = {
     default: '#36ac0d'
   } ),
 
-  finalEnergyProperty: new ProfileColorProperty( nuclearDecayCommon, 'finalEnergy', {
-    default: '#36ac0d'
-  } ),
-
   halfLifeColorProperty: new ProfileColorProperty( nuclearDecayCommon, 'halfLife', {
     default: '#ec4123'
   } ),

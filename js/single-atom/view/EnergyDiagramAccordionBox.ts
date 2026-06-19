@@ -201,7 +201,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     const initialEnergyGrabber = new EnergyGrabberNode( model.initialEnergyProperty, model, {
       x: graphRightX - 80,
       tandem: options.tandem.createTandem( 'initialEnergyGrabber' ),
-      accessibleName: NuclearDecayCommonFluent.initialEnergyStringProperty,
+      accessibleName: NuclearDecayCommonFluent.alphaParticleEnergyStringProperty,
       accessibleHelpText: NuclearDecayCommonFluent.a11y.initialEnergySlider.accessibleHelpTextStringProperty
     } );
 

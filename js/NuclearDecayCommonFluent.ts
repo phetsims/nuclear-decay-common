@@ -5,7 +5,7 @@
 /* eslint-disable */
 /* @formatter:off */
 
-import { TReadOnlyProperty } from '../../axon/js/TReadOnlyProperty.js';
+import {TReadOnlyProperty} from '../../axon/js/TReadOnlyProperty.js';
 import FluentLibrary from '../../chipper/js/browser-and-node/FluentLibrary.js';
 import FluentConstant from '../../chipper/js/browser/FluentConstant.js';
 import FluentContainer from '../../chipper/js/browser/FluentContainer.js';
@@ -35,10 +35,8 @@ addToMapIfDefined( 'halfLives', 'halfLivesStringProperty' );
 addToMapIfDefined( 'isotope', 'isotopeStringProperty' );
 addToMapIfDefined( 'time', 'timeStringProperty' );
 addToMapIfDefined( 'addAtom', 'addAtomStringProperty' );
-addToMapIfDefined( 'alphaDecayEnergy', 'alphaDecayEnergyStringProperty' );
-addToMapIfDefined( 'initialEnergy', 'initialEnergyStringProperty' );
+addToMapIfDefined( 'alphaParticleEnergy', 'alphaParticleEnergyStringProperty' );
 addToMapIfDefined( 'potentialEnergy', 'potentialEnergyStringProperty' );
-addToMapIfDefined( 'finalEnergy', 'finalEnergyStringProperty' );
 addToMapIfDefined( 'distance', 'distanceStringProperty' );
 addToMapIfDefined( 'energy', 'energyStringProperty' );
 addToMapIfDefined( 'energyDiagram', 'energyDiagramStringProperty' );
@@ -81,9 +79,8 @@ addToMapIfDefined( 'a11y_qualitative_valueHigh', 'a11y.qualitative.valueHighStri
 addToMapIfDefined( 'a11y_energyDiagram_accessibleName', 'a11y.energyDiagram.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_energyDiagram_accessibleHelpTextCollapsed', 'a11y.energyDiagram.accessibleHelpTextCollapsedStringProperty' );
 addToMapIfDefined( 'a11y_energyDiagram_staticDescription', 'a11y.energyDiagram.staticDescriptionStringProperty' );
-addToMapIfDefined( 'a11y_energyDiagram_beforeDecay_initialEnergy', 'a11y.energyDiagram.beforeDecay.initialEnergyStringProperty' );
+addToMapIfDefined( 'a11y_energyDiagram_beforeDecay_initialEnergy', 'a11y.energyDiagram.beforeDecay.alphaParticleEnergyStringProperty' );
 addToMapIfDefined( 'a11y_energyDiagram_beforeDecay_escapeDistance', 'a11y.energyDiagram.beforeDecay.escapeDistanceStringProperty' );
-addToMapIfDefined( 'a11y_energyDiagram_afterDecay_finalEnergy', 'a11y.energyDiagram.afterDecay.finalEnergyStringProperty' );
 addToMapIfDefined( 'a11y_energyDiagram_afterDecay_escapeDistance', 'a11y.energyDiagram.afterDecay.escapeDistanceStringProperty' );
 addToMapIfDefined( 'a11y_energyDiagram_afterDecay_potentialWell', 'a11y.energyDiagram.afterDecay.potentialWellStringProperty' );
 addToMapIfDefined( 'a11y_energyDiagramSliders_accessibleContextResponse', 'a11y.energyDiagramSliders.accessibleContextResponseStringProperty' );
@@ -172,10 +169,8 @@ const NuclearDecayCommonFluent = {
   isotopeStringProperty: _.get( NuclearDecayCommonStrings, 'isotopeStringProperty' ),
   timeStringProperty: _.get( NuclearDecayCommonStrings, 'timeStringProperty' ),
   addAtomStringProperty: _.get( NuclearDecayCommonStrings, 'addAtomStringProperty' ),
-  alphaDecayEnergyStringProperty: _.get( NuclearDecayCommonStrings, 'alphaDecayEnergyStringProperty' ),
-  initialEnergyStringProperty: _.get( NuclearDecayCommonStrings, 'initialEnergyStringProperty' ),
+  alphaParticleEnergyStringProperty: _.get( NuclearDecayCommonStrings, 'alphaParticleEnergyStringProperty' ),
   potentialEnergyStringProperty: _.get( NuclearDecayCommonStrings, 'potentialEnergyStringProperty' ),
-  finalEnergyStringProperty: _.get( NuclearDecayCommonStrings, 'finalEnergyStringProperty' ),
   distanceStringProperty: _.get( NuclearDecayCommonStrings, 'distanceStringProperty' ),
   energyStringProperty: _.get( NuclearDecayCommonStrings, 'energyStringProperty' ),
   energyDiagramStringProperty: _.get( NuclearDecayCommonStrings, 'energyDiagramStringProperty' ),
@@ -232,11 +227,10 @@ const NuclearDecayCommonFluent = {
       accessibleHelpTextCollapsedStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_energyDiagram_accessibleHelpTextCollapsed', _.get( NuclearDecayCommonStrings, 'a11y.energyDiagram.accessibleHelpTextCollapsedStringProperty' ) ),
       staticDescriptionStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_energyDiagram_staticDescription', _.get( NuclearDecayCommonStrings, 'a11y.energyDiagram.staticDescriptionStringProperty' ) ),
       beforeDecay: {
-        initialEnergy: new FluentPattern<{ position: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_energyDiagram_beforeDecay_initialEnergy', _.get( NuclearDecayCommonStrings, 'a11y.energyDiagram.beforeDecay.initialEnergyStringProperty' ), [{"name":"position"}] ),
+        initialEnergy: new FluentPattern<{ position: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_energyDiagram_beforeDecay_initialEnergy', _.get( NuclearDecayCommonStrings, 'a11y.energyDiagram.beforeDecay.alphaParticleEnergyStringProperty' ), [{"name":"position"}] ),
         escapeDistance: new FluentPattern<{ distance: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_energyDiagram_beforeDecay_escapeDistance', _.get( NuclearDecayCommonStrings, 'a11y.energyDiagram.beforeDecay.escapeDistanceStringProperty' ), [{"name":"distance"}] )
       },
       afterDecay: {
-        finalEnergyStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_energyDiagram_afterDecay_finalEnergy', _.get( NuclearDecayCommonStrings, 'a11y.energyDiagram.afterDecay.finalEnergyStringProperty' ) ),
         escapeDistance: new FluentPattern<{ distance: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_energyDiagram_afterDecay_escapeDistance', _.get( NuclearDecayCommonStrings, 'a11y.energyDiagram.afterDecay.escapeDistanceStringProperty' ), [{"name":"distance"}] ),
         potentialWellStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_energyDiagram_afterDecay_potentialWell', _.get( NuclearDecayCommonStrings, 'a11y.energyDiagram.afterDecay.potentialWellStringProperty' ) )
       }

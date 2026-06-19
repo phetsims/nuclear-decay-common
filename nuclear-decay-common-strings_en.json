@@ -23,17 +23,11 @@
   "addAtom": {
     "value": "Add Atom"
   },
-  "alphaDecayEnergy": {
-    "value": "Alpha Decay Energy"
-  },
-  "initialEnergy": {
-    "value": "Initial Energy"
+  "alphaParticleEnergy": {
+    "value": "Alpha Particle Energy"
   },
   "potentialEnergy": {
     "value": "Potential Energy"
-  },
-  "finalEnergy": {
-    "value": "Final Energy"
   },
   "distance": {
     "value": "Distance"
@@ -197,9 +191,6 @@
         }
       },
       "afterDecay": {
-        "finalEnergy": {
-          "value": "Final energy lower."
-        },
         "escapeDistance": {
           "value": "Alpha particle escape distance is { $distance }."
         },
