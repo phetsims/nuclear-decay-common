@@ -18,6 +18,7 @@ import Range from '../../../../dot/js/Range.js';
 import Vector2, { Vector2StateObject } from '../../../../dot/js/Vector2.js';
 import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
 import optionize from '../../../../phet-core/js/optionize.js';
+import ProfileColorProperty from '../../../../scenery/js/util/ProfileColorProperty.js';
 import AtomInfoUtils, { DecayType, decayTypeValues } from '../../../../shred/js/AtomInfoUtils.js';
 import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
 import AtomConfig from '../../../../shred/js/model/AtomConfig.js';
@@ -29,6 +30,7 @@ import IOType from '../../../../tandem/js/types/IOType.js';
 import NullableIO from '../../../../tandem/js/types/NullableIO.js';
 import NumberIO from '../../../../tandem/js/types/NumberIO.js';
 import StringUnionIO from '../../../../tandem/js/types/StringUnionIO.js';
+import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import EjectedDecayParticle, { EjectedDecayParticleStateObject } from './EjectedDecayParticle.js';
 
@@ -68,6 +70,18 @@ const ISOTOPE_TO_ATOM_CONFIG = new Map<ValidIsotopes, AtomConfig>( [
   [ 'helium-2', NuclearDecayCommonConstants.ALPHA_PARTICLE ],
   [ 'custom', NuclearDecayCommonConstants.CUSTOM_UNDECAYED ],
   [ 'custom-decayed', NuclearDecayCommonConstants.CUSTOM_DECAYED ]
+] );
+
+export const ISOTOPE_TO_COLOR = new Map<ValidIsotopes, ProfileColorProperty>( [
+  [ 'polonium-211', NuclearDecayCommonColors.poloniumColorProperty ],
+  [ 'custom', NuclearDecayCommonColors.isotopeAColorProperty ],
+  [ 'lead-207', NuclearDecayCommonColors.decayedProperty ],
+  [ 'carbon-14', NuclearDecayCommonColors.decayedProperty ],
+  [ 'nitrogen-14', NuclearDecayCommonColors.decayedProperty ],
+  [ 'hydrogen-3', NuclearDecayCommonColors.decayedProperty ],
+  [ 'helium-3', NuclearDecayCommonColors.decayedProperty ],
+  [ 'helium-2', NuclearDecayCommonColors.decayedProperty ],
+  [ 'custom-decayed', NuclearDecayCommonColors.decayedProperty ]
 ] );
 
 type SelfOptions = {

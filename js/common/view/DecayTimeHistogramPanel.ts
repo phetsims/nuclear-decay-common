@@ -35,7 +35,7 @@ import Tandem from '../../../../tandem/js/Tandem.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
-import NuclearDecayAtom, { StartingIsotopes } from '../model/NuclearDecayAtom.js';
+import NuclearDecayAtom, { ISOTOPE_TO_COLOR, StartingIsotopes } from '../model/NuclearDecayAtom.js';
 import NuclearDecayModel, { Timescale } from '../model/NuclearDecayModel.js';
 import { DecayPieChartNode } from './DecayPieChartNode.js';
 import DecayTimeHistogramCanvasNode from './DecayTimeHistogramCanvasNode.js';
@@ -128,7 +128,9 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
     const initialIsotopeSymbol = new RichText( selectedIsotopeSymbolProperty, {
       font: NuclearDecayCommonConstants.CONTROL_BOLD_FONT,
-      fill: NuclearDecayCommonColors.poloniumColorProperty,
+      fill: model.selectedIsotopeProperty.derived( isotope => {
+        return ISOTOPE_TO_COLOR.get( isotope )!.value;
+      } ),
       left: ISOTOPE_SYMBOL_X,
       centerY: 5,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
@@ -430,7 +432,11 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     } );
 
     const histogramCanvasNode = new DecayTimeHistogramCanvasNode(
-      model.histogramData, getXForTime, model.timescaleProperty, model.isSingleAtomMode,
+      model.selectedIsotopeProperty,
+      model.histogramData,
+      getXForTime,
+      model.timescaleProperty,
+      model.isSingleAtomMode,
       new Bounds2( 0, 0, GRAPH_X_OFFSET + GRAPH_WIDTH, GRAPH_HEIGHT )
     );
 

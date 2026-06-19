@@ -13,7 +13,7 @@ import ModelViewTransform2 from '../../../../phetcommon/js/view/ModelViewTransfo
 import Circle, { CircleOptions } from '../../../../scenery/js/nodes/Circle.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
-import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
+import NuclearDecayAtom, { ISOTOPE_TO_COLOR } from '../model/NuclearDecayAtom.js';
 import Updatable from '../model/Updatable.js';
 
 type SelfOptions = {
@@ -52,7 +52,7 @@ export default class MinimalAtomNode extends Circle implements Updatable {
 
   public update(): void {
     this.visible = this.decayingAtom.isActive;
-    this.fill = this.decayingAtom.hasDecayed ? NuclearDecayCommonColors.decayedProperty : NuclearDecayCommonColors.poloniumColorProperty;
+    this.fill = this.decayingAtom.hasDecayed ? NuclearDecayCommonColors.decayedProperty : ISOTOPE_TO_COLOR.get( this.decayingAtom.isotope )!;
     this.updatePosition();
   }
 }

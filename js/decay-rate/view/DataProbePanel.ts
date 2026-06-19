@@ -7,6 +7,7 @@
  */
 
 import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
+import ReadOnlyProperty from '../../../../axon/js/ReadOnlyProperty.js';
 import { toFixed } from '../../../../dot/js/util/toFixed.js';
 import { toFixedNumber } from '../../../../dot/js/util/toFixedNumber.js';
 import optionize from '../../../../phet-core/js/optionize.js';
@@ -15,7 +16,7 @@ import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
 import RichText from '../../../../scenery/js/nodes/RichText.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
-import ProfileColorProperty from '../../../../scenery/js/util/ProfileColorProperty.js';
+import Color from '../../../../scenery/js/util/Color.js';
 import Panel, { PanelOptions } from '../../../../sun/js/Panel.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
@@ -38,7 +39,7 @@ export default class DataProbePanel extends Panel {
   public constructor(
     undecayedSymbol: string,
     decayedSymbol: string,
-    undecayedColorProperty: ProfileColorProperty,
+    undecayedColorProperty: ReadOnlyProperty<Color>,
     providedOptions?: DataProbePanelOptions
   ) {
 

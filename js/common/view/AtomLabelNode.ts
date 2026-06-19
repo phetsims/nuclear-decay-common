@@ -17,7 +17,7 @@ import Rectangle from '../../../../scenery/js/nodes/Rectangle.js';
 import RichText from '../../../../scenery/js/nodes/RichText.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
-import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
+import NuclearDecayAtom, { ISOTOPE_TO_COLOR } from '../model/NuclearDecayAtom.js';
 
 type SelfOptions = {
   font?: PhetFont;
@@ -44,8 +44,7 @@ export default class AtomLabelNode extends Node {
     }, providedOptions );
 
     const labelText = new RichText( '', {
-      font: options.font,
-      fill: NuclearDecayCommonColors.poloniumColorProperty
+      font: options.font
     } );
 
     // Create the background.  The initial size is arbitrary and will update with the label size.
@@ -97,10 +96,9 @@ export default class AtomLabelNode extends Node {
   public updateLabelText(): void {
     this.labelText.string = NuclearDecayAtom.getIsotopeMassAndSymbolString( this.decayingAtom.isotope );
     this.labelText.center = this.labelBackground.center;
-
     this.labelText.fill = this.decayingAtom.hasDecayed ?
                           NuclearDecayCommonColors.decayedProperty :
-                          NuclearDecayCommonColors.poloniumColorProperty;
+                          ISOTOPE_TO_COLOR.get( this.decayingAtom.isotope )!;
   }
 
   public reset(): void {

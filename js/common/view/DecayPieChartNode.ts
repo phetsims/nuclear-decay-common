@@ -5,6 +5,7 @@
  * @author Agustín Vallejo
  */
 
+import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
 import Multilink from '../../../../axon/js/Multilink.js';
 import StringProperty from '../../../../axon/js/StringProperty.js';
 import Shape from '../../../../kite/js/Shape.js';
@@ -17,7 +18,7 @@ import Path from '../../../../scenery/js/nodes/Path.js';
 import RichText from '../../../../scenery/js/nodes/RichText.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
-import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
+import NuclearDecayAtom, { ISOTOPE_TO_COLOR } from '../model/NuclearDecayAtom.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
 
 type SelfOptions = {
@@ -55,17 +56,22 @@ export class DecayPieChartNode extends VBox {
     // Isotope count labels at the top
     const undecayedCountLabel = new RichText( undecayedCountStringProperty, {
       font: NuclearDecayCommonConstants.CONTROL_FONT,
-      fill: NuclearDecayCommonColors.poloniumColorProperty
+      fill: model.selectedIsotopeProperty.derived( isotope => {
+        return ISOTOPE_TO_COLOR.get( isotope )!.value;
+      } )
     } );
     const decayedCountLabel = new RichText( decayedCountStringProperty, {
       font: NuclearDecayCommonConstants.CONTROL_FONT
     } );
 
     const undecayedBackgroundCircle = new Circle( options.radius, {
-      stroke: 'black'
-    } );
-    model.undecayedCountProperty.link( count => {
-      undecayedBackgroundCircle.fill = count !== 0 ? NuclearDecayCommonColors.poloniumColorProperty : null;
+      stroke: 'black',
+      fill: new DerivedProperty( [
+        model.undecayedCountProperty,
+        model.selectedIsotopeProperty
+      ], ( count, isotope ) => {
+        return count !== 0 ? ISOTOPE_TO_COLOR.get( isotope )!.get() : null;
+      } )
     } );
 
     const decayedArc = new Path( null, {

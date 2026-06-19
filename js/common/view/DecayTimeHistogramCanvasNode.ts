@@ -11,9 +11,9 @@ import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
 import CanvasNode from '../../../../scenery/js/nodes/CanvasNode.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
-import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import HistogramData from '../model/HistogramData.js';
+import { ISOTOPE_TO_COLOR, StartingIsotopes } from '../model/NuclearDecayAtom.js';
 import { Timescale } from '../model/NuclearDecayModel.js';
 
 // Dimensions of the undecayed indicator in multi-atom mode.
@@ -27,6 +27,7 @@ export default class DecayTimeHistogramCanvasNode extends CanvasNode {
   private readonly graphHeight: number;
 
   public constructor(
+    private readonly selectedIsotopeProperty: TReadOnlyProperty<StartingIsotopes>,
     private readonly histogramData: HistogramData,
     private readonly getXForTime: ( time: number, timescale: Timescale ) => number,
     private readonly timescaleProperty: TReadOnlyProperty<Timescale>,
@@ -115,7 +116,8 @@ export default class DecayTimeHistogramCanvasNode extends CanvasNode {
       const undecayedHeight = this.isSingleAtomMode ? 9 : UNDECAYED_HEIGHT;
       const x = this.getXForTime( data.undecayedTime, timescale );
 
-      context.fillStyle = NuclearDecayCommonColors.poloniumColorProperty.value.toCSS();
+      const baseColorProperty = ISOTOPE_TO_COLOR.get( this.selectedIsotopeProperty.value )!;
+      context.fillStyle = baseColorProperty.value.toCSS();
       context.strokeStyle = 'black';
       context.fillRect( x, 0, undecayedWidth, undecayedHeight );
       context.strokeRect( x, 0, undecayedWidth, undecayedHeight );

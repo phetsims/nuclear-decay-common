@@ -15,9 +15,8 @@ import Node from '../../../../scenery/js/nodes/Node.js';
 import RichText from '../../../../scenery/js/nodes/RichText.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
 import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
-import NuclearDecayAtom from '../../common/model/NuclearDecayAtom.js';
+import NuclearDecayAtom, { ISOTOPE_TO_COLOR } from '../../common/model/NuclearDecayAtom.js';
 import NuclearDecayAccordionBox, { NuclearDecayAccordionBoxOptions } from '../../common/view/NuclearDecayAccordionBox.js';
-import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import SingleAtomModel from '../model/SingleAtomModel.js';
@@ -78,8 +77,12 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
     } );
 
     Multilink.multilink(
-      [ model.hasDecayOccurredProperty, accordionBoxExpandedProperty ], ( hasDecayed, expanded ) => {
-        titleNode.fill = hasDecayed || !expanded ? 'black' : NuclearDecayCommonColors.poloniumColorProperty;
+      [
+        model.hasDecayOccurredProperty,
+        model.selectedIsotopeProperty,
+        accordionBoxExpandedProperty
+      ], ( hasDecayed, isotope, expanded ) => {
+        titleNode.fill = hasDecayed || !expanded ? 'black' : ISOTOPE_TO_COLOR.get( isotope )!;
       }
     );
 
