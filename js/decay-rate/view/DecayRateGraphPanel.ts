@@ -187,8 +187,8 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     [ 0.25, 0.50, 0.75 ].forEach( fraction => {
       const y = GRAPH_HEIGHT * ( 1 - fraction );
       gridLines.addChild( new Line( 0, y, GRAPH_WIDTH, y, {
-        stroke: '#ddd',
-        lineWidth: 1
+        stroke: 'black',
+        lineWidth: 0.5
       } ) );
     } );
 

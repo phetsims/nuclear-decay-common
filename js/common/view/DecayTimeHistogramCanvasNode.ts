@@ -42,7 +42,7 @@ export default class DecayTimeHistogramCanvasNode extends CanvasNode {
       // Only have the count label in multi-atom mode.
       this.undecayedCountLabel = new Text( '', {
         font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
-        fill: 'black'
+        fill: 'white'
       } );
       this.addChild( this.undecayedCountLabel );
     }
