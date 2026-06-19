@@ -203,10 +203,11 @@ export default class NuclearDecayAtom {
         this.ejectedDecayParticles.push( particle );
       }
       else if ( decayType === 'betaMinusDecay' ) {
-        this.ejectedDecayParticles.push( new EjectedDecayParticle( 'electron', {
-          animationSpeedProperty: new NumberProperty( options.particleEjectionSpeed ),
-          tandem: Tandem.OPT_OUT
-        } ) );
+        // TODO: This will be added when we work on Beta Decay https://github.com/phetsims/alpha-decay/issues/3
+        // this.ejectedDecayParticles.push( new EjectedDecayParticle( 'electron', {
+        //   animationSpeedProperty: new NumberProperty( options.particleEjectionSpeed ),
+        //   tandem: Tandem.OPT_OUT
+        // } ) );
 
         // Note: We will also need to add the electron antineutrino as some point.
       }
