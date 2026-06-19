@@ -64,21 +64,6 @@ export default class EnergyDiagramLegendNode extends VBox {
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
-    const finalEnergyLegendLine = new Line( 0, 0, LEGEND_LINE_LENGTH, 0, {
-        stroke: NuclearDecayCommonColors.finalEnergyProperty,
-        lineWidth: 2,
-        lineDash: [ 4, 4 ],
-        visibleProperty: hasDecayOccurredProperty
-      }
-    );
-
-    const finalEnergyLabel = new Text( NuclearDecayCommonFluent.finalEnergyStringProperty, {
-      font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
-      maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH,
-      visibleProperty: hasDecayOccurredProperty
-    } );
-
-
     options.children = [
       subtitleText,
       new HBox( {
@@ -88,10 +73,6 @@ export default class EnergyDiagramLegendNode extends VBox {
       new HBox( {
         spacing: 6,
         children: [ potentialEnergyLegendLine, potentialEnergyLabel ]
-      } ),
-      new HBox( {
-        spacing: 6,
-        children: [ finalEnergyLegendLine, finalEnergyLabel ]
       } )
     ];
 

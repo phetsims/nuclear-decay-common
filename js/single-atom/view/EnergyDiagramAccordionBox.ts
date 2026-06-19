@@ -24,13 +24,11 @@ import optionize from '../../../../phet-core/js/optionize.js';
 import ModelViewTransform2 from '../../../../phetcommon/js/view/ModelViewTransform2.js';
 import AccessibleList from '../../../../scenery-phet/js/accessibility/AccessibleList.js';
 import ArrowNode from '../../../../scenery-phet/js/ArrowNode.js';
-import ShadedSphereNode from '../../../../scenery-phet/js/ShadedSphereNode.js';
 import DragListener from '../../../../scenery/js/listeners/DragListener.js';
 import Line from '../../../../scenery/js/nodes/Line.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Path from '../../../../scenery/js/nodes/Path.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
-import ShredColors from '../../../../shred/js/ShredColors.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
 import AlphaParticleNode from '../../common/view/AlphaParticleNode.js';
 import DynamicNucleusNode from '../../common/view/DynamicNucleusNode.js';
@@ -70,16 +68,8 @@ const WELL_BOTTOM_Y = GRAPH_HEIGHT * NuclearDecayCommonConstants.WELL_DEPTH / 2;
 const POINTINESS_FACTOR = 25; // sharpness of the quadratic curve at the barrier peak. 0 = max pointiness, 100 least.
 const CURVINESS_FACTOR = 0; // how curvy the potential energy curve is at the barrier peak. 0 = very curvy, rapid falloff, 1 = closer to a straight line.
 
-const FINAL_ENERGY_HEIGHT = 18; // height of the final energy line after decay (below x-axis)
-
 // How much deeper the well bottom goes at maximum initial energy (initialEnergy=1) after decay.
 const WELL_BOTTOM_POST_DECAY_MAX_EXTRA_DEPTH = GRAPH_HEIGHT * ( 1 - NuclearDecayCommonConstants.WELL_DEPTH - 0.05 ) / 2;
-
-const PRE_DECAY_PARTICLE_COUNTS = {
-  protons: 6,
-  neutrons: 6,
-  alphaParticles: 4
-};
 
 export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox {
 
@@ -221,13 +211,6 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       visibleProperty: isAtomInPlayAreaProperty
     } );
 
-    const finalEnergyGraphLine = new Line( -GRAPH_X_OFFSET, FINAL_ENERGY_HEIGHT, graphRightX, FINAL_ENERGY_HEIGHT, {
-      stroke: NuclearDecayCommonColors.finalEnergyProperty,
-      lineWidth: 2,
-      lineDash: [ 7, 7 ],
-      visibleProperty: model.hasDecayOccurredProperty
-    } );
-
     const energyIntersectionPointProperty = new Vector2Property( Vector2.ZERO, {
       tandem: Tandem.OPT_OUT
     } );
@@ -253,22 +236,9 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
 
     // Add the particlesInWell that will move around on the graph.
     const particlesInWell: Node[] = [];
-    affirm( PRE_DECAY_PARTICLE_COUNTS.alphaParticles >= 1, 'must have at least on alpha particle' );
-    _.times( PRE_DECAY_PARTICLE_COUNTS.protons, () => {
-      particlesInWell.push( new ShadedSphereNode( 2 * options.nucleonRadius, {
-        mainColor: ShredColors.protonColorProperty
-      } ) );
-    } );
-    _.times( PRE_DECAY_PARTICLE_COUNTS.neutrons, () => {
-      particlesInWell.push( new ShadedSphereNode( 2 * options.nucleonRadius, {
-        mainColor: ShredColors.neutronColorProperty
-      } ) );
-    } );
-    _.times( PRE_DECAY_PARTICLE_COUNTS.alphaParticles, () => {
-      particlesInWell.push( new AlphaParticleNode( {
-        nucleonDiameter: options.nucleonRadius * 2
-      } ) );
-    } );
+    particlesInWell.push( new AlphaParticleNode( {
+      nucleonDiameter: options.nucleonRadius * 2
+    } ) );
 
     // the layer where the particles that move around on the graph will reside
     const particleLayer = new Node( {
@@ -292,7 +262,6 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         initialEnergyGrabber,
         potentialEnergyHeightIndicator,
         potentialEnergyGrabber,
-        finalEnergyGraphLine,
         particleLayer
       ],
       accessibleTemplate: AccessibleList.createTemplateProperty( {
@@ -313,11 +282,6 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
           },
 
           // AFTER DECAY
-          // Final energy lower
-          {
-            stringProperty: NuclearDecayCommonFluent.a11y.energyDiagram.afterDecay.finalEnergyStringProperty,
-            visibleProperty: afterDecayDescriptionVisibleProperty
-          },
           // Alpha particle escape distance is ...
           {
             stringProperty: NuclearDecayCommonFluent.a11y.energyDiagram.afterDecay.escapeDistance.createProperty( {
@@ -495,7 +459,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     const ejectedParticleTweakFactor = -100; // JB REVIEW: Figure out why this is needed and fix the root cause.
     model.hasDecayOccurredProperty.link( hasDecayed => {
       particlesInWell.forEach( particle => {
-        particle.centerY = hasDecayed ? finalEnergyGraphLine.centerY : initialEnergyGraphLine.centerY;
+        particle.centerY = initialEnergyGraphLine.centerY;
         particle.centerX = wellCenterXProperty.value + ( dotRandom.nextDouble() - 0.5 ) * 2 * maxParticleXDelta;
       } );
 
