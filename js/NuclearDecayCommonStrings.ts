@@ -62,6 +62,10 @@ type StringsType = {
   'isotopeAStringProperty': LocalizedStringProperty;
   'isotopeB': string;
   'isotopeBStringProperty': LocalizedStringProperty;
+  'customIsotope': string;
+  'customIsotopeStringProperty': LocalizedStringProperty;
+  'decayedIsotope': string;
+  'decayedIsotopeStringProperty': LocalizedStringProperty;
   'protonsPattern': string;
   'protonsPatternStringProperty': LocalizedStringProperty;
   'neutronsPattern': string;

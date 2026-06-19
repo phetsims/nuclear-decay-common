@@ -71,6 +71,12 @@
   "isotopeB": {
     "value": "Isotope B"
   },
+  "customIsotope": {
+    "value": "Custom Isotope"
+  },
+  "decayedIsotope": {
+    "value": "Decayed Isotope"
+  },
   "protonsPattern": {
     "value": "Protons: {{protons}}"
   },

@@ -39,8 +39,7 @@ export type DecayRateScreenViewOptions = SelfOptions & NuclearDecayScreenViewOpt
 
 export default class DecayRateScreenView extends NuclearDecayScreenView {
 
-  // TODO: declare? Find a way to have this be this.model without conflicts with parent class https://github.com/phetsims/alpha-decay/issues/3
-  private readonly decayRateModel: DecayRateModel;
+  declare public readonly model: DecayRateModel;
   private readonly decayRateGraphPanel: DecayRateGraphPanel;
 
   private readonly visibleProperties: DecayRateVisibleProperties;
@@ -107,16 +106,15 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
     this.addChild( addAtomsPanel );
 
     const isotopesLegendPanel = new IsotopeSelectionPanel(
-      [ NuclearDecayCommonConstants.POLONIUM_211, NuclearDecayCommonConstants.LEAD_207 ],
+      [ 'polonium-211', 'lead-207' ],
       {
+        selectedIsotopeProperty: model.selectedIsotopeProperty,
         includeAtomRepresentation: true,
         left: this.layoutBounds.minX + MARGIN_X,
         bottom: this.layoutBounds.maxY - MARGIN_Y
       }
     );
     this.addChild( isotopesLegendPanel );
-
-    this.decayRateModel = model;
 
     this.decayRateGraphPanel = new DecayRateGraphPanel( model, this.visibleProperties, {
       top: this.layoutBounds.minY,
@@ -156,7 +154,6 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
       listener: () => {
         model.sort();
         this.updateAtomNodes();
-        model.isPlayingProperty.value = false;
       }
     } );
 
@@ -290,8 +287,8 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
   public override step( dt: number ): void {
     super.step( dt );
     this.decayRateGraphPanel.update(
-      this.decayRateModel.undecayedDataPoints,
-      this.decayRateModel.decayedDataPoints
+      this.model.undecayedDataPoints,
+      this.model.decayedDataPoints
     );
   }
 

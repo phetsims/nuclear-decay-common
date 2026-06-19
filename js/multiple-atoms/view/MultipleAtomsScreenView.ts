@@ -175,8 +175,9 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     this.setPlayAreaBounds( playAreaBounds );
 
     const isotopesLegendPanel = new IsotopeSelectionPanel(
-      [ NuclearDecayCommonConstants.POLONIUM_211, NuclearDecayCommonConstants.LEAD_207 ],
+      [ 'polonium-211', 'lead-207' ],
       {
+        selectedIsotopeProperty: model.selectedIsotopeProperty,
         left: this.layoutBounds.minX + MARGIN_X,
         bottom: this.layoutBounds.maxY - MARGIN_Y
       }
