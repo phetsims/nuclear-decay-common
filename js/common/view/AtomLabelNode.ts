@@ -45,15 +45,15 @@ export default class AtomLabelNode extends Node {
 
     const labelText = new RichText( '', {
       font: options.font,
-      fill: NuclearDecayCommonColors.undecayedProperty
+      fill: NuclearDecayCommonColors.poloniumColorProperty
     } );
 
     // Create the background.  The initial size is arbitrary and will update with the label size.
     const labelBackground = new Rectangle( 0, 0, 1, 1, {
-      fill: 'yellow',
+      fill: NuclearDecayCommonColors.labelHighlightProperty,
       cornerRadius: 5,
       opacity: 0,
-      stroke: 'orange'
+      stroke: NuclearDecayCommonColors.labelHighlightBorderProperty
     } );
 
     // Update the background size as the text changes.
@@ -100,7 +100,7 @@ export default class AtomLabelNode extends Node {
 
     this.labelText.fill = this.decayingAtom.hasDecayed ?
                           NuclearDecayCommonColors.decayedProperty :
-                          NuclearDecayCommonColors.undecayedProperty;
+                          NuclearDecayCommonColors.poloniumColorProperty;
   }
 
   public reset(): void {

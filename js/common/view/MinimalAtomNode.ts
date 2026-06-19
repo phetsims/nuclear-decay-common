@@ -30,7 +30,7 @@ export default class MinimalAtomNode extends Circle implements Updatable {
     const options = optionize<MinimalAtomNodeOptions, SelfOptions, MinimalAtomNodeOptions>()( {
       showElectronCloud: false,
       visible: decayingAtom.isActive,
-      fill: NuclearDecayCommonColors.undecayedProperty
+      fill: NuclearDecayCommonColors.poloniumColorProperty
     }, providedOptions );
 
     super( modelViewTransformProperty.value.modelToViewDeltaX( NuclearDecayCommonConstants.ATOM_RADIUS ), options );
@@ -52,7 +52,7 @@ export default class MinimalAtomNode extends Circle implements Updatable {
 
   public update(): void {
     this.visible = this.decayingAtom.isActive;
-    this.fill = this.decayingAtom.hasDecayed ? NuclearDecayCommonColors.decayedProperty : NuclearDecayCommonColors.undecayedProperty;
+    this.fill = this.decayingAtom.hasDecayed ? NuclearDecayCommonColors.decayedProperty : NuclearDecayCommonColors.poloniumColorProperty;
     this.updatePosition();
   }
 }

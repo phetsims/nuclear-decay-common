@@ -21,6 +21,7 @@ import Node, { NodeOptions } from '../../../../scenery/js/nodes/Node.js';
 import RadialGradient from '../../../../scenery/js/util/RadialGradient.js';
 import { rasterizeNode } from '../../../../scenery/js/util/rasterizeNode.js';
 import ShredColors from '../../../../shred/js/ShredColors.js';
+import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 import Updatable from '../model/Updatable.js';
 import AtomLabelNode from './AtomLabelNode.js';
@@ -42,9 +43,13 @@ const VIBRATION_UPDATE_PERIOD = 0.032;
 const MAX_VIBRATION_OFFSET = 4;
 
 const ELECTRON_CLOUD_RADIUS = NUCLEON_RADIUS * 10;
-const ELECTRON_CLOUD_GRADIENT = new RadialGradient( 0, 0, 0, 0, 0, ELECTRON_CLOUD_RADIUS )
-  .addColorStop( 0, 'rgba( 0, 0, 255, 0.5 )' )
-  .addColorStop( 1, 'rgba( 0, 0, 255, 0.05 )' );
+
+const createElectronCloudGradient = () => {
+  const color = NuclearDecayCommonColors.electronCloudColorProperty.value;
+  return new RadialGradient( 0, 0, 0, 0, 0, ELECTRON_CLOUD_RADIUS )
+    .addColorStop( 0, color.withAlpha( 0.5 ) )
+    .addColorStop( 1, color.withAlpha( 0.05 ) );
+};
 
 export default class VibratingDecayingAtomNode extends Node implements Updatable {
 
@@ -61,7 +66,7 @@ export default class VibratingDecayingAtomNode extends Node implements Updatable
   private readonly nucleusNode: Node;
 
   // node that represents the electron cloud, which may or may not be visible based on settings
-  private readonly electronCloudNode: Node;
+  private readonly electronCloudNode: Circle;
 
   // label of the atom
   private readonly atomLabelNode: AtomLabelNode;
@@ -85,11 +90,15 @@ export default class VibratingDecayingAtomNode extends Node implements Updatable
     this.addChild( this.nucleusNode );
 
     this.electronCloudNode = new Circle( ELECTRON_CLOUD_RADIUS, {
-      fill: ELECTRON_CLOUD_GRADIENT,
+      fill: createElectronCloudGradient(),
       visibleProperty: electronCloudVisibleProperty
     } );
     this.addChild( this.electronCloudNode );
     this.electronCloudNode.moveToBack();
+
+    NuclearDecayCommonColors.electronCloudColorProperty.link( () => {
+      this.electronCloudNode.fill = createElectronCloudGradient();
+    } );
 
     const labelsVisibleProperty = options.labelsVisibleProperty ?? new Property( true );
     this.atomLabelNode = new AtomLabelNode( decayingAtom, {

@@ -55,7 +55,7 @@ export class DecayPieChartNode extends VBox {
     // Isotope count labels at the top
     const undecayedCountLabel = new RichText( undecayedCountStringProperty, {
       font: NuclearDecayCommonConstants.CONTROL_FONT,
-      fill: NuclearDecayCommonColors.undecayedProperty
+      fill: NuclearDecayCommonColors.poloniumColorProperty
     } );
     const decayedCountLabel = new RichText( decayedCountStringProperty, {
       font: NuclearDecayCommonConstants.CONTROL_FONT
@@ -65,7 +65,7 @@ export class DecayPieChartNode extends VBox {
       stroke: 'black'
     } );
     model.undecayedCountProperty.link( count => {
-      undecayedBackgroundCircle.fill = count !== 0 ? NuclearDecayCommonColors.undecayedProperty : null;
+      undecayedBackgroundCircle.fill = count !== 0 ? NuclearDecayCommonColors.poloniumColorProperty : null;
     } );
 
     const decayedArc = new Path( null, {

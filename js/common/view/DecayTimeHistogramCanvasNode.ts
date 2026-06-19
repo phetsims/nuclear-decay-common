@@ -115,7 +115,7 @@ export default class DecayTimeHistogramCanvasNode extends CanvasNode {
       const undecayedHeight = this.isSingleAtomMode ? 9 : UNDECAYED_HEIGHT;
       const x = this.getXForTime( data.undecayedTime, timescale );
 
-      context.fillStyle = NuclearDecayCommonColors.undecayedProperty.value.toCSS();
+      context.fillStyle = NuclearDecayCommonColors.poloniumColorProperty.value.toCSS();
       context.strokeStyle = 'black';
       context.fillRect( x, 0, undecayedWidth, undecayedHeight );
       context.strokeRect( x, 0, undecayedWidth, undecayedHeight );

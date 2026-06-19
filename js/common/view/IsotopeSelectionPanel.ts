@@ -36,7 +36,7 @@ export default class IsotopeSelectionPanel extends NuclearDecayPanel {
       const massAndSymbol = AtomNameUtils.getMassAndSymbol( atomConfig.protonCount, atomConfig.neutronCount );
       const nameAndMassProperty = AtomNameUtils.getNameAndMass( atomConfig.protonCount, atomConfig.neutronCount );
 
-      const atomFill = index === 0 ? NuclearDecayCommonColors.undecayedProperty : 'black';
+      const atomFill = index === 0 ? NuclearDecayCommonColors.poloniumColorProperty : 'black';
 
       const massSymbolText = new RichText( `${massAndSymbol}:`, {
         font: NuclearDecayCommonConstants.CONTROL_FONT,

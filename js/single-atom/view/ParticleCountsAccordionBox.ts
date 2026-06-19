@@ -79,7 +79,7 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
 
     Multilink.multilink(
       [ model.hasDecayOccurredProperty, accordionBoxExpandedProperty ], ( hasDecayed, expanded ) => {
-        titleNode.fill = hasDecayed || !expanded ? 'black' : NuclearDecayCommonColors.undecayedProperty;
+        titleNode.fill = hasDecayed || !expanded ? 'black' : NuclearDecayCommonColors.poloniumColorProperty;
       }
     );
 

@@ -93,7 +93,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     const mainIcon = new Node( {
       children: [
         new Rectangle( 0, 0, ICON_WIDTH, ICON_HEIGHT, { stroke: 'black', lineWidth: 0.5 } ),
-        new Path( decayShape, { stroke: NuclearDecayCommonColors.undecayedProperty, lineWidth: 1.5 } )
+        new Path( decayShape, { stroke: NuclearDecayCommonColors.poloniumColorProperty, lineWidth: 1.5 } )
       ]
     } );
     const undecayedCheckboxContent = new HBox( {
@@ -269,7 +269,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     const dataCircleRadius = 5;
     const undecayedDataCircle = new Circle( dataCircleRadius, {
       fill: 'white',
-      stroke: NuclearDecayCommonColors.undecayedProperty,
+      stroke: NuclearDecayCommonColors.poloniumColorProperty,
       lineWidth: 2
     } );
     const decayedDataCircle = new Circle( dataCircleRadius, {
@@ -280,7 +280,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
 
     // Line paths for the decay curves, clipped to the graph area.
     const undecayedLinePath = new Path( null, {
-      stroke: NuclearDecayCommonColors.undecayedProperty,
+      stroke: NuclearDecayCommonColors.poloniumColorProperty,
       lineWidth: 3,
       clipArea: Shape.rect( 0, 0, GRAPH_WIDTH, GRAPH_HEIGHT )
     } );
@@ -328,7 +328,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     const dataProbePanel = new DataProbePanel(
       undecayedSymbol,
       decayedSymbol,
-      NuclearDecayCommonColors.undecayedProperty,
+      NuclearDecayCommonColors.poloniumColorProperty,
       {
         centerX: dataProbeNode.centerX,
         visibleProperty: visibleProperties.showDataProbeProperty,

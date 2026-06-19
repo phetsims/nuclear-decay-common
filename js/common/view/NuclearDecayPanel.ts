@@ -7,6 +7,7 @@
 
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
+import ShredColors from '../../../../shred/js/ShredColors.js';
 import Panel, { PanelOptions } from '../../../../sun/js/Panel.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 
@@ -19,6 +20,7 @@ export default class NuclearDecayPanel extends Panel {
     const options = optionize<NuclearDecayPanelOptions, SelfOptions, PanelOptions>()( {
       cornerRadius: 5,
       fill: NuclearDecayCommonConstants.PANEL_FILL,
+      stroke: ShredColors.panelStrokeColorProperty,
       xMargin: NuclearDecayCommonConstants.PANEL_X_MARGIN,
       yMargin: NuclearDecayCommonConstants.PANEL_Y_MARGIN
     }, providedOptions );

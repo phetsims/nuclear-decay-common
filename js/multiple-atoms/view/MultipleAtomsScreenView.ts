@@ -33,6 +33,7 @@ import NuclearDecayAtom from '../../common/model/NuclearDecayAtom.js';
 import IsotopeSelectionPanel from '../../common/view/IsotopeSelectionPanel.js';
 import ResetAtomsButton from '../../common/view/ResetAtomsButton.js';
 import SingleAndMultipleAtomsScreenView, { SingleAndMultipleAtomsScreenViewOptions } from '../../common/view/SingleAndMultipleAtomsScreenView.js';
+import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import MultipleAtomsModel from '../model/MultipleAtomsModel.js';
 import MultipleAtomsScreenSummaryContent from './MultipleAtomsScreenSummaryContent.js';
 import MultipleAtomsVisibleProperties from './MultipleAtomsVisibleProperties.js';
@@ -84,8 +85,8 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
           new Text( NuclearDecayCommonFluent.electronCloudStringProperty, { font: NuclearDecayCommonConstants.CONTROL_FONT } ),
           new Circle( electronCloudRadius, {
             fill: new RadialGradient( 0, 0, 0, 0, 0, electronCloudRadius )
-              .addColorStop( 0, 'rgba( 0, 0, 255, 100 )' )
-              .addColorStop( 0.9, 'rgba( 0, 0, 255, 0 )' )
+              .addColorStop( 0, NuclearDecayCommonColors.electronCloudColorProperty.value.withAlpha( 0.5 ) )
+              .addColorStop( 0.9, NuclearDecayCommonColors.electronCloudColorProperty.value.withAlpha( 0 ) )
           } )
         ]
       } ), {

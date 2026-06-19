@@ -128,7 +128,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
     const initialIsotopeSymbol = new RichText( selectedIsotopeSymbolProperty, {
       font: NuclearDecayCommonConstants.CONTROL_BOLD_FONT,
-      fill: NuclearDecayCommonColors.undecayedProperty,
+      fill: NuclearDecayCommonColors.poloniumColorProperty,
       left: ISOTOPE_SYMBOL_X,
       centerY: 5,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
