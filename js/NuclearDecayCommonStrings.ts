@@ -140,7 +140,7 @@ type StringsType = {
       'staticDescriptionStringProperty': LocalizedStringProperty;
       'beforeDecay': {
         'initialEnergy': string;
-        'alphaParticleEnergyStringProperty': LocalizedStringProperty;
+        'initialEnergyStringProperty': LocalizedStringProperty;
         'escapeDistance': string;
         'escapeDistanceStringProperty': LocalizedStringProperty;
       };
