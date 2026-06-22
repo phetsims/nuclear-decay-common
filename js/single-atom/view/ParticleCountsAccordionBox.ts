@@ -71,15 +71,12 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
         }
       } );
 
-    const title = new RichText( isotopeInfoTitleStringProperty, {
+    const titleNode = new RichText( isotopeInfoTitleStringProperty, {
       font: NuclearDecayCommonConstants.TITLE_BOLD_FONT,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
-    const titleNode = new Node( {
-      children: [ title ],
-      maxHeight: title.height
-    } );
+    titleNode.maxHeight = titleNode.height;
 
     Multilink.multilink(
       [
@@ -87,7 +84,7 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
         model.selectedIsotopeProperty,
         accordionBoxExpandedProperty
       ], ( hasDecayed, isotope, expanded ) => {
-        title.fill = hasDecayed || !expanded ? 'black' : ISOTOPE_TO_COLOR.get( isotope )!;
+        titleNode.fill = hasDecayed || !expanded ? 'black' : ISOTOPE_TO_COLOR.get( isotope )!;
       }
     );
 
