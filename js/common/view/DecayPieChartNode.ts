@@ -33,7 +33,9 @@ export class DecayPieChartNode extends VBox {
     providedOptions: DecayPieChartNodeOptions ) {
     const options = optionize<DecayPieChartNodeOptions, SelfOptions, VBoxOptions>()( {
       spacing: 10,
-      radius: 30
+      radius: 30,
+      justify: 'center',
+      resize: false
     }, providedOptions );
 
     const undecayedCountStringProperty = new StringProperty( '' );

@@ -54,8 +54,6 @@ const MARGIN_X = 3 * NuclearDecayCommonConstants.PANEL_X_MARGIN;
 
 // left margin: room for rotated label + isotope symbols
 const GRAPH_X_OFFSET = 90;
-const ISOTOPE_SYMBOL_X = 35; // x of the isotope symbol column
-const AXIS_LABEL_X = 10; // x center of the rotated "Isotope" label
 
 const TICK_HEIGHT = 12;
 const TICK_LABEL_SPACING = 15;
@@ -105,8 +103,6 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     const isotopeAxisLabel = new Text( NuclearDecayCommonFluent.isotopeStringProperty, {
       font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
       rotation: -Math.PI / 2,
-      centerX: AXIS_LABEL_X,
-      centerY: GRAPH_HEIGHT / 2,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
@@ -131,15 +127,11 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       fill: model.selectedIsotopeProperty.derived( isotope => {
         return ISOTOPE_TO_COLOR.get( isotope )!.value;
       } ),
-      left: ISOTOPE_SYMBOL_X,
-      centerY: 5,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
     const decayProductSymbol = new RichText( decayProductSymbolProperty, {
       font: NuclearDecayCommonConstants.CONTROL_BOLD_FONT,
-      left: ISOTOPE_SYMBOL_X,
-      centerY: GRAPH_HEIGHT * 0.9,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
@@ -159,8 +151,6 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
     const timeText = new Text( NuclearDecayCommonFluent.timeStringProperty, {
       font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
-      left: 0,
-      centerY: GRAPH_HEIGHT + 20,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
@@ -440,15 +430,30 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       new Bounds2( 0, 0, GRAPH_X_OFFSET + GRAPH_WIDTH, GRAPH_HEIGHT )
     );
 
+    const isotopeSymbolsBox = new VBox( {
+      children: [ initialIsotopeSymbol, decayProductSymbol ],
+      spacing: GRAPH_HEIGHT - initialIsotopeSymbol.height - decayProductSymbol.height
+    } );
+
+    const yAxisBox = new HBox( {
+      children: [ isotopeAxisLabel, isotopeSymbolsBox ],
+      spacing: 10
+    } );
+
+    const allAxisBox = new VBox( {
+      children: [ yAxisBox, timeText ],
+      spacing: 10,
+      align: 'right',
+      right: GRAPH_X_OFFSET - 20,
+      centerY: GRAPH_HEIGHT / 2 + 10
+    } );
+
     // Graph area node
     const graphAreaNode = new Node( {
       excludeInvisibleChildrenFromBounds: true,
       children: [
-        isotopeAxisLabel,
-        initialIsotopeSymbol,
-        decayProductSymbol,
+        allAxisBox,
         timeAxis,
-        timeText,
         eraserButton,
         histogramCanvasNode,
         halfLifeIndicator,
@@ -466,7 +471,8 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     } );
 
     const contentsNode = new HBox( {
-      spacing: 20,
+      xMargin: NuclearDecayCommonConstants.PANEL_X_MARGIN,
+      spacing: 30,
       justify: 'center',
       children: [
         pieChartNode,

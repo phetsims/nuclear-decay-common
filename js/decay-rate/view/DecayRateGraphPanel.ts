@@ -7,6 +7,7 @@
  * @author Agustín Vallejo
  */
 
+import Multilink from '../../../../axon/js/Multilink.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import Range from '../../../../dot/js/Range.js';
 import { clamp } from '../../../../dot/js/util/clamp.js';
@@ -73,7 +74,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     private readonly visibleProperties: DecayRateVisibleProperties,
     providedOptions?: DecayRateGraphOptions ) {
     const options = optionize<DecayRateGraphOptions, SelfOptions, NuclearDecayPanelOptions>()( {
-      minWidth: NuclearDecayCommonConstants.LONG_PANEL_WIDTH
+      // no options
     }, providedOptions );
 
     const undecayedIsotope = model.selectedIsotopeProperty.value;
@@ -344,11 +345,15 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       }
     );
 
-    // Adjust bottom of panel to layout after contents change
+    // Reposition the panel whenever its bounds change (rows appearing/disappearing change both
+    // height and potentially width, so both bottom and centerX must be reclamped).
+    const DATA_PROBE_OVERSHOOT = 1;
     dataProbePanel.boundsProperty.link( () => {
-        dataProbePanel.bottom = dataProbeNode.top + dataProbeLineOvershoot;
-      }
-    );
+      dataProbePanel.bottom = dataProbeNode.top + dataProbeLineOvershoot;
+      dataProbePanel.centerX = clamp( dataProbeXProperty.value,
+        dataProbePanel.width / 2 - DATA_PROBE_OVERSHOOT,
+        GRAPH_WIDTH - dataProbePanel.width / 2 + DATA_PROBE_OVERSHOOT );
+    } );
 
     // Assemble graph with axes
     const graphArea = new Node( {
@@ -395,8 +400,9 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     // Bottom section: checkboxes on the left, graph on the right
     const contentNode = new HBox( {
       spacing: 12,
-      align: 'top',
+      align: 'bottom',
       justify: 'center',
+      yMargin: NuclearDecayCommonConstants.PANEL_Y_MARGIN,
       children: [ leftColumn, graphArea ]
     } );
 
@@ -420,19 +426,22 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       dataProbeCheckbox
     ];
 
-    // TODO should we uncomment this to stop the panel from moving? https://github.com/phetsims/alpha-decay/issues/3
-    // Freeze the graph's local bounds so moving children like the Grabber won't affect its bounds.
-    // graphArea.localBounds = graphArea.localBounds.copy();
-
     this.dataProbeXProperty.link( position => {
       dataProbeNode.centerX = clamp( position, 0, GRAPH_WIDTH );
-      // Extra pixels to add to the positions to avoid visual artifacts
-      const dataProbeOvershoot = 1;
       dataProbePanel.centerX = clamp( position,
-        dataProbePanel.width / 2 - dataProbeOvershoot,
-        GRAPH_WIDTH - dataProbePanel.width / 2 + dataProbeOvershoot );
+        dataProbePanel.width / 2 - DATA_PROBE_OVERSHOOT,
+        GRAPH_WIDTH - dataProbePanel.width / 2 + DATA_PROBE_OVERSHOOT );
       this.updateProbeReadouts();
     } );
+
+    // Keep circles and readouts current when visibility toggles while the sim is paused.
+    Multilink.multilink(
+      [ visibleProperties.showUndecayedProperty, visibleProperties.showDecayedProperty, visibleProperties.showDataProbeProperty ],
+      () => this.updateProbeReadouts()
+    );
+
+    // Freeze so that data probe movements and dataProbePanel resizes don't shift the outer panel layout.
+    graphArea.localBounds = graphArea.localBounds.copy();
   }
 
   /**
