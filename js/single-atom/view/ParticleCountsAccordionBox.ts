@@ -43,15 +43,15 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
         NuclearDecayCommonFluent.isotopeAStringProperty,
         NuclearDecayCommonFluent.isotopeBStringProperty
       ], (
-          selectedIsotope,
-          isPlayAreaEmpty,
-          hasDecayOccurred,
-          expanded,
-          pattern,
-          closedTitle,
-          isotopeA,
-          isotopeB
-          ) => {
+        selectedIsotope,
+        isPlayAreaEmpty,
+        hasDecayOccurred,
+        expanded,
+        pattern,
+        closedTitle,
+        isotopeA,
+        isotopeB
+      ) => {
         if ( expanded ) {
           if ( isPlayAreaEmpty ) {
             return '--';
@@ -71,9 +71,14 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
         }
       } );
 
-    const titleNode = new RichText( isotopeInfoTitleStringProperty, {
+    const title = new RichText( isotopeInfoTitleStringProperty, {
       font: NuclearDecayCommonConstants.TITLE_BOLD_FONT,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
+    } );
+
+    const titleNode = new Node( {
+      children: [ title ],
+      maxHeight: title.height
     } );
 
     Multilink.multilink(
@@ -82,7 +87,7 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
         model.selectedIsotopeProperty,
         accordionBoxExpandedProperty
       ], ( hasDecayed, isotope, expanded ) => {
-        titleNode.fill = hasDecayed || !expanded ? 'black' : ISOTOPE_TO_COLOR.get( isotope )!;
+        title.fill = hasDecayed || !expanded ? 'black' : ISOTOPE_TO_COLOR.get( isotope )!;
       }
     );
 
@@ -147,8 +152,8 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
         const isotope = hasDecayOccurred ? NuclearDecayAtom.getDecayProduct( selectedIsotope ) : selectedIsotope;
         const atomConfig = NuclearDecayAtom.getIsotopeAtomConfig( isotope );
         const isotopeName = selectedIsotope === 'custom'
-          ? ( hasDecayOccurred ? isotopeBName : isotopeAName )
-          : AtomNameUtils.getNameAndMass( atomConfig.protonCount, atomConfig.neutronCount ).value;
+                            ? ( hasDecayOccurred ? isotopeBName : isotopeAName )
+                            : AtomNameUtils.getNameAndMass( atomConfig.protonCount, atomConfig.neutronCount ).value;
         return NuclearDecayCommonFluent.a11y.particleCounts.accessibleParagraph.format( {
           isotope: isotopeName,
           protons: atomConfig.protonCount,
