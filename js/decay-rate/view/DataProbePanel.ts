@@ -94,9 +94,11 @@ export default class DataProbePanel extends Panel {
 
   public updateReadouts( undecayedPercent: number | null, time: number ): void {
     if ( undecayedPercent ) {
-      const undecayedPercentRounded = toFixedNumber( undecayedPercent * 100, 0 );
-      this.undecayedValueText.string = `${undecayedPercentRounded} %`;
-      this.decayedValueText.string = `${100 - undecayedPercentRounded} %`;
+
+      // Using toFixedNumber to first round the value. Then toFixed to ensure values like 87.0 do show that last decimal.
+      const undecayedPercentRounded = toFixedNumber( undecayedPercent * 100, 1 );
+      this.undecayedValueText.string = `${toFixed( undecayedPercentRounded, 1 )} %`;
+      this.decayedValueText.string = `${toFixed( 100 - undecayedPercentRounded, 1 )} %`;
     }
     else {
       this.undecayedValueText.string = `${DASH} %`;
