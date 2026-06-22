@@ -22,9 +22,9 @@ export type SingleAtomScreenViewOptions = SelfOptions & SingleAndMultipleAtomsSc
 
 export default class SingleAtomScreenView extends SingleAndMultipleAtomsScreenView {
 
-  public readonly particleCountsAccordionBox: Node;
+  public readonly particleCountsAccordionBox: ParticleCountsAccordionBox;
 
-  public readonly equationAccordionBox: Node;
+  public readonly equationAccordionBox: EquationAccordionBox;
 
   protected declare atomNodes: DynamicNucleusNode[];
 
@@ -41,12 +41,14 @@ export default class SingleAtomScreenView extends SingleAndMultipleAtomsScreenVi
     this.particleCountsAccordionBox = new ParticleCountsAccordionBox( model, {
       tandem: options.tandem.createTandem( 'particleCountsAccordionBox' )
     } );
+
     this.equationAccordionBox = new EquationAccordionBox( model.selectedIsotopeProperty,
       model.isPlayAreaEmptyProperty,
       model.hasDecayOccurredProperty,
       model.selectedIsotopeProperty.derived( isotope => isotope === 'custom' ),
       {
-        tandem: options.tandem.createTandem( 'equationAccordionBox' )
+        tandem: options.tandem.createTandem( 'equationAccordionBox' ),
+        expandedDefaultValue: false
       } );
     this.rightColumnControls.addChild( this.particleCountsAccordionBox );
     this.rightColumnControls.addChild( this.equationAccordionBox );
@@ -71,5 +73,11 @@ export default class SingleAtomScreenView extends SingleAndMultipleAtomsScreenVi
       this.timeControlNode,
       this.resetAllButton
     ];
+  }
+
+  public override reset(): void {
+    super.reset();
+    this.equationAccordionBox.reset();
+    this.particleCountsAccordionBox.reset();
   }
 }

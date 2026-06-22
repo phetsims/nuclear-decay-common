@@ -176,4 +176,11 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
 
     super( contentsNode, options );
   }
+
+  public override reset(): void {
+    super.reset();
+
+    // Since we provided the expanded property, we own it and have to reset
+    this.expandedProperty.reset();
+  }
 }
