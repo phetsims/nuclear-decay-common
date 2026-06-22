@@ -3,10 +3,10 @@
 ## Build, lint, and test commands
 
 - This package lives inside the PhET `totality` monorepo. Run repo-level commands from the monorepo root: `C:\Users\john\totality`.
-- `npm run check` — primary verification command. It runs linting, type checking, and the relevant tests for the current working changes.
-- `npm run use -- nuclear-decay-common` — select this package as the current project for directory-specific Grunt tasks.
-- `npm run grunt -- --help` — list Grunt tasks available for the currently selected project.
-- `npm run grunt -- modulify` — regenerate generated module/string outputs after editing sources such as `nuclear-decay-common-strings_en.yaml`.
+- `bin/check` — primary verification command. It runs linting, type checking, and the relevant tests for the current working changes.
+- `bin/use nuclear-decay-common` — select this package as the current project for directory-specific Grunt tasks.
+- `bin/grunt --help` — list Grunt tasks available for the currently selected project.
+- `bin/grunt modulify` — regenerate generated module/string outputs after editing sources such as `nuclear-decay-common-strings_en.yaml`.
 - There are no package-local test files in this directory, so there is no package-local single-test command. Focused runtime verification usually happens through a consuming sim such as `alpha-decay` or `beta-decay`.
 
 ## High-level architecture
