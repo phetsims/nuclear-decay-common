@@ -473,7 +473,7 @@ export default class NuclearDecayAtom {
     // If this atom is undecayed and could decay, run the calculations to decide whether it will decay in this step.
     if ( this._halfLife !== Infinity && !this.hasDecayed ) {
 
-      // In the event of a restart, the atom stores its decay time but its local time is smaller.
+      // In the event of a replay, the atom stores its decay time but its local time is smaller.
       // Wait until the internal time reaches the decay time and have it decay again.
       if ( this.decayTime !== null ) {
         if ( this.time >= this.decayTime ) {
@@ -622,6 +622,7 @@ export default class NuclearDecayAtom {
       atom.time = stateObject.time;
       atom.decayTime = stateObject.decayTime;
       atom.position = Vector2.Vector2IO.fromStateObject( stateObject.position );
+      atom.hasDecayed = stateObject.hasDecayed;
 
       const deserializedEjectedParticles = ArrayIO( EjectedDecayParticle.EjectedDecayParticleIO ).fromStateObject( stateObject.ejectedDecayParticles );
 
