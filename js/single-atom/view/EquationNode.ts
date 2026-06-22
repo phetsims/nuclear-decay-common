@@ -39,7 +39,7 @@ export default class EquationNode extends HBox {
     } );
     const secondTermIsotope = EquationElementNode.createFromIsotope( decayedIsotope, {
       isActiveProperty: hasDecayOccurredProperty,
-        visibleProperty: isCustomProperty.derived( isCustom => !isCustom )
+      visibleProperty: isCustomProperty.derived( isCustom => !isCustom )
     } );
 
     const firstTermCustom = new EquationElementNode( 'A', '(p+n)', 'p', {

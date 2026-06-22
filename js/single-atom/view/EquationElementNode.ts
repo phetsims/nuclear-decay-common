@@ -61,14 +61,14 @@ export default class EquationElementNode extends Node {
     } );
 
     const symbolNode = new Node( {
-      children: [ symbolText, superscriptText, subscriptText ]
+      children: [ symbolText, superscriptText, subscriptText ],
+      excludeInvisibleChildrenFromBounds: true
     } );
 
     // Show a question mark when the element is not active
     const questionMarkNode = new RichText( '?', {
       font: NuclearDecayCommonConstants.TITLE_FONT,
       fill: options.fill,
-      center: symbolNode.center,
       visibleProperty: options.isActiveProperty.derived( isActive => !isActive )
     } );
 
