@@ -30,6 +30,7 @@ import { rasterizeNode } from '../../../../scenery/js/util/rasterizeNode.js';
 import Checkbox from '../../../../sun/js/Checkbox.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
 import NuclearDecayAtom from '../../common/model/NuclearDecayAtom.js';
+import createNucleusIconNode from '../../common/view/createNucleusIconNode.js';
 import IsotopeSelectionPanel from '../../common/view/IsotopeSelectionPanel.js';
 import ResetAtomsButton from '../../common/view/ResetAtomsButton.js';
 import SingleAndMultipleAtomsScreenView, { SingleAndMultipleAtomsScreenViewOptions } from '../../common/view/SingleAndMultipleAtomsScreenView.js';
@@ -145,7 +146,8 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
       {
         centerX: this.layoutBounds.centerX,
         bottom: this.layoutBounds.maxY - NuclearDecayCommonConstants.SCREEN_VIEW_Y_MARGIN,
-        tandem: options.tandem.createTandem( 'addAtomsPanel' )
+        tandem: options.tandem.createTandem( 'addAtomsPanel' ),
+        atomIcon: createNucleusIconNode( 30, 64, 2 )
       } );
     this.addChild( addAtomsPanel );
 

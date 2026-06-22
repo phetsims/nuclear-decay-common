@@ -63,7 +63,7 @@ export default class VibratingDecayingAtomNode extends Node implements Updatable
   private vibrationTimeAccumulator = dotRandom.nextDouble() * VIBRATION_UPDATE_PERIOD;
 
   // The node that represents the atom's nucleus, which is updated as the atom decays.
-  private readonly nucleusNode: Node;
+  private readonly nucleusNodeParent: Node;
 
   // node that represents the electron cloud, which may or may not be visible based on settings
   private readonly electronCloudNode: Circle;
@@ -86,8 +86,8 @@ export default class VibratingDecayingAtomNode extends Node implements Updatable
     super( options );
 
     this.atomHasDecayed = decayingAtom.hasDecayed;
-    this.nucleusNode = new Node( { children: [ this.createNucleusNode() ] } );
-    this.addChild( this.nucleusNode );
+    this.nucleusNodeParent = new Node( { children: [ this.createnucleusNodeParent() ] } );
+    this.addChild( this.nucleusNodeParent );
 
     this.electronCloudNode = new Circle( ELECTRON_CLOUD_RADIUS, {
       fill: createElectronCloudGradient(),
@@ -167,8 +167,8 @@ export default class VibratingDecayingAtomNode extends Node implements Updatable
     if ( this.atomHasDecayed !== this.decayingAtom.hasDecayed ) {
 
       // Decay state changed, so rebuild the nucleus node.
-      this.nucleusNode.removeAllChildren();
-      this.nucleusNode.addChild( this.createNucleusNode() );
+      this.nucleusNodeParent.removeAllChildren();
+      this.nucleusNodeParent.addChild( this.createnucleusNodeParent() );
       this.atomHasDecayed = this.decayingAtom.hasDecayed;
     }
 
@@ -182,7 +182,7 @@ export default class VibratingDecayingAtomNode extends Node implements Updatable
    * Creates a visual representation of the nucleus with individual protons and neutrons arranged to look like a
    * spherical atomic nucleus.
    */
-  private createNucleusNode(): Node {
+  private createnucleusNodeParent(): Node {
     const parentNode = new Node();
 
     const protonCount = this.decayingAtom.atomConfigBeforeDecay.protonCount;
@@ -225,7 +225,7 @@ export default class VibratingDecayingAtomNode extends Node implements Updatable
     } );
 
     // Return the created node, and make it an image so that it is one node, which improves rendering performance.
-    return rasterizeNode( parentNode );
+    return rasterizeNode( parentNode, { resolution: 4 } );
   }
 
   /**

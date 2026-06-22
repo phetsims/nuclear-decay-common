@@ -23,6 +23,7 @@ import ResetAllButton from '../../../../scenery-phet/js/buttons/ResetAllButton.j
 import TimeControlNode from '../../../../scenery-phet/js/TimeControlNode.js';
 import TimeSpeed from '../../../../scenery-phet/js/TimeSpeed.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
+import Circle from '../../../../scenery/js/nodes/Circle.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import NuclearDecayAtom from '../../common/model/NuclearDecayAtom.js';
 import IsotopeSelectionPanel from '../../common/view/IsotopeSelectionPanel.js';
@@ -101,7 +102,10 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
         stepSize: 100,
         centerX: this.layoutBounds.centerX,
         bottom: this.layoutBounds.maxY - NuclearDecayCommonConstants.SCREEN_VIEW_Y_MARGIN,
-        tandem: options.tandem.createTandem( 'addAtomsPanel' )
+        tandem: options.tandem.createTandem( 'addAtomsPanel' ),
+        atomIcon: new Circle( 8, {
+          fill: NuclearDecayCommonColors.poloniumColorProperty
+        } )
       } );
     this.addChild( addAtomsPanel );
 

@@ -14,6 +14,7 @@ import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
 import FineCoarseSpinner from '../../../../scenery-phet/js/FineCoarseSpinner.js';
 import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
+import Node from '../../../../scenery/js/nodes/Node.js';
 import RichText from '../../../../scenery/js/nodes/RichText.js';
 import sharedSoundPlayers from '../../../../tambo/js/sharedSoundPlayers.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
@@ -25,6 +26,7 @@ import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel
 
 type SelfOptions = {
   stepSize?: number;
+  atomIcon?: Node;
 };
 
 export type AddAtomsControlPanelOptions = SelfOptions & WithRequired<NuclearDecayPanelOptions, 'tandem'>;
@@ -37,7 +39,8 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
     providedOptions?: AddAtomsControlPanelOptions
   ) {
     const options = optionize<AddAtomsControlPanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {
-      stepSize: 10
+      stepSize: 10,
+      atomIcon: new Node()
     }, providedOptions );
 
     const isotopeDynamicNameProperty = NuclearDecayAtom.createDynamicIsotopeNameAndMassStringProperty(
@@ -48,6 +51,11 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
     const titleText = new RichText( isotopeDynamicNameProperty, {
       font: NuclearDecayCommonConstants.CONTROL_FONT,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
+    } );
+
+    const titleRow = new HBox( {
+      spacing: 10,
+      children: [ options.atomIcon, titleText ]
     } );
 
     const numberOfAtomsSpinner = new FineCoarseSpinner( atomsToAddProperty, {
@@ -74,7 +82,7 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
     const leftBox = new VBox( {
       spacing: 8,
       align: 'left',
-      children: [ titleText, numberOfAtomsSpinner ]
+      children: [ titleRow, numberOfAtomsSpinner ]
     } );
 
     const contentNode = new HBox( {
