@@ -8,6 +8,7 @@
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
+import ShredColors from '../../../../shred/js/ShredColors.js';
 import AccordionBox, { AccordionBoxOptions } from '../../../../sun/js/AccordionBox.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 
@@ -23,7 +24,8 @@ export default class NuclearDecayAccordionBox extends AccordionBox {
       titleXMargin: NuclearDecayCommonConstants.PANEL_X_MARGIN,
       titleYMargin: NuclearDecayCommonConstants.PANEL_Y_MARGIN,
       buttonXMargin: NuclearDecayCommonConstants.PANEL_X_MARGIN,
-      buttonYMargin: NuclearDecayCommonConstants.PANEL_Y_MARGIN
+      buttonYMargin: NuclearDecayCommonConstants.PANEL_Y_MARGIN,
+      stroke: ShredColors.panelStrokeColorProperty
     }, providedOptions );
 
     super( contentNode, options );
