@@ -48,6 +48,10 @@ type SelfOptions = {
 
   // Property to control the escape radius of the atoms. Optional - only used in single-atom screens.
   escapeRadiusProperty?: TReadOnlyProperty<number> | null;
+
+  // UI elements will eat up a bit of the available play area, these values dictate how much
+  playAreaExclusionDilationX?: number;
+  playAreaExclusionDilationY?: number;
 };
 
 export type NuclearDecayScreenViewOptions = SelfOptions & WithRequired<ScreenViewOptions, 'tandem'>;
@@ -73,6 +77,9 @@ export default class NuclearDecayScreenView extends ScreenView {
   // that atoms are not placed behind them.  Must be populated before calling setPlayAreaBounds.
   protected readonly playAreaExclusionNodes: Node[] = [];
 
+  private readonly playAreaExclusionDilationX: number;
+  private readonly playAreaExclusionDilationY: number;
+
   public constructor(
     protected readonly model: NuclearDecayModel,
     providedOptions?: NuclearDecayScreenViewOptions
@@ -89,7 +96,10 @@ export default class NuclearDecayScreenView extends ScreenView {
 
       electronCloudVisibleProperty: null,
 
-      labelsVisibleProperty: null
+      labelsVisibleProperty: null,
+
+      playAreaExclusionDilationX: 10,
+      playAreaExclusionDilationY: 10
     }, providedOptions );
 
     super( options );
@@ -203,6 +213,9 @@ export default class NuclearDecayScreenView extends ScreenView {
         }
       } );
     } );
+
+    this.playAreaExclusionDilationX = options.playAreaExclusionDilationX;
+    this.playAreaExclusionDilationY = options.playAreaExclusionDilationY;
   }
 
   /**
@@ -224,14 +237,15 @@ export default class NuclearDecayScreenView extends ScreenView {
     // Start with the full model-space play area.
     let atomPlacementShape: Shape = Shape.bounds( mvt.viewToModelBounds( playAreaBounds ) );
 
-    // Carve out a full right-side column for each exclusion node (e.g. ResetAtomsButton, SortButton).
-    // Use this.boundsOf() — which traverses globalToLocal — rather than node.bounds so that the
-    // bounds are never stale from Scenery's lazy localBounds cache.
+    // Carve out each exclusion node (e.g. ResetAtomsButton, SortButton).
     this.playAreaExclusionNodes.forEach( node => {
       const nodeViewBounds = this.boundsOf( node );
       if ( nodeViewBounds.isValid() ) {
 
-        atomPlacementShape = atomPlacementShape.shapeDifference( Shape.bounds( mvt.viewToModelBounds( nodeViewBounds.dilated( 10 ) ) ) );
+        atomPlacementShape = atomPlacementShape.shapeDifference(
+          Shape.bounds( mvt.viewToModelBounds( nodeViewBounds
+            .dilatedX( this.playAreaExclusionDilationX ).dilatedY( this.playAreaExclusionDilationY ) ) )
+        );
       }
     } );
 

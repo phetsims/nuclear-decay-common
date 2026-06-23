@@ -508,11 +508,11 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     // For the second screen, we want atoms to be tidy in a randomized grid fashion
     // whereas third screen should be just shuffled
     if ( this.maxNumberOfAtoms === NuclearDecayCommonConstants.MAX_ATOMS_SECOND_SCREEN ) {
-      this.sort();
-      this.softRandomize();
+      this.randomizeAtomPositions();
+      this.repelAtoms();
     }
     else if ( this.maxNumberOfAtoms === NuclearDecayCommonConstants.MAX_ATOMS_THIRD_SCREEN ) {
-      this.hardRandomize();
+      this.randomizeAtomPositions();
     }
     this.updateAtoms();
     if ( this.stopwatch ) {
@@ -740,30 +740,60 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   }
 
   /**
-   * Randomizes the position of atoms by shifting them slightly in an arbitrary direction
-   */
-  private softRandomize(): void {
-
-    const bounds = this.atomPlacementAreaProperty.value.bounds;
-    const amplitude = 0.3 * bounds.height / Math.sqrt( this.activeAtoms.length );
-
-    this.activeAtoms.forEach( atom => {
-      atom.position.add( new Vector2(
-        dotRandom.nextDoubleInRange( new Range( -amplitude, amplitude ) ),
-        dotRandom.nextDoubleInRange( new Range( -amplitude, amplitude ) ) )
-      );
-    } );
-  }
-
-  /**
    * Shuffles the atom positions within the play area bounds
    */
-  private hardRandomize(): void {
+  private randomizeAtomPositions(): void {
     this.activeAtoms.forEach( atom => {
 
       // Since we ate up a portion of the play area with UI buttons, we need to find
       // valid positions within the shape for the atoms
       atom.position = this.nextPointInConcaveShape( this.atomPlacementAreaProperty.value );
+    } );
+  }
+
+  /**
+   * Generates some iterations of repulsive forces between atoms to ensure they get far away from each other
+   * this is done to avoid overlapping and overall fill the space neatly.
+   */
+  private repelAtoms(): void {
+    const iterations = 5;
+    const minAtomDistance = 5;
+    const playArea = this.atomPlacementAreaProperty.value;
+
+    // Do multiple iterations of a repulsive force to push away atoms from each other
+    _.times( iterations, () => {
+
+      // Map all the positions
+      const positions = this.activeAtoms.map( atom => atom.position );
+
+      this.activeAtoms.forEach( ( ( atom, i ) => {
+        const force = Vector2.ZERO.copy();
+        const forceMultiplier = 1;
+
+        // Repulsion by all other atoms
+        positions.forEach( ( position, j ) => {
+          if ( i === j ) { return; } // Ignore if it's the same atom
+
+          // Relative distance to current atom
+          const distanceVec = position.minus( atom.position );
+          const distance = distanceVec.magnitude;
+
+          // Simulate a repulsive force that is stronger the closer it is
+          if ( distance && distance < minAtomDistance ) {
+            force.add( distanceVec.withMagnitude( -forceMultiplier / distance ) );
+          }
+        } );
+
+        const newPosition = atom.position.plus( force );
+
+        // If it went overboard, set the new position at the border
+        if ( playArea.containsPoint( newPosition ) ) {
+          atom.position = newPosition;
+        }
+        else {
+          atom.position = playArea.getClosestPoint( newPosition );
+        }
+      } ) );
     } );
   }
 

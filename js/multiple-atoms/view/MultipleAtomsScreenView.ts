@@ -130,7 +130,9 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
       numberOfAtomsInPlayAreaWidth: 40,
       decayParticleStringProperty: new Property( '' ),
       electronCloudVisibleProperty: visibleProperties.electronCloudVisibleProperty,
-      labelsVisibleProperty: visibleProperties.labelsVisibleProperty
+      labelsVisibleProperty: visibleProperties.labelsVisibleProperty,
+      playAreaExclusionDilationX: 30,
+      playAreaExclusionDilationY: 40
     }, providedOptions );
 
     super( model, options );
@@ -152,8 +154,8 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     this.addChild( addAtomsPanel );
 
     const playAreaBounds = new Bounds2(
-      this.decayTimeHistogramPanel.left,
-      this.decayTimeHistogramPanel.bottom + NuclearDecayCommonConstants.SCREEN_VIEW_Y_MARGIN,
+      this.decayTimeHistogramPanel.left + NuclearDecayCommonConstants.SCREEN_VIEW_X_MARGIN,
+      this.decayTimeHistogramPanel.bottom + 3 * NuclearDecayCommonConstants.SCREEN_VIEW_Y_MARGIN,
       this.decayTimeHistogramPanel.right,
       addAtomsPanel.top - NuclearDecayCommonConstants.SCREEN_VIEW_Y_MARGIN
     );
@@ -166,7 +168,7 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
         this.updateAtomNodes();
       },
       right: playAreaBounds.right,
-      top: playAreaBounds.top,
+      top: playAreaBounds.top - 2 * NuclearDecayCommonConstants.SCREEN_VIEW_Y_MARGIN,
       accessibleName: NuclearDecayCommonFluent.a11y.multipleAtoms.resetSampleButton.accessibleNameStringProperty,
       tandem: options.tandem.createTandem( 'resetSampleButton' )
     } );
