@@ -476,7 +476,8 @@ export default class NuclearDecayAtom {
       // In the event of a replay, the atom stores its decay time but its local time is smaller.
       // Wait until the internal time reaches the decay time and have it decay again.
       if ( this.decayTime !== null ) {
-        if ( this.time >= this.decayTime ) {
+        if ( this.time > this.decayTime ) {
+          this.time = this.decayTime;
           this.decay( false );
         }
       }

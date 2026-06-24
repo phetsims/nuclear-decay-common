@@ -101,8 +101,13 @@ export default class SingleAtomModel extends NuclearDecayModel {
       }
     );
 
-    this.hasDecayOccurredProperty.link( hasDecayOccurred => {
+    this.hasDecayOccurredProperty.lazyLink( hasDecayOccurred => {
       this.continueAddingTimeProperty.value = !hasDecayOccurred;
+
+      // If atom decayed, set the current time to the decay time of the atom
+      if ( hasDecayOccurred && this.activeAtoms[ 0 ].decayTime ) {
+        this.timeProperty.value = this.activeAtoms[ 0 ].decayTime;
+      }
     } );
 
     Multilink.multilink(
