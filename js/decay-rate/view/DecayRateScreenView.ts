@@ -121,7 +121,7 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
     this.addChild( isotopesLegendPanel );
 
     this.decayRateGraphPanel = new DecayRateGraphPanel( model, this.visibleProperties, {
-      bottom: this.layoutBounds.centerY - NuclearDecayCommonConstants.PANEL_Y_MARGIN,
+      bottom: this.layoutBounds.centerY,
 
       // Panel really wide to make it seem a control background, as per design request
       minWidth: this.layoutBounds.width * 10,
