@@ -70,7 +70,7 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
     const setSampleButton = new ArrowWithTailButton( {
       arrowRotation: Math.PI / 2,
       baseColor: NuclearDecayCommonColors.setSampleButtonProperty,
-      soundPlayer: sharedSoundPlayers.get( 'goBack' ),
+      soundPlayer: sharedSoundPlayers.get( 'pushButton' ),
       enabledProperty: atomsToAddProperty.derived( value => value !== 0 ),
       listener: () => {
         addAtomsCallback( atomsToAddProperty.value );
