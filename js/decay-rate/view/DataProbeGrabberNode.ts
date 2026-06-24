@@ -14,6 +14,7 @@ import Orientation from '../../../../phet-core/js/Orientation.js';
 import StrictOmit from '../../../../phet-core/js/types/StrictOmit.js';
 import ShadedSphereNode, { ShadedSphereNodeOptions } from '../../../../scenery-phet/js/ShadedSphereNode.js';
 import AccessibleSlider, { type AccessibleSliderOptions } from '../../../../sun/js/accessibility/AccessibleSlider.js';
+import ValueChangeSoundPlayer from '../../../../tambo/js/sound-generators/ValueChangeSoundPlayer.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 
 // The maximum time displayed on the x-axis (seconds), mirrored from DecayRateGraphPanel.
@@ -24,7 +25,7 @@ type SelfOptions = EmptySelfOptions;
 type ParentOptions = ShadedSphereNodeOptions & AccessibleSliderOptions;
 
 export type DataProbeGrabberNodeOptions = SelfOptions & StrictOmit<ParentOptions,
-  'valueProperty' | 'enabledRangeProperty' | 'startDrag' | 'endDrag'>;
+  'valueProperty' | 'enabledRangeProperty' | 'startDrag' | 'drag' | 'endDrag'>;
 
 export default class DataProbeGrabberNode extends AccessibleSlider( ShadedSphereNode, 1 ) {
   public constructor(
@@ -32,6 +33,9 @@ export default class DataProbeGrabberNode extends AccessibleSlider( ShadedSphere
     graphWidth: number,
     providedOptions?: DataProbeGrabberNodeOptions
   ) {
+    const valueChangeSoundPlayer = new ValueChangeSoundPlayer( dataProbeXProperty.rangeProperty );
+    let previousValue = dataProbeXProperty.value;
+
     const options = optionize<DataProbeGrabberNodeOptions, SelfOptions, ParentOptions>()( {
 
       valueProperty: dataProbeXProperty,
@@ -45,6 +49,12 @@ export default class DataProbeGrabberNode extends AccessibleSlider( ShadedSphere
       accessibleName: NuclearDecayCommonFluent.dataProbeStringProperty,
       accessibleHelpText: NuclearDecayCommonFluent.a11y.dataProbeSlider.accessibleHelpTextStringProperty,
       ariaOrientation: Orientation.HORIZONTAL,
+      startDrag: () => { previousValue = dataProbeXProperty.value; },
+      drag: () => {
+        const newValue = dataProbeXProperty.value;
+        valueChangeSoundPlayer.playSoundIfThresholdReached( newValue, previousValue );
+        previousValue = newValue;
+      },
       createAriaValueText: ( _formattedValue: number, value: number ) => {
         const time = ( value / graphWidth ) * MAX_TIME;
         return toFixed( time, 2 );

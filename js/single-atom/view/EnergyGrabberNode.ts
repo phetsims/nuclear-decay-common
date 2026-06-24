@@ -16,6 +16,7 @@ import StrictOmit from '../../../../phet-core/js/types/StrictOmit.js';
 import ArrowShape, { ArrowShapeOptions } from '../../../../scenery-phet/js/ArrowShape.js';
 import Path, { PathOptions } from '../../../../scenery/js/nodes/Path.js';
 import AccessibleSlider, { type AccessibleSliderOptions } from '../../../../sun/js/accessibility/AccessibleSlider.js';
+import ValueChangeSoundPlayer from '../../../../tambo/js/sound-generators/ValueChangeSoundPlayer.js';
 import NuclearDecayModel from '../../common/model/NuclearDecayModel.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 
@@ -26,7 +27,7 @@ type SelfOptions = {
 type ParentOptions = PathOptions & AccessibleSliderOptions;
 
 export type EnergyGrabberNodeOptions = SelfOptions & StrictOmit<ParentOptions,
-  'valueProperty' | 'enabledRangeProperty' | 'startDrag' | 'endDrag'>;
+  'valueProperty' | 'enabledRangeProperty' | 'startDrag' | 'drag' | 'endDrag'>;
 
 export default class EnergyGrabberNode extends AccessibleSlider( Path, 1 ) {
   public constructor(
@@ -34,6 +35,13 @@ export default class EnergyGrabberNode extends AccessibleSlider( Path, 1 ) {
     model: NuclearDecayModel,
     providedOptions?: EnergyGrabberNodeOptions
   ) {
+
+    const shiftStepSize = 0.05;
+
+    const valueChangeSoundPlayer = new ValueChangeSoundPlayer( energyProperty.rangeProperty, {
+      numberOfMiddleThresholds: energyProperty.rangeProperty.value.getLength() / shiftStepSize
+    } );
+    let previousValue = energyProperty.value;
 
     const sliderAriaValueText = ( value: number, range: Range ) => {
       const normalized = ( value - range.min ) / ( range.max - range.min );
@@ -46,6 +54,10 @@ export default class EnergyGrabberNode extends AccessibleSlider( Path, 1 ) {
 
       valueProperty: energyProperty,
       enabledRangeProperty: energyProperty.rangeProperty,
+
+      shiftKeyboardStep: shiftStepSize,
+      keyboardStep: 2 * shiftStepSize,
+      pageKeyboardStep: 4 * shiftStepSize,
 
       arrowShapeOptions: {
         headWidth: 15,
@@ -70,6 +82,12 @@ export default class EnergyGrabberNode extends AccessibleSlider( Path, 1 ) {
       createAriaValueText: ( _formattedValue, value ) => {
         const range = energyProperty.range;
         return sliderAriaValueText( value, range );
+      },
+      startDrag: () => { previousValue = energyProperty.value; },
+      drag: () => {
+        const newValue = energyProperty.value;
+        valueChangeSoundPlayer.playSoundIfThresholdReached( newValue, previousValue );
+        previousValue = newValue;
       },
       createContextResponseAlert: ( newValue, oldValue ) => {
         const increased = oldValue !== null && newValue > oldValue;

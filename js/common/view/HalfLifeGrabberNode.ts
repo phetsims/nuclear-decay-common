@@ -14,7 +14,9 @@ import StrictOmit from '../../../../phet-core/js/types/StrictOmit.js';
 import StringUtils from '../../../../phetcommon/js/util/StringUtils.js';
 import ShadedSphereNode, { ShadedSphereNodeOptions } from '../../../../scenery-phet/js/ShadedSphereNode.js';
 import AccessibleSlider, { type AccessibleSliderOptions } from '../../../../sun/js/accessibility/AccessibleSlider.js';
+import ValueChangeSoundPlayer from '../../../../tambo/js/sound-generators/ValueChangeSoundPlayer.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
+import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
 
@@ -23,14 +25,25 @@ type SelfOptions = EmptySelfOptions;
 type ParentOptions = ShadedSphereNodeOptions & AccessibleSliderOptions;
 
 export type HalfLifeGrabberNodeOptions = SelfOptions & StrictOmit<ParentOptions,
-  'valueProperty' | 'enabledRangeProperty' | 'startDrag' | 'endDrag'>;
+  'valueProperty' | 'enabledRangeProperty' | 'startDrag' | 'drag' | 'endDrag'>;
 
 export default class HalfLifeGrabberNode extends AccessibleSlider( ShadedSphereNode, 1 ) {
   public constructor( model: NuclearDecayModel, providedOptions?: HalfLifeGrabberNodeOptions ) {
+    const numberOfExponents = NuclearDecayCommonConstants.EXPONENTIAL_HALF_LIFE_EXPONENT_RANGE.getLength();
+
+    const valueChangeSoundPlayer = new ValueChangeSoundPlayer( model.customHalfLifeProperty.rangeProperty, {
+      numberOfMiddleThresholds: numberOfExponents
+    } );
+    let previousValue = model.customHalfLifeProperty.value;
+
     const options = optionize<HalfLifeGrabberNodeOptions, SelfOptions, ParentOptions>()( {
 
       valueProperty: model.customHalfLifeProperty,
       enabledRangeProperty: model.customHalfLifeProperty.rangeProperty,
+
+      keyboardStep: 3 / numberOfExponents, // Goes every 10^3 exponents like the ticks in the graph
+      shiftKeyboardStep: 1 / numberOfExponents, // Goes every 10^1
+      pageKeyboardStep: 6 / numberOfExponents, // Every 10^6
 
       mainColor: NuclearDecayCommonColors.halfLifeColorProperty,
       visibleProperty: model.selectedIsotopeProperty.derived( isotope => isotope === 'custom' ),
@@ -48,6 +61,12 @@ export default class HalfLifeGrabberNode extends AccessibleSlider( ShadedSphereN
                           `10<sup>${toFixed( Math.log10( realTime ), 1 )}</sup>` :
                           toFixed( value, 2 );
         return StringUtils.fillIn( NuclearDecayCommonFluent.timeSecondsStringProperty.value, { time: shownTime } );
+      },
+      startDrag: () => { previousValue = model.customHalfLifeProperty.value; },
+      drag: () => {
+        const newValue = model.customHalfLifeProperty.value;
+        valueChangeSoundPlayer.playSoundIfThresholdReached( newValue, previousValue );
+        previousValue = newValue;
       },
       createContextResponseAlert: ( newValue: number, oldValue: number ) => {
         const increased = oldValue !== null && newValue > oldValue;
