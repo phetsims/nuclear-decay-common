@@ -444,7 +444,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       children: [ yAxisBox, timeText ],
       spacing: 10,
       align: 'right',
-      right: GRAPH_X_OFFSET - 20,
+      right: GRAPH_X_OFFSET - 30,
       centerY: GRAPH_HEIGHT / 2 + 10
     } );
 

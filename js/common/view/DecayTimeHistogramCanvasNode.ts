@@ -62,7 +62,7 @@ export default class DecayTimeHistogramCanvasNode extends CanvasNode {
         this.undecayedCountLabel.visible = true;
         const x = this.getXForTime( this.histogramData.undecayedTime, this.timescaleProperty.value );
         this.undecayedCountLabel.string = this.histogramData.numberOfUndecayedAtoms;
-        this.undecayedCountLabel.centerX = x + UNDECAYED_WIDTH / 2;
+        this.undecayedCountLabel.centerX = x - UNDECAYED_WIDTH / 2;
         this.undecayedCountLabel.centerY = UNDECAYED_HEIGHT / 2;
       }
       else {
@@ -114,13 +114,7 @@ export default class DecayTimeHistogramCanvasNode extends CanvasNode {
     if ( data.showUndecayed() ) {
       const undecayedWidth = this.isSingleAtomMode ? 6 : UNDECAYED_WIDTH;
       const undecayedHeight = this.isSingleAtomMode ? 9 : UNDECAYED_HEIGHT;
-      let x = this.getXForTime( data.undecayedTime, timescale );
-
-      if ( this.isSingleAtomMode ) {
-
-        // For the first screen we want the little box to appear a bit to the left when it starts
-        x -= undecayedWidth;
-      }
+      const x = this.getXForTime( data.undecayedTime, timescale ) - undecayedWidth;
 
       const baseColorProperty = ISOTOPE_TO_COLOR.get( this.selectedIsotopeProperty.value )!;
       context.fillStyle = baseColorProperty.value.toCSS();
