@@ -18,9 +18,9 @@ import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.
 import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
 import ArrowNode from '../../../../scenery-phet/js/ArrowNode.js';
 import EraserButton from '../../../../scenery-phet/js/buttons/EraserButton.js';
+import SoundDragListener from '../../../../scenery-phet/js/SoundDragListener.js';
 import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
-import DragListener from '../../../../scenery/js/listeners/DragListener.js';
 import Line from '../../../../scenery/js/nodes/Line.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Path from '../../../../scenery/js/nodes/Path.js';
@@ -333,7 +333,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
     // Pointer drag: convert the pointer's absolute x position to a normalized half-life value.
     // graphAreaNode is defined below; safe to reference because this callback only fires at runtime.
-    halfLifeGrabber.addInputListener( new DragListener( {
+    halfLifeGrabber.addInputListener( new SoundDragListener( {
       tandem: Tandem.OPT_OUT,
       drag: event => {
         const localX = graphAreaNode.globalToLocalPoint( event.pointer.point ).x;

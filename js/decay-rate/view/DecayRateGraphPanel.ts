@@ -16,9 +16,9 @@ import Shape from '../../../../kite/js/Shape.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
 import PhetFont from '../../../../scenery-phet/js/PhetFont.js';
+import SoundDragListener from '../../../../scenery-phet/js/SoundDragListener.js';
 import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
-import DragListener from '../../../../scenery/js/listeners/DragListener.js';
 import Circle from '../../../../scenery/js/nodes/Circle.js';
 import Line from '../../../../scenery/js/nodes/Line.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
@@ -373,7 +373,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     } );
 
     // Pointer drag: convert the pointer's absolute x position to a normalized graph value.
-    dataProbeGrabber.addInputListener( new DragListener( {
+    dataProbeGrabber.addInputListener( new SoundDragListener( {
       tandem: Tandem.OPT_OUT,
       drag: event => {
         const localX = graphArea.globalToLocalPoint( event.pointer.point ).x;

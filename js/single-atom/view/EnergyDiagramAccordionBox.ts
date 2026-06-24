@@ -24,7 +24,7 @@ import optionize from '../../../../phet-core/js/optionize.js';
 import ModelViewTransform2 from '../../../../phetcommon/js/view/ModelViewTransform2.js';
 import AccessibleList from '../../../../scenery-phet/js/accessibility/AccessibleList.js';
 import ArrowNode from '../../../../scenery-phet/js/ArrowNode.js';
-import DragListener from '../../../../scenery/js/listeners/DragListener.js';
+import SoundDragListener from '../../../../scenery-phet/js/SoundDragListener.js';
 import Line from '../../../../scenery/js/nodes/Line.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Path from '../../../../scenery/js/nodes/Path.js';
@@ -302,7 +302,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     // contentsNode is defined below; safe to reference because these callbacks only fire at runtime.
 
     // Pointer drag: convert absolute pointer position to an initialEnergyProperty value.
-    initialEnergyGrabber.addInputListener( new DragListener( {
+    initialEnergyGrabber.addInputListener( new SoundDragListener( {
       tandem: Tandem.OPT_OUT,
       drag: event => {
         const localY = contentsNode.globalToLocalPoint( event.pointer.point ).y;
@@ -323,7 +323,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     // Inverting: value = (localY − COULOMB_MIN_Y) / ENERGY_PEAK_Y * range.max.
 
     // Pointer drag: convert absolute pointer position to a potentialEnergyProperty value.
-    potentialEnergyGrabber.addInputListener( new DragListener( {
+    potentialEnergyGrabber.addInputListener( new SoundDragListener( {
       tandem: Tandem.OPT_OUT,
       drag: event => {
         const localY = contentsNode.globalToLocalPoint( event.pointer.point ).y;

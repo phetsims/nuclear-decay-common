@@ -233,7 +233,7 @@ export default class NuclearDecayAtom {
    * AtomConfigs and half-life don't need resetting.
    */
   public reset(): void {
-    this.restartDecayAndTimes();
+    this.replayDecayAndTimes();
     this.isActive = false;
     this.position = new Vector2( 0, 0 );
     this.ejectedDecayParticles.forEach( particle => {
@@ -245,7 +245,7 @@ export default class NuclearDecayAtom {
    * Restarts the isotope to before the decay and sets the ejected particles back into position.
    * It's not per se a hard reset because ejecta destination does not change, neither does isActive.
    */
-  public restartDecay(): void {
+  public replayDecay(): void {
     this.hasDecayed = false;
     if ( DecayProductValues.includes( this.isotope ) ) {
       this.isotope = NuclearDecayAtom.getDecayOrigin( this.isotope );
@@ -260,8 +260,8 @@ export default class NuclearDecayAtom {
    * Resets the decay process, which resets the time experienced by the atom back to zero and, if the atom has decayed,
    * resets the atom back to its original state.
    */
-  public restartDecayAndTimes(): void {
-    this.restartDecay();
+  public replayDecayAndTimes(): void {
+    this.replayDecay();
     this.time = 0;
     this.decayTime = null;
   }

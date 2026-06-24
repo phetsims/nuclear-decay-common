@@ -11,7 +11,6 @@ import { ScreenViewOptions } from '../../../../joist/js/ScreenView.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
 import ResetAllButton from '../../../../scenery-phet/js/buttons/ResetAllButton.js';
-import RestartButton from '../../../../scenery-phet/js/buttons/RestartButton.js';
 import TimeControlNode from '../../../../scenery-phet/js/TimeControlNode.js';
 import TimeSpeed from '../../../../scenery-phet/js/TimeSpeed.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
@@ -133,22 +132,6 @@ export default class SingleAndMultipleAtomsScreenView extends NuclearDecayScreen
       right: model.isSingleAtomMode ? this.resetAllButton.right : this.resetAllButton.left - 5 * PANEL_SPACING,
       tandem: options.tandem.createTandem( 'timeControlNode' )
     } );
-
-    if ( model.isSingleAtomMode ) {
-
-      // AV REVIEW: Can this be moved to SingleAtomScreenView?
-      const restartButton = new RestartButton( {
-        listener: () => {
-          model.restart();
-          this.updateAtomNodes();
-        },
-        enabledProperty: model.timeProperty.derived( time => time > 0 ),
-        accessibleName: NuclearDecayCommonFluent.a11y.replayDecay.accessibleNameStringProperty,
-        accessibleHelpText: NuclearDecayCommonFluent.a11y.replayDecay.accessibleHelpTextStringProperty,
-        tandem: options.tandem.createTandem( 'restartButton' )
-      } );
-      this.timeControlNode.addPushButton( restartButton, 0 );
-    }
 
     this.addChild( this.timeControlNode );
   }

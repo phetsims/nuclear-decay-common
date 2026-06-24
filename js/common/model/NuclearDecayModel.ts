@@ -552,7 +552,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     this.resetTimes();
 
     this.atomPool.forEach( atom => {
-      atom.restartDecayAndTimes();
+      atom.replayDecayAndTimes();
       atom.setIsotope( newIsotope );
       if ( newIsotope === 'custom' ) {
 
@@ -632,7 +632,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   private resetStopwatch(): void {
     affirm( this.stopwatch, 'Screen must have a stopwatch to use this function' );
     const wasPlaying = this.stopwatch.isRunningProperty.value;
-    this.stopwatch.reset();
+    this.stopwatch.timeProperty.reset();
     this.stopwatch.isRunningProperty.value = wasPlaying;
   }
 
@@ -641,7 +641,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
    * pre-decayed configuration.
    */
   public resetAtomDecayStates(): void {
-    this.atomPool.forEach( atom => atom.restartDecay() );
+    this.atomPool.forEach( atom => atom.replayDecay() );
     this.setNewIsotope( this.selectedIsotopeProperty.value );
 
     // Because the time may be progressing exponentially, we need to reset the time value here too.
@@ -818,10 +818,10 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
   }
 
   /**
-   * Restarts the simulation to its initial state. Override in subclasses to implement specific restart behavior.
+   * Restarts the simulation to its initial state. Override in subclasses to implement specific replay behavior.
    */
-  public restart(): void {
-    // no-op in base class, but can be overridden in subclasses to implement specific restart behavior
+  public replay(): void {
+    // no-op in base class, but can be overridden in subclasses to implement specific replay behavior
   }
 
   /**

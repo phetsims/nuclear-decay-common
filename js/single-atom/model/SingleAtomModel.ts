@@ -40,6 +40,9 @@ export default class SingleAtomModel extends NuclearDecayModel {
   // mapping is being made to avoid circular updates.
   public mappingInProgress = false;
 
+  // Distance at which the alpha particle currently lies
+  public readonly alphaParticleDistanceProperty: NumberProperty;
+
   public constructor(
     StartingIsotopes: StartingIsotopes[],
     decayType: DecayType,
@@ -79,6 +82,10 @@ export default class SingleAtomModel extends NuclearDecayModel {
 
     this.neutronCountProperty = new NumberProperty( 0, {
       tandem: particleCountsTandem.createTandem( 'neutronCountProperty' )
+    } );
+
+    this.alphaParticleDistanceProperty = new NumberProperty( 0, {
+      tandem: particleCountsTandem.createTandem( 'alphaParticleDistanceProperty' )
     } );
 
     Multilink.multilink(
@@ -121,18 +128,18 @@ export default class SingleAtomModel extends NuclearDecayModel {
    * This function rolls back time to before the decay, essentially reverting the model to right when it's
    * going to happen. If there has been no decay it just goes back to 0.
    */
-  public override restart(): void {
+  public override replay(): void {
     const atom = this.atomPool[ 0 ];
     const rollbackTime = 0.05;
 
     if ( atom.decayTime !== null ) {
 
       // For linear time go back 0.1 seconds. For exponential time, go back to when it was an exponent before
-      const timeToRestart = this.timescaleProperty.value === 'linear' ?
-                            Math.max( atom.decayTime - rollbackTime, 0 ) :
-                            Math.max( atom.decayTime / 2, 1e-3 );
-      this.setTimes( timeToRestart );
-      atom.restartDecay();
+      const timeToReplay = this.timescaleProperty.value === 'linear' ?
+                           Math.max( atom.decayTime - rollbackTime, 0 ) :
+                           Math.max( atom.decayTime / 2, 1e-3 );
+      this.setTimes( timeToReplay );
+      atom.replayDecay();
 
       this.decayedAtoms.pop();
       this.decayedCountProperty.value = this.decayedAtoms.length;
@@ -144,11 +151,19 @@ export default class SingleAtomModel extends NuclearDecayModel {
     else {
       this.resetTimes();
     }
+
+    this.alphaParticleDistanceProperty.reset();
   }
 
   public override step( dt: number ): void {
     super.step( dt );
     this.hasDecayOccurredProperty.value = this.activeAtoms.some( atom => atom.hasDecayed );
+
+    if ( this.hasDecayOccurredProperty.value ) {
+      const atom = this.activeAtoms[ 0 ];
+      const ejectedParticle = atom.ejectedDecayParticles[ 0 ];
+      this.alphaParticleDistanceProperty.value = ejectedParticle.positionProperty.value.distance( atom.position );
+    }
   }
 
   public override reset(): void {
@@ -156,5 +171,6 @@ export default class SingleAtomModel extends NuclearDecayModel {
     this.hasDecayOccurredProperty.reset();
     this.potentialEnergyProperty.reset();
     this.initialEnergyProperty.reset();
+    this.alphaParticleDistanceProperty.reset();
   }
 }

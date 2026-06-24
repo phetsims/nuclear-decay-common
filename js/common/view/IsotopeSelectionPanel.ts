@@ -35,8 +35,7 @@ export default class IsotopeSelectionPanel extends NuclearDecayPanel {
   public constructor( isotopes: ValidIsotopes[], providedOptions?: IsotopeSelectionPanelOptions ) {
     const options = optionize<IsotopeSelectionPanelOptions, SelfOptions, NuclearDecayPanelOptions>()( {
       includeAtomRepresentation: false,
-      selectedIsotopeProperty: null,
-      minWidth: NuclearDecayCommonConstants.RIGHT_PANEL_WIDTH
+      selectedIsotopeProperty: null
     }, providedOptions );
 
     const selectedIsotopeProperty = options.selectedIsotopeProperty;
