@@ -40,9 +40,6 @@ type SelfOptions = {
   // How many atoms will fit visually within the width of the play area
   numberOfAtomsInPlayAreaWidth?: number;
 
-  // Property to control visibility of electron clouds around nuclei. Optional - only used in multiple-atoms screens.
-  electronCloudVisibleProperty?: TReadOnlyProperty<boolean> | null;
-
   // Property to control visibility of labels on top of nuclei. Optional - only used in multiple-atoms screens.
   labelsVisibleProperty?: TReadOnlyProperty<boolean> | null;
 
@@ -94,8 +91,6 @@ export default class NuclearDecayScreenView extends ScreenView {
 
       escapeRadiusProperty: null,
 
-      electronCloudVisibleProperty: null,
-
       labelsVisibleProperty: null,
 
       playAreaExclusionDilationX: 10,
@@ -127,15 +122,13 @@ export default class NuclearDecayScreenView extends ScreenView {
     }
     else if ( model.maxNumberOfAtoms === NuclearDecayCommonConstants.MAX_ATOMS_SECOND_SCREEN ) {
 
-      // For screens that use VibratingDecayingAtomNode, electronCloudVisibleProperty must be provided.
-      affirm( options.electronCloudVisibleProperty, 'electronCloudVisibleProperty is required for multiple-atoms screens' );
+      // For screens that use VibratingDecayingAtomNode, labelsVisibleProperty must be provided.
       affirm( options.labelsVisibleProperty, 'labelsVisibleProperty is required for multiple-atoms screens' );
 
       model.atomPool.forEach( atom => {
         const atomNode = new VibratingDecayingAtomNode(
           atom,
           this.modelViewTransformProperty,
-          options.electronCloudVisibleProperty!,
           {
             labelsVisibleProperty: options.labelsVisibleProperty!
           }

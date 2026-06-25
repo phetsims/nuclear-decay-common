@@ -76,10 +76,6 @@ const NuclearDecayCommonColors = {
 
   bluePanelColorProperty: new ProfileColorProperty( nuclearDecayCommon, 'bluePanel', {
     default: new Color( 241, 250, 254 )
-  } ),
-
-  electronCloudColorProperty: new ProfileColorProperty( nuclearDecayCommon, 'electronCloud', {
-    default: new Color( 0, 0, 255 )
   } )
 };
 

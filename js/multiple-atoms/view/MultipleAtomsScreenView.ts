@@ -22,10 +22,8 @@ import optionize from '../../../../phet-core/js/optionize.js';
 import Stopwatch from '../../../../scenery-phet/js/Stopwatch.js';
 import StopwatchNode from '../../../../scenery-phet/js/StopwatchNode.js';
 import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
-import Circle from '../../../../scenery/js/nodes/Circle.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
-import RadialGradient from '../../../../scenery/js/util/RadialGradient.js';
 import { rasterizeNode } from '../../../../scenery/js/util/rasterizeNode.js';
 import Checkbox from '../../../../sun/js/Checkbox.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
@@ -34,7 +32,6 @@ import createNucleusIconNode from '../../common/view/createNucleusIconNode.js';
 import IsotopeSelectionPanel from '../../common/view/IsotopeSelectionPanel.js';
 import ResetAtomsButton from '../../common/view/ResetAtomsButton.js';
 import SingleAndMultipleAtomsScreenView, { SingleAndMultipleAtomsScreenViewOptions } from '../../common/view/SingleAndMultipleAtomsScreenView.js';
-import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import MultipleAtomsModel from '../model/MultipleAtomsModel.js';
 import MultipleAtomsScreenSummaryContent from './MultipleAtomsScreenSummaryContent.js';
 import MultipleAtomsVisibleProperties from './MultipleAtomsVisibleProperties.js';
@@ -78,33 +75,15 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     } );
     stopwatchIcon.setScaleMagnitude( 0.3 );
 
-    const electronCloudRadius = 10;
-    const electronCloudCheckbox = new Checkbox( visibleProperties.electronCloudVisibleProperty,
-      new HBox( {
-        spacing: 10,
-        children: [
-          new Text( NuclearDecayCommonFluent.electronCloudStringProperty, { font: NuclearDecayCommonConstants.CONTROL_FONT } ),
-          new Circle( electronCloudRadius, {
-            fill: new RadialGradient( 0, 0, 0, 0, 0, electronCloudRadius )
-              .addColorStop( 0, NuclearDecayCommonColors.electronCloudColorProperty.value.withAlpha( 0.5 ) )
-              .addColorStop( 0.9, NuclearDecayCommonColors.electronCloudColorProperty.value.withAlpha( 0 ) )
-          } )
-        ]
-      } ), {
-        accessibleName: NuclearDecayCommonFluent.a11y.multipleAtoms.electronCloudCheckbox.accessibleNameStringProperty,
-        accessibleHelpText: NuclearDecayCommonFluent.a11y.multipleAtoms.electronCloudCheckbox.accessibleHelpTextStringProperty,
-        tandem: providedOptions.tandem.createTandem( 'electronCloudCheckbox' )
-      }
-    );
     const labelsVisibleCheckbox = new Checkbox( visibleProperties.labelsVisibleProperty,
       new HBox( {
         spacing: 10,
         children: [
-          new Text( 'Labels', { font: NuclearDecayCommonConstants.CONTROL_FONT } )
+          new Text( NuclearDecayCommonFluent.labelsStringProperty, { font: NuclearDecayCommonConstants.CONTROL_FONT } )
         ]
       } ), {
-        accessibleName: NuclearDecayCommonFluent.a11y.multipleAtoms.electronCloudCheckbox.accessibleNameStringProperty,
-        accessibleHelpText: NuclearDecayCommonFluent.a11y.multipleAtoms.electronCloudCheckbox.accessibleHelpTextStringProperty,
+        accessibleName: NuclearDecayCommonFluent.a11y.multipleAtoms.labelsCheckbox.accessibleNameStringProperty,
+        accessibleHelpText: NuclearDecayCommonFluent.a11y.multipleAtoms.labelsCheckbox.accessibleHelpTextStringProperty,
         tandem: providedOptions.tandem.createTandem( 'labelsVisibleCheckbox' )
       }
     );
@@ -122,14 +101,13 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
       }
     );
 
-    const isotopePanelMiddleContent = [ electronCloudCheckbox, labelsVisibleCheckbox, stopwatchCheckbox ];
+    const isotopePanelMiddleContent = [ labelsVisibleCheckbox, stopwatchCheckbox ];
 
     const options = optionize<MultipleAtomsScreenViewOptions, SelfOptions, SingleAndMultipleAtomsScreenViewOptions>()( {
       screenSummaryContent: new MultipleAtomsScreenSummaryContent( model ),
       isotopePanelMiddleContent: isotopePanelMiddleContent,
       numberOfAtomsInPlayAreaWidth: 40,
       decayParticleStringProperty: new Property( '' ),
-      electronCloudVisibleProperty: visibleProperties.electronCloudVisibleProperty,
       labelsVisibleProperty: visibleProperties.labelsVisibleProperty,
       playAreaExclusionDilationX: 30,
       playAreaExclusionDilationY: 40
@@ -315,7 +293,7 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     ];
 
     // Control Area pdomOrder:
-    //   Electron cloud checkbox → Stopwatch checkbox → Time controls → Reset All button
+    //   Labels checkbox → Stopwatch checkbox → Time controls → Reset All button
     this.pdomControlAreaNode.pdomOrder = [
       ...isotopePanelMiddleContent,
       this.timeControlNode,

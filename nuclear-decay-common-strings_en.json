@@ -92,8 +92,8 @@
   "isotopeInfoTitle": {
     "value": "{{nameAndNumber}} ({{numberSymbol}})"
   },
-  "electronCloud": {
-    "value": "Electron Cloud"
+  "labels": {
+    "value": "Labels"
   },
   "stopwatch": {
     "value": "Stopwatch"
@@ -369,12 +369,12 @@
       "decayTimeHistogramAtHalfLife": {
         "value": "At half-life, { $halfLifePercentageUndecayed } percent of sample remains."
       },
-      "electronCloudCheckbox": {
+      "labelsCheckbox": {
         "accessibleName": {
-          "value": "Electron Cloud"
+          "value": "Labels"
         },
         "accessibleHelpText": {
-          "value": "Show or hide electron clouds for atoms."
+          "value": "Show or hide labels for atoms."
         }
       },
       "stopwatchCheckbox": {

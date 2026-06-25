@@ -29,7 +29,7 @@ neutronsPattern: 'Neutrons: {{neutrons}}'
 isotopeNameNumberPattern: '{{name}}-{{massNumber}}'
 isotopeNumberSymbolPattern: '<sup>{{massNumber}}</sup>{{symbol}}'
 isotopeInfoTitle: '{{nameAndNumber}} ({{numberSymbol}})'
-electronCloud: 'Electron Cloud'
+labels: 'Labels'
 stopwatch: 'Stopwatch'
 dataProbe: 'Data Probe'
 percentRemaining: 'Isotope Remaining (%)'
@@ -151,9 +151,9 @@ a11y:
       accessibleName: Reset Sample
     decayDataHeading: Decay Data
     decayTimeHistogramAtHalfLife: 'At half-life, { $halfLifePercentageUndecayed } percent of sample remains.'
-    electronCloudCheckbox:
-      accessibleName: Electron Cloud
-      accessibleHelpText: Show or hide electron clouds for atoms.
+    labelsCheckbox:
+      accessibleName: Labels
+      accessibleHelpText: Show or hide labels for atoms.
     stopwatchCheckbox:
       accessibleName: Stopwatch
       accessibleHelpText: Show or hide stopwatch.

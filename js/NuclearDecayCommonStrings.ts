@@ -76,8 +76,8 @@ type StringsType = {
   'isotopeNumberSymbolPatternStringProperty': LocalizedStringProperty;
   'isotopeInfoTitle': string;
   'isotopeInfoTitleStringProperty': LocalizedStringProperty;
-  'electronCloud': string;
-  'electronCloudStringProperty': LocalizedStringProperty;
+  'labels': string;
+  'labelsStringProperty': LocalizedStringProperty;
   'stopwatch': string;
   'stopwatchStringProperty': LocalizedStringProperty;
   'dataProbe': string;
@@ -278,7 +278,7 @@ type StringsType = {
       'decayDataHeadingStringProperty': LocalizedStringProperty;
       'decayTimeHistogramAtHalfLife': string;
       'decayTimeHistogramAtHalfLifeStringProperty': LocalizedStringProperty;
-      'electronCloudCheckbox': {
+      'labelsCheckbox': {
         'accessibleName': string;
         'accessibleNameStringProperty': LocalizedStringProperty;
         'accessibleHelpText': string;

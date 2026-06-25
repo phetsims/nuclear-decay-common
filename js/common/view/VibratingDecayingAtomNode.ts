@@ -16,12 +16,9 @@ import Vector2 from '../../../../dot/js/Vector2.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 import ModelViewTransform2 from '../../../../phetcommon/js/view/ModelViewTransform2.js';
 import ShadedSphereNode from '../../../../scenery-phet/js/ShadedSphereNode.js';
-import Circle from '../../../../scenery/js/nodes/Circle.js';
 import Node, { NodeOptions } from '../../../../scenery/js/nodes/Node.js';
-import RadialGradient from '../../../../scenery/js/util/RadialGradient.js';
 import { rasterizeNode } from '../../../../scenery/js/util/rasterizeNode.js';
 import ShredColors from '../../../../shred/js/ShredColors.js';
-import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 import Updatable from '../model/Updatable.js';
 import AtomLabelNode from './AtomLabelNode.js';
@@ -42,14 +39,8 @@ const VIBRATION_UPDATE_PERIOD = 0.032;
 // Maximum offset for vibration, in screen coordinates.
 const MAX_VIBRATION_OFFSET = 4;
 
-const ELECTRON_CLOUD_RADIUS = NUCLEON_RADIUS * 10;
-
-const createElectronCloudGradient = () => {
-  const color = NuclearDecayCommonColors.electronCloudColorProperty.value;
-  return new RadialGradient( 0, 0, 0, 0, 0, ELECTRON_CLOUD_RADIUS )
-    .addColorStop( 0, color.withAlpha( 0.5 ) )
-    .addColorStop( 1, color.withAlpha( 0.05 ) );
-};
+// Vertical offset (in screen coordinates) used to position the atom label above the nucleus.
+const LABEL_BOTTOM_OFFSET = NUCLEON_RADIUS * 10;
 
 export default class VibratingDecayingAtomNode extends Node implements Updatable {
 
@@ -65,16 +56,12 @@ export default class VibratingDecayingAtomNode extends Node implements Updatable
   // The node that represents the atom's nucleus, which is updated as the atom decays.
   private readonly nucleusNodeParent: Node;
 
-  // node that represents the electron cloud, which may or may not be visible based on settings
-  private readonly electronCloudNode: Circle;
-
   // label of the atom
   private readonly atomLabelNode: AtomLabelNode;
 
   public constructor(
     private readonly decayingAtom: NuclearDecayAtom,
     private readonly modelViewTransformProperty: TReadOnlyProperty<ModelViewTransform2>,
-    private readonly electronCloudVisibleProperty: TReadOnlyProperty<boolean>,
     providedOptions?: VibratingDecayingAtomNodeOptions
   ) {
 
@@ -89,21 +76,10 @@ export default class VibratingDecayingAtomNode extends Node implements Updatable
     this.nucleusNodeParent = new Node( { children: [ this.createnucleusNodeParent() ] } );
     this.addChild( this.nucleusNodeParent );
 
-    this.electronCloudNode = new Circle( ELECTRON_CLOUD_RADIUS, {
-      fill: createElectronCloudGradient(),
-      visibleProperty: electronCloudVisibleProperty
-    } );
-    this.addChild( this.electronCloudNode );
-    this.electronCloudNode.moveToBack();
-
-    NuclearDecayCommonColors.electronCloudColorProperty.link( () => {
-      this.electronCloudNode.fill = createElectronCloudGradient();
-    } );
-
     const labelsVisibleProperty = options.labelsVisibleProperty ?? new Property( true );
     this.atomLabelNode = new AtomLabelNode( decayingAtom, {
-      centerX: this.electronCloudNode.centerX,
-      bottom: this.electronCloudNode.top,
+      centerX: 0,
+      bottom: -LABEL_BOTTOM_OFFSET,
       visibleProperty: labelsVisibleProperty
     } );
     this.addChild( this.atomLabelNode );

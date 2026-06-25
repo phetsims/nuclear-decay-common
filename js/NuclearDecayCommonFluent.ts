@@ -51,7 +51,7 @@ addToMapIfDefined( 'isotopeA', 'isotopeAStringProperty' );
 addToMapIfDefined( 'isotopeB', 'isotopeBStringProperty' );
 addToMapIfDefined( 'customIsotope', 'customIsotopeStringProperty' );
 addToMapIfDefined( 'decayedIsotope', 'decayedIsotopeStringProperty' );
-addToMapIfDefined( 'electronCloud', 'electronCloudStringProperty' );
+addToMapIfDefined( 'labels', 'labelsStringProperty' );
 addToMapIfDefined( 'stopwatch', 'stopwatchStringProperty' );
 addToMapIfDefined( 'dataProbe', 'dataProbeStringProperty' );
 addToMapIfDefined( 'percentRemaining', 'percentRemainingStringProperty' );
@@ -125,8 +125,8 @@ addToMapIfDefined( 'a11y_multipleAtoms_addAtomsButton_accessibleName', 'a11y.mul
 addToMapIfDefined( 'a11y_multipleAtoms_resetSampleButton_accessibleName', 'a11y.multipleAtoms.resetSampleButton.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_decayDataHeading', 'a11y.multipleAtoms.decayDataHeadingStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_decayTimeHistogramAtHalfLife', 'a11y.multipleAtoms.decayTimeHistogramAtHalfLifeStringProperty' );
-addToMapIfDefined( 'a11y_multipleAtoms_electronCloudCheckbox_accessibleName', 'a11y.multipleAtoms.electronCloudCheckbox.accessibleNameStringProperty' );
-addToMapIfDefined( 'a11y_multipleAtoms_electronCloudCheckbox_accessibleHelpText', 'a11y.multipleAtoms.electronCloudCheckbox.accessibleHelpTextStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_labelsCheckbox_accessibleName', 'a11y.multipleAtoms.labelsCheckbox.accessibleNameStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_labelsCheckbox_accessibleHelpText', 'a11y.multipleAtoms.labelsCheckbox.accessibleHelpTextStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_stopwatchCheckbox_accessibleName', 'a11y.multipleAtoms.stopwatchCheckbox.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_stopwatchCheckbox_accessibleHelpText', 'a11y.multipleAtoms.stopwatchCheckbox.accessibleHelpTextStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_screenSummary_playArea', 'a11y.decayRate.screenSummary.playAreaStringProperty' );
@@ -194,7 +194,7 @@ const NuclearDecayCommonFluent = {
   isotopeNameNumberPatternStringProperty: _.get( NuclearDecayCommonStrings, 'isotopeNameNumberPatternStringProperty' ),
   isotopeNumberSymbolPatternStringProperty: _.get( NuclearDecayCommonStrings, 'isotopeNumberSymbolPatternStringProperty' ),
   isotopeInfoTitleStringProperty: _.get( NuclearDecayCommonStrings, 'isotopeInfoTitleStringProperty' ),
-  electronCloudStringProperty: _.get( NuclearDecayCommonStrings, 'electronCloudStringProperty' ),
+  labelsStringProperty: _.get( NuclearDecayCommonStrings, 'labelsStringProperty' ),
   stopwatchStringProperty: _.get( NuclearDecayCommonStrings, 'stopwatchStringProperty' ),
   dataProbeStringProperty: _.get( NuclearDecayCommonStrings, 'dataProbeStringProperty' ),
   percentRemainingStringProperty: _.get( NuclearDecayCommonStrings, 'percentRemainingStringProperty' ),
@@ -321,9 +321,9 @@ const NuclearDecayCommonFluent = {
       },
       decayDataHeadingStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_decayDataHeading', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.decayDataHeadingStringProperty' ) ),
       decayTimeHistogramAtHalfLife: new FluentPattern<{ halfLifePercentageUndecayed: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_multipleAtoms_decayTimeHistogramAtHalfLife', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.decayTimeHistogramAtHalfLifeStringProperty' ), [{"name":"halfLifePercentageUndecayed"}] ),
-      electronCloudCheckbox: {
-        accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_electronCloudCheckbox_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.electronCloudCheckbox.accessibleNameStringProperty' ) ),
-        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_electronCloudCheckbox_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.electronCloudCheckbox.accessibleHelpTextStringProperty' ) )
+      labelsCheckbox: {
+        accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_labelsCheckbox_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.labelsCheckbox.accessibleNameStringProperty' ) ),
+        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_labelsCheckbox_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.labelsCheckbox.accessibleHelpTextStringProperty' ) )
       },
       stopwatchCheckbox: {
         accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_stopwatchCheckbox_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.stopwatchCheckbox.accessibleNameStringProperty' ) ),
