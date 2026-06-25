@@ -18,7 +18,9 @@ import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 import ModelViewTransform2 from '../../../../phetcommon/js/view/ModelViewTransform2.js';
 import ShadedSphereNode from '../../../../scenery-phet/js/ShadedSphereNode.js';
+import Circle from '../../../../scenery/js/nodes/Circle.js';
 import Node, { NodeOptions } from '../../../../scenery/js/nodes/Node.js';
+import Color from '../../../../scenery/js/util/Color.js';
 import AtomConfig from '../../../../shred/js/model/AtomConfig.js';
 import ShredColors from '../../../../shred/js/ShredColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
@@ -82,6 +84,10 @@ const MAX_PARTICLE_NODES_SUPPORTED = 200;
 // The range of time for an alpha particle to appear when it goes outside the nucleus but doesn't tunnel, in seconds.
 const ALPHA_PARTICLE_EXCURSION_TIME_RANGE = new Range( 0.05, 0.2 );
 
+// This is a debugging thing. It determines whether to show a transparent circular node on top of the nucleus that is
+// exactly the prescribed radius so that we can see if the nucleons are staying at least mostly within it.
+const SHOW_RADIUS_NODE = false;
+
 class DynamicNucleusNode extends Node implements Updatable {
 
   // The radius of the individual nucleons that comprise the nucleus.  All nucleons are depicted as spheres with this
@@ -127,6 +133,9 @@ class DynamicNucleusNode extends Node implements Updatable {
 
   // The proportion of particles that can swap positions in an update.
   private particleSwapProportion = PARTICLE_SWAP_PROPORTION_RANGE.expandNormalizedValue( 0.5 );
+
+  // A node that can be turned on to help check the size of this node.
+  private readonly radiusNode: null | Circle;
 
   public constructor(
     atom: NuclearDecayAtom,
@@ -221,6 +230,19 @@ class DynamicNucleusNode extends Node implements Updatable {
       this.setNucleusRadius( mvt.modelToViewDeltaX( NuclearDecayCommonConstants.ATOM_RADIUS ) );
       this.update();
     } );
+
+    if ( SHOW_RADIUS_NODE ) {
+      const viewRadius = modelViewTransformProperty.value.modelToViewDeltaX( NuclearDecayCommonConstants.ATOM_RADIUS );
+      this.radiusNode = new Circle( viewRadius, {
+        fill: Color.GREEN.withAlpha( 0.1 ),
+        stroke: Color.GREEN.withAlpha( 0.5 ),
+        center: Vector2.ZERO
+      } );
+      this.addChild( this.radiusNode );
+    }
+    else {
+      this.radiusNode = null;
+    }
   }
 
   public agitateNucleus(): void {
@@ -293,6 +315,11 @@ class DynamicNucleusNode extends Node implements Updatable {
   public update(): void {
     this.translation = this.modelViewTransformProperty.value.modelToViewPosition( this.atom.position );
     this.atomLabelNode.update();
+    if ( this.radiusNode ) {
+      this.radiusNode.setRadius(
+        this.modelViewTransformProperty.value.modelToViewDeltaX( NuclearDecayCommonConstants.ATOM_RADIUS )
+      );
+    }
   }
 
   /**
@@ -547,6 +574,7 @@ class DynamicNucleusNode extends Node implements Updatable {
     const particleNodesSortedByDistance = [ ...particleNodesInNucleus ].sort( ( a, b ) => b.center.magnitude - a.center.magnitude );
     particleNodesSortedByDistance.forEach( particleNode => particleNode.moveToFront() );
     this.atomLabelNode.moveToFront();
+    this.radiusNode && this.radiusNode.moveToFront();
   }
 
   /**
@@ -685,6 +713,9 @@ class DynamicNucleusNode extends Node implements Updatable {
 
     // Make sure the label is out in front of the z-order.
     this.atomLabelNode.moveToFront();
+
+    // If the radius node is present, make sure it is in front of the z-order.
+    this.radiusNode && this.radiusNode.moveToFront();
 
     this.currentlyDepictedAtomConfig = activeAtomConfig;
   }
