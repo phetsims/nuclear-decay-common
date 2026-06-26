@@ -52,12 +52,12 @@ export type StartingIsotopes = ( typeof StartingIsotopesValues )[ number ];
 
 // Decay products that could be produced in the alpha decay or beta decay sim.
 // These are not selectable by the user, but are used for internal logic and for display purposes.
-export const DecayProductValues = [ 'lead-207', 'nitrogen-14', 'helium-3', 'custom-decayed' ];
+export const DecayProductValues = [ 'lead-207', 'nitrogen-14', 'helium-3', 'custom-decayed' ] as const;
 export type DecayProducts = ( typeof DecayProductValues )[ number ];
 
 // All isotopes that are valid in the sim, whether selectable or decay products.
-export const ValidIsotopeValues = [ ...StartingIsotopesValues, ...DecayProductValues ] as const;
-export type ValidIsotopes = StartingIsotopes | DecayProducts;
+export const ValidIsotopeValues = [ ...StartingIsotopesValues, ...DecayProductValues, 'helium-2' ] as const;
+export type ValidIsotopes = ( typeof ValidIsotopeValues )[ number ];
 
 const ISOTOPE_TO_ATOM_CONFIG = new Map<ValidIsotopes, AtomConfig>( [
   [ 'polonium-211', NuclearDecayCommonConstants.POLONIUM_211 ],
@@ -194,7 +194,7 @@ export default class NuclearDecayAtom {
       this.atomConfigAfterDecay = NuclearDecayAtom.deriveAtomConfigAfterDecay( atomConfigBeforeDecay, decayType );
     }
     else {
-      const preDecayIsotope = NuclearDecayAtom.getDecayOrigin( isotope );
+      const preDecayIsotope = NuclearDecayAtom.getDecayOrigin( isotope as DecayProducts );
       atomConfigBeforeDecay = NuclearDecayAtom.getIsotopeAtomConfig( preDecayIsotope );
       this.atomConfigBeforeDecay = atomConfigBeforeDecay;
       this.atomConfigAfterDecay = NuclearDecayAtom.deriveAtomConfigAfterDecay( atomConfigBeforeDecay, decayType );
@@ -254,8 +254,8 @@ export default class NuclearDecayAtom {
    * It's not per se a hard reset because ejecta destination does not change, neither does isActive.
    */
   public replayDecay(): void {
-    if ( DecayProductValues.includes( this.isotope ) ) {
-      this.isotope = NuclearDecayAtom.getDecayOrigin( this.isotope );
+    if ( DecayProductValues.includes( this.isotope as DecayProducts ) ) {
+      this.isotope = NuclearDecayAtom.getDecayOrigin( this.isotope as DecayProducts );
     }
     this.ejectedDecayParticles.forEach( particle => {
       particle.isActiveProperty.value = false;
@@ -513,7 +513,7 @@ export default class NuclearDecayAtom {
    * Derive the fact that it has decayed from the current isotope and whether it belongs to the decayed isotopes
    */
   public get hasDecayed(): boolean {
-    return DecayProductValues.includes( this.isotope );
+    return DecayProductValues.includes( this.isotope as DecayProducts );
   }
 
   private decay( randomizeEjectionDestination: boolean ): void {
