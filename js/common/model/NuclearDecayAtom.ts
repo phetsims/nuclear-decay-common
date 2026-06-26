@@ -40,7 +40,6 @@ export type NuclearDecayAtomStateObject = {
   decayType: DecayType;
   halfLife: number;
   isActive: boolean;
-  hasDecayed: boolean;
   time: number;
   decayTime: number | null;
   position: Vector2StateObject;
@@ -58,7 +57,7 @@ export type DecayProducts = ( typeof DecayProductValues )[ number ];
 
 // All isotopes that are valid in the sim, whether selectable or decay products.
 export const ValidIsotopeValues = [ ...StartingIsotopesValues, ...DecayProductValues ] as const;
-export type ValidIsotopes = ( typeof ValidIsotopeValues )[ number ];
+export type ValidIsotopes = StartingIsotopes | DecayProducts;
 
 const ISOTOPE_TO_ATOM_CONFIG = new Map<ValidIsotopes, AtomConfig>( [
   [ 'polonium-211', NuclearDecayCommonConstants.POLONIUM_211 ],
@@ -133,9 +132,6 @@ export default class NuclearDecayAtom {
   // The time at which this atom decayed, or null if it has not decayed yet.
   public decayTime: number | null = null;
 
-  // Whether the atom has decayed or not
-  public hasDecayed = false;
-
   // The location of this atom in model space.
   public position: Vector2 = new Vector2( 0, 0 );
 
@@ -189,9 +185,21 @@ export default class NuclearDecayAtom {
 
     this.isotope = isotope;
 
-    const atomConfigBeforeDecay = NuclearDecayAtom.getIsotopeAtomConfig( isotope );
-    this.atomConfigBeforeDecay = atomConfigBeforeDecay;
-    this.atomConfigAfterDecay = NuclearDecayAtom.deriveAtomConfigAfterDecay( atomConfigBeforeDecay, decayType );
+    // Depending on the provided isotope, configure the atom configs before and after the decay
+    // This if statement is done because phet-io can create atoms in their decayed state
+    let atomConfigBeforeDecay: AtomConfig;
+    if ( StartingIsotopesValues.includes( isotope as StartingIsotopes ) ) {
+      atomConfigBeforeDecay = NuclearDecayAtom.getIsotopeAtomConfig( isotope );
+      this.atomConfigBeforeDecay = atomConfigBeforeDecay;
+      this.atomConfigAfterDecay = NuclearDecayAtom.deriveAtomConfigAfterDecay( atomConfigBeforeDecay, decayType );
+    }
+    else {
+      const preDecayIsotope = NuclearDecayAtom.getDecayOrigin( isotope );
+      atomConfigBeforeDecay = NuclearDecayAtom.getIsotopeAtomConfig( preDecayIsotope );
+      this.atomConfigBeforeDecay = atomConfigBeforeDecay;
+      this.atomConfigAfterDecay = NuclearDecayAtom.deriveAtomConfigAfterDecay( atomConfigBeforeDecay, decayType );
+    }
+
     this.ejectParticlesOnDecay = options.ejectParticlesOnDecay;
     this.restrictEjectionAngles = options.restrictEjectionAngles;
     this.particleEjectionSpeed = options.particleEjectionSpeed;
@@ -246,7 +254,6 @@ export default class NuclearDecayAtom {
    * It's not per se a hard reset because ejecta destination does not change, neither does isActive.
    */
   public replayDecay(): void {
-    this.hasDecayed = false;
     if ( DecayProductValues.includes( this.isotope ) ) {
       this.isotope = NuclearDecayAtom.getDecayOrigin( this.isotope );
     }
@@ -471,7 +478,7 @@ export default class NuclearDecayAtom {
     this.time += decayDt;
 
     // If this atom is undecayed and could decay, run the calculations to decide whether it will decay in this step.
-    if ( this._halfLife !== Infinity && !this.hasDecayed ) {
+    if ( !this.hasDecayed && this._halfLife !== Infinity ) {
 
       // In the event of a replay, the atom stores its decay time but its local time is smaller.
       // Wait until the internal time reaches the decay time and have it decay again.
@@ -502,10 +509,15 @@ export default class NuclearDecayAtom {
     this.steppedEmitter.emit( dt );
   }
 
-  private decay( randomizeEjectionDestination: boolean ): void {
-    this.hasDecayed = true;
+  /**
+   * Derive the fact that it has decayed from the current isotope and whether it belongs to the decayed isotopes
+   */
+  public get hasDecayed(): boolean {
+    return DecayProductValues.includes( this.isotope );
+  }
 
-    affirm( !DecayProductValues.includes( this.isotope ), 'Atom must not have a decayed isotope type before decaying' );
+  private decay( randomizeEjectionDestination: boolean ): void {
+    affirm( !this.hasDecayed, 'Atom should not be trying to decay after it has already decayed' );
 
     this.isotope = NuclearDecayAtom.getDecayProduct( this.isotope as StartingIsotopes );
 
@@ -605,7 +617,6 @@ export default class NuclearDecayAtom {
       decayType: StringUnionIO( decayTypeValues ),
       halfLife: InfiniteNumberIO,
       isActive: BooleanIO,
-      hasDecayed: BooleanIO,
       time: NumberIO,
       decayTime: NullableIO( NumberIO ),
       position: Vector2.Vector2IO,
@@ -623,7 +634,6 @@ export default class NuclearDecayAtom {
       atom.time = stateObject.time;
       atom.decayTime = stateObject.decayTime;
       atom.position = Vector2.Vector2IO.fromStateObject( stateObject.position );
-      atom.hasDecayed = stateObject.hasDecayed;
 
       const deserializedEjectedParticles = ArrayIO( EjectedDecayParticle.EjectedDecayParticleIO ).fromStateObject( stateObject.ejectedDecayParticles );
 
