@@ -15,7 +15,6 @@ import Vector2 from '../../../../dot/js/Vector2.js';
 import Shape from '../../../../kite/js/Shape.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
-import PhetFont from '../../../../scenery-phet/js/PhetFont.js';
 import SoundDragListener from '../../../../scenery-phet/js/SoundDragListener.js';
 import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
@@ -200,40 +199,41 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
       } ) );
     } );
 
-    const AXIS_LABEL_FONT = new PhetFont( 12 );
-    const TICK_FONT = new PhetFont( 11 );
-
     // Distribute y-tick labels evenly along graph height
     const yTickContainer = new Node();
     const yLabels = [ '100', '75', '50', '25', '0' ];
     yLabels.forEach( ( label, index ) => {
       const y = ( index / ( yLabels.length - 1 ) ) * GRAPH_HEIGHT;
       yTickContainer.addChild( new Text( label, {
-        font: TICK_FONT,
+        font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
         rightCenter: new Vector2( -4, y )
       } ) );
     } );
 
-    // X-axis tick labels
+    // X-axis tick marks and labels
     const xTickContainer = new Node();
     const xLabels = [ '0', '1', '2', '3' ];
     xLabels.forEach( ( label, index ) => {
       const x = ( index / MAX_TIME ) * GRAPH_WIDTH;
+      xTickContainer.addChild( new Line( x, GRAPH_HEIGHT, x, GRAPH_HEIGHT + 15, {
+        stroke: 'black',
+        lineWidth: 1
+      } ) );
       xTickContainer.addChild( new Text( label, {
-        font: TICK_FONT,
-        centerTop: new Vector2( x, GRAPH_HEIGHT + 4 )
+        font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
+        centerTop: new Vector2( x, GRAPH_HEIGHT + 17 )
       } ) );
     } );
 
     // Axis labels. Y axis is rotated sideways
     const yAxisLabel = new RichText( NuclearDecayCommonFluent.percentRemainingStringProperty, {
-      font: AXIS_LABEL_FONT,
+      font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
       rotation: -Math.PI / 2,
       maxWidth: GRAPH_HEIGHT
     } );
 
     const xAxisLabel = new Text( NuclearDecayCommonFluent.timeStringProperty, {
-      font: AXIS_LABEL_FONT,
+      font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
       maxWidth: 100
     } );
 
@@ -382,7 +382,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     } ) );
 
     // Position x-axis label below the graph
-    xAxisLabel.centerTop = new Vector2( GRAPH_WIDTH / 2, GRAPH_HEIGHT + 20 );
+    xAxisLabel.centerTop = new Vector2( GRAPH_WIDTH / 2, GRAPH_HEIGHT + 30 );
     graphArea.addChild( xAxisLabel );
 
     // Position y-axis label to the left
