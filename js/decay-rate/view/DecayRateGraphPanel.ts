@@ -399,7 +399,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
 
     // Bottom section: checkboxes on the left, graph on the right
     const contentNode = new HBox( {
-      spacing: 12,
+      spacing: 20,
       align: 'bottom',
       justify: 'center',
       yMargin: NuclearDecayCommonConstants.PANEL_Y_MARGIN,
