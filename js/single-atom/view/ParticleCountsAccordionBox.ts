@@ -161,6 +161,7 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
     const contentsNode = new VBox( {
       spacing: 5,
       align: 'left',
+      xMargin: 16,
       children: [
         new Text( protonsStringProperty, {
           font: NuclearDecayCommonConstants.CONTROL_FONT,
