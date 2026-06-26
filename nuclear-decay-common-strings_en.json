@@ -189,8 +189,8 @@
         "value": "An energy versus distance graph shows alpha particles in a nuclear potential well and indicates their energy before and after decay."
       },
       "beforeDecay": {
-        "initialEnergy": {
-          "value": "Initial energy is { $position } potential energy barrier height."
+        "alphaParticleEnergy": {
+          "value": "Alpha particle energy is { $position } potential energy barrier height."
         },
         "escapeDistance": {
           "value": "Alpha particle escape distance is { $distance }."
@@ -218,9 +218,9 @@
         "value": "Adjust well height."
       }
     },
-    "initialEnergySlider": {
+    "alphaParticleEnergySlider": {
       "accessibleHelpText": {
-        "value": "Adjust initial energy for alpha particles in nucleus."
+        "value": "Adjust alpha particle energy for alpha particles in nucleus."
       }
     },
     "decayTimeHistogram": {
@@ -236,7 +236,7 @@
         "value": "Adjust time for isotope A to undergo one half-life."
       },
       "accessibleContextResponse": {
-        "value": "Initial energy { $initialEProgress }, alpha particle escape distance { $distanceProgress }."
+        "value": "Alpha particle energy { $initialEProgress }, alpha particle escape distance { $distanceProgress }."
       }
     },
     "dataProbeSlider": {

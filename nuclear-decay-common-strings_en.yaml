@@ -67,7 +67,7 @@ a11y:
       An energy versus distance graph shows alpha particles in a nuclear potential well and indicates their
       energy before and after decay.
     beforeDecay:
-      initialEnergy: 'Initial energy is { $position } potential energy barrier height.'
+      alphaParticleEnergy: 'Alpha particle energy is { $position } potential energy barrier height.'
       escapeDistance: 'Alpha particle escape distance is { $distance }.'
     afterDecay:
       escapeDistance: 'Alpha particle escape distance is { $distance }.'
@@ -77,8 +77,8 @@ a11y:
   potentialEnergyBarrierHeight: Potential Energy Barrier Height
   potentialEnergySlider:
     accessibleHelpText: Adjust well height.
-  initialEnergySlider:
-    accessibleHelpText: Adjust initial energy for alpha particles in nucleus.
+  alphaParticleEnergySlider:
+    accessibleHelpText: Adjust alpha particle energy for alpha particles in nucleus.
   decayTimeHistogram:
     accessibleParagraph: '{ $scale } timeline in seconds shows when each { $isotope } atom decayed relative to the half-life, { $hLifeTime } seconds.'
     scale:
@@ -87,7 +87,7 @@ a11y:
         logarithmic: Logarithmic
   halfLifeSlider:
     accessibleHelpText: Adjust time for isotope A to undergo one half-life.
-    accessibleContextResponse: 'Initial energy { $initialEProgress }, alpha particle escape distance { $distanceProgress }.'
+    accessibleContextResponse: 'Alpha particle energy { $initialEProgress }, alpha particle escape distance { $distanceProgress }.'
   dataProbeSlider:
     accessibleHelpText: Move probe horizontally to explore graph values.
   timeScaleCheckbox:

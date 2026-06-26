@@ -25,7 +25,7 @@ export default class SingleAtomModel extends NuclearDecayModel {
   public readonly potentialEnergyProperty: NumberProperty;
 
   // Initial energy
-  public readonly initialEnergyProperty: NumberProperty;
+  public readonly alphaParticleEnergyProperty: NumberProperty;
 
   public readonly escapeDistanceProperty: NumberProperty;
 
@@ -65,9 +65,9 @@ export default class SingleAtomModel extends NuclearDecayModel {
       phetioFeatured: true
     } );
 
-    this.initialEnergyProperty = new NumberProperty( 0.5, {
+    this.alphaParticleEnergyProperty = new NumberProperty( 0.5, {
       range: new Range( -1 * NuclearDecayCommonConstants.WELL_DEPTH, 1 ),
-      tandem: options.tandem.createTandem( 'initialEnergyProperty' ),
+      tandem: options.tandem.createTandem( 'alphaParticleEnergyProperty' ),
       phetioFeatured: true
     } );
 
@@ -111,12 +111,12 @@ export default class SingleAtomModel extends NuclearDecayModel {
     } );
 
     Multilink.multilink(
-      [ this.potentialEnergyProperty, this.initialEnergyProperty ],
-      ( potentialEnergy, initialEnergy ) => {
+      [ this.potentialEnergyProperty, this.alphaParticleEnergyProperty ],
+      ( potentialEnergy, alphaParticleEnergy ) => {
         if ( this.mappingInProgress ) { return; }
 
         this.mappingInProgress = true;
-        this.customHalfLifeProperty.value = NuclearDecayCommonConstants.ENERGIES_TO_HALF_LIFE_EXPONENT_MAPPING( initialEnergy, potentialEnergy );
+        this.customHalfLifeProperty.value = NuclearDecayCommonConstants.ENERGIES_TO_HALF_LIFE_EXPONENT_MAPPING( alphaParticleEnergy, potentialEnergy );
         this.mappingInProgress = false;
       } );
 
@@ -124,7 +124,7 @@ export default class SingleAtomModel extends NuclearDecayModel {
       if ( this.mappingInProgress ) { return; }
 
       this.mappingInProgress = true;
-      this.initialEnergyProperty.value = NuclearDecayCommonConstants.HALF_LIFE_TO_KINETIC_ENERGY_MAPPING( halfLife, this.potentialEnergyProperty.value );
+      this.alphaParticleEnergyProperty.value = NuclearDecayCommonConstants.HALF_LIFE_TO_KINETIC_ENERGY_MAPPING( halfLife, this.potentialEnergyProperty.value );
       this.mappingInProgress = false;
     } );
   }
@@ -175,7 +175,7 @@ export default class SingleAtomModel extends NuclearDecayModel {
     super.reset();
     this.hasDecayOccurredProperty.reset();
     this.potentialEnergyProperty.reset();
-    this.initialEnergyProperty.reset();
+    this.alphaParticleEnergyProperty.reset();
     this.alphaParticleDistanceProperty.reset();
   }
 }

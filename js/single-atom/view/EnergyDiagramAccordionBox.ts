@@ -60,15 +60,15 @@ const LEGEND_X = GRAPH_X_OFFSET + 10;
 const LEGEND_Y = 25;
 
 // Potential energy curve parameters (screen coordinates: negative Y = higher energy)
-export const MAX_ESCAPE_DISTANCE = 1000; // used when initial energy is above the barrier, so the intersection point is off the graph
+export const MAX_ESCAPE_DISTANCE = 1000; // used when alpha particle energy is above the barrier, so the intersection point is off the graph
 const INTERSECTION_THRESHOLD = -0.4; // Below this, the intersection between curves might accidentally land in the well
 const COULOMB_MIN_Y = 0; // asymptotic Coulomb energy at large distance (just above x-axis)
-const ENERGY_PEAK_Y = -GRAPH_HEIGHT * 0.4; // top of the Coulomb barrier (above initial energy line)
+const ENERGY_PEAK_Y = -GRAPH_HEIGHT * 0.4; // top of the Coulomb barrier (above alpha particle energy line)
 const WELL_BOTTOM_Y = GRAPH_HEIGHT * NuclearDecayCommonConstants.WELL_DEPTH / 2; // bottom of the nuclear potential well (below x-axis)
 const POINTINESS_FACTOR = 25; // sharpness of the quadratic curve at the barrier peak. 0 = max pointiness, 100 least.
 const CURVINESS_FACTOR = 0; // how curvy the potential energy curve is at the barrier peak. 0 = very curvy, rapid falloff, 1 = closer to a straight line.
 
-// How much deeper the well bottom goes at maximum initial energy (initialEnergy=1) after decay.
+// How much deeper the well bottom goes at maximum alpha particle energy (alphaParticleEnergy=1) after decay.
 const WELL_BOTTOM_POST_DECAY_MAX_EXTRA_DEPTH = GRAPH_HEIGHT * ( 1 - NuclearDecayCommonConstants.WELL_DEPTH - 0.05 ) / 2;
 
 export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox {
@@ -196,17 +196,17 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         } )
     } );
 
-    // Double-headed vertical arrow for dragging the initial energy level.
-    // Only visible in custom isotope mode. Dragging up increases initialEnergyProperty.
-    const initialEnergyGrabber = new EnergyGrabberNode( model.initialEnergyProperty, model, {
+    // Double-headed vertical arrow for dragging the alpha particle energy level.
+    // Only visible in custom isotope mode. Dragging up increases alphaParticleEnergyProperty.
+    const alphaParticleEnergyGrabber = new EnergyGrabberNode( model.alphaParticleEnergyProperty, model, {
       x: graphRightX - 80,
-      tandem: options.tandem.createTandem( 'initialEnergyGrabber' ),
+      tandem: options.tandem.createTandem( 'alphaParticleEnergyGrabber' ),
       accessibleName: NuclearDecayCommonFluent.alphaParticleEnergyStringProperty,
-      accessibleHelpText: NuclearDecayCommonFluent.a11y.initialEnergySlider.accessibleHelpTextStringProperty
+      accessibleHelpText: NuclearDecayCommonFluent.a11y.alphaParticleEnergySlider.accessibleHelpTextStringProperty
     } );
 
-    const initialEnergyGraphLine = new Line( -GRAPH_X_OFFSET, 0, graphRightX, 0, {
-      stroke: NuclearDecayCommonColors.initialEnergyColorProperty,
+    const alphaParticleEnergyGraphLine = new Line( -GRAPH_X_OFFSET, 0, graphRightX, 0, {
+      stroke: NuclearDecayCommonColors.alphaParticleEnergyColorProperty,
       lineWidth: 2,
       visibleProperty: isAtomInPlayAreaProperty
     } );
@@ -258,8 +258,8 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         potentialEnergyGraphCurve,
         yAxis,
         xAxis,
-        initialEnergyGraphLine,
-        initialEnergyGrabber,
+        alphaParticleEnergyGraphLine,
+        alphaParticleEnergyGrabber,
         potentialEnergyHeightIndicator,
         potentialEnergyGrabber,
         particleLayer
@@ -268,10 +268,10 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         listItems: [
 
           // BEFORE DECAY
-          // Initial energy is ... potential energy barrier height
+          // Alpha particle energy is ... potential energy barrier height
           {
-            stringProperty: NuclearDecayCommonFluent.a11y.energyDiagram.beforeDecay.initialEnergy.createProperty( {
-              position: model.initialEnergyProperty
+            stringProperty: NuclearDecayCommonFluent.a11y.energyDiagram.beforeDecay.alphaParticleEnergy.createProperty( {
+              position: model.alphaParticleEnergyProperty
             } ), visibleProperty: beforeDecayDescriptionVisibleProperty
           },
           // Alpha particle escape distance is ...
@@ -297,20 +297,20 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       } )
     } );
 
-    // --- initialEnergyGrabber interaction ---
+    // --- alphaParticleEnergyGrabber interaction ---
     //
-    // The initial energy line sits at screen-y = value * ENERGY_PEAK_Y (ENERGY_PEAK_Y is negative, so higher values
+    // The alpha particle energy line sits at screen-y = value * ENERGY_PEAK_Y (ENERGY_PEAK_Y is negative, so higher values
     // move the line upward). Inverting: value = localY / ENERGY_PEAK_Y.
     //
     // contentsNode is defined below; safe to reference because these callbacks only fire at runtime.
 
-    // Pointer drag: convert absolute pointer position to an initialEnergyProperty value.
-    initialEnergyGrabber.addInputListener( new SoundDragListener( {
+    // Pointer drag: convert absolute pointer position to an alphaParticleEnergyProperty value.
+    alphaParticleEnergyGrabber.addInputListener( new SoundDragListener( {
       tandem: Tandem.OPT_OUT,
       drag: event => {
         const localY = contentsNode.globalToLocalPoint( event.pointer.point ).y;
         const value = localY / ENERGY_PEAK_Y;
-        model.initialEnergyProperty.value = clamp( value, model.initialEnergyProperty.range.min, model.initialEnergyProperty.range.max );
+        model.alphaParticleEnergyProperty.value = clamp( value, model.alphaParticleEnergyProperty.range.min, model.alphaParticleEnergyProperty.range.max );
       },
       start: () => {
         model.isUserInteractingProperty.value = true;
@@ -363,8 +363,8 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
 
     // Multilink to update the energy shapes and find their intersection
     Multilink.multilink(
-      [ wellCenterXProperty, model.potentialEnergyProperty, model.initialEnergyProperty, model.hasDecayOccurredProperty ],
-      ( wellCenterX: number, potentialEnergy: number, initialEnergy: number, hasDecayOccurred: boolean ) => {
+      [ wellCenterXProperty, model.potentialEnergyProperty, model.alphaParticleEnergyProperty, model.hasDecayOccurredProperty ],
+      ( wellCenterX: number, potentialEnergy: number, alphaParticleEnergy: number, hasDecayOccurred: boolean ) => {
 
         // JB REVIEW: Get rid of tweak factor by addressing root cause.
         const wellWidthTweakFactor = -5;
@@ -381,9 +381,9 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         potentialEnergyHeightIndicator.setLine( wellCenterX + wellHalfWidth, peakY + peakCorrection,
           potentialEnergyGrabber.x + 20, peakY + peakCorrection );
 
-        // After decay, lower the well bottom proportionally to initial energy (higher energy = deeper well).
+        // After decay, lower the well bottom proportionally to alpha particle energy (higher energy = deeper well).
         const wellBottomY = hasDecayOccurred
-                            ? WELL_BOTTOM_Y + clamp( initialEnergy, 0, 1 ) * WELL_BOTTOM_POST_DECAY_MAX_EXTRA_DEPTH
+                            ? WELL_BOTTOM_Y + clamp( alphaParticleEnergy, 0, 1 ) * WELL_BOTTOM_POST_DECAY_MAX_EXTRA_DEPTH
                             : WELL_BOTTOM_Y;
 
         potentialEnergyGraphCurve.shape = new Shape()
@@ -401,18 +401,18 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
           );
 
         // Higher initial-energy value raises the line (screen-Y is inverted).
-        const initialEnergyHeight = initialEnergy * ENERGY_PEAK_Y;
-        initialEnergyGraphLine.y = initialEnergyHeight;
-        initialEnergyGrabber.centerY = initialEnergyHeight;
+        const alphaParticleEnergyHeight = alphaParticleEnergy * ENERGY_PEAK_Y;
+        alphaParticleEnergyGraphLine.y = alphaParticleEnergyHeight;
+        alphaParticleEnergyGrabber.centerY = alphaParticleEnergyHeight;
 
         // A ray at the height of the initial energy, directed horizontally into the potential energy curve.
-        const initialEnergyRay = new Ray2(
-          new Vector2( 0, initialEnergyHeight ),
+        const alphaParticleEnergyRay = new Ray2(
+          new Vector2( 0, alphaParticleEnergyHeight ),
           new Vector2( 1, 0 )
         );
 
         // Multiple intersections found due to the well shape; only the first (leftmost) is used.
-        const intersections = potentialEnergyGraphCurve.shape.intersection( initialEnergyRay );
+        const intersections = potentialEnergyGraphCurve.shape.intersection( alphaParticleEnergyRay );
         if ( intersections.length !== 0 ) {
           const point = intersections[ 0 ].point;
           if ( point.y < INTERSECTION_THRESHOLD ) {
@@ -429,7 +429,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         else {
           // No intersection cases
 
-          if ( initialEnergyGraphLine.y < 0 ) {
+          if ( alphaParticleEnergyGraphLine.y < 0 ) {
 
             // No intersection and energy above well — dotted circle assumes the size of the well.
             energyIntersectionPointProperty.value = new Vector2( wellHalfWidth, 0 );
@@ -443,7 +443,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
 
         // Update the Y positions for the particles.
         particlesInWell.forEach( particle => {
-          particle.centerY = initialEnergyHeight;
+          particle.centerY = alphaParticleEnergyHeight;
         } );
       }
     );
@@ -459,7 +459,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     const ejectedParticleTweakFactor = -100; // JB REVIEW: Figure out why this is needed and fix the root cause.
     model.hasDecayOccurredProperty.link( hasDecayed => {
       particlesInWell.forEach( particle => {
-        particle.centerY = initialEnergyGraphLine.centerY;
+        particle.centerY = alphaParticleEnergyGraphLine.centerY;
         particle.centerX = wellCenterXProperty.value + ( dotRandom.nextDouble() - 0.5 ) * 2 * maxParticleXDelta;
       } );
 
@@ -477,7 +477,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
             alphaParticleNode.centerX =
               modelViewTransformProperty.value.modelToViewX( ejectedParticle.positionProperty.value.x ) +
               ejectedParticleTweakFactor;
-            alphaParticleNode.centerY = initialEnergyGraphLine.centerY;
+            alphaParticleNode.centerY = alphaParticleEnergyGraphLine.centerY;
             particlesOutsideWell.push( alphaParticleNode );
           }
         }
@@ -488,7 +488,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         if ( particlesOutsideWell.length > 0 ) {
           particlesOutsideWell.forEach( particle => {
             particlesInWell.push( particle );
-            particle.center = initialEnergyGraphLine.center;
+            particle.center = alphaParticleEnergyGraphLine.center;
           } );
           particlesOutsideWell.length = 0;
         }
@@ -509,7 +509,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         particlesOutsideWell[ 0 ].centerX =
           modelViewTransformProperty.value.modelToViewX( ejectedParticle.positionProperty.value.x ) +
           ejectedParticleTweakFactor;
-        particlesOutsideWell[ 0 ].centerY = initialEnergyGraphLine.centerY;
+        particlesOutsideWell[ 0 ].centerY = alphaParticleEnergyGraphLine.centerY;
       }
 
       // If there are any alpha particles outside the nucleus but inside the tunneling radius in the dynamic nucleus,

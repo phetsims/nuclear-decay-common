@@ -36,7 +36,7 @@ const NuclearDecayCommonColors = {
     default: new Color( 102, 45, 145 )
   } ),
 
-  initialEnergyColorProperty: new ProfileColorProperty( nuclearDecayCommon, 'initialEnergy', {
+  alphaParticleEnergyColorProperty: new ProfileColorProperty( nuclearDecayCommon, 'alphaParticleEnergy', {
     default: new Color( 5, 130, 0 )
   } ),
 

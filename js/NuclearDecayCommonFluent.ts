@@ -5,7 +5,7 @@
 /* eslint-disable */
 /* @formatter:off */
 
-import { TReadOnlyProperty } from '../../axon/js/TReadOnlyProperty.js';
+import {TReadOnlyProperty} from '../../axon/js/TReadOnlyProperty.js';
 import FluentLibrary from '../../chipper/js/browser-and-node/FluentLibrary.js';
 import FluentConstant from '../../chipper/js/browser/FluentConstant.js';
 import FluentContainer from '../../chipper/js/browser/FluentContainer.js';
@@ -81,14 +81,14 @@ addToMapIfDefined( 'a11y_qualitative_valueHigh', 'a11y.qualitative.valueHighStri
 addToMapIfDefined( 'a11y_energyDiagram_accessibleName', 'a11y.energyDiagram.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_energyDiagram_accessibleHelpTextCollapsed', 'a11y.energyDiagram.accessibleHelpTextCollapsedStringProperty' );
 addToMapIfDefined( 'a11y_energyDiagram_staticDescription', 'a11y.energyDiagram.staticDescriptionStringProperty' );
-addToMapIfDefined( 'a11y_energyDiagram_beforeDecay_initialEnergy', 'a11y.energyDiagram.beforeDecay.initialEnergyStringProperty' );
+addToMapIfDefined( 'a11y_energyDiagram_beforeDecay_alphaParticleEnergy', 'a11y.energyDiagram.beforeDecay.alphaParticleEnergyStringProperty' );
 addToMapIfDefined( 'a11y_energyDiagram_beforeDecay_escapeDistance', 'a11y.energyDiagram.beforeDecay.escapeDistanceStringProperty' );
 addToMapIfDefined( 'a11y_energyDiagram_afterDecay_escapeDistance', 'a11y.energyDiagram.afterDecay.escapeDistanceStringProperty' );
 addToMapIfDefined( 'a11y_energyDiagram_afterDecay_potentialWell', 'a11y.energyDiagram.afterDecay.potentialWellStringProperty' );
 addToMapIfDefined( 'a11y_energyDiagramSliders_accessibleContextResponse', 'a11y.energyDiagramSliders.accessibleContextResponseStringProperty' );
 addToMapIfDefined( 'a11y_potentialEnergyBarrierHeight', 'a11y.potentialEnergyBarrierHeightStringProperty' );
 addToMapIfDefined( 'a11y_potentialEnergySlider_accessibleHelpText', 'a11y.potentialEnergySlider.accessibleHelpTextStringProperty' );
-addToMapIfDefined( 'a11y_initialEnergySlider_accessibleHelpText', 'a11y.initialEnergySlider.accessibleHelpTextStringProperty' );
+addToMapIfDefined( 'a11y_alphaParticleEnergySlider_accessibleHelpText', 'a11y.alphaParticleEnergySlider.accessibleHelpTextStringProperty' );
 addToMapIfDefined( 'a11y_decayTimeHistogram_accessibleParagraph', 'a11y.decayTimeHistogram.accessibleParagraphStringProperty' );
 addToMapIfDefined( 'a11y_decayTimeHistogram_scale', 'a11y.decayTimeHistogram.scaleStringProperty' );
 addToMapIfDefined( 'a11y_halfLifeSlider_accessibleHelpText', 'a11y.halfLifeSlider.accessibleHelpTextStringProperty' );
@@ -231,7 +231,7 @@ const NuclearDecayCommonFluent = {
       accessibleHelpTextCollapsedStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_energyDiagram_accessibleHelpTextCollapsed', _.get( NuclearDecayCommonStrings, 'a11y.energyDiagram.accessibleHelpTextCollapsedStringProperty' ) ),
       staticDescriptionStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_energyDiagram_staticDescription', _.get( NuclearDecayCommonStrings, 'a11y.energyDiagram.staticDescriptionStringProperty' ) ),
       beforeDecay: {
-        initialEnergy: new FluentPattern<{ position: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_energyDiagram_beforeDecay_initialEnergy', _.get( NuclearDecayCommonStrings, 'a11y.energyDiagram.beforeDecay.initialEnergyStringProperty' ), [{"name":"position"}] ),
+        alphaParticleEnergy: new FluentPattern<{ position: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_energyDiagram_beforeDecay_alphaParticleEnergy', _.get( NuclearDecayCommonStrings, 'a11y.energyDiagram.beforeDecay.alphaParticleEnergyStringProperty' ), [{"name":"position"}] ),
         escapeDistance: new FluentPattern<{ distance: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_energyDiagram_beforeDecay_escapeDistance', _.get( NuclearDecayCommonStrings, 'a11y.energyDiagram.beforeDecay.escapeDistanceStringProperty' ), [{"name":"distance"}] )
       },
       afterDecay: {
@@ -246,8 +246,8 @@ const NuclearDecayCommonFluent = {
     potentialEnergySlider: {
       accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_potentialEnergySlider_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.potentialEnergySlider.accessibleHelpTextStringProperty' ) )
     },
-    initialEnergySlider: {
-      accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_initialEnergySlider_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.initialEnergySlider.accessibleHelpTextStringProperty' ) )
+    alphaParticleEnergySlider: {
+      accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_alphaParticleEnergySlider_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.alphaParticleEnergySlider.accessibleHelpTextStringProperty' ) )
     },
     decayTimeHistogram: {
       accessibleParagraph: new FluentPattern<{ hLifeTime: FluentVariable, isotope: FluentVariable, scale: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayTimeHistogram_accessibleParagraph', _.get( NuclearDecayCommonStrings, 'a11y.decayTimeHistogram.accessibleParagraphStringProperty' ), [{"name":"hLifeTime"},{"name":"isotope"},{"name":"scale"}] ),

@@ -34,13 +34,13 @@ export default class EnergyDiagramLegendNode extends VBox {
 
     // Legend lines and labels
 
-    const initialEnergyLegendLine = new Line( 0, 0, LEGEND_LINE_LENGTH, 0, {
-        stroke: NuclearDecayCommonColors.initialEnergyColorProperty,
+    const alphaParticleEnergyLegendLine = new Line( 0, 0, LEGEND_LINE_LENGTH, 0, {
+        stroke: NuclearDecayCommonColors.alphaParticleEnergyColorProperty,
         lineWidth: 2
       }
     );
 
-    const initialEnergyLabel = new Text( NuclearDecayCommonFluent.alphaParticleEnergyStringProperty, {
+    const alphaParticleEnergyLabel = new Text( NuclearDecayCommonFluent.alphaParticleEnergyStringProperty, {
       font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
@@ -59,7 +59,7 @@ export default class EnergyDiagramLegendNode extends VBox {
     options.children = [
       new HBox( {
         spacing: 6,
-        children: [ initialEnergyLegendLine, initialEnergyLabel ]
+        children: [ alphaParticleEnergyLegendLine, alphaParticleEnergyLabel ]
       } ),
       new HBox( {
         spacing: 6,

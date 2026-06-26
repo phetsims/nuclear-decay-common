@@ -143,8 +143,8 @@ type StringsType = {
       'staticDescription': string;
       'staticDescriptionStringProperty': LocalizedStringProperty;
       'beforeDecay': {
-        'initialEnergy': string;
-        'initialEnergyStringProperty': LocalizedStringProperty;
+        'alphaParticleEnergy': string;
+        'alphaParticleEnergyStringProperty': LocalizedStringProperty;
         'escapeDistance': string;
         'escapeDistanceStringProperty': LocalizedStringProperty;
       };
@@ -165,7 +165,7 @@ type StringsType = {
       'accessibleHelpText': string;
       'accessibleHelpTextStringProperty': LocalizedStringProperty;
     };
-    'initialEnergySlider': {
+    'alphaParticleEnergySlider': {
       'accessibleHelpText': string;
       'accessibleHelpTextStringProperty': LocalizedStringProperty;
     };

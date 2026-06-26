@@ -67,7 +67,7 @@ export default class SingleAtomScreenView extends SingleAndMultipleAtomsScreenVi
     this.rightColumnControls.addChild( this.particleCountsAccordionBox );
     this.rightColumnControls.addChild( this.equationAccordionBox );
 
-    Multilink.multilink( [ model.potentialEnergyProperty, model.initialEnergyProperty ], () => {
+    Multilink.multilink( [ model.potentialEnergyProperty, model.alphaParticleEnergyProperty ], () => {
       model.resetAtomDecayStates();
       this.atomNodes.forEach( atomNode => {
         atomNode.agitateNucleus();
