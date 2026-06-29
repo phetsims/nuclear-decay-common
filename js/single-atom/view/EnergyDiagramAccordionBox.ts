@@ -182,7 +182,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     const potentialEnergyGrabber = new EnergyGrabberNode( model.potentialEnergyProperty, model, {
       x: graphRightX - 120,
       tandem: options.tandem.createTandem( 'potentialEnergyGrabber' ),
-      accessibleName: NuclearDecayCommonFluent.potentialEnergyStringProperty,
+      accessibleName: NuclearDecayCommonFluent.a11y.potentialEnergySlider.accessibleNameStringProperty,
       accessibleHelpText: NuclearDecayCommonFluent.a11y.potentialEnergySlider.accessibleHelpTextStringProperty
     } );
 
@@ -201,7 +201,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     const alphaParticleEnergyGrabber = new EnergyGrabberNode( model.alphaParticleEnergyProperty, model, {
       x: graphRightX - 80,
       tandem: options.tandem.createTandem( 'alphaParticleEnergyGrabber' ),
-      accessibleName: NuclearDecayCommonFluent.alphaParticleEnergyStringProperty,
+      accessibleName: NuclearDecayCommonFluent.a11y.alphaParticleEnergySlider.accessibleNameStringProperty,
       accessibleHelpText: NuclearDecayCommonFluent.a11y.alphaParticleEnergySlider.accessibleHelpTextStringProperty
     } );
 
@@ -258,10 +258,10 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         potentialEnergyGraphCurve,
         yAxis,
         xAxis,
-        alphaParticleEnergyGraphLine,
-        alphaParticleEnergyGrabber,
         potentialEnergyHeightIndicator,
         potentialEnergyGrabber,
+        alphaParticleEnergyGraphLine,
+        alphaParticleEnergyGrabber,
         particleLayer
       ],
       accessibleTemplate: AccessibleList.createTemplateProperty( {

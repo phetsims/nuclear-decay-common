@@ -252,10 +252,10 @@
         "value": "Energy Diagram"
       },
       "accessibleHelpTextCollapsed": {
-        "value": "Show changes to alpha particle energy."
+        "value": "View alpha particle in nuclear potential well."
       },
       "staticDescription": {
-        "value": "An energy versus distance graph shows alpha particles in a nuclear potential well and indicates their energy before and after decay."
+        "value": "An energy versus distance graph shows alpha particles in a nuclear potential well."
       },
       "beforeDecay": {
         "alphaParticleEnergy": {
@@ -279,17 +279,20 @@
         "value": "Alpha particle escape distance { $distanceProgress }, half-life { $hLifeProgress }."
       }
     },
-    "potentialEnergyBarrierHeight": {
-      "value": "Potential Energy Barrier Height"
-    },
     "potentialEnergySlider": {
+      "accessibleName": {
+        "value": "Potential Energy Barrier Height"
+      },
       "accessibleHelpText": {
-        "value": "Adjust well height."
+        "value": "Adjust barrier height."
       }
     },
     "alphaParticleEnergySlider": {
+      "accessibleName": {
+        "value": "Alpha Particle Energy"
+      },
       "accessibleHelpText": {
-        "value": "Adjust alpha particle energy for alpha particles in nucleus."
+        "value": "Adjust energy of alpha particles in nucleus."
       }
     },
     "decayTimeHistogram": {

@@ -211,13 +211,15 @@ type StringsType = {
       'accessibleContextResponse': string;
       'accessibleContextResponseStringProperty': LocalizedStringProperty;
     };
-    'potentialEnergyBarrierHeight': string;
-    'potentialEnergyBarrierHeightStringProperty': LocalizedStringProperty;
     'potentialEnergySlider': {
+      'accessibleName': string;
+      'accessibleNameStringProperty': LocalizedStringProperty;
       'accessibleHelpText': string;
       'accessibleHelpTextStringProperty': LocalizedStringProperty;
     };
     'alphaParticleEnergySlider': {
+      'accessibleName': string;
+      'accessibleNameStringProperty': LocalizedStringProperty;
       'accessibleHelpText': string;
       'accessibleHelpTextStringProperty': LocalizedStringProperty;
     };

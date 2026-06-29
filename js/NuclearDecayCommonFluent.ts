@@ -103,8 +103,9 @@ addToMapIfDefined( 'a11y_energyDiagram_beforeDecay_escapeDistance', 'a11y.energy
 addToMapIfDefined( 'a11y_energyDiagram_afterDecay_escapeDistance', 'a11y.energyDiagram.afterDecay.escapeDistanceStringProperty' );
 addToMapIfDefined( 'a11y_energyDiagram_afterDecay_potentialWell', 'a11y.energyDiagram.afterDecay.potentialWellStringProperty' );
 addToMapIfDefined( 'a11y_energyDiagramSliders_accessibleContextResponse', 'a11y.energyDiagramSliders.accessibleContextResponseStringProperty' );
-addToMapIfDefined( 'a11y_potentialEnergyBarrierHeight', 'a11y.potentialEnergyBarrierHeightStringProperty' );
+addToMapIfDefined( 'a11y_potentialEnergySlider_accessibleName', 'a11y.potentialEnergySlider.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_potentialEnergySlider_accessibleHelpText', 'a11y.potentialEnergySlider.accessibleHelpTextStringProperty' );
+addToMapIfDefined( 'a11y_alphaParticleEnergySlider_accessibleName', 'a11y.alphaParticleEnergySlider.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_alphaParticleEnergySlider_accessibleHelpText', 'a11y.alphaParticleEnergySlider.accessibleHelpTextStringProperty' );
 addToMapIfDefined( 'a11y_decayTimeHistogram_accessibleParagraph', 'a11y.decayTimeHistogram.accessibleParagraphStringProperty' );
 addToMapIfDefined( 'a11y_decayTimeHistogram_scale', 'a11y.decayTimeHistogram.scaleStringProperty' );
@@ -295,11 +296,12 @@ const NuclearDecayCommonFluent = {
     energyDiagramSliders: {
       accessibleContextResponse: new FluentPattern<{ distanceProgress: FluentVariable, hLifeProgress: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_energyDiagramSliders_accessibleContextResponse', _.get( NuclearDecayCommonStrings, 'a11y.energyDiagramSliders.accessibleContextResponseStringProperty' ), [{"name":"distanceProgress"},{"name":"hLifeProgress"}] )
     },
-    potentialEnergyBarrierHeightStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_potentialEnergyBarrierHeight', _.get( NuclearDecayCommonStrings, 'a11y.potentialEnergyBarrierHeightStringProperty' ) ),
     potentialEnergySlider: {
+      accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_potentialEnergySlider_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.potentialEnergySlider.accessibleNameStringProperty' ) ),
       accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_potentialEnergySlider_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.potentialEnergySlider.accessibleHelpTextStringProperty' ) )
     },
     alphaParticleEnergySlider: {
+      accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_alphaParticleEnergySlider_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.alphaParticleEnergySlider.accessibleNameStringProperty' ) ),
       accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_alphaParticleEnergySlider_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.alphaParticleEnergySlider.accessibleHelpTextStringProperty' ) )
     },
     decayTimeHistogram: {

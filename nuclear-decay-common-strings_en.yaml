@@ -105,8 +105,7 @@ a11y:
     accessibleName: Energy Diagram
     accessibleHelpTextCollapsed: View alpha particle in nuclear potential well.
     staticDescription: >-
-      An energy versus distance graph shows alpha particles in a nuclear potential well and indicates their
-      energy before and after decay.
+      An energy versus distance graph shows alpha particles in a nuclear potential well.
     beforeDecay:
       alphaParticleEnergy: 'Alpha particle energy is { $position } potential energy barrier height.'
       escapeDistance: 'Alpha particle escape distance is { $distance }.'
@@ -115,11 +114,12 @@ a11y:
       potentialWell: 'Potential well deeper.'
   energyDiagramSliders:
     accessibleContextResponse: 'Alpha particle escape distance { $distanceProgress }, half-life { $hLifeProgress }.'
-  potentialEnergyBarrierHeight: Potential Energy Barrier Height
   potentialEnergySlider:
-    accessibleHelpText: Adjust well height.
+    accessibleName: Potential Energy Barrier Height
+    accessibleHelpText: Adjust barrier height.
   alphaParticleEnergySlider:
-    accessibleHelpText: Adjust alpha particle energy for alpha particles in nucleus.
+    accessibleName: Alpha Particle Energy
+    accessibleHelpText: Adjust energy of alpha particles in nucleus.
   decayTimeHistogram:
     accessibleParagraph: '{ $scale } timeline shows when each { $isotope } atom decayed relative to the half-life, { $hLifeTime } seconds.'
     scale:
