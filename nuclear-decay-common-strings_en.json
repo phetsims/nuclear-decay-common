@@ -29,6 +29,9 @@
   "potentialEnergy": {
     "value": "Potential Energy"
   },
+  "preDecayWell": {
+    "value": "Pre-Decay Well"
+  },
   "distance": {
     "value": "Distance"
   },

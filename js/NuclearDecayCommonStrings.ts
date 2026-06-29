@@ -34,6 +34,8 @@ type StringsType = {
   'alphaParticleEnergyStringProperty': LocalizedStringProperty;
   'potentialEnergy': string;
   'potentialEnergyStringProperty': LocalizedStringProperty;
+  'preDecayWell': string;
+  'preDecayWellStringProperty': LocalizedStringProperty;
   'distance': string;
   'distanceStringProperty': LocalizedStringProperty;
   'energy': string;

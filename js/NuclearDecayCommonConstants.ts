@@ -97,23 +97,24 @@ export default class NuclearDecayCommonConstants {
   // How deep the well is with respect to half the graph height. 1 corresponds to the lower end of the Y axis.
   public static readonly WELL_DEPTH = 0.3;
 
-  public static readonly ENERGIES_TO_HALF_LIFE_EXPONENT_MAPPING =
-    ( kineticEnergy: number, potentialEnergy: number ): number => {
+  // We work with normalized energy and halfLife values so it's easier to map between them
+  public static readonly CALCULATE_HALF_LIFE =
+    ( alphaParticleEnergy: number, potentialEnergy: number ): number => {
 
-      // If kinetic energy is negative, return the maximum half-life
-      if ( kineticEnergy < 0 ) { return 1; }
+      // If alpha particle energy is negative, return the maximum half-life
+      if ( alphaParticleEnergy < 0 ) { return 1; }
 
-      // If kinetic energy is greater than potential energy, return the minimum half-life (immediate decay)
-      if ( kineticEnergy > potentialEnergy ) { return 0; }
+      // If alpha particle energy is greater than potential energy, return the minimum half-life (immediate decay)
+      if ( alphaParticleEnergy > potentialEnergy ) { return 0; }
 
       // Expression that roughly maps the energy difference to a normalized half-life
       return clamp(
-        ( potentialEnergy - kineticEnergy ) / potentialEnergy, 0, 1 );
+        ( potentialEnergy - alphaParticleEnergy ) / potentialEnergy, 0, 1 );
     };
 
-  public static readonly HALF_LIFE_TO_KINETIC_ENERGY_MAPPING = ( halfLife: number, potentialEnergy: number ): number => {
+  public static readonly CALCULATE_ALPHA_PARTICLE_ENERGY = ( halfLife: number, potentialEnergy: number ): number => {
 
-    // Inverse of the above function solving for kinetic energy
+    // Inverse of the above function solving for alpha particle energy
     return clamp(
       potentialEnergy - halfLife * potentialEnergy, 0, 1 );
   };

@@ -88,6 +88,20 @@ export default class SingleAtomModel extends NuclearDecayModel {
       tandem: particleCountsTandem.createTandem( 'alphaParticleDistanceProperty' )
     } );
 
+    this.selectedIsotopeProperty.link( isotope => {
+
+      // Default energy values for polonium.
+      if ( isotope === 'polonium-211' ) {
+        this.potentialEnergyProperty.value = 0.7;
+        this.alphaParticleEnergyProperty.value = NuclearDecayCommonConstants.CALCULATE_ALPHA_PARTICLE_ENERGY(
+          NuclearDecayCommonConstants.LINEAR_HALF_LIFE.getNormalizedValue(
+            NuclearDecayAtom.getHalfLife( isotope )!
+          ),
+          this.potentialEnergyProperty.value
+        );
+      }
+    } );
+
     Multilink.multilink(
       [
         this.selectedIsotopeProperty,
@@ -116,7 +130,7 @@ export default class SingleAtomModel extends NuclearDecayModel {
         if ( this.mappingInProgress ) { return; }
 
         this.mappingInProgress = true;
-        this.customHalfLifeProperty.value = NuclearDecayCommonConstants.ENERGIES_TO_HALF_LIFE_EXPONENT_MAPPING( alphaParticleEnergy, potentialEnergy );
+        this.customHalfLifeProperty.value = NuclearDecayCommonConstants.CALCULATE_HALF_LIFE( alphaParticleEnergy, potentialEnergy );
         this.mappingInProgress = false;
       } );
 
@@ -124,7 +138,7 @@ export default class SingleAtomModel extends NuclearDecayModel {
       if ( this.mappingInProgress ) { return; }
 
       this.mappingInProgress = true;
-      this.alphaParticleEnergyProperty.value = NuclearDecayCommonConstants.HALF_LIFE_TO_KINETIC_ENERGY_MAPPING( halfLife, this.potentialEnergyProperty.value );
+      this.alphaParticleEnergyProperty.value = NuclearDecayCommonConstants.CALCULATE_ALPHA_PARTICLE_ENERGY( halfLife, this.potentialEnergyProperty.value );
       this.mappingInProgress = false;
     } );
   }
@@ -168,6 +182,9 @@ export default class SingleAtomModel extends NuclearDecayModel {
       const atom = this.activeAtoms[ 0 ];
       const ejectedParticle = atom.ejectedDecayParticles[ 0 ];
       this.alphaParticleDistanceProperty.value = ejectedParticle.positionProperty.value.distance( atom.position );
+    }
+    else {
+      this.alphaParticleDistanceProperty.value = 0;
     }
   }
 

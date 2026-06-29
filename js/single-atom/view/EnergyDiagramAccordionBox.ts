@@ -52,6 +52,10 @@ const CONTENT_Y_MARGIN = 20;
 // Height of the graph region (y-axis length). Kept constant; width is derived from provided bounds.
 const GRAPH_HEIGHT = 160;
 
+// Fraction of GRAPH_HEIGHT that lies above the x-axis (positive-energy region).
+// 0.5 → equal split; increase to give more room to the positive region, decrease for more negative room.
+const X_AXIS_AT_HEIGHT = 0.4;
+
 // Left margin inside the content: room for the rotated "Energy" label and the left side of the x-axis arrow.
 const GRAPH_X_OFFSET = 15;
 
@@ -63,13 +67,10 @@ const LEGEND_Y = 25;
 export const MAX_ESCAPE_DISTANCE = 1000; // used when alpha particle energy is above the barrier, so the intersection point is off the graph
 const INTERSECTION_THRESHOLD = -0.4; // Below this, the intersection between curves might accidentally land in the well
 const COULOMB_MIN_Y = 0; // asymptotic Coulomb energy at large distance (just above x-axis)
-const ENERGY_PEAK_Y = -GRAPH_HEIGHT * 0.4; // top of the Coulomb barrier (above alpha particle energy line)
-const WELL_BOTTOM_Y = GRAPH_HEIGHT * NuclearDecayCommonConstants.WELL_DEPTH / 2; // bottom of the nuclear potential well (below x-axis)
+const ENERGY_PEAK_Y = -GRAPH_HEIGHT * X_AXIS_AT_HEIGHT * 0.8; // top of the Coulomb barrier (above alpha particle energy line)
+const WELL_BOTTOM_Y = GRAPH_HEIGHT * ( 1 - X_AXIS_AT_HEIGHT ) * NuclearDecayCommonConstants.WELL_DEPTH; // bottom of the nuclear potential well (below x-axis)
 const POINTINESS_FACTOR = 25; // sharpness of the quadratic curve at the barrier peak. 0 = max pointiness, 100 least.
 const CURVINESS_FACTOR = 0; // how curvy the potential energy curve is at the barrier peak. 0 = very curvy, rapid falloff, 1 = closer to a straight line.
-
-// How much deeper the well bottom goes at maximum alpha particle energy (alphaParticleEnergy=1) after decay.
-const WELL_BOTTOM_POST_DECAY_MAX_EXTRA_DEPTH = GRAPH_HEIGHT * ( 1 - NuclearDecayCommonConstants.WELL_DEPTH - 0.05 ) / 2;
 
 export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox {
 
@@ -122,7 +123,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
 
     // Y-axis: upward arrow
 
-    const yAxis = new ArrowNode( GRAPH_X_OFFSET, GRAPH_HEIGHT / 2, GRAPH_X_OFFSET, -GRAPH_HEIGHT / 2, {
+    const yAxis = new ArrowNode( GRAPH_X_OFFSET, GRAPH_HEIGHT * ( 1 - X_AXIS_AT_HEIGHT ), GRAPH_X_OFFSET, -GRAPH_HEIGHT * X_AXIS_AT_HEIGHT, {
       stroke: 'black',
       lineWidth: 1,
       headWidth: 8,
@@ -145,7 +146,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
       rotation: -Math.PI / 2,
       centerX: GRAPH_X_OFFSET - 15,
-      centerY: GRAPH_HEIGHT / 2 - 20,
+      centerY: GRAPH_HEIGHT * ( 1 - X_AXIS_AT_HEIGHT ) - 20,
       maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
     } );
 
@@ -234,6 +235,20 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       }
     );
 
+    // Dashed line marking where the well bottom sat before decay; appears after decay so the deepening is apparent.
+    const preDecayWellLine = new Line( 0, WELL_BOTTOM_Y, 0, WELL_BOTTOM_Y, {
+      lineWidth: 2,
+      stroke: 'black',
+      visibleProperty: afterDecayDescriptionVisibleProperty
+    } );
+
+    const preDecayWellLabel = new Text( NuclearDecayCommonFluent.preDecayWellStringProperty, {
+      font: NuclearDecayCommonConstants.SMALL_LABEL_FONT,
+      centerY: WELL_BOTTOM_Y,
+      maxWidth: 100,
+      visibleProperty: afterDecayDescriptionVisibleProperty
+    } );
+
     // Add the particlesInWell that will move around on the graph.
     const particlesInWell: Node[] = [];
     particlesInWell.push( new AlphaParticleNode( {
@@ -256,6 +271,8 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         distanceAxisLabel,
         legend,
         potentialEnergyGraphCurve,
+        preDecayWellLine,
+        preDecayWellLabel,
         yAxis,
         xAxis,
         potentialEnergyHeightIndicator,
@@ -383,7 +400,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
 
         // After decay, lower the well bottom proportionally to alpha particle energy (higher energy = deeper well).
         const wellBottomY = hasDecayOccurred
-                            ? WELL_BOTTOM_Y + clamp( alphaParticleEnergy, 0, 1 ) * WELL_BOTTOM_POST_DECAY_MAX_EXTRA_DEPTH
+                            ? WELL_BOTTOM_Y + clamp( alphaParticleEnergy, 0, 1 ) * GRAPH_HEIGHT * X_AXIS_AT_HEIGHT
                             : WELL_BOTTOM_Y;
 
         potentialEnergyGraphCurve.shape = new Shape()
@@ -400,8 +417,13 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
             graphRightX, COULOMB_MIN_Y
           );
 
+        const preDecayWellLineX = wellCenterX + wellHalfWidth;
+        const preDecayWellLineWidth = 15;
+        preDecayWellLine.setLine( preDecayWellLineX, WELL_BOTTOM_Y, preDecayWellLineX + preDecayWellLineWidth, WELL_BOTTOM_Y );
+        preDecayWellLabel.left = preDecayWellLineX + preDecayWellLineWidth + 10;
+
         // Higher initial-energy value raises the line (screen-Y is inverted).
-        const alphaParticleEnergyHeight = alphaParticleEnergy * ENERGY_PEAK_Y;
+        const alphaParticleEnergyHeight = alphaParticleEnergy * ENERGY_PEAK_Y + peakCorrection;
         alphaParticleEnergyGraphLine.y = alphaParticleEnergyHeight;
         alphaParticleEnergyGrabber.centerY = alphaParticleEnergyHeight;
 
@@ -415,9 +437,9 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         const intersections = potentialEnergyGraphCurve.shape.intersection( alphaParticleEnergyRay );
         if ( intersections.length !== 0 ) {
           const point = intersections[ 0 ].point;
-          if ( point.y < INTERSECTION_THRESHOLD ) {
 
-            // Make sure the intersection is above the X axis, otherwise it could be inside the well walls
+          // Make sure the intersection is above the X axis, otherwise it could be inside the well walls
+          if ( point.y < INTERSECTION_THRESHOLD ) {
             energyIntersectionPointProperty.value = new Vector2( Math.abs( point.x - wellCenterX ), point.y );
           }
           else {
