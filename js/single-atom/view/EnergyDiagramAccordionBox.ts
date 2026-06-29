@@ -440,7 +440,11 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
 
           // Make sure the intersection is above the X axis, otherwise it could be inside the well walls
           if ( point.y < INTERSECTION_THRESHOLD ) {
-            energyIntersectionPointProperty.value = new Vector2( Math.abs( point.x - wellCenterX ), point.y );
+
+            // Since the x-axis is not necessarily at the center of the graph, adjust the intersection height
+            const centerCorrection = ( X_AXIS_AT_HEIGHT - 0.5 ) * GRAPH_HEIGHT;
+
+            energyIntersectionPointProperty.value = new Vector2( Math.abs( point.x - wellCenterX ), point.y + centerCorrection );
           }
           else {
 
