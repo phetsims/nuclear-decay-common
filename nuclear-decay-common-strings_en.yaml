@@ -103,7 +103,7 @@ a11y:
           and 2 neutrons.
   energyDiagram:
     accessibleName: Energy Diagram
-    accessibleHelpTextCollapsed: Show changes to alpha particle energy.
+    accessibleHelpTextCollapsed: View alpha particle in nuclear potential well.
     staticDescription: >-
       An energy versus distance graph shows alpha particles in a nuclear potential well and indicates their
       energy before and after decay.
