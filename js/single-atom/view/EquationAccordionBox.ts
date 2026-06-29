@@ -8,7 +8,6 @@
 import DerivedStringProperty from '../../../../axon/js/DerivedStringProperty.js';
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
-import StringUtils from '../../../../phetcommon/js/util/StringUtils.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
 import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
@@ -58,10 +57,9 @@ export default class EquationAccordionBox extends NuclearDecayAccordionBox {
         isPlayAreaEmptyProperty,
         hasDecayOccurredProperty,
         NuclearDecayCommonFluent.a11y.nuclearEquation.noEquationStringProperty,
-        NuclearDecayCommonFluent.a11y.nuclearEquation.afterDecayStringProperty,
         NuclearDecayCommonFluent.isotopeAStringProperty,
         NuclearDecayCommonFluent.isotopeBStringProperty
-      ], ( isotope, isPlayAreaEmpty, hasDecayOccurred, noEquation, afterDecayPattern, isotopeAName, isotopeBName ) => {
+      ], ( isotope, isPlayAreaEmpty, hasDecayOccurred, noEquation, isotopeAName, isotopeBName ) => {
         if ( isPlayAreaEmpty ) {
           return noEquation;
         }
@@ -77,13 +75,9 @@ export default class EquationAccordionBox extends NuclearDecayAccordionBox {
 
         const daughterIsotopeName = isotope === 'custom' ? isotopeBName :
           AtomNameUtils.getNameAndMass( daughterConfig.protonCount, daughterConfig.neutronCount ).value;
-        return StringUtils.fillIn( afterDecayPattern, {
+        return NuclearDecayCommonFluent.a11y.nuclearEquation.afterDecay.format( {
           parentIsotope: parentIsotopeName,
-          daughterIsotope: daughterIsotopeName,
-          parentMass: parentConfig.protonCount + parentConfig.neutronCount,
-          daughterMass: daughterConfig.protonCount + daughterConfig.neutronCount,
-          parentCharge: parentConfig.protonCount,
-          daughterCharge: daughterConfig.protonCount
+          daughterIsotope: daughterIsotopeName
         } );
       } );
 

@@ -5,7 +5,7 @@
 /* eslint-disable */
 /* @formatter:off */
 
-import { TReadOnlyProperty } from '../../axon/js/TReadOnlyProperty.js';
+import {TReadOnlyProperty} from '../../axon/js/TReadOnlyProperty.js';
 import FluentLibrary from '../../chipper/js/browser-and-node/FluentLibrary.js';
 import FluentConstant from '../../chipper/js/browser/FluentConstant.js';
 import FluentContainer from '../../chipper/js/browser/FluentContainer.js';
@@ -107,6 +107,7 @@ addToMapIfDefined( 'a11y_particleCounts_noData', 'a11y.particleCounts.noDataStri
 addToMapIfDefined( 'a11y_nuclearEquation_accessibleHelpTextCollapsed', 'a11y.nuclearEquation.accessibleHelpTextCollapsedStringProperty' );
 addToMapIfDefined( 'a11y_nuclearEquation_noEquation', 'a11y.nuclearEquation.noEquationStringProperty' );
 addToMapIfDefined( 'a11y_nuclearEquation_beforeDecay', 'a11y.nuclearEquation.beforeDecayStringProperty' );
+addToMapIfDefined( 'a11y_nuclearEquation_afterDecay', 'a11y.nuclearEquation.afterDecayStringProperty' );
 addToMapIfDefined( 'a11y_timeControls_accessibleHeading', 'a11y.timeControls.accessibleHeadingStringProperty' );
 addToMapIfDefined( 'a11y_replayDecay_accessibleName', 'a11y.replayDecay.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_replayDecay_accessibleHelpText', 'a11y.replayDecay.accessibleHelpTextStringProperty' );
@@ -282,7 +283,7 @@ const NuclearDecayCommonFluent = {
       accessibleHelpTextCollapsedStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_nuclearEquation_accessibleHelpTextCollapsed', _.get( NuclearDecayCommonStrings, 'a11y.nuclearEquation.accessibleHelpTextCollapsedStringProperty' ) ),
       noEquationStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_nuclearEquation_noEquation', _.get( NuclearDecayCommonStrings, 'a11y.nuclearEquation.noEquationStringProperty' ) ),
       beforeDecay: new FluentPattern<{ parentIsotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_nuclearEquation_beforeDecay', _.get( NuclearDecayCommonStrings, 'a11y.nuclearEquation.beforeDecayStringProperty' ), [{"name":"parentIsotope"}] ),
-      afterDecayStringProperty: _.get( NuclearDecayCommonStrings, 'a11y.nuclearEquation.afterDecayStringProperty' )
+      afterDecay: new FluentPattern<{ daughterIsotope: FluentVariable, parentIsotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_nuclearEquation_afterDecay', _.get( NuclearDecayCommonStrings, 'a11y.nuclearEquation.afterDecayStringProperty' ), [{"name":"daughterIsotope"},{"name":"parentIsotope"}] )
     },
     timeControls: {
       accessibleHeadingStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_timeControls_accessibleHeading', _.get( NuclearDecayCommonStrings, 'a11y.timeControls.accessibleHeadingStringProperty' ) )

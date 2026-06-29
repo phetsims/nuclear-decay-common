@@ -225,7 +225,7 @@
     },
     "decayTimeHistogram": {
       "accessibleParagraph": {
-        "value": "{ $scale } timeline in seconds shows when each { $isotope } atom decayed relative to the half-life, { $hLifeTime } seconds."
+        "value": "{ $scale } timeline shows when each { $isotope } atom decayed relative to the half-life, { $hLifeTime } seconds."
       },
       "scale": {
         "value": "{ $scale ->\n  [linear] Linear\n  *[logarithmic] Logarithmic\n}"
@@ -284,16 +284,16 @@
     },
     "nuclearEquation": {
       "accessibleHelpTextCollapsed": {
-        "value": "Explore how mass number and charge are conserved in decay."
+        "value": "View nuclear equation for decay."
       },
       "noEquation": {
         "value": "No equation yet."
       },
       "beforeDecay": {
-        "value": "{ $parentIsotope } decays to a product and another product."
+        "value": "{ $parentIsotope } decays to a unknown products."
       },
       "afterDecay": {
-        "value": "{ $parentIsotope } decays to { $daughterIsotope } and an alpha particle. Original mass, { $parentMass } and product masses, { $daughterMass } and 4. Original charge, { $parentCharge } and product charges, {{daughterCharge}} and 2."
+        "value": "{ $parentIsotope } decays to { $daughterIsotope } and an alpha particle."
       }
     },
     "timeControls": {
