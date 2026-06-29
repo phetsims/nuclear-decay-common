@@ -394,9 +394,9 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         // The quadratic curve has a pointy end that extends beyond the actual peak, we have to adjust for that
         const peakCorrection = -7 * potentialEnergy;
 
-        potentialEnergyGrabber.centerY = peakY + peakCorrection;
-        potentialEnergyHeightIndicator.setLine( wellCenterX + wellHalfWidth, peakY + peakCorrection,
-          potentialEnergyGrabber.x + 20, peakY + peakCorrection );
+        potentialEnergyGrabber.centerY = peakY;
+        potentialEnergyHeightIndicator.setLine( wellCenterX + wellHalfWidth, peakY,
+          potentialEnergyGrabber.x + 20, peakY );
 
         // After decay, lower the well bottom proportionally to alpha particle energy (higher energy = deeper well).
         const wellBottomY = hasDecayOccurred
@@ -407,11 +407,11 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
           .moveTo( -GRAPH_X_OFFSET, COULOMB_MIN_Y )
           .quadraticCurveTo(
             wellCenterX - wellHalfWidth - POINTINESS_FACTOR, CURVINESS_FACTOR * peakY,
-            wellCenterX - wellHalfWidth, peakY
+            wellCenterX - wellHalfWidth, peakY - peakCorrection
           )
           .lineTo( wellCenterX - wellHalfWidth, wellBottomY )
           .lineTo( wellCenterX + wellHalfWidth, wellBottomY )
-          .lineTo( wellCenterX + wellHalfWidth, peakY )
+          .lineTo( wellCenterX + wellHalfWidth, peakY - peakCorrection )
           .quadraticCurveTo(
             wellCenterX + wellHalfWidth + POINTINESS_FACTOR, CURVINESS_FACTOR * peakY,
             graphRightX, COULOMB_MIN_Y
@@ -423,7 +423,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         preDecayWellLabel.left = preDecayWellLineX + preDecayWellLineWidth + 10;
 
         // Higher initial-energy value raises the line (screen-Y is inverted).
-        const alphaParticleEnergyHeight = alphaParticleEnergy * ENERGY_PEAK_Y + peakCorrection;
+        const alphaParticleEnergyHeight = alphaParticleEnergy * ENERGY_PEAK_Y;
         alphaParticleEnergyGraphLine.y = alphaParticleEnergyHeight;
         alphaParticleEnergyGrabber.centerY = alphaParticleEnergyHeight;
 
