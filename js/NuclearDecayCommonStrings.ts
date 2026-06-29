@@ -193,16 +193,18 @@ type StringsType = {
       'staticDescription': string;
       'staticDescriptionStringProperty': LocalizedStringProperty;
       'beforeDecay': {
-        'alphaParticleEnergy': string;
-        'alphaParticleEnergyStringProperty': LocalizedStringProperty;
+        'leadingParagraph': string;
+        'leadingParagraphStringProperty': LocalizedStringProperty;
+        'alphaParticleInWell': string;
+        'alphaParticleInWellStringProperty': LocalizedStringProperty;
         'escapeDistance': string;
         'escapeDistanceStringProperty': LocalizedStringProperty;
+        'escapeDistanceDescription': string;
+        'escapeDistanceDescriptionStringProperty': LocalizedStringProperty;
       };
       'afterDecay': {
-        'escapeDistance': string;
-        'escapeDistanceStringProperty': LocalizedStringProperty;
-        'potentialWell': string;
-        'potentialWellStringProperty': LocalizedStringProperty;
+        'accessibleParagraph': string;
+        'accessibleParagraphStringProperty': LocalizedStringProperty;
       }
     };
     'energyDiagramSliders': {

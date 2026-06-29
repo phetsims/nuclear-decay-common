@@ -223,9 +223,9 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
 
     // Assemble
     const beforeDecayDescriptionVisibleProperty = new DerivedProperty(
-      [ model.hasDecayOccurredProperty, model.isPlayAreaEmptyProperty, model.selectedIsotopeProperty ],
-      ( hasDecayOccurred, isPlayAreaEmpty, selectedIsotope ) => {
-        return !hasDecayOccurred && !isPlayAreaEmpty && selectedIsotope !== 'custom';
+      [ model.hasDecayOccurredProperty, model.isPlayAreaEmptyProperty ],
+      ( hasDecayOccurred, isPlayAreaEmpty ) => {
+        return !hasDecayOccurred && !isPlayAreaEmpty;
       }
     );
     const afterDecayDescriptionVisibleProperty = new DerivedProperty(
@@ -234,6 +234,62 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         return hasDecayOccurred && !isPlayAreaEmpty;
       }
     );
+
+    // Qualitative string for alpha particle position relative to potential energy barrier.
+    const positionStringProperty = new DerivedProperty(
+      [
+        model.alphaParticleEnergyProperty,
+        model.potentialEnergyProperty,
+        NuclearDecayCommonFluent.a11y.qualitative.positionAboveStringProperty,
+        NuclearDecayCommonFluent.a11y.qualitative.positionBelowStringProperty,
+        NuclearDecayCommonFluent.a11y.qualitative.positionEqualToStringProperty
+      ],
+      ( alphaEnergy, potentialEnergy, above, below, equalTo ) => {
+        if ( alphaEnergy > potentialEnergy ) { return above; }
+        else if ( alphaEnergy < potentialEnergy ) { return below; }
+        else { return equalTo; }
+      }
+    );
+
+    // Qualitative string for escape distance, using view-space intersection point x as the measure.
+    const escapeDistanceStringProperty = new DerivedProperty(
+      [
+        energyIntersectionPointProperty,
+        NuclearDecayCommonFluent.a11y.qualitative.distanceSmallStringProperty,
+        NuclearDecayCommonFluent.a11y.qualitative.distanceMediumStringProperty,
+        NuclearDecayCommonFluent.a11y.qualitative.distanceLargeStringProperty,
+        NuclearDecayCommonFluent.a11y.qualitative.distanceInfiniteStringProperty
+      ],
+      ( point, small, medium, large, infinite ) => {
+        if ( point.x >= MAX_ESCAPE_DISTANCE ) { return infinite; }
+        else if ( point.x >= 100 ) { return large; }
+        else if ( point.x >= 50 ) { return medium; }
+        else { return small; }
+      }
+    );
+
+    // Before-decay list: single alpha in well, escape distance, and explanation. Visible before a decay occurs.
+    const beforeDecayDescriptionNode = new Node( {
+      visibleProperty: beforeDecayDescriptionVisibleProperty,
+      accessibleTemplate: AccessibleList.createTemplateProperty( {
+        leadingParagraphStringProperty: NuclearDecayCommonFluent.a11y.energyDiagram.beforeDecay.leadingParagraphStringProperty,
+        listItems: [
+          NuclearDecayCommonFluent.a11y.energyDiagram.beforeDecay.alphaParticleInWell.createProperty( {
+            position: positionStringProperty
+          } ),
+          NuclearDecayCommonFluent.a11y.energyDiagram.beforeDecay.escapeDistance.createProperty( {
+            distance: escapeDistanceStringProperty
+          } ),
+          NuclearDecayCommonFluent.a11y.energyDiagram.beforeDecay.escapeDistanceDescriptionStringProperty
+        ]
+      } )
+    } );
+
+    // After-decay paragraph: visible only once decay has occurred.
+    const afterDecayDescriptionNode = new Node( {
+      visibleProperty: afterDecayDescriptionVisibleProperty,
+      accessibleParagraph: NuclearDecayCommonFluent.a11y.energyDiagram.afterDecay.accessibleParagraphStringProperty
+    } );
 
     // Dashed line marking where the well bottom sat before decay; appears after decay so the deepening is apparent.
     const preDecayWellLine = new Line( 0, WELL_BOTTOM_Y, 0, WELL_BOTTOM_Y, {
@@ -267,6 +323,8 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     const contentsNode = new Node( {
       children: [
         staticDescriptionNode,
+        beforeDecayDescriptionNode,
+        afterDecayDescriptionNode,
         energyAxisLabel,
         distanceAxisLabel,
         legend,
@@ -280,38 +338,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         alphaParticleEnergyGraphLine,
         alphaParticleEnergyGrabber,
         particleLayer
-      ],
-      accessibleTemplate: AccessibleList.createTemplateProperty( {
-        listItems: [
-
-          // BEFORE DECAY
-          // Alpha particle energy is ... potential energy barrier height
-          {
-            stringProperty: NuclearDecayCommonFluent.a11y.energyDiagram.beforeDecay.alphaParticleEnergy.createProperty( {
-              position: model.alphaParticleEnergyProperty
-            } ), visibleProperty: beforeDecayDescriptionVisibleProperty
-          },
-          // Alpha particle escape distance is ...
-          {
-            stringProperty: NuclearDecayCommonFluent.a11y.energyDiagram.beforeDecay.escapeDistance.createProperty( {
-              distance: model.escapeDistanceProperty
-            } ), visibleProperty: beforeDecayDescriptionVisibleProperty
-          },
-
-          // AFTER DECAY
-          // Alpha particle escape distance is ...
-          {
-            stringProperty: NuclearDecayCommonFluent.a11y.energyDiagram.afterDecay.escapeDistance.createProperty( {
-              distance: model.escapeDistanceProperty
-            } ), visibleProperty: afterDecayDescriptionVisibleProperty
-          },
-          // Potential well is deeper
-          {
-            stringProperty: NuclearDecayCommonFluent.a11y.energyDiagram.afterDecay.potentialWellStringProperty,
-            visibleProperty: afterDecayDescriptionVisibleProperty
-          }
-        ]
-      } )
+      ]
     } );
 
     // --- alphaParticleEnergyGrabber interaction ---

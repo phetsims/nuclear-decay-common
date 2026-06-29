@@ -253,22 +253,25 @@
         "value": "View alpha particle in nuclear potential well."
       },
       "staticDescription": {
-        "value": "An energy versus distance graph shows alpha particles in a nuclear potential well."
+        "value": "An energy versus distance graph shows a nuclear potential well."
       },
       "beforeDecay": {
-        "alphaParticleEnergy": {
-          "value": "Alpha particle energy is { $position } potential energy barrier height."
+        "leadingParagraph": {
+          "value": "Before decay:"
+        },
+        "alphaParticleInWell": {
+          "value": "Single alpha particle in well moves along its energy line, { $position } potential energy barrier height."
         },
         "escapeDistance": {
           "value": "Alpha particle escape distance is { $distance }."
+        },
+        "escapeDistanceDescription": {
+          "value": "Escape distance is where alpha particle energy meets the barrier."
         }
       },
       "afterDecay": {
-        "escapeDistance": {
-          "value": "Alpha particle escape distance is { $distance }."
-        },
-        "potentialWell": {
-          "value": "Potential well deeper."
+        "accessibleParagraph": {
+          "value": "After decay, well is deeper and empty."
         }
       }
     },
