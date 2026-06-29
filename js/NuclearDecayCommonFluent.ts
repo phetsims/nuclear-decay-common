@@ -78,6 +78,23 @@ addToMapIfDefined( 'a11y_qualitative_progressHigher', 'a11y.qualitative.progress
 addToMapIfDefined( 'a11y_qualitative_valueLow', 'a11y.qualitative.valueLowStringProperty' );
 addToMapIfDefined( 'a11y_qualitative_valueMedium', 'a11y.qualitative.valueMediumStringProperty' );
 addToMapIfDefined( 'a11y_qualitative_valueHigh', 'a11y.qualitative.valueHighStringProperty' );
+addToMapIfDefined( 'a11y_alphaDecay_screenSummary_playArea', 'a11y.alphaDecay.screenSummary.playAreaStringProperty' );
+addToMapIfDefined( 'a11y_alphaDecay_screenSummary_energyGraph', 'a11y.alphaDecay.screenSummary.energyGraphStringProperty' );
+addToMapIfDefined( 'a11y_alphaDecay_screenSummary_playAreaSelector', 'a11y.alphaDecay.screenSummary.playAreaSelectorStringProperty' );
+addToMapIfDefined( 'a11y_alphaDecay_screenSummary_controlArea', 'a11y.alphaDecay.screenSummary.controlAreaStringProperty' );
+addToMapIfDefined( 'a11y_alphaDecay_screenSummary_currentDetails', 'a11y.alphaDecay.screenSummary.currentDetailsStringProperty' );
+addToMapIfDefined( 'a11y_alphaDecay_screenSummary_interactionHint_addAtom', 'a11y.alphaDecay.screenSummary.interactionHint.addAtomStringProperty' );
+addToMapIfDefined( 'a11y_alphaDecay_screenSummary_interactionHint_afterDecay', 'a11y.alphaDecay.screenSummary.interactionHint.afterDecayStringProperty' );
+addToMapIfDefined( 'a11y_alphaDecay_radioactiveAtomHeading', 'a11y.alphaDecay.radioactiveAtomHeadingStringProperty' );
+addToMapIfDefined( 'a11y_alphaDecay_addAtomButton_accessibleContextResponse', 'a11y.alphaDecay.addAtomButton.accessibleContextResponseStringProperty' );
+addToMapIfDefined( 'a11y_alphaDecay_atomInPlayArea_readyToDecay', 'a11y.alphaDecay.atomInPlayArea.readyToDecayStringProperty' );
+addToMapIfDefined( 'a11y_alphaDecay_atomInPlayArea_nowPresent', 'a11y.alphaDecay.atomInPlayArea.nowPresentStringProperty' );
+addToMapIfDefined( 'a11y_alphaDecay_atomDecay_alphaParticleEmitted', 'a11y.alphaDecay.atomDecay.alphaParticleEmittedStringProperty' );
+addToMapIfDefined( 'a11y_alphaDecay_resetAtomButton_accessibleName', 'a11y.alphaDecay.resetAtomButton.accessibleNameStringProperty' );
+addToMapIfDefined( 'a11y_alphaDecay_resetAtomButton_accessibleContextResponse', 'a11y.alphaDecay.resetAtomButton.accessibleContextResponseStringProperty' );
+addToMapIfDefined( 'a11y_alphaDecay_decayDataHeading', 'a11y.alphaDecay.decayDataHeadingStringProperty' );
+addToMapIfDefined( 'a11y_alphaDecay_multipleAtomsScreen_decayParticle', 'a11y.alphaDecay.multipleAtomsScreen.decayParticleStringProperty' );
+addToMapIfDefined( 'a11y_alphaDecay_multipleAtomsScreen_particleLegend_accessibleParagraph', 'a11y.alphaDecay.multipleAtomsScreen.particleLegend.accessibleParagraphStringProperty' );
 addToMapIfDefined( 'a11y_energyDiagram_accessibleName', 'a11y.energyDiagram.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_energyDiagram_accessibleHelpTextCollapsed', 'a11y.energyDiagram.accessibleHelpTextCollapsedStringProperty' );
 addToMapIfDefined( 'a11y_energyDiagram_staticDescription', 'a11y.energyDiagram.staticDescriptionStringProperty' );
@@ -226,6 +243,41 @@ const NuclearDecayCommonFluent = {
       valueLowStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_qualitative_valueLow', _.get( NuclearDecayCommonStrings, 'a11y.qualitative.valueLowStringProperty' ) ),
       valueMediumStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_qualitative_valueMedium', _.get( NuclearDecayCommonStrings, 'a11y.qualitative.valueMediumStringProperty' ) ),
       valueHighStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_qualitative_valueHigh', _.get( NuclearDecayCommonStrings, 'a11y.qualitative.valueHighStringProperty' ) )
+    },
+    alphaDecay: {
+      screenSummary: {
+        playAreaStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_alphaDecay_screenSummary_playArea', _.get( NuclearDecayCommonStrings, 'a11y.alphaDecay.screenSummary.playAreaStringProperty' ) ),
+        energyGraphStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_alphaDecay_screenSummary_energyGraph', _.get( NuclearDecayCommonStrings, 'a11y.alphaDecay.screenSummary.energyGraphStringProperty' ) ),
+        playAreaSelector: new FluentPattern<{ quantum: 'true' | 'false' | TReadOnlyProperty<'true' | 'false'> }>( fluentSupport.bundleProperty, 'a11y_alphaDecay_screenSummary_playAreaSelector', _.get( NuclearDecayCommonStrings, 'a11y.alphaDecay.screenSummary.playAreaSelectorStringProperty' ), [{"name":"quantum","variants":["true","false"]}] ),
+        controlAreaStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_alphaDecay_screenSummary_controlArea', _.get( NuclearDecayCommonStrings, 'a11y.alphaDecay.screenSummary.controlAreaStringProperty' ) ),
+        currentDetails: new FluentPattern<{ atom: 'noAtom' | 'withAtom' | TReadOnlyProperty<'noAtom' | 'withAtom'>, isotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_alphaDecay_screenSummary_currentDetails', _.get( NuclearDecayCommonStrings, 'a11y.alphaDecay.screenSummary.currentDetailsStringProperty' ), [{"name":"atom","variants":["noAtom","withAtom"]},{"name":"isotope"}] ),
+        interactionHint: {
+          addAtomStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_alphaDecay_screenSummary_interactionHint_addAtom', _.get( NuclearDecayCommonStrings, 'a11y.alphaDecay.screenSummary.interactionHint.addAtomStringProperty' ) ),
+          afterDecayStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_alphaDecay_screenSummary_interactionHint_afterDecay', _.get( NuclearDecayCommonStrings, 'a11y.alphaDecay.screenSummary.interactionHint.afterDecayStringProperty' ) )
+        }
+      },
+      radioactiveAtomHeadingStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_alphaDecay_radioactiveAtomHeading', _.get( NuclearDecayCommonStrings, 'a11y.alphaDecay.radioactiveAtomHeadingStringProperty' ) ),
+      addAtomButton: {
+        accessibleContextResponse: new FluentPattern<{ isotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_alphaDecay_addAtomButton_accessibleContextResponse', _.get( NuclearDecayCommonStrings, 'a11y.alphaDecay.addAtomButton.accessibleContextResponseStringProperty' ), [{"name":"isotope"}] )
+      },
+      atomInPlayArea: {
+        readyToDecay: new FluentPattern<{ isotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_alphaDecay_atomInPlayArea_readyToDecay', _.get( NuclearDecayCommonStrings, 'a11y.alphaDecay.atomInPlayArea.readyToDecayStringProperty' ), [{"name":"isotope"}] ),
+        nowPresent: new FluentPattern<{ decayTime: FluentVariable, isotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_alphaDecay_atomInPlayArea_nowPresent', _.get( NuclearDecayCommonStrings, 'a11y.alphaDecay.atomInPlayArea.nowPresentStringProperty' ), [{"name":"decayTime"},{"name":"isotope"}] )
+      },
+      atomDecay: {
+        alphaParticleEmitted: new FluentPattern<{ decayTime: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_alphaDecay_atomDecay_alphaParticleEmitted', _.get( NuclearDecayCommonStrings, 'a11y.alphaDecay.atomDecay.alphaParticleEmittedStringProperty' ), [{"name":"decayTime"}] )
+      },
+      resetAtomButton: {
+        accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_alphaDecay_resetAtomButton_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.alphaDecay.resetAtomButton.accessibleNameStringProperty' ) ),
+        accessibleContextResponseStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_alphaDecay_resetAtomButton_accessibleContextResponse', _.get( NuclearDecayCommonStrings, 'a11y.alphaDecay.resetAtomButton.accessibleContextResponseStringProperty' ) )
+      },
+      decayDataHeadingStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_alphaDecay_decayDataHeading', _.get( NuclearDecayCommonStrings, 'a11y.alphaDecay.decayDataHeadingStringProperty' ) ),
+      multipleAtomsScreen: {
+        decayParticleStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_alphaDecay_multipleAtomsScreen_decayParticle', _.get( NuclearDecayCommonStrings, 'a11y.alphaDecay.multipleAtomsScreen.decayParticleStringProperty' ) ),
+        particleLegend: {
+          accessibleParagraphStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_alphaDecay_multipleAtomsScreen_particleLegend_accessibleParagraph', _.get( NuclearDecayCommonStrings, 'a11y.alphaDecay.multipleAtomsScreen.particleLegend.accessibleParagraphStringProperty' ) )
+        }
+      }
     },
     energyDiagram: {
       accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_energyDiagram_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.energyDiagram.accessibleNameStringProperty' ) ),

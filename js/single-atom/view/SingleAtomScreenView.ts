@@ -78,7 +78,7 @@ export default class SingleAtomScreenView extends SingleAndMultipleAtomsScreenVi
     const decayDataHeadingNode = new Node( {
 
       // TODO: Move from Alpha Decay to here https://github.com/phetsims/alpha-decay/issues/3
-      // accessibleHeading: AlphaDecayFluent.a11y.decayDataHeadingStringProperty
+      // accessibleHeading: NuclearDecayCommonFluent.a11y.alphaDecay.decayDataHeadingStringProperty
     } );
     this.addChild( decayDataHeadingNode );
 

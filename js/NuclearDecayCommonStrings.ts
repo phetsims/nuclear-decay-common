@@ -135,6 +135,58 @@ type StringsType = {
       'valueHigh': string;
       'valueHighStringProperty': LocalizedStringProperty;
     };
+    'alphaDecay': {
+      'screenSummary': {
+        'playArea': string;
+        'playAreaStringProperty': LocalizedStringProperty;
+        'energyGraph': string;
+        'energyGraphStringProperty': LocalizedStringProperty;
+        'playAreaSelector': string;
+        'playAreaSelectorStringProperty': LocalizedStringProperty;
+        'controlArea': string;
+        'controlAreaStringProperty': LocalizedStringProperty;
+        'currentDetails': string;
+        'currentDetailsStringProperty': LocalizedStringProperty;
+        'interactionHint': {
+          'addAtom': string;
+          'addAtomStringProperty': LocalizedStringProperty;
+          'afterDecay': string;
+          'afterDecayStringProperty': LocalizedStringProperty;
+        }
+      };
+      'radioactiveAtomHeading': string;
+      'radioactiveAtomHeadingStringProperty': LocalizedStringProperty;
+      'addAtomButton': {
+        'accessibleContextResponse': string;
+        'accessibleContextResponseStringProperty': LocalizedStringProperty;
+      };
+      'atomInPlayArea': {
+        'readyToDecay': string;
+        'readyToDecayStringProperty': LocalizedStringProperty;
+        'nowPresent': string;
+        'nowPresentStringProperty': LocalizedStringProperty;
+      };
+      'atomDecay': {
+        'alphaParticleEmitted': string;
+        'alphaParticleEmittedStringProperty': LocalizedStringProperty;
+      };
+      'resetAtomButton': {
+        'accessibleName': string;
+        'accessibleNameStringProperty': LocalizedStringProperty;
+        'accessibleContextResponse': string;
+        'accessibleContextResponseStringProperty': LocalizedStringProperty;
+      };
+      'decayDataHeading': string;
+      'decayDataHeadingStringProperty': LocalizedStringProperty;
+      'multipleAtomsScreen': {
+        'decayParticle': string;
+        'decayParticleStringProperty': LocalizedStringProperty;
+        'particleLegend': {
+          'accessibleParagraph': string;
+          'accessibleParagraphStringProperty': LocalizedStringProperty;
+        }
+      }
+    };
     'energyDiagram': {
       'accessibleName': string;
       'accessibleNameStringProperty': LocalizedStringProperty;

@@ -60,6 +60,47 @@ a11y:
     valueLow: Low
     valueMedium: Medium
     valueHigh: High
+  alphaDecay:
+    screenSummary:
+      playArea: >-
+        A radioactive atom with jiggling nucleons sits in the center. You can watch it decay,
+        observe how the nucleus changes, and reset the atom to repeat your experiment. A timeline shows the moment
+        of each decay relative to half-life.
+      energyGraph: >-
+        An energy diagram shows the potential energy barrier and alpha particle
+        energy. With a custom isotope, you can experiment with the barrier height, alpha particle energy, and half-life.
+      playAreaSelector:
+        select_quantum:
+          true: '{ a11y.alphaDecay.screenSummary.playArea } { a11y.alphaDecay.screenSummary.energyGraph }'
+          false: '{ a11y.alphaDecay.screenSummary.playArea }'
+      controlArea: >-
+        You can replay the last decay and control how fast the action happens. Reset sim to
+        start over.
+      currentDetails:
+        select_atom:
+          noAtom: Currently no atom in play area.
+          withAtom: 'Currently { $isotope } atom in play area.'
+      interactionHint:
+        addAtom: Add atom to begin observations.
+        afterDecay: Reset atom to continue observations.
+    radioactiveAtomHeading: Radioactive Atom
+    addAtomButton:
+      accessibleContextResponse: '{ $isotope } added.'
+    atomInPlayArea:
+      readyToDecay: '{ $isotope } present, ready to decay.'
+      nowPresent: '{ $isotope } now present. Decay time, { $decayTime } seconds.'
+    atomDecay:
+      alphaParticleEmitted: 'Alpha particle emitted from nucleus. Decay time, { $decayTime } seconds.'
+    resetAtomButton:
+      accessibleName: Reset Atom
+      accessibleContextResponse: Nucleus reset.
+    decayDataHeading: Decay Data
+    multipleAtomsScreen:
+      decayParticle: Alpha
+      particleLegend:
+        accessibleParagraph: >-
+          Particle legend shows: Proton: red sphere. Neutron: grey sphere. Alpha Particle: cluster of 2 protons
+          and 2 neutrons.
   energyDiagram:
     accessibleName: Energy Diagram
     accessibleHelpTextCollapsed: Show changes to alpha particle energy.

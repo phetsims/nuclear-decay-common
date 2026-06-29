@@ -178,6 +178,75 @@
         "value": "High"
       }
     },
+    "alphaDecay": {
+      "screenSummary": {
+        "playArea": {
+          "value": "A radioactive atom with jiggling nucleons sits in the center. You can watch it decay, observe how the nucleus changes, and reset the atom to repeat your experiment. A timeline shows the moment of each decay relative to half-life."
+        },
+        "energyGraph": {
+          "value": "An energy diagram shows the potential energy barrier and alpha particle energy. With a custom isotope, you can experiment with the barrier height, alpha particle energy, and half-life."
+        },
+        "playAreaSelector": {
+          "value": "{ $quantum ->\n  [true] { a11y_alphaDecay_screenSummary_playArea } { a11y_alphaDecay_screenSummary_energyGraph }\n  *[false] { a11y_alphaDecay_screenSummary_playArea }\n}"
+        },
+        "controlArea": {
+          "value": "You can replay the last decay and control how fast the action happens. Reset sim to start over."
+        },
+        "currentDetails": {
+          "value": "{ $atom ->\n  [noAtom] Currently no atom in play area.\n  *[withAtom] Currently { $isotope } atom in play area.\n}"
+        },
+        "interactionHint": {
+          "addAtom": {
+            "value": "Add atom to begin observations."
+          },
+          "afterDecay": {
+            "value": "Reset atom to continue observations."
+          }
+        }
+      },
+      "radioactiveAtomHeading": {
+        "value": "Radioactive Atom"
+      },
+      "addAtomButton": {
+        "accessibleContextResponse": {
+          "value": "{ $isotope } added."
+        }
+      },
+      "atomInPlayArea": {
+        "readyToDecay": {
+          "value": "{ $isotope } present, ready to decay."
+        },
+        "nowPresent": {
+          "value": "{ $isotope } now present. Decay time, { $decayTime } seconds."
+        }
+      },
+      "atomDecay": {
+        "alphaParticleEmitted": {
+          "value": "Alpha particle emitted from nucleus. Decay time, { $decayTime } seconds."
+        }
+      },
+      "resetAtomButton": {
+        "accessibleName": {
+          "value": "Reset Atom"
+        },
+        "accessibleContextResponse": {
+          "value": "Nucleus reset."
+        }
+      },
+      "decayDataHeading": {
+        "value": "Decay Data"
+      },
+      "multipleAtomsScreen": {
+        "decayParticle": {
+          "value": "Alpha"
+        },
+        "particleLegend": {
+          "accessibleParagraph": {
+            "value": "Particle legend shows: Proton: red sphere. Neutron: grey sphere. Alpha Particle: cluster of 2 protons and 2 neutrons."
+          }
+        }
+      }
+    },
     "energyDiagram": {
       "accessibleName": {
         "value": "Energy Diagram"
