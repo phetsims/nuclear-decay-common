@@ -7,7 +7,6 @@
  */
 
 import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
-import DynamicProperty from '../../../../axon/js/DynamicProperty.js';
 import Multilink from '../../../../axon/js/Multilink.js';
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
@@ -28,7 +27,6 @@ import Rectangle from '../../../../scenery/js/nodes/Rectangle.js';
 import RichText from '../../../../scenery/js/nodes/RichText.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
 import Color from '../../../../scenery/js/util/Color.js';
-import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
 import InfinityNode from '../../../../shred/js/view/InfinityNode.js';
 import Checkbox from '../../../../sun/js/Checkbox.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
@@ -378,17 +376,12 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       scale: model.selectedIsotopeProperty.derived( selectedIsotope => selectedIsotope === 'custom' ? 'logarithmic' : 'linear' )
     } );
 
-    const poloniumNameProperty = AtomNameUtils.getNameAndMass( 84, 127 );
-    const isotopeNameProperty = model.selectedIsotopeProperty.derived( selectedIsotope => {
-      if ( selectedIsotope === 'custom' ) {
-        return poloniumNameProperty;
-      }
-      return NuclearDecayCommonFluent.isotopeAStringProperty;
-    } );
+    const isotopeNameProperty = NuclearDecayAtom.createDynamicIsotopeNameAndMassStringProperty(
+      model.selectedIsotopeProperty, NuclearDecayCommonFluent.isotopeAStringProperty );
 
     const timelineParagraphStringProperty = NuclearDecayCommonFluent.a11y.decayTimeHistogram.accessibleParagraph.createProperty( {
       scale: scaleStringProperty,
-      isotope: new DynamicProperty( isotopeNameProperty ),
+      isotope: isotopeNameProperty,
       hLifeTime: model.halfLifeProperty.derived( halfLife => toFixed( halfLife, 2 ) )
     } );
 

@@ -260,34 +260,10 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     this.addChild( decayOccurringDescNode );
     this.addChild( radioactiveSampleHeadingNode );
 
-    // At-half-life paragraph: appears once the elapsed sample time has reached the half-life.
-    const halfLifeReachedProperty = new DerivedProperty(
-      [ model.timeProperty, model.halfLifeProperty, model.isPlayAreaEmptyProperty ],
-      ( time, halfLife, isEmpty ) => !isEmpty && time > 0 && time >= halfLife
-    );
-    const atHalfLifeDescNode = new Node( {
-      visibleProperty: halfLifeReachedProperty,
-      accessibleParagraph: NuclearDecayCommonFluent.a11y.multipleAtoms.decayTimeHistogramAtHalfLife.createProperty( {
-        halfLifePercentageUndecayed: model.percentageOfUndecayedProperty.derived( p => `${roundSymmetric( p * 100 )}` )
-      } )
-    } );
-    this.addChild( atHalfLifeDescNode );
-
-    // Heading that groups the decay data panel content for screen readers.
-    const decayDataHeadingNode = new Node( {
-      accessibleHeading: NuclearDecayCommonFluent.a11y.multipleAtoms.decayDataHeadingStringProperty
-    } );
-    decayDataHeadingNode.pdomOrder = [
-      this.decayTimeHistogramPanel,
-      atHalfLifeDescNode
-    ];
-    this.addChild( decayDataHeadingNode );
-
     // Play Area pdomOrder:
     //   Radioactive Sample heading → Decay Data heading → Particle legend → Isotope panel
     this.pdomPlayAreaNode.pdomOrder = [
       radioactiveSampleHeadingNode,
-      decayDataHeadingNode,
       this.particleLegendPanel,
       this.isotopePanel
     ];

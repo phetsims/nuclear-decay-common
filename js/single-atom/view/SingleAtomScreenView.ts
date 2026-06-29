@@ -10,7 +10,6 @@
 import Multilink from '../../../../axon/js/Multilink.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import RestartButton from '../../../../scenery-phet/js/buttons/RestartButton.js';
-import Node from '../../../../scenery/js/nodes/Node.js';
 import DynamicNucleusNode from '../../common/view/DynamicNucleusNode.js';
 import SingleAndMultipleAtomsScreenView, { SingleAndMultipleAtomsScreenViewOptions } from '../../common/view/SingleAndMultipleAtomsScreenView.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
@@ -73,14 +72,6 @@ export default class SingleAtomScreenView extends SingleAndMultipleAtomsScreenVi
         atomNode.agitateNucleus();
       } );
     } );
-
-    // Heading node grouping the decay timeline histogram panel under "Decay Data".
-    const decayDataHeadingNode = new Node( {
-
-      // TODO: Move from Alpha Decay to here https://github.com/phetsims/alpha-decay/issues/3
-      // accessibleHeading: NuclearDecayCommonFluent.a11y.alphaDecay.decayDataHeadingStringProperty
-    } );
-    this.addChild( decayDataHeadingNode );
 
     // Control area PDOM order: Time Controls → Reset All
     this.pdomControlAreaNode.pdomOrder = [

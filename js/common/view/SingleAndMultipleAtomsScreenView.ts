@@ -7,6 +7,8 @@
  * @author Agustín Vallejo
  */
 
+import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
+import { roundSymmetric } from '../../../../dot/js/util/roundSymmetric.js';
 import { ScreenViewOptions } from '../../../../joist/js/ScreenView.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
@@ -98,9 +100,24 @@ export default class SingleAndMultipleAtomsScreenView extends NuclearDecayScreen
         left: this.layoutBounds.minX + MARGIN_X,
         top: this.layoutBounds.minY + MARGIN_Y,
         fill: NuclearDecayCommonConstants.MAIN_PANEL_FILL,
-        tandem: options.tandem.createTandem( 'decayTimeHistogramPanel' )
+        tandem: options.tandem.createTandem( 'decayTimeHistogramPanel' ),
+        accessibleHeading: NuclearDecayCommonFluent.a11y.multipleAtoms.decayDataHeadingStringProperty
       } );
     this.addChild( this.decayTimeHistogramPanel );
+
+    // At-half-life paragraph: appears once the elapsed sample time has reached the half-life.
+    const halfLifeReachedProperty = new DerivedProperty(
+      [ model.timeProperty, model.halfLifeProperty, model.isPlayAreaEmptyProperty ],
+      ( time, halfLife, isEmpty ) => !isEmpty && time > 0 && time >= halfLife
+    );
+    const atHalfLifeDescNode = new Node( {
+      visibleProperty: halfLifeReachedProperty,
+      accessibleParagraph: NuclearDecayCommonFluent.a11y.multipleAtoms.decayTimeHistogramAtHalfLife.createProperty( {
+        halfLifePercentageUndecayed: model.percentageOfUndecayedProperty.derived( p => `${roundSymmetric( p * 100 )}` )
+      } )
+    } );
+    this.addChild( atHalfLifeDescNode );
+
 
     // Bottom-right controls
 

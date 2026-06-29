@@ -32,7 +32,6 @@ import NumberIO from '../../../../tandem/js/types/NumberIO.js';
 import StringUnionIO from '../../../../tandem/js/types/StringUnionIO.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
-import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import EjectedDecayParticle, { EjectedDecayParticleStateObject } from './EjectedDecayParticle.js';
 
 export type NuclearDecayAtomStateObject = {
@@ -414,9 +413,9 @@ export default class NuclearDecayAtom {
     return dynamicNameProperty;
   }
 
-  public static getNameAndMassString( isotope: ValidIsotopes ): string {
+  public static getNameAndMassString( isotope: ValidIsotopes, customString: string ): string {
     if ( isotope === 'custom' ) {
-      return NuclearDecayCommonFluent.customStringProperty.value;
+      return customString;
     }
     else {
       const atomConfig = NuclearDecayAtom.getIsotopeAtomConfig( isotope );
