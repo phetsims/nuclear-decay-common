@@ -98,10 +98,6 @@ a11y:
     decayDataHeading: Decay Data
     multipleAtomsScreen:
       decayParticle: Alpha
-      particleLegend:
-        accessibleParagraph: >-
-          Particle legend shows: Proton: red sphere. Neutron: grey sphere. Alpha Particle: cluster of 2 protons
-          and 2 neutrons.
   energyDiagram:
     accessibleName: Energy Diagram
     accessibleHelpTextCollapsed: View alpha particle in nuclear potential well.
@@ -149,7 +145,7 @@ a11y:
   nuclearEquation:
     accessibleHelpTextCollapsed: View nuclear equation for decay.
     noEquation: No equation yet.
-    beforeDecay: '{ $parentIsotope } decays to a unknown products.'
+    beforeDecay: '{ $parentIsotope } decays to unknown products.'
     afterDecay: >-
       { $parentIsotope } decays to { $daughterIsotope } and an alpha particle.
   timeControls:
@@ -239,3 +235,9 @@ a11y:
       accessibleHelpText: Group atoms by isotope.
     resetSampleButton:
       accessibleName: Reset Sample
+  particlesLegendPanel:
+    accessibleList:
+      leadingParagraph: 'Particle legend shows:'
+      proton: Proton, red sphere.
+      neutron: Neutron, grey sphere.
+      alphaParticle: Alpha Particle, cluster of 2 protons and 2 neutrons.

@@ -242,11 +242,6 @@
       "multipleAtomsScreen": {
         "decayParticle": {
           "value": "Alpha"
-        },
-        "particleLegend": {
-          "accessibleParagraph": {
-            "value": "Particle legend shows: Proton: red sphere. Neutron: grey sphere. Alpha Particle: cluster of 2 protons and 2 neutrons."
-          }
         }
       }
     },
@@ -365,7 +360,7 @@
         "value": "No equation yet."
       },
       "beforeDecay": {
-        "value": "{ $parentIsotope } decays to a unknown products."
+        "value": "{ $parentIsotope } decays to unknown products."
       },
       "afterDecay": {
         "value": "{ $parentIsotope } decays to { $daughterIsotope } and an alpha particle."
@@ -537,6 +532,22 @@
       "resetSampleButton": {
         "accessibleName": {
           "value": "Reset Sample"
+        }
+      }
+    },
+    "particlesLegendPanel": {
+      "accessibleList": {
+        "leadingParagraph": {
+          "value": "Particle legend shows:"
+        },
+        "proton": {
+          "value": "Proton, red sphere."
+        },
+        "neutron": {
+          "value": "Neutron, grey sphere."
+        },
+        "alphaParticle": {
+          "value": "Alpha Particle, cluster of 2 protons and 2 neutrons."
         }
       }
     }

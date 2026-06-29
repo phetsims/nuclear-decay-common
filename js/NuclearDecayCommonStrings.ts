@@ -183,10 +183,6 @@ type StringsType = {
       'multipleAtomsScreen': {
         'decayParticle': string;
         'decayParticleStringProperty': LocalizedStringProperty;
-        'particleLegend': {
-          'accessibleParagraph': string;
-          'accessibleParagraphStringProperty': LocalizedStringProperty;
-        }
       }
     };
     'energyDiagram': {
@@ -405,6 +401,18 @@ type StringsType = {
       'resetSampleButton': {
         'accessibleName': string;
         'accessibleNameStringProperty': LocalizedStringProperty;
+      }
+    };
+    'particlesLegendPanel': {
+      'accessibleList': {
+        'leadingParagraph': string;
+        'leadingParagraphStringProperty': LocalizedStringProperty;
+        'proton': string;
+        'protonStringProperty': LocalizedStringProperty;
+        'neutron': string;
+        'neutronStringProperty': LocalizedStringProperty;
+        'alphaParticle': string;
+        'alphaParticleStringProperty': LocalizedStringProperty;
       }
     }
   }

@@ -8,6 +8,7 @@
 
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import optionize, { combineOptions, EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import AccessibleList from '../../../../scenery-phet/js/accessibility/AccessibleList.js';
 import ShadedSphereNode from '../../../../scenery-phet/js/ShadedSphereNode.js';
 import HBox, { HBoxOptions } from '../../../../scenery/js/layout/nodes/HBox.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
@@ -15,6 +16,7 @@ import Node from '../../../../scenery/js/nodes/Node.js';
 import RichText from '../../../../scenery/js/nodes/RichText.js';
 import ShredColors from '../../../../shred/js/ShredColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import NuclearDecayCommonStrings from '../../NuclearDecayCommonStrings.js';
 import AlphaParticleNode from './AlphaParticleNode.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
@@ -85,5 +87,14 @@ export default class ParticlesLegendPanel extends NuclearDecayPanel {
     } );
 
     super( content, options );
+
+    this.accessibleTemplate = AccessibleList.createTemplateProperty( {
+      leadingParagraphStringProperty: NuclearDecayCommonFluent.a11y.particlesLegendPanel.accessibleList.leadingParagraphStringProperty,
+      listItems: [
+        NuclearDecayCommonFluent.a11y.particlesLegendPanel.accessibleList.protonStringProperty,
+        NuclearDecayCommonFluent.a11y.particlesLegendPanel.accessibleList.neutronStringProperty,
+        NuclearDecayCommonFluent.a11y.particlesLegendPanel.accessibleList.alphaParticleStringProperty
+      ]
+    } );
   }
 }

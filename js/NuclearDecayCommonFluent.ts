@@ -95,7 +95,6 @@ addToMapIfDefined( 'a11y_alphaDecay_resetAtomButton_accessibleName', 'a11y.alpha
 addToMapIfDefined( 'a11y_alphaDecay_resetAtomButton_accessibleContextResponse', 'a11y.alphaDecay.resetAtomButton.accessibleContextResponseStringProperty' );
 addToMapIfDefined( 'a11y_alphaDecay_decayDataHeading', 'a11y.alphaDecay.decayDataHeadingStringProperty' );
 addToMapIfDefined( 'a11y_alphaDecay_multipleAtomsScreen_decayParticle', 'a11y.alphaDecay.multipleAtomsScreen.decayParticleStringProperty' );
-addToMapIfDefined( 'a11y_alphaDecay_multipleAtomsScreen_particleLegend_accessibleParagraph', 'a11y.alphaDecay.multipleAtomsScreen.particleLegend.accessibleParagraphStringProperty' );
 addToMapIfDefined( 'a11y_energyDiagram_accessibleName', 'a11y.energyDiagram.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_energyDiagram_accessibleHelpTextCollapsed', 'a11y.energyDiagram.accessibleHelpTextCollapsedStringProperty' );
 addToMapIfDefined( 'a11y_energyDiagram_staticDescription', 'a11y.energyDiagram.staticDescriptionStringProperty' );
@@ -168,6 +167,10 @@ addToMapIfDefined( 'a11y_decayRate_dataProbeCheckbox_accessibleHelpText', 'a11y.
 addToMapIfDefined( 'a11y_decayRate_sortButton_accessibleName', 'a11y.decayRate.sortButton.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_sortButton_accessibleHelpText', 'a11y.decayRate.sortButton.accessibleHelpTextStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_resetSampleButton_accessibleName', 'a11y.decayRate.resetSampleButton.accessibleNameStringProperty' );
+addToMapIfDefined( 'a11y_particlesLegendPanel_accessibleList_leadingParagraph', 'a11y.particlesLegendPanel.accessibleList.leadingParagraphStringProperty' );
+addToMapIfDefined( 'a11y_particlesLegendPanel_accessibleList_proton', 'a11y.particlesLegendPanel.accessibleList.protonStringProperty' );
+addToMapIfDefined( 'a11y_particlesLegendPanel_accessibleList_neutron', 'a11y.particlesLegendPanel.accessibleList.neutronStringProperty' );
+addToMapIfDefined( 'a11y_particlesLegendPanel_accessibleList_alphaParticle', 'a11y.particlesLegendPanel.accessibleList.alphaParticleStringProperty' );
 
 // A function that creates contents for a new Fluent file, which will be needed if any string changes.
 const createFluentFile = (): string => {
@@ -276,10 +279,7 @@ const NuclearDecayCommonFluent = {
       },
       decayDataHeadingStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_alphaDecay_decayDataHeading', _.get( NuclearDecayCommonStrings, 'a11y.alphaDecay.decayDataHeadingStringProperty' ) ),
       multipleAtomsScreen: {
-        decayParticleStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_alphaDecay_multipleAtomsScreen_decayParticle', _.get( NuclearDecayCommonStrings, 'a11y.alphaDecay.multipleAtomsScreen.decayParticleStringProperty' ) ),
-        particleLegend: {
-          accessibleParagraphStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_alphaDecay_multipleAtomsScreen_particleLegend_accessibleParagraph', _.get( NuclearDecayCommonStrings, 'a11y.alphaDecay.multipleAtomsScreen.particleLegend.accessibleParagraphStringProperty' ) )
-        }
+        decayParticleStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_alphaDecay_multipleAtomsScreen_decayParticle', _.get( NuclearDecayCommonStrings, 'a11y.alphaDecay.multipleAtomsScreen.decayParticleStringProperty' ) )
       }
     },
     energyDiagram: {
@@ -426,6 +426,14 @@ const NuclearDecayCommonFluent = {
       },
       resetSampleButton: {
         accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_resetSampleButton_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.resetSampleButton.accessibleNameStringProperty' ) )
+      }
+    },
+    particlesLegendPanel: {
+      accessibleList: {
+        leadingParagraphStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_particlesLegendPanel_accessibleList_leadingParagraph', _.get( NuclearDecayCommonStrings, 'a11y.particlesLegendPanel.accessibleList.leadingParagraphStringProperty' ) ),
+        protonStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_particlesLegendPanel_accessibleList_proton', _.get( NuclearDecayCommonStrings, 'a11y.particlesLegendPanel.accessibleList.protonStringProperty' ) ),
+        neutronStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_particlesLegendPanel_accessibleList_neutron', _.get( NuclearDecayCommonStrings, 'a11y.particlesLegendPanel.accessibleList.neutronStringProperty' ) ),
+        alphaParticleStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_particlesLegendPanel_accessibleList_alphaParticle', _.get( NuclearDecayCommonStrings, 'a11y.particlesLegendPanel.accessibleList.alphaParticleStringProperty' ) )
       }
     }
   }
