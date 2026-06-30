@@ -72,8 +72,8 @@ export default class HalfLifeGrabberNode extends AccessibleSlider( ShadedSphereN
                                  ? NuclearDecayCommonFluent.a11y.qualitative.progressLowerStringProperty.value
                                  : NuclearDecayCommonFluent.a11y.qualitative.progressHigherStringProperty.value;
         const distanceProgress = increased
-                                 ? NuclearDecayCommonFluent.a11y.qualitative.progressSmallerStringProperty.value
-                                 : NuclearDecayCommonFluent.a11y.qualitative.progressLargerStringProperty.value;
+                                 ? NuclearDecayCommonFluent.a11y.qualitative.progressLargerStringProperty.value
+                                 : NuclearDecayCommonFluent.a11y.qualitative.progressSmallerStringProperty.value;
         return NuclearDecayCommonFluent.a11y.halfLifeSlider.accessibleContextResponse.format( {
           initialEProgress: initialEProgress, distanceProgress: distanceProgress
         } );
