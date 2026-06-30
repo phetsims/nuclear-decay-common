@@ -97,7 +97,7 @@ export default class EnergyGrabberNode extends AccessibleSlider( Path, 1 ) {
         const hLifeProgress = increased
                               ? NuclearDecayCommonFluent.a11y.qualitative.progressShorterStringProperty.value
                               : NuclearDecayCommonFluent.a11y.qualitative.progressLongerStringProperty.value;
-        return NuclearDecayCommonFluent.a11y.energyDiagramSliders.accessibleContextResponse.format( {
+        return NuclearDecayCommonFluent.a11y.escapeDistanceContextResponse.format( {
           distanceProgress: distanceProgress, hLifeProgress: hLifeProgress
         } );
       }

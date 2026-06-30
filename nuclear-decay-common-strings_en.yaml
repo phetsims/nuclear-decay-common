@@ -48,6 +48,7 @@ a11y:
     positionAbove: above
     positionBelow: below
     positionEqualTo: equal to
+    equal: equal
     distanceSmall: small
     distanceMedium: medium
     distanceLarge: large
@@ -110,8 +111,7 @@ a11y:
       escapeDistanceDescription: Escape distance is where alpha particle energy meets the barrier.
     afterDecay:
       accessibleParagraph: After decay, well is deeper and empty.
-  energyDiagramSliders:
-    accessibleContextResponse: 'Alpha particle escape distance { $distanceProgress }, half-life { $hLifeProgress }.'
+  escapeDistanceContextResponse: 'Alpha particle escape distance { $distanceProgress }, half-life { $hLifeProgress }.'
   potentialEnergySlider:
     accessibleName: Potential Energy Barrier Height
     accessibleHelpText: Adjust barrier height.

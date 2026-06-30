@@ -110,6 +110,8 @@ type StringsType = {
       'positionBelowStringProperty': LocalizedStringProperty;
       'positionEqualTo': string;
       'positionEqualToStringProperty': LocalizedStringProperty;
+      'equal': string;
+      'equalStringProperty': LocalizedStringProperty;
       'distanceSmall': string;
       'distanceSmallStringProperty': LocalizedStringProperty;
       'distanceMedium': string;
@@ -207,10 +209,8 @@ type StringsType = {
         'accessibleParagraphStringProperty': LocalizedStringProperty;
       }
     };
-    'energyDiagramSliders': {
-      'accessibleContextResponse': string;
-      'accessibleContextResponseStringProperty': LocalizedStringProperty;
-    };
+    'escapeDistanceContextResponse': string;
+    'escapeDistanceContextResponseStringProperty': LocalizedStringProperty;
     'potentialEnergySlider': {
       'accessibleName': string;
       'accessibleNameStringProperty': LocalizedStringProperty;

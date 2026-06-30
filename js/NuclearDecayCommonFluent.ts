@@ -66,6 +66,7 @@ addToMapIfDefined( 'timesMap_yr', 'timesMap.yrStringProperty' );
 addToMapIfDefined( 'a11y_qualitative_positionAbove', 'a11y.qualitative.positionAboveStringProperty' );
 addToMapIfDefined( 'a11y_qualitative_positionBelow', 'a11y.qualitative.positionBelowStringProperty' );
 addToMapIfDefined( 'a11y_qualitative_positionEqualTo', 'a11y.qualitative.positionEqualToStringProperty' );
+addToMapIfDefined( 'a11y_qualitative_equal', 'a11y.qualitative.equalStringProperty' );
 addToMapIfDefined( 'a11y_qualitative_distanceSmall', 'a11y.qualitative.distanceSmallStringProperty' );
 addToMapIfDefined( 'a11y_qualitative_distanceMedium', 'a11y.qualitative.distanceMediumStringProperty' );
 addToMapIfDefined( 'a11y_qualitative_distanceLarge', 'a11y.qualitative.distanceLargeStringProperty' );
@@ -103,7 +104,7 @@ addToMapIfDefined( 'a11y_energyDiagram_beforeDecay_alphaParticleInWell', 'a11y.e
 addToMapIfDefined( 'a11y_energyDiagram_beforeDecay_escapeDistance', 'a11y.energyDiagram.beforeDecay.escapeDistanceStringProperty' );
 addToMapIfDefined( 'a11y_energyDiagram_beforeDecay_escapeDistanceDescription', 'a11y.energyDiagram.beforeDecay.escapeDistanceDescriptionStringProperty' );
 addToMapIfDefined( 'a11y_energyDiagram_afterDecay_accessibleParagraph', 'a11y.energyDiagram.afterDecay.accessibleParagraphStringProperty' );
-addToMapIfDefined( 'a11y_energyDiagramSliders_accessibleContextResponse', 'a11y.energyDiagramSliders.accessibleContextResponseStringProperty' );
+addToMapIfDefined( 'a11y_escapeDistanceContextResponse', 'a11y.escapeDistanceContextResponseStringProperty' );
 addToMapIfDefined( 'a11y_potentialEnergySlider_accessibleName', 'a11y.potentialEnergySlider.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_potentialEnergySlider_accessibleHelpText', 'a11y.potentialEnergySlider.accessibleHelpTextStringProperty' );
 addToMapIfDefined( 'a11y_alphaParticleEnergySlider_accessibleName', 'a11y.alphaParticleEnergySlider.accessibleNameStringProperty' );
@@ -237,6 +238,7 @@ const NuclearDecayCommonFluent = {
       positionAboveStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_qualitative_positionAbove', _.get( NuclearDecayCommonStrings, 'a11y.qualitative.positionAboveStringProperty' ) ),
       positionBelowStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_qualitative_positionBelow', _.get( NuclearDecayCommonStrings, 'a11y.qualitative.positionBelowStringProperty' ) ),
       positionEqualToStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_qualitative_positionEqualTo', _.get( NuclearDecayCommonStrings, 'a11y.qualitative.positionEqualToStringProperty' ) ),
+      equalStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_qualitative_equal', _.get( NuclearDecayCommonStrings, 'a11y.qualitative.equalStringProperty' ) ),
       distanceSmallStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_qualitative_distanceSmall', _.get( NuclearDecayCommonStrings, 'a11y.qualitative.distanceSmallStringProperty' ) ),
       distanceMediumStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_qualitative_distanceMedium', _.get( NuclearDecayCommonStrings, 'a11y.qualitative.distanceMediumStringProperty' ) ),
       distanceLargeStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_qualitative_distanceLarge', _.get( NuclearDecayCommonStrings, 'a11y.qualitative.distanceLargeStringProperty' ) ),
@@ -297,9 +299,7 @@ const NuclearDecayCommonFluent = {
         accessibleParagraphStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_energyDiagram_afterDecay_accessibleParagraph', _.get( NuclearDecayCommonStrings, 'a11y.energyDiagram.afterDecay.accessibleParagraphStringProperty' ) )
       }
     },
-    energyDiagramSliders: {
-      accessibleContextResponse: new FluentPattern<{ distanceProgress: FluentVariable, hLifeProgress: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_energyDiagramSliders_accessibleContextResponse', _.get( NuclearDecayCommonStrings, 'a11y.energyDiagramSliders.accessibleContextResponseStringProperty' ), [{"name":"distanceProgress"},{"name":"hLifeProgress"}] )
-    },
+    escapeDistanceContextResponse: new FluentPattern<{ distanceProgress: FluentVariable, hLifeProgress: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_escapeDistanceContextResponse', _.get( NuclearDecayCommonStrings, 'a11y.escapeDistanceContextResponseStringProperty' ), [{"name":"distanceProgress"},{"name":"hLifeProgress"}] ),
     potentialEnergySlider: {
       accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_potentialEnergySlider_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.potentialEnergySlider.accessibleNameStringProperty' ) ),
       accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_potentialEnergySlider_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.potentialEnergySlider.accessibleHelpTextStringProperty' ) )

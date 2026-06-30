@@ -141,6 +141,9 @@
       "positionEqualTo": {
         "value": "equal to"
       },
+      "equal": {
+        "value": "equal"
+      },
       "distanceSmall": {
         "value": "small"
       },
@@ -275,10 +278,8 @@
         }
       }
     },
-    "energyDiagramSliders": {
-      "accessibleContextResponse": {
-        "value": "Alpha particle escape distance { $distanceProgress }, half-life { $hLifeProgress }."
-      }
+    "escapeDistanceContextResponse": {
+      "value": "Alpha particle escape distance { $distanceProgress }, half-life { $hLifeProgress }."
     },
     "potentialEnergySlider": {
       "accessibleName": {
