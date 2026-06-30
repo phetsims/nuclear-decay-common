@@ -38,7 +38,7 @@ import NuclearDecayModel, { Timescale } from '../model/NuclearDecayModel.js';
 import { DecayPieChartNode } from './DecayPieChartNode.js';
 import DecayTimeHistogramCanvasNode from './DecayTimeHistogramCanvasNode.js';
 import formatTimescaleStrings from './formatTimescaleStrings.js';
-import HalfLifeGrabberNode from './HalfLifeGrabberNode.js';
+import HalfLifeGrabberNode, { ContextResponseAlert } from './HalfLifeGrabberNode.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
 
 type SelfOptions = EmptySelfOptions;
@@ -494,8 +494,8 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     this.histogramCanvasNode.update();
   }
 
-  public setContextResponseEmission( emit: boolean ): void {
-    this.halfLifeGrabberNode.setContextResponseEmission( emit );
+  public setHalfLifeGrabberContextResponseAlert( contextResponseAlert: ContextResponseAlert | null ): void {
+    this.halfLifeGrabberNode.setContextResponseAlert( contextResponseAlert );
   }
 
 }

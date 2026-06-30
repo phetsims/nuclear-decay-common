@@ -24,13 +24,12 @@ type SelfOptions = EmptySelfOptions;
 
 type ParentOptions = ShadedSphereNodeOptions & AccessibleSliderOptions;
 
+export type ContextResponseAlert = ( mappedValue: number, newValue: number, oldValue: number ) => string;
+
 export type HalfLifeGrabberNodeOptions = SelfOptions & StrictOmit<ParentOptions,
   'valueProperty' | 'enabledRangeProperty' | 'startDrag' | 'drag' | 'endDrag'>;
 
 export default class HalfLifeGrabberNode extends AccessibleSlider( ShadedSphereNode, 1 ) {
-
-  // Because of a preference all the way out in Alpha Decay, this grabber needs a way to control its context response
-  private _emitContextResponse = true;
 
   public constructor( model: NuclearDecayModel, providedOptions?: HalfLifeGrabberNodeOptions ) {
     const numberOfExponents = NuclearDecayCommonConstants.EXPONENTIAL_HALF_LIFE_EXPONENT_RANGE.getLength();
@@ -68,20 +67,6 @@ export default class HalfLifeGrabberNode extends AccessibleSlider( ShadedSphereN
       drag: () => {
         const newValue = model.customHalfLifeProperty.value;
         valueChangeSoundPlayer.playSoundIfThresholdReached( newValue, previousValue );
-
-        if ( this._emitContextResponse ) {
-          const increased = newValue > previousValue;
-          const initialEProgress = increased
-                                   ? NuclearDecayCommonFluent.a11y.qualitative.progressLowerStringProperty.value
-                                   : NuclearDecayCommonFluent.a11y.qualitative.progressHigherStringProperty.value;
-          const distanceProgress = increased
-                                   ? NuclearDecayCommonFluent.a11y.qualitative.progressLargerStringProperty.value
-                                   : NuclearDecayCommonFluent.a11y.qualitative.progressSmallerStringProperty.value;
-          this.addAccessibleContextResponse( NuclearDecayCommonFluent.a11y.halfLifeSlider.accessibleContextResponse.format( {
-            initialEProgress: initialEProgress, distanceProgress: distanceProgress
-          } ), { responseGroup: 'halfLifeGrabberNode' } );
-        }
-
         previousValue = newValue;
       }
     }, providedOptions );
@@ -91,7 +76,8 @@ export default class HalfLifeGrabberNode extends AccessibleSlider( ShadedSphereN
     super( diameter, options );
   }
 
-  public setContextResponseEmission( emit: boolean ): void {
-    this._emitContextResponse = emit;
+  public setContextResponseAlert( contextResponseAlert: ContextResponseAlert | null ): void {
+    this.createContextResponseAlert = contextResponseAlert;
+
   }
 }
