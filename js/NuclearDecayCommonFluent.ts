@@ -5,7 +5,7 @@
 /* eslint-disable */
 /* @formatter:off */
 
-import { TReadOnlyProperty } from '../../axon/js/TReadOnlyProperty.js';
+import {TReadOnlyProperty} from '../../axon/js/TReadOnlyProperty.js';
 import FluentLibrary from '../../chipper/js/browser-and-node/FluentLibrary.js';
 import FluentConstant from '../../chipper/js/browser/FluentConstant.js';
 import FluentContainer from '../../chipper/js/browser/FluentContainer.js';
@@ -80,6 +80,7 @@ addToMapIfDefined( 'a11y_qualitative_progressHigher', 'a11y.qualitative.progress
 addToMapIfDefined( 'a11y_qualitative_valueLow', 'a11y.qualitative.valueLowStringProperty' );
 addToMapIfDefined( 'a11y_qualitative_valueMedium', 'a11y.qualitative.valueMediumStringProperty' );
 addToMapIfDefined( 'a11y_qualitative_valueHigh', 'a11y.qualitative.valueHighStringProperty' );
+addToMapIfDefined( 'a11y_scientificNotation', 'a11y.scientificNotationStringProperty' );
 addToMapIfDefined( 'a11y_alphaDecay_screenSummary_playArea', 'a11y.alphaDecay.screenSummary.playAreaStringProperty' );
 addToMapIfDefined( 'a11y_alphaDecay_screenSummary_energyGraph', 'a11y.alphaDecay.screenSummary.energyGraphStringProperty' );
 addToMapIfDefined( 'a11y_alphaDecay_screenSummary_playAreaSelector', 'a11y.alphaDecay.screenSummary.playAreaSelectorStringProperty' );
@@ -253,6 +254,7 @@ const NuclearDecayCommonFluent = {
       valueMediumStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_qualitative_valueMedium', _.get( NuclearDecayCommonStrings, 'a11y.qualitative.valueMediumStringProperty' ) ),
       valueHighStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_qualitative_valueHigh', _.get( NuclearDecayCommonStrings, 'a11y.qualitative.valueHighStringProperty' ) )
     },
+    scientificNotation: new FluentPattern<{ exponent: FluentVariable, mantissa: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_scientificNotation', _.get( NuclearDecayCommonStrings, 'a11y.scientificNotationStringProperty' ), [{"name":"exponent"},{"name":"mantissa"}] ),
     alphaDecay: {
       screenSummary: {
         playAreaStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_alphaDecay_screenSummary_playArea', _.get( NuclearDecayCommonStrings, 'a11y.alphaDecay.screenSummary.playAreaStringProperty' ) ),

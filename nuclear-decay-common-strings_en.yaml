@@ -62,6 +62,7 @@ a11y:
     valueLow: Low
     valueMedium: Medium
     valueHigh: High
+  scientificNotation: '{ $mantissa } times 10 to the { $exponent }'
   alphaDecay:
     screenSummary:
       playArea: >-

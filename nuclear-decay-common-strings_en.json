@@ -184,6 +184,9 @@
         "value": "High"
       }
     },
+    "scientificNotation": {
+      "value": "{ $mantissa } times 10 to the { $exponent }"
+    },
     "alphaDecay": {
       "screenSummary": {
         "playArea": {

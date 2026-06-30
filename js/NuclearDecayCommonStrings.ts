@@ -139,6 +139,8 @@ type StringsType = {
       'valueHigh': string;
       'valueHighStringProperty': LocalizedStringProperty;
     };
+    'scientificNotation': string;
+    'scientificNotationStringProperty': LocalizedStringProperty;
     'alphaDecay': {
       'screenSummary': {
         'playArea': string;
