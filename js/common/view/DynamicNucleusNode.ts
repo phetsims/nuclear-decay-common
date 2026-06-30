@@ -22,6 +22,7 @@ import Circle from '../../../../scenery/js/nodes/Circle.js';
 import Node, { NodeOptions } from '../../../../scenery/js/nodes/Node.js';
 import Color from '../../../../scenery/js/util/Color.js';
 import AtomConfig from '../../../../shred/js/model/AtomConfig.js';
+import { PARTICLE_COLORS } from '../../../../shred/js/model/Particle.js';
 import ShredColors from '../../../../shred/js/ShredColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
@@ -232,7 +233,8 @@ class DynamicNucleusNode extends Node implements Updatable {
     }
 
     // Add the background circle. The initial size is arbitrary - it will be sized on particle updates.
-    this.backgroundCircle = new Circle( 1, { fill: Color.BLACK } );
+    const backgroundCircleColor = PARTICLE_COLORS.neutron.blend( PARTICLE_COLORS.proton, 0.5 ).colorUtilsDarker( 0.5 );
+    this.backgroundCircle = new Circle( 1, { fill: backgroundCircleColor } );
     this.addChild( this.backgroundCircle );
 
     // Set up the initial batch of nucleon nodes.
