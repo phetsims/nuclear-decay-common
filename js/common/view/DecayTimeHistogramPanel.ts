@@ -37,6 +37,7 @@ import NuclearDecayAtom, { ISOTOPE_TO_COLOR, StartingIsotopes } from '../model/N
 import NuclearDecayModel, { Timescale } from '../model/NuclearDecayModel.js';
 import { DecayPieChartNode } from './DecayPieChartNode.js';
 import DecayTimeHistogramCanvasNode from './DecayTimeHistogramCanvasNode.js';
+import formatTimescaleStrings from './formatTimescaleStrings.js';
 import HalfLifeGrabberNode from './HalfLifeGrabberNode.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from './NuclearDecayPanel.js';
 
@@ -373,7 +374,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
     // Accessible paragraph describing the timeline, for screen readers.
     const scaleStringProperty = NuclearDecayCommonFluent.a11y.decayTimeHistogram.scale.createProperty( {
-      scale: model.selectedIsotopeProperty.derived( selectedIsotope => selectedIsotope === 'custom' ? 'logarithmic' : 'linear' )
+      scale: model.timescaleProperty.derived( timescale => timescale === 'exponential' ? 'logarithmic' : 'linear' )
     } );
 
     const isotopeNameProperty = NuclearDecayAtom.createDynamicIsotopeNameAndMassStringProperty(
@@ -382,7 +383,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     const timelineParagraphStringProperty = NuclearDecayCommonFluent.a11y.decayTimeHistogram.accessibleParagraph.createProperty( {
       scale: scaleStringProperty,
       isotope: isotopeNameProperty,
-      hLifeTime: model.halfLifeProperty.derived( halfLife => toFixed( halfLife, 2 ) )
+      hLifeTime: model.halfLifeProperty.derived( halfLife => formatTimescaleStrings( halfLife, model.timescaleProperty.value ) )
     } );
 
     const timelineParagraphNode = new Node( {
