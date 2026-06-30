@@ -63,6 +63,10 @@ a11y:
     valueMedium: Medium
     valueHigh: High
   scientificNotation: '{ $mantissa } times 10 to the { $exponent }'
+  signSelector:
+    select_sign:
+      positive: '{ $value }'
+      negative: 'negative { $value }'
   alphaDecay:
     screenSummary:
       playArea: >-

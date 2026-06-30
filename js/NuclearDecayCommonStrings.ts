@@ -141,6 +141,8 @@ type StringsType = {
     };
     'scientificNotation': string;
     'scientificNotationStringProperty': LocalizedStringProperty;
+    'signSelector': string;
+    'signSelectorStringProperty': LocalizedStringProperty;
     'alphaDecay': {
       'screenSummary': {
         'playArea': string;

@@ -18,8 +18,15 @@ const formatTimescaleStrings = ( value: number, timescale: Timescale, decimals =
     return toFixed( value, decimals );
   }
   else {
-    return NuclearDecayCommonFluent.a11y.scientificNotation.format(
-      ScientificNotationNode.toScientificNotation( value, { mantissaDecimalPlaces: decimals } )
+    const scientificNotationValue = ScientificNotationNode.toScientificNotation( value, { mantissaDecimalPlaces: decimals } );
+    const exponent = Number( scientificNotationValue.exponent );
+    return NuclearDecayCommonFluent.a11y.scientificNotation.format( {
+        mantissa: scientificNotationValue.mantissa,
+        exponent: NuclearDecayCommonFluent.a11y.signSelector.format( {
+          value: Math.abs( exponent ),
+          sign: exponent < 0 ? 'negative' : 'positive'
+        } )
+      }
     );
   }
 };

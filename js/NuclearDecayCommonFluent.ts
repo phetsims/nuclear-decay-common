@@ -81,6 +81,7 @@ addToMapIfDefined( 'a11y_qualitative_valueLow', 'a11y.qualitative.valueLowString
 addToMapIfDefined( 'a11y_qualitative_valueMedium', 'a11y.qualitative.valueMediumStringProperty' );
 addToMapIfDefined( 'a11y_qualitative_valueHigh', 'a11y.qualitative.valueHighStringProperty' );
 addToMapIfDefined( 'a11y_scientificNotation', 'a11y.scientificNotationStringProperty' );
+addToMapIfDefined( 'a11y_signSelector', 'a11y.signSelectorStringProperty' );
 addToMapIfDefined( 'a11y_alphaDecay_screenSummary_playArea', 'a11y.alphaDecay.screenSummary.playAreaStringProperty' );
 addToMapIfDefined( 'a11y_alphaDecay_screenSummary_energyGraph', 'a11y.alphaDecay.screenSummary.energyGraphStringProperty' );
 addToMapIfDefined( 'a11y_alphaDecay_screenSummary_playAreaSelector', 'a11y.alphaDecay.screenSummary.playAreaSelectorStringProperty' );
@@ -255,6 +256,7 @@ const NuclearDecayCommonFluent = {
       valueHighStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_qualitative_valueHigh', _.get( NuclearDecayCommonStrings, 'a11y.qualitative.valueHighStringProperty' ) )
     },
     scientificNotation: new FluentPattern<{ exponent: FluentVariable, mantissa: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_scientificNotation', _.get( NuclearDecayCommonStrings, 'a11y.scientificNotationStringProperty' ), [{"name":"exponent"},{"name":"mantissa"}] ),
+    signSelector: new FluentPattern<{ sign: 'positive' | 'negative' | TReadOnlyProperty<'positive' | 'negative'>, value: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_signSelector', _.get( NuclearDecayCommonStrings, 'a11y.signSelectorStringProperty' ), [{"name":"sign","variants":["positive","negative"]},{"name":"value"}] ),
     alphaDecay: {
       screenSummary: {
         playAreaStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_alphaDecay_screenSummary_playArea', _.get( NuclearDecayCommonStrings, 'a11y.alphaDecay.screenSummary.playAreaStringProperty' ) ),

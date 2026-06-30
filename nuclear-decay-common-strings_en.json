@@ -187,6 +187,9 @@
     "scientificNotation": {
       "value": "{ $mantissa } times 10 to the { $exponent }"
     },
+    "signSelector": {
+      "value": "{ $sign ->\n  [positive] { $value }\n  *[negative] negative { $value }\n}"
+    },
     "alphaDecay": {
       "screenSummary": {
         "playArea": {
