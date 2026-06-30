@@ -148,14 +148,21 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
         }
         const isotope = hasDecayOccurred ? NuclearDecayAtom.getDecayProduct( selectedIsotope ) : selectedIsotope;
         const atomConfig = NuclearDecayAtom.getIsotopeAtomConfig( isotope );
-        const isotopeName = selectedIsotope === 'custom'
-                            ? ( hasDecayOccurred ? isotopeBName : isotopeAName )
-                            : AtomNameUtils.getNameAndMass( atomConfig.protonCount, atomConfig.neutronCount ).value;
-        return NuclearDecayCommonFluent.a11y.particleCounts.accessibleParagraph.format( {
-          isotope: isotopeName,
-          protons: atomConfig.protonCount,
-          neutrons: atomConfig.neutronCount
-        } );
+        if ( selectedIsotope !== 'custom' ) {
+          const isotopeName = AtomNameUtils.getNameAndMass( atomConfig.protonCount, atomConfig.neutronCount ).value;
+          return NuclearDecayCommonFluent.a11y.particleCounts.accessibleParagraph.format( {
+            isotope: isotopeName,
+            protons: atomConfig.protonCount,
+            neutrons: atomConfig.neutronCount
+          } );
+        }
+        else {
+          return NuclearDecayCommonFluent.a11y.particleCounts.accessibleParagraph.format( {
+            isotope: hasDecayOccurred ? isotopeBName : isotopeAName,
+            protons: hasDecayOccurred ? 'p\u22122' : 'p',
+            neutrons: hasDecayOccurred ? 'n\u22122' : 'n'
+          } );
+        }
       } );
 
     const contentsNode = new VBox( {
