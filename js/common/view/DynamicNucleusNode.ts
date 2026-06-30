@@ -1,9 +1,10 @@
 // Copyright 2026, University of Colorado Boulder
 
 /**
- * DynamicNucleusNode portrays an atomic nucleus made of protons and neutrons, potentially clustering together as alpha
- * particles, and moving around within the nucleus.  The nucleons portrayed in this view do not track model elements.
- * In other words, the dynamic behavior is a view-specific features of this Node.
+ * DynamicNucleusNode portrays an atomic nucleus made of protons and neutrons that are moving around. Depending on the
+ * decay type of the atom being portrayed, some clustering of the nucleons into alpha particles may occur, and the alpha
+ * particles may move outside the nucleus radius as a sort of "pre-tunneling" behavior. The nucleons portrayed in this
+ * view do not track model elements. In other words, the dynamic behavior is a view-specific feature of this Node.
  *
  * @author John Blanco (PhET Interactive Simulations)
  */
@@ -11,7 +12,6 @@
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import dotRandom from '../../../../dot/js/dotRandom.js';
 import Range from '../../../../dot/js/Range.js';
-import { clamp } from '../../../../dot/js/util/clamp.js';
 import { roundSymmetric } from '../../../../dot/js/util/roundSymmetric.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
@@ -60,23 +60,19 @@ type RoamingAlphaInfo = {
   remainingTimeOutsideNucleus: number;
 };
 
-// The range of update frequencies used for the atom's animation, in updates per second
-const UPDATE_FREQUENCY_RANGE = new Range( 5, 25 );
+// The range of update frequencies used for the atom's animation, in updates per second.
+const UPDATE_FREQUENCY_RANGE = new Range( 10, 25 );
 
 // The range of allowed particle jumps, in particle radii. This is used when animating the nucleus and trying to make it
 // appear more or less agitated.
-const PARTICLE_JUMP_RANGE = new Range( 0.005, 1 );
+const PARTICLE_JUMP_RANGE = new Range( 0.2, 1.5 );
 
 // The range of allowed particle swaps that can occur on an update. This is used when animating the nucleus and trying
 // to make it appear more or less agitated. A swap means two particles change positions in the nucleus structure.
 const PARTICLE_SWAP_PROPORTION_RANGE = new Range( 0.01, 0.03 );
 
-// Label is positioned this many nucleon radii above the nucleus center.
+// The label is positioned this many nucleon radii above the nucleus center.
 const LABEL_OFFSET_IN_NUCLEON_RADII = 10;
-
-// This factor defines how tightly the particles in the nucleus are packed. The value must be less than 1, and larger
-// values lead to a larger (i.e. less tightly packed) nucleus. Adjust as needed to get the desired visual effect.
-const NUCLEUS_ENLARGEMENT_FACTOR = 0.99;
 
 // Maximum number of particle nodes that will be supported by the trellis structure. Make this bigger if you need to.
 const MAX_PARTICLE_NODES_SUPPORTED = 200;
@@ -87,6 +83,10 @@ const ALPHA_PARTICLE_EXCURSION_TIME_RANGE = new Range( 0.05, 0.2 );
 // This is a debugging thing. It determines whether to show a transparent circular node on top of the nucleus that is
 // exactly the prescribed radius so that we can see if the nucleons are staying at least mostly within it.
 const SHOW_RADIUS_NODE = false;
+
+// The minimum agitation level exhibited by the nucleus. This is used to prevent the nucleus from appearing completely
+// static, which is non-physical.
+const MIN_AGITATION_LEVEL = 0.1;
 
 class DynamicNucleusNode extends Node implements Updatable {
 
@@ -133,6 +133,10 @@ class DynamicNucleusNode extends Node implements Updatable {
 
   // The proportion of particles that can swap positions in an update.
   private particleSwapProportion = PARTICLE_SWAP_PROPORTION_RANGE.expandNormalizedValue( 0.5 );
+
+  // A dark circle that sits behind the nucleons in the Z-order so that, if there are any spaces between them, they
+  // don't appear as empty spaces.
+  private readonly backgroundCircle: Circle;
 
   // A node that can be turned on to help check the size of this node.
   private readonly radiusNode: null | Circle;
@@ -183,7 +187,7 @@ class DynamicNucleusNode extends Node implements Updatable {
     let currentShellRadius = 0;
     let currentAngle = 0;
     let particlesAllowedInThisShell = 1;
-    let particlesPositionsInThisShell = 0;
+    let particlePositionsInThisShell = 0;
     let totalPositions = 0;
     let done = false;
 
@@ -193,20 +197,31 @@ class DynamicNucleusNode extends Node implements Updatable {
       if ( !this.particleNodeTrellis[ currentShell ] ) {
         this.particleNodeTrellis.push( { radius: currentShellRadius, locations: [] } );
       }
-      this.particleNodeTrellis[ currentShell ].locations.push( { angle: currentAngle, particle: null, jitterOffset: null } );
+      this.particleNodeTrellis[ currentShell ].locations.push( {
+        angle: currentAngle,
+        particle: null,
+        jitterOffset: null
+      } );
       totalPositions++;
-      particlesPositionsInThisShell++;
+      particlePositionsInThisShell++;
       currentAngle += ( 2 * Math.PI ) / particlesAllowedInThisShell;
-      if ( particlesPositionsInThisShell >= particlesAllowedInThisShell ) {
+      if ( particlePositionsInThisShell >= particlesAllowedInThisShell ) {
 
         if ( totalPositions < MAX_PARTICLE_NODES_SUPPORTED ) {
 
           // Time to move to the next shell.
           currentShell++;
-          currentShellRadius = currentShellRadius + this.nucleonRadius * ( Math.pow( NUCLEUS_ENLARGEMENT_FACTOR, currentShell ) );
+
+          // Calculate the shell radius using a function that increases forever, but in decreasing amounts in order to
+          // create a round look with the collection of particles. The multiplier at the end is empirically determined
+          // and can be adjusted to create a more or less tightly packed appearance.
+          currentShellRadius = this.nucleonRadius * Math.log( currentShell + 1 ) * 2.25;
+
+          particlesAllowedInThisShell = Math.floor( 2 * Math.PI * currentShellRadius / ( this.nucleonRadius * 2 ) );
+          particlePositionsInThisShell = 0;
+
+          // Set an initial angle that is random for a somewhat chaotic look.
           currentAngle = 2 * Math.PI * dotRandom.nextDouble();
-          particlesAllowedInThisShell = Math.floor( 2 * Math.PI * currentShellRadius / ( this.nucleonRadius * NUCLEUS_ENLARGEMENT_FACTOR ) );
-          particlesPositionsInThisShell = 0;
         }
         else {
 
@@ -215,6 +230,10 @@ class DynamicNucleusNode extends Node implements Updatable {
         }
       }
     }
+
+    // Add the background circle. The initial size is arbitrary - it will be sized on particle updates.
+    this.backgroundCircle = new Circle( 1, { fill: Color.BLACK } );
+    this.addChild( this.backgroundCircle );
 
     // Set up the initial batch of nucleon nodes.
     this.createParticleNodes();
@@ -254,59 +273,65 @@ class DynamicNucleusNode extends Node implements Updatable {
     // Shuffle the particles when this change occurs to signal that it is, in some sense, a different nucleus.
     this.doMinorParticleShuffle();
 
-    this.updateAgitationFactor( this.particleNodeTrellis[ this.particleNodeTrellis.length - 1 ].radius );
+    this.updateAgitationLevel();
   }
 
   /**
    * Scale the shell radii so the outer shell matches the requested nucleus radius, and reposition any occupied
    * trellis locations to their new shell radii.
-   *
    * @param radius - Desired overall nucleus radius in view coordinates.
-   * @returns - Nothing.
    */
   private setNucleusRadius( radius: number ): void {
 
+    // TODO: See https://github.com/phetsims/alpha-decay/issues/28. Scaling the nucleus size without scaling the
+    //       nucleons is causing weird behavior, so this is bypassed for now, and we need to work out something better.
+
     // Determine the radius of the outer shell. Somewhat arbitrarily, the code says we have to have and outer shell of
     // at least one nucleon radius.  This value can't be zero or the calculations won't work.
-    const outerShellRadius = Math.max( radius - this.nucleonRadius, this.nucleonRadius );
+    // const targetOuterShellRadius = Math.max( radius - this.nucleonRadius, this.nucleonRadius );
 
-    const currentOuterShellRadius = this.particleNodeTrellis[ this.particleNodeTrellis.length - 1 ].radius;
-    const scaleFactor = outerShellRadius / currentOuterShellRadius;
+    // const currentOuterShellRadius = this.particleNodeTrellis[ this.particleNodeTrellis.length - 1 ].radius;
+    // const scaleFactor = targetOuterShellRadius / currentOuterShellRadius;
 
-    this.particleNodeTrellis.forEach( shell => {
-      shell.radius *= scaleFactor;
-      shell.locations.forEach( location => {
-        if ( location.particle !== null ) {
-          location.particle.center = this.getParticlePositionForTrellisLocation( shell, location );
-        }
-      } );
-    } );
+    // this.particleNodeTrellis.forEach( shell => {
+    //   shell.radius *= scaleFactor;
+    //   shell.locations.forEach( location => {
+    //     if ( location.particle !== null ) {
+    //       location.particle.center = this.getParticlePositionForTrellisLocation( shell, location );
+    //     }
+    //   } );
+    // } );
 
-    this.updateAgitationFactor( outerShellRadius );
+    // this.updateAgitationLevel( targetOuterShellRadius );
+    this.updateParticlePositions();
   }
 
   /**
-   * Update the "agitation factor" for the nucleus, meaning how much the particles are moving around. Generally
-   * speaking, the more rapidly the atom is likely to decay, the more agitated the nucleus should appear.
+   * Update the level of "agitation" exhibited by the nucleus, meaning how much the particles are moving around.
+   * Generally speaking, the shorter the half life of the atom, the more agitated the nucleus should appear.
    */
-  private updateAgitationFactor( maxShellRadius: number ): void {
+  private updateAgitationLevel(): void {
 
     // This is a normalized value from 0 to 1 indicating how agitated we want the nucleus to look.
-    let agitationFactor = UPDATE_FREQUENCY_RANGE.expandNormalizedValue( 0.5 );
+    let agitationLevel;
 
-    if ( this.atom.hasDecayed ) {
-      agitationFactor = 0;
+    if ( this.atom.hasDecayed || this.atom.halfLife === Number.POSITIVE_INFINITY ) {
+
+      // For the purposes of this node, once an atom has decayed, it becomes much less agitated.
+      agitationLevel = MIN_AGITATION_LEVEL;
     }
     else {
 
-      if ( this.escapeRadiusProperty ) {
-        agitationFactor = clamp( 1 - ( this.escapeRadiusProperty.value / ( maxShellRadius + this.nucleonRadius ) / 6 ), 0, 1 );
-      }
+      const halfLifeLog10 = Math.log10( this.atom.halfLife );
+      agitationLevel = Math.max(
+        1 - NuclearDecayCommonConstants.EXPONENTIAL_HALF_LIFE_EXPONENT_RANGE.getNormalizedValue( halfLifeLog10 ),
+        MIN_AGITATION_LEVEL
+      );
     }
 
-    this.updateFrequency = UPDATE_FREQUENCY_RANGE.expandNormalizedValue( agitationFactor );
-    this.maxParticleJump = PARTICLE_JUMP_RANGE.expandNormalizedValue( agitationFactor );
-    this.particleSwapProportion = PARTICLE_SWAP_PROPORTION_RANGE.expandNormalizedValue( agitationFactor );
+    this.updateFrequency = UPDATE_FREQUENCY_RANGE.expandNormalizedValue( agitationLevel );
+    this.maxParticleJump = PARTICLE_JUMP_RANGE.expandNormalizedValue( agitationLevel );
+    this.particleSwapProportion = PARTICLE_SWAP_PROPORTION_RANGE.expandNormalizedValue( agitationLevel );
   }
 
   /**
@@ -333,8 +358,8 @@ class DynamicNucleusNode extends Node implements Updatable {
   }
 
   /**
-   * Add a particle to an open location on the trellis and position it accordingly.
-   * This updates only trellis bookkeeping and the particle's center; it does not add to the scene graph.
+   * Add a particle to an open location on the trellis and position it accordingly. This updates only trellis
+   * bookkeeping and the particle's center; it does not add to the scene graph.
    */
   private addParticleToTrellis( particleNode: Node ): void {
     for ( const shell of this.particleNodeTrellis ) {
@@ -419,7 +444,7 @@ class DynamicNucleusNode extends Node implements Updatable {
 
     if ( this.currentlyDepictedAtomConfig && !activeAtomConfig.equals( this.currentlyDepictedAtomConfig ) ) {
       this.createParticleNodes();
-      this.updateAgitationFactor( this.particleNodeTrellis[ this.particleNodeTrellis.length - 1 ].radius );
+      this.updateAgitationLevel();
       this.timeAccumulator = 0;
 
       // Put any alpha particles that are currently outside the nucleus back in.
@@ -427,7 +452,7 @@ class DynamicNucleusNode extends Node implements Updatable {
     }
 
     // Update the excursion time for any alpha particles that are outside the nucleus. If their excursion time has
-    // elapsed, put them back in the nucleus.
+    // elapsed, put them back in the nucleus.  Note that this is only relevant for atoms that exhibit alpha decay.
     const almostTunnelingAlphas = [ ...this.almostTunnelingAlphaParticles ];
     almostTunnelingAlphas.forEach( atap => {
       atap.remainingTimeOutsideNucleus = Math.max( atap.remainingTimeOutsideNucleus - dt, 0 );
@@ -479,7 +504,9 @@ class DynamicNucleusNode extends Node implements Updatable {
         return;
       }
 
-      locationForParticle.jitterOffset = new Vector2( dotRandom.nextDouble() * this.maxParticleJump, 0 ).rotated( dotRandom.nextDouble() * 2 * Math.PI );
+      locationForParticle.jitterOffset = new Vector2(
+        dotRandom.nextDouble() * this.maxParticleJump * this.nucleonRadius, 0
+      ).rotated( dotRandom.nextDouble() );
       particleNode.center = this.getParticlePositionForTrellisLocation( shellForParticle, locationForParticle );
     } );
 
@@ -535,7 +562,7 @@ class DynamicNucleusNode extends Node implements Updatable {
         const escapeRadius = this.escapeRadiusProperty.value;
         const minimumAlmostTunnelingDistance = nucleusSize;
 
-        if ( escapeRadius > minimumAlmostTunnelingDistance ) {
+        if ( this.alphaParticleNodes.length > 0 && escapeRadius > minimumAlmostTunnelingDistance ) {
           this.alphaParticleNodes.forEach( alphaParticleNode => {
 
             // Skip any alpha particles that are already outside the nucleus.
@@ -544,8 +571,8 @@ class DynamicNucleusNode extends Node implements Updatable {
             }
 
             // Decide randomly whether to move this alpha particle out of the nucleus and have it "almost tunnel".
-            // Atoms with infinite half-lives (stable) do not even attempt to tunnel
-            if ( this.atom.halfLife !== Infinity && dotRandom.nextInt( 200 ) === 0 ) {
+            // Atoms with infinite half-lives (stable) do not even attempt to tunnel.
+            if ( this.atom.halfLife !== Infinity && dotRandom.nextInt( 20 ) === 0 ) {
               this.removeParticleFromTrellis( alphaParticleNode );
 
               const distanceRange = new Range( minimumAlmostTunnelingDistance, escapeRadius * 0.9 );
@@ -673,15 +700,12 @@ class DynamicNucleusNode extends Node implements Updatable {
     this.neutronNodes.length = 0;
     this.alphaParticleNodes.length = 0;
 
-    const protonCount = activeAtomConfig.protonCount;
-    const neutronCount = activeAtomConfig.neutronCount;
-
     // Decide how many particles of each type to display.
     const {
       individualProtonCount,
       individualNeutronCount,
       alphaParticleCount
-    } = DynamicNucleusNode.getDisplayedParticleCounts( protonCount, neutronCount );
+    } = this.getDisplayedParticleCounts();
 
     // Create the particle nodes.
 
@@ -714,6 +738,11 @@ class DynamicNucleusNode extends Node implements Updatable {
     // Make sure the label is out in front of the z-order.
     this.atomLabelNode.moveToFront();
 
+    // Make sure the background is small enough not to peak around the edges and at the back of the z-order.
+    const maxParticleDistance = particleNodesSortedByDistance[ 0 ].center.distance( Vector2.ZERO );
+    this.backgroundCircle.setRadius( maxParticleDistance * 0.8 );
+    this.backgroundCircle.moveToBack();
+
     // If the radius node is present, make sure it is in front of the z-order.
     this.radiusNode && this.radiusNode.moveToFront();
 
@@ -721,14 +750,20 @@ class DynamicNucleusNode extends Node implements Updatable {
   }
 
   /**
-   * Determine how many individual protons/neutrons and alpha particles to render.
+   * Determine how many individual protons/neutrons and alpha particles to render. Except for perhaps very small nuclei
+   * (like helium), this will generally be significantly less than the actual number of particles in the atom, since
+   * in real life, for a set of small spheres packed into a larger sphere, many of the smaller spheres will be obscured
+   * by the ones in front of them.
    */
-  private static getDisplayedParticleCounts( protonCount: number, neutronCount: number ): {
+  private getDisplayedParticleCounts(): {
     individualProtonCount: number;
     individualNeutronCount: number;
     alphaParticleCount: number;
   } {
-    const totalNucleonCount = protonCount + neutronCount;
+    const atomConfig = this.atom.hasDecayed ?
+                       this.atom.atomConfigAfterDecay :
+                       this.atom.atomConfigAfterDecay;
+    const totalNucleonCount = atomConfig.protonCount + atomConfig.neutronCount;
     if ( totalNucleonCount === 0 ) {
       return {
         individualProtonCount: 0,
@@ -737,22 +772,24 @@ class DynamicNucleusNode extends Node implements Updatable {
       };
     }
 
-    // Calculate the number of nucleons to display.  This uses some "real" formulas for estimating the number of
-    // spheres that would be visible in a 2D depiction of tightly packed set, but is tweaked to get the look we wanted.
-    // Adjust as needed.
+    // Calculate the number of nucleons to display.  This uses some formulas for estimating the number of spheres that
+    // would be visible in a 2D depiction of tightly packed set, but is tweaked to get the look we wanted. Adjust as
+    // needed.
     const numberOfNucleonsToDisplay = totalNucleonCount < 5 ?
                                       totalNucleonCount :
                                       Math.ceil( 3.5 * Math.pow( totalNucleonCount, 2 / 3 ) );
 
-    const displayedProtonCount = roundSymmetric( numberOfNucleonsToDisplay * protonCount / totalNucleonCount );
+    const displayedProtonCount = roundSymmetric( numberOfNucleonsToDisplay * atomConfig.protonCount / totalNucleonCount );
     const displayedNeutronCount = numberOfNucleonsToDisplay - displayedProtonCount;
 
-    // About half of the represented nucleons are grouped into alpha particles (4 nucleons each).
-    const alphaParticleCount = Math.min(
-      Math.floor( numberOfNucleonsToDisplay / 8 ),
-      Math.floor( displayedProtonCount / 2 ),
-      Math.floor( displayedNeutronCount / 2 )
-    );
+    // If this atom decays via alpha decay, and currently has not decayed, then add an alpha particle. As a design note,
+    // this code was originally written to support an arbitrary number of alpha particles, but then a design decision
+    // was made to only ever show a max of one. However, the ability to support N has been left in place in case the
+    // design changes.
+    let alphaParticleCount = 0;
+    if ( this.atom.decayType === 'alphaDecay' && !this.atom.hasDecayed ) {
+      alphaParticleCount = 1;
+    }
 
     return {
       individualProtonCount: displayedProtonCount - 2 * alphaParticleCount,

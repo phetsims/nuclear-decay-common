@@ -159,8 +159,8 @@ export default class NuclearDecayAtom {
   // See related options for description of this field.
   private readonly ejectParticlesOnDecay: boolean;
 
-  // The type of decay that this nucleus will undergo.
-  private decayType: DecayType;
+  // The type of decay that this nucleus will undergo. External entities should never set this.
+  public decayType: DecayType;
 
   // When this value is true, the model may start the ejection decay products at a distance outside the nucleus.  When
   // false, ejected particles will come from the center of the nucleus.
