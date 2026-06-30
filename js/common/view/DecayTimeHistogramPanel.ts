@@ -91,6 +91,8 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
   private timescaleVisibleProperty: BooleanProperty;
 
+  private halfLifeGrabberNode: HalfLifeGrabberNode;
+
   public constructor(
     model: NuclearDecayModel,
     providedOptions: DecayTimeHistogramPanelOptions ) {
@@ -274,11 +276,11 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
     // The half-life grabber is a draggable sphere that sits below the half-life dashed line. It is only visible in
     // custom isotope mode, and converts horizontal drag position into a normalized customHalfLifeProperty value.
-    const halfLifeGrabber = new HalfLifeGrabberNode( model );
+    const halfLifeGrabberNode = new HalfLifeGrabberNode( model );
 
     const halfLifeIndicator = new VBox( {
       align: 'center',
-      children: [ halfLifeText, halfLifeLine, halfLifeGrabber, halfLifeNumberDisplay ],
+      children: [ halfLifeText, halfLifeLine, halfLifeGrabberNode, halfLifeNumberDisplay ],
       bottom: model.isSingleAtomMode ? GRAPH_HEIGHT : GRAPH_HEIGHT + halfLifeNumberDisplay.height + 2
     } );
 
@@ -332,7 +334,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
     // Pointer drag: convert the pointer's absolute x position to a normalized half-life value.
     // graphAreaNode is defined below; safe to reference because this callback only fires at runtime.
-    halfLifeGrabber.addInputListener( new SoundDragListener( {
+    halfLifeGrabberNode.addInputListener( new SoundDragListener( {
       tandem: Tandem.OPT_OUT,
       drag: event => {
         const localX = graphAreaNode.globalToLocalPoint( event.pointer.point ).x;
@@ -478,6 +480,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
     this.histogramCanvasNode = histogramCanvasNode;
     this.timescaleVisibleProperty = timescaleVisibleProperty;
+    this.halfLifeGrabberNode = halfLifeGrabberNode;
   }
 
   public reset(): void {
@@ -489,6 +492,10 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
    */
   public update(): void {
     this.histogramCanvasNode.update();
+  }
+
+  public setContextResponseEmission( emit: boolean ): void {
+    this.halfLifeGrabberNode.setContextResponseEmission( emit );
   }
 
 }

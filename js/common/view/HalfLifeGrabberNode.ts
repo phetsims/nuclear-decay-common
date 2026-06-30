@@ -28,6 +28,10 @@ export type HalfLifeGrabberNodeOptions = SelfOptions & StrictOmit<ParentOptions,
   'valueProperty' | 'enabledRangeProperty' | 'startDrag' | 'drag' | 'endDrag'>;
 
 export default class HalfLifeGrabberNode extends AccessibleSlider( ShadedSphereNode, 1 ) {
+
+  // Because of a preference all the way out in Alpha Decay, this grabber needs a way to control its context response
+  private _emitContextResponse = true;
+
   public constructor( model: NuclearDecayModel, providedOptions?: HalfLifeGrabberNodeOptions ) {
     const numberOfExponents = NuclearDecayCommonConstants.EXPONENTIAL_HALF_LIFE_EXPONENT_RANGE.getLength();
 
@@ -65,16 +69,18 @@ export default class HalfLifeGrabberNode extends AccessibleSlider( ShadedSphereN
         const newValue = model.customHalfLifeProperty.value;
         valueChangeSoundPlayer.playSoundIfThresholdReached( newValue, previousValue );
 
-        const increased = newValue > previousValue;
-        const initialEProgress = increased
-                                 ? NuclearDecayCommonFluent.a11y.qualitative.progressLowerStringProperty.value
-                                 : NuclearDecayCommonFluent.a11y.qualitative.progressHigherStringProperty.value;
-        const distanceProgress = increased
-                                 ? NuclearDecayCommonFluent.a11y.qualitative.progressLargerStringProperty.value
-                                 : NuclearDecayCommonFluent.a11y.qualitative.progressSmallerStringProperty.value;
-        this.addAccessibleContextResponse( NuclearDecayCommonFluent.a11y.halfLifeSlider.accessibleContextResponse.format( {
-          initialEProgress: initialEProgress, distanceProgress: distanceProgress
-        } ), { responseGroup: 'halfLifeGrabberNode' } );
+        if ( this._emitContextResponse ) {
+          const increased = newValue > previousValue;
+          const initialEProgress = increased
+                                   ? NuclearDecayCommonFluent.a11y.qualitative.progressLowerStringProperty.value
+                                   : NuclearDecayCommonFluent.a11y.qualitative.progressHigherStringProperty.value;
+          const distanceProgress = increased
+                                   ? NuclearDecayCommonFluent.a11y.qualitative.progressLargerStringProperty.value
+                                   : NuclearDecayCommonFluent.a11y.qualitative.progressSmallerStringProperty.value;
+          this.addAccessibleContextResponse( NuclearDecayCommonFluent.a11y.halfLifeSlider.accessibleContextResponse.format( {
+            initialEProgress: initialEProgress, distanceProgress: distanceProgress
+          } ), { responseGroup: 'halfLifeGrabberNode' } );
+        }
 
         previousValue = newValue;
       }
@@ -83,5 +89,9 @@ export default class HalfLifeGrabberNode extends AccessibleSlider( ShadedSphereN
     const diameter = 15;
 
     super( diameter, options );
+  }
+
+  public setContextResponseEmission( emit: boolean ): void {
+    this._emitContextResponse = emit;
   }
 }
