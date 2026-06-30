@@ -240,5 +240,5 @@ a11y:
     accessibleList:
       leadingParagraph: 'Particle legend shows:'
       proton: Proton, red sphere.
-      neutron: Neutron, grey sphere.
+      neutron: Neutron, gray sphere.
       alphaParticle: Alpha Particle, cluster of 2 protons and 2 neutrons.
