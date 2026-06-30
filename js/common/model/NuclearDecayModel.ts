@@ -62,9 +62,6 @@ export type NuclearDecayModelOptions = SelfOptions & WithRequired<PhetioObjectOp
 
 export default class NuclearDecayModel extends PhetioObject implements TModel {
 
-  // Flag to distinguish features that are only needed in the single atom model
-  public readonly isSingleAtomMode: boolean;
-
   // List of the selectable isotopes in the sim. Provided by subclasses
   public readonly selectableIsotopes: StartingIsotopes[];
 
@@ -173,8 +170,6 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     }, providedOptions );
 
     super( options );
-
-    this.isSingleAtomMode = options.maxNumberOfAtoms === 1;
 
     this.maxNumberOfAtoms = options.maxNumberOfAtoms!;
 
@@ -366,6 +361,11 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     this.isUserInteractingProperty = new BooleanProperty( false, {
       tandem: Tandem.OPT_OUT
     } );
+  }
+
+  // Flag to distinguish features that are only needed in the single atom model
+  public get isSingleAtomMode(): boolean {
+    return this.atomPool.length === 1;
   }
 
   public expandNormalizedTime( normalizedTime: number, timescale: Timescale ): number {
