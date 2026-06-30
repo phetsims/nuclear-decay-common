@@ -59,6 +59,7 @@ a11y:
     progressLonger: longer
     progressLower: lower
     progressHigher: higher
+    progressUnchanged: unchanged
     valueLow: Low
     valueMedium: Medium
     valueHigh: High

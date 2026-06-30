@@ -132,6 +132,8 @@ type StringsType = {
       'progressLowerStringProperty': LocalizedStringProperty;
       'progressHigher': string;
       'progressHigherStringProperty': LocalizedStringProperty;
+      'progressUnchanged': string;
+      'progressUnchangedStringProperty': LocalizedStringProperty;
       'valueLow': string;
       'valueLowStringProperty': LocalizedStringProperty;
       'valueMedium': string;

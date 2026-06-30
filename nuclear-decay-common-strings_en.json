@@ -174,6 +174,9 @@
       "progressHigher": {
         "value": "higher"
       },
+      "progressUnchanged": {
+        "value": "unchanged"
+      },
       "valueLow": {
         "value": "Low"
       },

@@ -77,6 +77,7 @@ addToMapIfDefined( 'a11y_qualitative_progressShorter', 'a11y.qualitative.progres
 addToMapIfDefined( 'a11y_qualitative_progressLonger', 'a11y.qualitative.progressLongerStringProperty' );
 addToMapIfDefined( 'a11y_qualitative_progressLower', 'a11y.qualitative.progressLowerStringProperty' );
 addToMapIfDefined( 'a11y_qualitative_progressHigher', 'a11y.qualitative.progressHigherStringProperty' );
+addToMapIfDefined( 'a11y_qualitative_progressUnchanged', 'a11y.qualitative.progressUnchangedStringProperty' );
 addToMapIfDefined( 'a11y_qualitative_valueLow', 'a11y.qualitative.valueLowStringProperty' );
 addToMapIfDefined( 'a11y_qualitative_valueMedium', 'a11y.qualitative.valueMediumStringProperty' );
 addToMapIfDefined( 'a11y_qualitative_valueHigh', 'a11y.qualitative.valueHighStringProperty' );
@@ -251,6 +252,7 @@ const NuclearDecayCommonFluent = {
       progressLongerStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_qualitative_progressLonger', _.get( NuclearDecayCommonStrings, 'a11y.qualitative.progressLongerStringProperty' ) ),
       progressLowerStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_qualitative_progressLower', _.get( NuclearDecayCommonStrings, 'a11y.qualitative.progressLowerStringProperty' ) ),
       progressHigherStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_qualitative_progressHigher', _.get( NuclearDecayCommonStrings, 'a11y.qualitative.progressHigherStringProperty' ) ),
+      progressUnchangedStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_qualitative_progressUnchanged', _.get( NuclearDecayCommonStrings, 'a11y.qualitative.progressUnchangedStringProperty' ) ),
       valueLowStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_qualitative_valueLow', _.get( NuclearDecayCommonStrings, 'a11y.qualitative.valueLowStringProperty' ) ),
       valueMediumStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_qualitative_valueMedium', _.get( NuclearDecayCommonStrings, 'a11y.qualitative.valueMediumStringProperty' ) ),
       valueHighStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_qualitative_valueHigh', _.get( NuclearDecayCommonStrings, 'a11y.qualitative.valueHighStringProperty' ) )

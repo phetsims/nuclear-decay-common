@@ -64,19 +64,19 @@ export default class HalfLifeGrabberNode extends AccessibleSlider( ShadedSphereN
       drag: () => {
         const newValue = model.customHalfLifeProperty.value;
         valueChangeSoundPlayer.playSoundIfThresholdReached( newValue, previousValue );
-        previousValue = newValue;
-      },
-      createContextResponseAlert: ( newValue: number, oldValue: number ) => {
-        const increased = oldValue !== null && newValue > oldValue;
+
+        const increased = newValue > previousValue;
         const initialEProgress = increased
                                  ? NuclearDecayCommonFluent.a11y.qualitative.progressLowerStringProperty.value
                                  : NuclearDecayCommonFluent.a11y.qualitative.progressHigherStringProperty.value;
         const distanceProgress = increased
                                  ? NuclearDecayCommonFluent.a11y.qualitative.progressLargerStringProperty.value
                                  : NuclearDecayCommonFluent.a11y.qualitative.progressSmallerStringProperty.value;
-        return NuclearDecayCommonFluent.a11y.halfLifeSlider.accessibleContextResponse.format( {
+        this.addAccessibleContextResponse( NuclearDecayCommonFluent.a11y.halfLifeSlider.accessibleContextResponse.format( {
           initialEProgress: initialEProgress, distanceProgress: distanceProgress
-        } );
+        } ), { responseGroup: 'halfLifeGrabberNode' } );
+
+        previousValue = newValue;
       }
     }, providedOptions );
 

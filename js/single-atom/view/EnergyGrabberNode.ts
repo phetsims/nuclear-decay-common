@@ -10,6 +10,7 @@
 import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import Range from '../../../../dot/js/Range.js';
+import { equalsEpsilon } from '../../../../dot/js/util/equalsEpsilon.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 import Orientation from '../../../../phet-core/js/Orientation.js';
 import StrictOmit from '../../../../phet-core/js/types/StrictOmit.js';
@@ -42,6 +43,7 @@ export default class EnergyGrabberNode extends AccessibleSlider( Path, 1 ) {
       numberOfMiddleThresholds: energyProperty.rangeProperty.value.getLength() / shiftStepSize
     } );
     let previousValue = energyProperty.value;
+    let previousHalfLife = model.halfLifeProperty.value;
 
     const sliderAriaValueText = ( value: number, range: Range ) => {
       const normalized = ( value - range.min ) / ( range.max - range.min );
@@ -86,20 +88,34 @@ export default class EnergyGrabberNode extends AccessibleSlider( Path, 1 ) {
       startDrag: () => { previousValue = energyProperty.value; },
       drag: () => {
         const newValue = energyProperty.value;
+        const newHalfLife = model.halfLifeProperty.value;
+
         valueChangeSoundPlayer.playSoundIfThresholdReached( newValue, previousValue );
+
+        let contextResponse = '';
+        if ( equalsEpsilon( newHalfLife, previousHalfLife, 1e-3 ) ) {
+          const unchanged = NuclearDecayCommonFluent.a11y.qualitative.progressUnchangedStringProperty.value;
+          contextResponse = NuclearDecayCommonFluent.a11y.escapeDistanceContextResponse.format( {
+            distanceProgress: unchanged,
+            hLifeProgress: unchanged
+          } );
+        }
+        else {
+          const increased = newHalfLife > previousHalfLife;
+          const distanceProgress = increased
+                                   ? NuclearDecayCommonFluent.a11y.qualitative.progressLargerStringProperty.value
+                                   : NuclearDecayCommonFluent.a11y.qualitative.progressSmallerStringProperty.value;
+          const hLifeProgress = increased
+                                ? NuclearDecayCommonFluent.a11y.qualitative.progressLongerStringProperty.value
+                                : NuclearDecayCommonFluent.a11y.qualitative.progressShorterStringProperty.value;
+          contextResponse = NuclearDecayCommonFluent.a11y.escapeDistanceContextResponse.format( {
+            distanceProgress: distanceProgress, hLifeProgress: hLifeProgress
+          } );
+        }
+
+        this.addAccessibleContextResponse( contextResponse, { responseGroup: 'energyGrabber' } );
         previousValue = newValue;
-      },
-      createContextResponseAlert: ( newValue, oldValue ) => {
-        const increased = oldValue !== null && newValue > oldValue;
-        const distanceProgress = increased
-                                 ? NuclearDecayCommonFluent.a11y.qualitative.progressLargerStringProperty.value
-                                 : NuclearDecayCommonFluent.a11y.qualitative.progressSmallerStringProperty.value;
-        const hLifeProgress = increased
-                              ? NuclearDecayCommonFluent.a11y.qualitative.progressShorterStringProperty.value
-                              : NuclearDecayCommonFluent.a11y.qualitative.progressLongerStringProperty.value;
-        return NuclearDecayCommonFluent.a11y.escapeDistanceContextResponse.format( {
-          distanceProgress: distanceProgress, hLifeProgress: hLifeProgress
-        } );
+        previousHalfLife = newHalfLife;
       }
     }, providedOptions );
 
