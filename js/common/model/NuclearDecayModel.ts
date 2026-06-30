@@ -209,7 +209,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
       [ this.selectedIsotopeProperty, this.customHalfLifeProperty, this.timescaleProperty ],
       ( selectedIsotope, customHalfLife, timeScale ) => {
         if ( selectedIsotope === 'custom' ) {
-          return this.expandNormalizedTime( customHalfLife, timeScale === 'exponential' );
+          return this.expandNormalizedTime( customHalfLife, timeScale );
         }
         const halfLife = NuclearDecayAtom.getHalfLife( selectedIsotope );
         affirm( halfLife !== null, 'Should provide a valid isotope with a known half-life' );
@@ -368,8 +368,8 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
     } );
   }
 
-  public expandNormalizedTime( normalizedTime: number, exponential: boolean ): number {
-    return exponential ?
+  public expandNormalizedTime( normalizedTime: number, timescale: Timescale ): number {
+    return timescale === 'exponential' ?
            NuclearDecayCommonConstants.EXPONENTIAL_TIME(
              NuclearDecayCommonConstants.EXPONENTIAL_HALF_LIFE_EXPONENT_RANGE.expandNormalizedValue( normalizedTime ) ) :
            NuclearDecayCommonConstants.LINEAR_HALF_LIFE.expandNormalizedValue( normalizedTime );
@@ -487,7 +487,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
    *   in order to place it easily in the line.
    */
   public getCustomHalfLife(): number {
-    const halfLife = this.expandNormalizedTime( this.customHalfLifeProperty.value, this.timescaleProperty.value === 'exponential' );
+    const halfLife = this.expandNormalizedTime( this.customHalfLifeProperty.value, this.timescaleProperty.value );
     if ( Math.log10( halfLife ) > NuclearDecayCommonConstants.MAX_HALF_LIFE_EXPONENT ) {
       return Infinity;
     }

@@ -7,7 +7,6 @@
  * @author Agustín Vallejo
  */
 
-import { toFixed } from '../../../../dot/js/util/toFixed.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import Orientation from '../../../../phet-core/js/Orientation.js';
 import StrictOmit from '../../../../phet-core/js/types/StrictOmit.js';
@@ -19,6 +18,7 @@ import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
+import formatTimescaleStrings from './formatTimescaleStrings.js';
 
 type SelfOptions = EmptySelfOptions;
 
@@ -55,11 +55,9 @@ export default class HalfLifeGrabberNode extends AccessibleSlider( ShadedSphereN
       accessibleHelpText: NuclearDecayCommonFluent.a11y.halfLifeSlider.accessibleHelpTextStringProperty,
       ariaOrientation: Orientation.HORIZONTAL,
       createAriaValueText: ( _formattedValue: number, value: number ) => {
-        const isLogarithmic = model.timescaleProperty.value === 'exponential';
-        const realTime = model.expandNormalizedTime( value, isLogarithmic );
-        const shownTime = isLogarithmic ?
-                          `10<sup>${toFixed( Math.log10( realTime ), 1 )}</sup>` :
-                          toFixed( value, 2 );
+        const timescale = model.timescaleProperty.value;
+        const time = model.expandNormalizedTime( value, timescale );
+        const shownTime = formatTimescaleStrings( time, timescale );
         return StringUtils.fillIn( NuclearDecayCommonFluent.timeSecondsStringProperty.value, { time: shownTime } );
       },
       startDrag: () => { previousValue = model.customHalfLifeProperty.value; },
