@@ -7,6 +7,7 @@
 
 import {TReadOnlyProperty} from '../../axon/js/TReadOnlyProperty.js';
 import FluentLibrary from '../../chipper/js/browser-and-node/FluentLibrary.js';
+import FluentComment from '../../chipper/js/browser/FluentComment.js';
 import FluentConstant from '../../chipper/js/browser/FluentConstant.js';
 import FluentContainer from '../../chipper/js/browser/FluentContainer.js';
 import type {FluentVariable} from '../../chipper/js/browser/FluentPattern.js';
@@ -175,6 +176,13 @@ addToMapIfDefined( 'a11y_decayRate_radioactiveSample_decayOccurring_accessibleLi
 addToMapIfDefined( 'a11y_decayRate_radioactiveSample_decayOccurring_accessibleList_decayedCountItem', 'a11y.decayRate.radioactiveSample.decayOccurring.accessibleList.decayedCountItemStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_decayGraphHeading', 'a11y.decayRate.decayGraphHeadingStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_decayGraphPanel_accessibleParagraph', 'a11y.decayRate.decayGraphPanel.accessibleParagraphStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_decayGraphPanel_undecayedCurveItem', 'a11y.decayRate.decayGraphPanel.undecayedCurveItemStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_decayGraphPanel_decayedCurveItem', 'a11y.decayRate.decayGraphPanel.decayedCurveItemStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_decayGraphPanel_halfLifeMarkersItem', 'a11y.decayRate.decayGraphPanel.halfLifeMarkersItemStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_decayGraphPanel_checkedComponentsListNone', 'a11y.decayRate.decayGraphPanel.checkedComponentsListNoneStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_decayGraphPanel_checkedComponentsListOne', 'a11y.decayRate.decayGraphPanel.checkedComponentsListOneStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_decayGraphPanel_checkedComponentsListTwo', 'a11y.decayRate.decayGraphPanel.checkedComponentsListTwoStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_decayGraphPanel_checkedComponentsListThree', 'a11y.decayRate.decayGraphPanel.checkedComponentsListThreeStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_atHalfLifeContextResponse', 'a11y.decayRate.atHalfLifeContextResponseStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_undecayedCheckbox_accessibleName', 'a11y.decayRate.undecayedCheckbox.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_undecayedCheckbox_accessibleHelpText', 'a11y.decayRate.undecayedCheckbox.accessibleHelpTextStringProperty' );
@@ -447,7 +455,16 @@ const NuclearDecayCommonFluent = {
       },
       decayGraphHeadingStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_decayGraphHeading', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.decayGraphHeadingStringProperty' ) ),
       decayGraphPanel: {
-        accessibleParagraph: new FluentPattern<{ checkedComponents: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_decayGraphPanel_accessibleParagraph', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.decayGraphPanel.accessibleParagraphStringProperty' ), [{"name":"checkedComponents"}] )
+        accessibleParagraph: new FluentPattern<{ checkedComponents: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_decayGraphPanel_accessibleParagraph', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.decayGraphPanel.accessibleParagraphStringProperty' ), [{"name":"checkedComponents"}] ),
+        undecayedCurveItem: new FluentPattern<{ isotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_decayGraphPanel_undecayedCurveItem', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.decayGraphPanel.undecayedCurveItemStringProperty' ), [{"name":"isotope"}] ),
+        decayedCurveItem: new FluentPattern<{ isotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_decayGraphPanel_decayedCurveItem', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.decayGraphPanel.decayedCurveItemStringProperty' ), [{"name":"isotope"}] ),
+        halfLifeMarkersItemStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_decayGraphPanel_halfLifeMarkersItem', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.decayGraphPanel.halfLifeMarkersItemStringProperty' ) ),
+        _comment_0: new FluentComment( {"comment":"Translatable list formatting for checked graph components (max 3 items).","associatedKey":"checkedComponentsListNone"} ),
+        _comment_1: new FluentComment( {"comment":"Each language can define its own conjunction and comma patterns.","associatedKey":"checkedComponentsListNone"} ),
+        checkedComponentsListNoneStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_decayGraphPanel_checkedComponentsListNone', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.decayGraphPanel.checkedComponentsListNoneStringProperty' ) ),
+        checkedComponentsListOne: new FluentPattern<{ item1: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_decayGraphPanel_checkedComponentsListOne', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.decayGraphPanel.checkedComponentsListOneStringProperty' ), [{"name":"item1"}] ),
+        checkedComponentsListTwo: new FluentPattern<{ item1: FluentVariable, item2: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_decayGraphPanel_checkedComponentsListTwo', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.decayGraphPanel.checkedComponentsListTwoStringProperty' ), [{"name":"item1"},{"name":"item2"}] ),
+        checkedComponentsListThree: new FluentPattern<{ item1: FluentVariable, item2: FluentVariable, item3: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_decayGraphPanel_checkedComponentsListThree', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.decayGraphPanel.checkedComponentsListThreeStringProperty' ), [{"name":"item1"},{"name":"item2"},{"name":"item3"}] )
       },
       atHalfLifeContextResponse: new FluentPattern<{ nth: 1 | 2 | 3 | 4 | 5 | number | 'other' | TReadOnlyProperty<1 | 2 | 3 | 4 | 5 | number | 'other'> }>( fluentSupport.bundleProperty, 'a11y_decayRate_atHalfLifeContextResponse', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.atHalfLifeContextResponseStringProperty' ), [{"name":"nth","variants":[1,2,3,4,5,{"type":"number","value":"other"}]}] ),
       undecayedCheckbox: {

@@ -249,20 +249,32 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
     this.addChild( radioactiveSampleHeadingNode );
 
     // Description of the decay graph that updates as curve visibility changes.
+    const undecayedCurveItemProperty = NuclearDecayCommonFluent.a11y.decayRate.decayGraphPanel.undecayedCurveItem.createProperty( {
+      isotope: undecayedIsotopeNameProperty
+    } );
+    const decayedCurveItemProperty = NuclearDecayCommonFluent.a11y.decayRate.decayGraphPanel.decayedCurveItem.createProperty( {
+      isotope: decayedIsotopeNameProperty
+    } );
     const checkedComponentsProperty = new DerivedStringProperty(
       [
         this.visibleProperties.showUndecayedProperty,
         this.visibleProperties.showDecayedProperty,
         this.visibleProperties.showHalfLivesProperty,
-        undecayedIsotopeNameProperty,
-        decayedIsotopeNameProperty
+        undecayedCurveItemProperty,
+        decayedCurveItemProperty,
+        NuclearDecayCommonFluent.a11y.decayRate.decayGraphPanel.halfLifeMarkersItemStringProperty,
+        NuclearDecayCommonFluent.a11y.decayRate.decayGraphPanel.checkedComponentsListNoneStringProperty
       ],
-      ( showUndecayed, showDecayed, showHalfLives, undecayedName, decayedName ) => {
-        const parts: string[] = [];
-        if ( showUndecayed ) { parts.push( `${undecayedName} curve` ); }
-        if ( showDecayed ) { parts.push( `${decayedName} curve` ); }
-        if ( showHalfLives ) { parts.push( 'half-life markers' ); }
-        return parts.length > 0 ? parts.join( ' and ' ) : 'nothing';
+      ( showUndecayed, showDecayed, showHalfLives, undecayedCurveItem, decayedCurveItem, halfLifeMarkersItem, checkedComponentsListNone ) => {
+        const items: string[] = [];
+        if ( showUndecayed ) { items.push( undecayedCurveItem ); }
+        if ( showDecayed ) { items.push( decayedCurveItem ); }
+        if ( showHalfLives ) { items.push( halfLifeMarkersItem ); }
+
+        if ( items.length === 0 ) { return checkedComponentsListNone; }
+        if ( items.length === 1 ) { return NuclearDecayCommonFluent.a11y.decayRate.decayGraphPanel.checkedComponentsListOne.format( { item1: items[ 0 ] } ); }
+        if ( items.length === 2 ) { return NuclearDecayCommonFluent.a11y.decayRate.decayGraphPanel.checkedComponentsListTwo.format( { item1: items[ 0 ], item2: items[ 1 ] } ); }
+        return NuclearDecayCommonFluent.a11y.decayRate.decayGraphPanel.checkedComponentsListThree.format( { item1: items[ 0 ], item2: items[ 1 ], item3: items[ 2 ] } );
       }
     );
 

@@ -550,6 +550,27 @@
       "decayGraphPanel": {
         "accessibleParagraph": {
           "value": "Decay graph plots percent of isotope remaining as a function of time. Currently, { $checkedComponents } visible on graph."
+        },
+        "undecayedCurveItem": {
+          "value": "{ $isotope } curve"
+        },
+        "decayedCurveItem": {
+          "value": "{ $isotope } curve"
+        },
+        "halfLifeMarkersItem": {
+          "value": "half-life markers"
+        },
+        "checkedComponentsListNone": {
+          "value": "nothing"
+        },
+        "checkedComponentsListOne": {
+          "value": "{ $item1 }"
+        },
+        "checkedComponentsListTwo": {
+          "value": "{ $item1 } and { $item2 }"
+        },
+        "checkedComponentsListThree": {
+          "value": "{ $item1 }, { $item2 }, and { $item3 }"
         }
       },
       "atHalfLifeContextResponse": {

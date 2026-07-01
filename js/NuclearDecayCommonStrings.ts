@@ -411,6 +411,20 @@ type StringsType = {
       'decayGraphPanel': {
         'accessibleParagraph': string;
         'accessibleParagraphStringProperty': LocalizedStringProperty;
+        'undecayedCurveItem': string;
+        'undecayedCurveItemStringProperty': LocalizedStringProperty;
+        'decayedCurveItem': string;
+        'decayedCurveItemStringProperty': LocalizedStringProperty;
+        'halfLifeMarkersItem': string;
+        'halfLifeMarkersItemStringProperty': LocalizedStringProperty;
+        'checkedComponentsListNone': string;
+        'checkedComponentsListNoneStringProperty': LocalizedStringProperty;
+        'checkedComponentsListOne': string;
+        'checkedComponentsListOneStringProperty': LocalizedStringProperty;
+        'checkedComponentsListTwo': string;
+        'checkedComponentsListTwoStringProperty': LocalizedStringProperty;
+        'checkedComponentsListThree': string;
+        'checkedComponentsListThreeStringProperty': LocalizedStringProperty;
       };
       'atHalfLifeContextResponse': string;
       'atHalfLifeContextResponseStringProperty': LocalizedStringProperty;

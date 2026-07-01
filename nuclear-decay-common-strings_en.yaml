@@ -237,6 +237,16 @@ a11y:
     decayGraphHeading: Decay Graph
     decayGraphPanel:
       accessibleParagraph: 'Decay graph plots percent of isotope remaining as a function of time. Currently, { $checkedComponents } visible on graph.'
+      undecayedCurveItem: '{ $isotope } curve'
+      decayedCurveItem: '{ $isotope } curve'
+      halfLifeMarkersItem: half-life markers
+
+      # Translatable list formatting for checked graph components (max 3 items).
+      # Each language can define its own conjunction and comma patterns.
+      checkedComponentsListNone: nothing
+      checkedComponentsListOne: '{ $item1 }'
+      checkedComponentsListTwo: '{ $item1 } and { $item2 }'
+      checkedComponentsListThree: '{ $item1 }, { $item2 }, and { $item3 }'
     atHalfLifeContextResponse: |-
       { $nth ->
       [1] At first half-life, about 50 percent remains.
