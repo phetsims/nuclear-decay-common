@@ -283,6 +283,14 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
     ];
     this.addChild( decayGraphHeadingNode );
 
+    model.undecayedCountProperty.link( count => {
+      if ( count === 0 && model.activeAtoms.length !== 0 ) {
+        this.addAccessibleContextResponse(
+          NuclearDecayCommonFluent.a11y.multipleAtoms.allDecayedContextResponseStringProperty
+        );
+      }
+    } );
+
     // Play Area pdomOrder:
     //   Radioactive Sample heading → Decay Graph heading → Isotopes legend
     this.pdomPlayAreaNode.pdomOrder = [
