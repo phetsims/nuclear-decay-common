@@ -27,9 +27,6 @@ type SelfOptions = {
 };
 export type VibratingDecayingAtomNodeOptions = SelfOptions & NodeOptions;
 
-// Constant for the radius of individual nucleons, in screen coordinates (unitless).
-const NUCLEON_RADIUS = 1.5;
-
 // Period between vibration updates for undecayed nuclei, in seconds.
 const VIBRATION_UPDATE_PERIOD = 0.032;
 
@@ -37,7 +34,7 @@ const VIBRATION_UPDATE_PERIOD = 0.032;
 const MAX_VIBRATION_OFFSET = 4;
 
 // Vertical offset (in screen coordinates) used to position the atom label above the nucleus.
-const LABEL_BOTTOM_OFFSET = NUCLEON_RADIUS * 10;
+const LABEL_BOTTOM_OFFSET = 1;
 
 export default class VibratingDecayingAtomNode extends Node implements Updatable {
 
@@ -51,7 +48,7 @@ export default class VibratingDecayingAtomNode extends Node implements Updatable
   private vibrationTimeAccumulator = dotRandom.nextDouble() * VIBRATION_UPDATE_PERIOD;
 
   // The node that represents the atom's nucleus, which is updated as the atom decays.
-  private readonly nucleusNodeParent: Node;
+  private nucleusNode: Node;
 
   // label of the atom
   private readonly atomLabelNode: AtomLabelNode;
@@ -70,16 +67,20 @@ export default class VibratingDecayingAtomNode extends Node implements Updatable
     super( options );
 
     this.atomHasDecayed = decayingAtom.hasDecayed;
-    this.nucleusNodeParent = new Node( { children: [ this.createNucleusNode() ] } );
-    this.addChild( this.nucleusNodeParent );
+    this.nucleusNode = this.createNucleusNode();
+    this.addChild( this.nucleusNode );
 
     const labelsVisibleProperty = options.labelsVisibleProperty ?? new Property( true );
     this.atomLabelNode = new AtomLabelNode( decayingAtom, {
-      centerX: 0,
-      bottom: -LABEL_BOTTOM_OFFSET,
       visibleProperty: labelsVisibleProperty
     } );
     this.addChild( this.atomLabelNode );
+
+    // Handle the positioning of the label above the nucleus.
+    this.atomLabelNode.localBoundsProperty.link( () => {
+      this.atomLabelNode.centerX = this.nucleusNode.centerX;
+      this.atomLabelNode.bottom = this.nucleusNode.top - LABEL_BOTTOM_OFFSET;
+    } );
 
     decayingAtom.steppedEmitter.addListener( dt => {
 
@@ -140,9 +141,10 @@ export default class VibratingDecayingAtomNode extends Node implements Updatable
     if ( this.atomHasDecayed !== this.decayingAtom.hasDecayed ) {
 
       // Decay state changed, so rebuild the nucleus node.
-      this.nucleusNodeParent.removeAllChildren();
-      this.nucleusNodeParent.addChild( this.createNucleusNode() );
       this.atomHasDecayed = this.decayingAtom.hasDecayed;
+      this.removeChild( this.nucleusNode );
+      this.nucleusNode = this.createNucleusNode();
+      this.addChild( this.nucleusNode );
     }
 
     // Always update position and visibility.
