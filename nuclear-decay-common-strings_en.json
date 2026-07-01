@@ -480,6 +480,12 @@
         },
         "accessibleHelpText": {
           "value": "Show or hide labels for atoms."
+        },
+        "accessibleContextResponseChecked": {
+          "value": "Isotope labels displayed above atoms."
+        },
+        "accessibleContextResponseUnchecked": {
+          "value": "Isotope labels hidden."
         }
       },
       "stopwatchCheckbox": {
@@ -488,7 +494,16 @@
         },
         "accessibleHelpText": {
           "value": "Show or hide stopwatch."
+        },
+        "accessibleContextResponseChecked": {
+          "value": "Stopwatch added to Play Area."
+        },
+        "accessibleContextResponseUnchecked": {
+          "value": "Stopwatch hidden."
         }
+      },
+      "allDecayedContextResponse": {
+        "value": "All decayed. Reset sample to repeat experiment."
       }
     },
     "decayRate": {

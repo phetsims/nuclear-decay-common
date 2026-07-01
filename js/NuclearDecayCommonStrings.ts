@@ -359,13 +359,23 @@ type StringsType = {
         'accessibleNameStringProperty': LocalizedStringProperty;
         'accessibleHelpText': string;
         'accessibleHelpTextStringProperty': LocalizedStringProperty;
+        'accessibleContextResponseChecked': string;
+        'accessibleContextResponseCheckedStringProperty': LocalizedStringProperty;
+        'accessibleContextResponseUnchecked': string;
+        'accessibleContextResponseUncheckedStringProperty': LocalizedStringProperty;
       };
       'stopwatchCheckbox': {
         'accessibleName': string;
         'accessibleNameStringProperty': LocalizedStringProperty;
         'accessibleHelpText': string;
         'accessibleHelpTextStringProperty': LocalizedStringProperty;
-      }
+        'accessibleContextResponseChecked': string;
+        'accessibleContextResponseCheckedStringProperty': LocalizedStringProperty;
+        'accessibleContextResponseUnchecked': string;
+        'accessibleContextResponseUncheckedStringProperty': LocalizedStringProperty;
+      };
+      'allDecayedContextResponse': string;
+      'allDecayedContextResponseStringProperty': LocalizedStringProperty;
     };
     'decayRate': {
       'screenSummary': {

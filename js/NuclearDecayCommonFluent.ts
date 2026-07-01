@@ -157,8 +157,13 @@ addToMapIfDefined( 'a11y_multipleAtoms_decayDataHeading', 'a11y.multipleAtoms.de
 addToMapIfDefined( 'a11y_multipleAtoms_decayTimeHistogramAtHalfLife', 'a11y.multipleAtoms.decayTimeHistogramAtHalfLifeStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_labelsCheckbox_accessibleName', 'a11y.multipleAtoms.labelsCheckbox.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_labelsCheckbox_accessibleHelpText', 'a11y.multipleAtoms.labelsCheckbox.accessibleHelpTextStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_labelsCheckbox_accessibleContextResponseChecked', 'a11y.multipleAtoms.labelsCheckbox.accessibleContextResponseCheckedStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_labelsCheckbox_accessibleContextResponseUnchecked', 'a11y.multipleAtoms.labelsCheckbox.accessibleContextResponseUncheckedStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_stopwatchCheckbox_accessibleName', 'a11y.multipleAtoms.stopwatchCheckbox.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_stopwatchCheckbox_accessibleHelpText', 'a11y.multipleAtoms.stopwatchCheckbox.accessibleHelpTextStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_stopwatchCheckbox_accessibleContextResponseChecked', 'a11y.multipleAtoms.stopwatchCheckbox.accessibleContextResponseCheckedStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_stopwatchCheckbox_accessibleContextResponseUnchecked', 'a11y.multipleAtoms.stopwatchCheckbox.accessibleContextResponseUncheckedStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_allDecayedContextResponse', 'a11y.multipleAtoms.allDecayedContextResponseStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_screenSummary_playArea', 'a11y.decayRate.screenSummary.playAreaStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_screenSummary_controlArea', 'a11y.decayRate.screenSummary.controlAreaStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_screenSummary_currentDetails', 'a11y.decayRate.screenSummary.currentDetailsStringProperty' );
@@ -407,12 +412,17 @@ const NuclearDecayCommonFluent = {
       decayTimeHistogramAtHalfLife: new FluentPattern<{ halfLifePercentageUndecayed: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_multipleAtoms_decayTimeHistogramAtHalfLife', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.decayTimeHistogramAtHalfLifeStringProperty' ), [{"name":"halfLifePercentageUndecayed"}] ),
       labelsCheckbox: {
         accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_labelsCheckbox_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.labelsCheckbox.accessibleNameStringProperty' ) ),
-        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_labelsCheckbox_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.labelsCheckbox.accessibleHelpTextStringProperty' ) )
+        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_labelsCheckbox_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.labelsCheckbox.accessibleHelpTextStringProperty' ) ),
+        accessibleContextResponseCheckedStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_labelsCheckbox_accessibleContextResponseChecked', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.labelsCheckbox.accessibleContextResponseCheckedStringProperty' ) ),
+        accessibleContextResponseUncheckedStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_labelsCheckbox_accessibleContextResponseUnchecked', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.labelsCheckbox.accessibleContextResponseUncheckedStringProperty' ) )
       },
       stopwatchCheckbox: {
         accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_stopwatchCheckbox_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.stopwatchCheckbox.accessibleNameStringProperty' ) ),
-        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_stopwatchCheckbox_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.stopwatchCheckbox.accessibleHelpTextStringProperty' ) )
-      }
+        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_stopwatchCheckbox_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.stopwatchCheckbox.accessibleHelpTextStringProperty' ) ),
+        accessibleContextResponseCheckedStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_stopwatchCheckbox_accessibleContextResponseChecked', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.stopwatchCheckbox.accessibleContextResponseCheckedStringProperty' ) ),
+        accessibleContextResponseUncheckedStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_stopwatchCheckbox_accessibleContextResponseUnchecked', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.stopwatchCheckbox.accessibleContextResponseUncheckedStringProperty' ) )
+      },
+      allDecayedContextResponseStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_allDecayedContextResponse', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.allDecayedContextResponseStringProperty' ) )
     },
     decayRate: {
       screenSummary: {

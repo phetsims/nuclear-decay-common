@@ -86,6 +86,8 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
       } ), {
         accessibleName: NuclearDecayCommonFluent.a11y.multipleAtoms.labelsCheckbox.accessibleNameStringProperty,
         accessibleHelpText: NuclearDecayCommonFluent.a11y.multipleAtoms.labelsCheckbox.accessibleHelpTextStringProperty,
+        accessibleContextResponseChecked: NuclearDecayCommonFluent.a11y.multipleAtoms.labelsCheckbox.accessibleContextResponseCheckedStringProperty,
+        accessibleContextResponseUnchecked: NuclearDecayCommonFluent.a11y.multipleAtoms.labelsCheckbox.accessibleContextResponseUncheckedStringProperty,
         tandem: providedOptions.tandem.createTandem( 'labelsVisibleCheckbox' )
       }
     );
@@ -99,6 +101,8 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
       } ), {
         accessibleName: NuclearDecayCommonFluent.a11y.multipleAtoms.stopwatchCheckbox.accessibleNameStringProperty,
         accessibleHelpText: NuclearDecayCommonFluent.a11y.multipleAtoms.stopwatchCheckbox.accessibleHelpTextStringProperty,
+        accessibleContextResponseChecked: NuclearDecayCommonFluent.a11y.multipleAtoms.stopwatchCheckbox.accessibleContextResponseCheckedStringProperty,
+        accessibleContextResponseUnchecked: NuclearDecayCommonFluent.a11y.multipleAtoms.stopwatchCheckbox.accessibleContextResponseUncheckedStringProperty,
         tandem: providedOptions.tandem.createTandem( 'stopwatchCheckbox' )
       }
     );
@@ -287,6 +291,11 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     halfLifeReachedProperty.link( reached => {
       const value = reached ? model.percentageOfUndecayedProperty.value : 0;
       percentageAtHalfLifeProperty.value = `${roundSymmetric( value * 100 )}`;
+      if ( reached ) {
+        this.addAccessibleContextResponse( NuclearDecayCommonFluent.a11y.multipleAtoms.decayTimeHistogramAtHalfLife.format( {
+          halfLifePercentageUndecayed: percentageAtHalfLifeProperty.value
+        } ) );
+      }
     } );
 
     const atHalfLifeDescNode = new Node( {
@@ -296,6 +305,14 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
       } )
     } );
     this.addChild( atHalfLifeDescNode );
+
+    model.undecayedCountProperty.link( count => {
+      if ( count === 0 && model.activeAtoms.length !== 0 ) {
+        this.addAccessibleContextResponse(
+          NuclearDecayCommonFluent.a11y.multipleAtoms.allDecayedContextResponseStringProperty
+        );
+      }
+    } );
 
     // Play Area pdomOrder:
     //   Radioactive Sample heading → Decay Data heading → Particle legend → Isotope panel

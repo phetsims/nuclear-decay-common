@@ -202,9 +202,14 @@ a11y:
     labelsCheckbox:
       accessibleName: Labels
       accessibleHelpText: Show or hide labels for atoms.
+      accessibleContextResponseChecked: Isotope labels displayed above atoms.
+      accessibleContextResponseUnchecked: Isotope labels hidden.
     stopwatchCheckbox:
       accessibleName: Stopwatch
       accessibleHelpText: Show or hide stopwatch.
+      accessibleContextResponseChecked: Stopwatch added to Play Area.
+      accessibleContextResponseUnchecked: Stopwatch hidden.
+    allDecayedContextResponse: 'All decayed. Reset sample to repeat experiment.'
   decayRate:
     screenSummary:
       playArea: >-
