@@ -13,6 +13,7 @@ import Path from '../../../../scenery/js/nodes/Path.js';
 import undoSolidShape from '../../../../sherpa/js/fontawesome-5/undoSolidShape.js';
 import RectangularPushButton, { RectangularPushButtonOptions } from '../../../../sun/js/buttons/RectangularPushButton.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
+import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 
 type SelfOptions = EmptySelfOptions;
 
@@ -23,7 +24,8 @@ export default class ResetAtomsButton extends RectangularPushButton {
     const options = optionize<SelfOptions, EmptySelfOptions, RectangularPushButtonOptions>()( {
       content: new Path( undoSolidShape, { scale: 0.038, fill: 'black' } ),
       baseColor: NuclearDecayCommonColors.resetButtonProperty,
-      enabledProperty: isPlayAreaEmptyProperty.derived( empty => !empty )
+      enabledProperty: isPlayAreaEmptyProperty.derived( empty => !empty ),
+      accessibleContextResponse: NuclearDecayCommonFluent.a11y.multipleAtoms.resetSampleButton.contextResponseStringProperty
     }, providedOptions );
 
     super( options );

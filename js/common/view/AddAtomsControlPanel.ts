@@ -75,6 +75,10 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
       enabledProperty: atomsToAddProperty.derived( value => value !== 0 ),
       listener: () => {
         addAtomsCallback( atomsToAddProperty.value );
+        this.addAccessibleContextResponse( NuclearDecayCommonFluent.a11y.multipleAtoms.setSampleControl.contextResponse.format( {
+          isotope: NuclearDecayAtom.getNameAndMassString( selectedIsotopeProperty.value, NuclearDecayCommonFluent.isotopeAStringProperty.value ),
+          value: atomsToAddProperty.value
+        } ) );
       },
       accessibleName: NuclearDecayCommonFluent.a11y.multipleAtoms.setSampleControl.accessibleNameStringProperty,
       tandem: options.tandem.createTandem( 'setSampleButton' )

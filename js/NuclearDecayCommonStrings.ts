@@ -341,10 +341,14 @@ type StringsType = {
         'accessibleNameStringProperty': LocalizedStringProperty;
         'accessibleHelpText': string;
         'accessibleHelpTextStringProperty': LocalizedStringProperty;
+        'contextResponse': string;
+        'contextResponseStringProperty': LocalizedStringProperty;
       };
       'resetSampleButton': {
         'accessibleName': string;
         'accessibleNameStringProperty': LocalizedStringProperty;
+        'contextResponse': string;
+        'contextResponseStringProperty': LocalizedStringProperty;
       };
       'decayDataHeading': string;
       'decayDataHeadingStringProperty': LocalizedStringProperty;

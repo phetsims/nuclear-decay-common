@@ -455,11 +455,17 @@
         },
         "accessibleHelpText": {
           "value": "Choose number of atoms for radioactive sample. Then look for set sample button."
+        },
+        "contextResponse": {
+          "value": "Now { $value } { $isotope } atoms in sample."
         }
       },
       "resetSampleButton": {
         "accessibleName": {
           "value": "Reset Sample"
+        },
+        "contextResponse": {
+          "value": "All nuclei reset."
         }
       },
       "decayDataHeading": {

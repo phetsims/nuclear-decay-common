@@ -193,8 +193,10 @@ a11y:
     setSampleControl:
       accessibleName: Set Sample
       accessibleHelpText: Choose number of atoms for radioactive sample. Then look for set sample button.
+      contextResponse: 'Now { $value } { $isotope } atoms in sample.'
     resetSampleButton:
       accessibleName: Reset Sample
+      contextResponse: 'All nuclei reset.'
     decayDataHeading: Decay Data
     decayTimeHistogramAtHalfLife: 'At half-life, { $halfLifePercentageUndecayed } percent of sample remains.'
     labelsCheckbox:

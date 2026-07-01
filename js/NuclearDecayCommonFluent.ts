@@ -150,7 +150,9 @@ addToMapIfDefined( 'a11y_multipleAtoms_radioactiveSample_decayOccurring_accessib
 addToMapIfDefined( 'a11y_multipleAtoms_numberOfAtomsControl_accessibleName', 'a11y.multipleAtoms.numberOfAtomsControl.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_setSampleControl_accessibleName', 'a11y.multipleAtoms.setSampleControl.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_setSampleControl_accessibleHelpText', 'a11y.multipleAtoms.setSampleControl.accessibleHelpTextStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_setSampleControl_contextResponse', 'a11y.multipleAtoms.setSampleControl.contextResponseStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_resetSampleButton_accessibleName', 'a11y.multipleAtoms.resetSampleButton.accessibleNameStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_resetSampleButton_contextResponse', 'a11y.multipleAtoms.resetSampleButton.contextResponseStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_decayDataHeading', 'a11y.multipleAtoms.decayDataHeadingStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_decayTimeHistogramAtHalfLife', 'a11y.multipleAtoms.decayTimeHistogramAtHalfLifeStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_labelsCheckbox_accessibleName', 'a11y.multipleAtoms.labelsCheckbox.accessibleNameStringProperty' );
@@ -394,10 +396,12 @@ const NuclearDecayCommonFluent = {
       },
       setSampleControl: {
         accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_setSampleControl_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.setSampleControl.accessibleNameStringProperty' ) ),
-        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_setSampleControl_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.setSampleControl.accessibleHelpTextStringProperty' ) )
+        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_setSampleControl_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.setSampleControl.accessibleHelpTextStringProperty' ) ),
+        contextResponse: new FluentPattern<{ isotope: FluentVariable, value: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_multipleAtoms_setSampleControl_contextResponse', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.setSampleControl.contextResponseStringProperty' ), [{"name":"isotope"},{"name":"value"}] )
       },
       resetSampleButton: {
-        accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_resetSampleButton_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.resetSampleButton.accessibleNameStringProperty' ) )
+        accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_resetSampleButton_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.resetSampleButton.accessibleNameStringProperty' ) ),
+        contextResponseStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_resetSampleButton_contextResponse', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.resetSampleButton.contextResponseStringProperty' ) )
       },
       decayDataHeadingStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_decayDataHeading', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.decayDataHeadingStringProperty' ) ),
       decayTimeHistogramAtHalfLife: new FluentPattern<{ halfLifePercentageUndecayed: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_multipleAtoms_decayTimeHistogramAtHalfLife', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.decayTimeHistogramAtHalfLifeStringProperty' ), [{"name":"halfLifePercentageUndecayed"}] ),
