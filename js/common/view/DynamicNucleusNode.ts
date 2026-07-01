@@ -161,11 +161,15 @@ class DynamicNucleusNode extends Node implements Updatable {
     this.escapeRadiusProperty = options.escapeRadiusProperty;
 
     this.atomLabelNode = new AtomLabelNode( atom, {
-      font: NuclearDecayCommonConstants.TITLE_BOLD_FONT,
-      centerX: 0,
-      bottom: -LABEL_OFFSET_IN_NUCLEON_RADII * this.nucleonRadius
+      font: NuclearDecayCommonConstants.TITLE_BOLD_FONT
     } );
     this.addChild( this.atomLabelNode );
+
+    // Keep the label positioned above the nucleus.
+    this.atomLabelNode.localBoundsProperty.link( () => {
+      this.atomLabelNode.centerX = 0;
+      this.atomLabelNode.bottom = -LABEL_OFFSET_IN_NUCLEON_RADII * this.nucleonRadius;
+    } );
 
     // Add a listener to the atom's step emitter that implements the dynamic motion of the particles in the nucleus.
     atom.steppedEmitter.addListener( dt => {
