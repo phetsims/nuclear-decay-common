@@ -93,12 +93,7 @@ export default class SingleAtomModel extends NuclearDecayModel {
       // Default energy values for polonium.
       if ( isotope === 'polonium-211' ) {
         this.potentialEnergyProperty.value = 0.7;
-        this.alphaParticleEnergyProperty.value = NuclearDecayCommonConstants.CALCULATE_ALPHA_PARTICLE_ENERGY(
-          NuclearDecayCommonConstants.LINEAR_HALF_LIFE.getNormalizedValue(
-            NuclearDecayAtom.getHalfLife( isotope )!
-          ),
-          this.potentialEnergyProperty.value
-        );
+        this.alphaParticleEnergyProperty.value = 0.25;
       }
     } );
 

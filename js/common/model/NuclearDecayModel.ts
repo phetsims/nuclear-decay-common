@@ -237,7 +237,7 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
         // In the single-atom case, the angle at which decay products are ejected is restricted to a horizontal band so
         // that the particles don't go behind panels.  This is due to the layout for the single-atom screens, and does
         // not correspond to anything physical that is being modeled.
-        restrictEjectionAngles: this.isSingleAtomMode,
+        restrictEjectionAngles: this.maxNumberOfAtoms === 1,
         ejectParticlesOnDecay: options.ejectParticlesOnDecay
       } );
       this.atomPool.push( atom );
