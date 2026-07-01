@@ -19,6 +19,7 @@ import NuclearDecayCommonColors from '../../../../nuclear-decay-common/js/Nuclea
 import NuclearDecayCommonConstants from '../../../../nuclear-decay-common/js/NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../../../nuclear-decay-common/js/NuclearDecayCommonFluent.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import AccessibleList from '../../../../scenery-phet/js/accessibility/AccessibleList.js';
 import ResetAllButton from '../../../../scenery-phet/js/buttons/ResetAllButton.js';
 import TimeControlNode from '../../../../scenery-phet/js/TimeControlNode.js';
 import TimeSpeed from '../../../../scenery-phet/js/TimeSpeed.js';
@@ -210,13 +211,23 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
     // State 3: Atoms added and at least one has decayed.
     const decayOccurringDescNode = new Node( {
       visibleProperty: model.decayedCountProperty.derived( count => count > 0 ),
-      accessibleParagraph: NuclearDecayCommonFluent.a11y.decayRate.radioactiveSample.decayOccurring.createProperty( {
-        addedAtoms: model.activeAtomsCountProperty,
-        isotope: undecayedIsotopeNameProperty,
-        time: model.timeProperty.derived( t => toFixed( t, 2 ) ),
-        percentageUndecayed: model.percentageOfUndecayedProperty.derived( p => `${roundSymmetric( p * 100 )}` ),
-        undecayedCount: model.undecayedCountProperty,
-        decayedCount: model.decayedCountProperty
+      accessibleTemplate: AccessibleList.createTemplateProperty( {
+        leadingParagraphStringProperty: NuclearDecayCommonFluent.a11y.decayRate.radioactiveSample.decayOccurring.accessibleList.leadingParagraphStringProperty,
+        listItems: [
+          NuclearDecayCommonFluent.a11y.decayRate.radioactiveSample.decayOccurring.accessibleList.sampleAge.createProperty( {
+            isotope: undecayedIsotopeNameProperty,
+            time: model.timeProperty.derived( t => toFixed( t, 2 ) ),
+            percentageUndecayed: model.percentageOfUndecayedProperty.derived( p => `${roundSymmetric( p * 100 )}` )
+          } ),
+          NuclearDecayCommonFluent.a11y.decayRate.radioactiveSample.decayOccurring.accessibleList.undecayedCountItem.createProperty( {
+            undecayedCount: model.undecayedCountProperty,
+            parentIsotope: undecayedIsotopeNameProperty
+          } ),
+          NuclearDecayCommonFluent.a11y.decayRate.radioactiveSample.decayOccurring.accessibleList.decayedCountItem.createProperty( {
+            decayedCount: model.decayedCountProperty,
+            daughterIsotope: decayedIsotopeNameProperty
+          } )
+        ]
       } )
     } );
 

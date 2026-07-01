@@ -182,14 +182,17 @@ a11y:
     radioactiveSample:
       noAtoms: 'No atoms in sample. Look for { $isotope } atoms control to get started.'
       readyToDecay: 'Original sample contains { $addedAtoms } { $isotope } atoms, ready to decay.'
-      decayOccurring: >-
-        Original sample contains { $addedAtoms } { $isotope } atoms. { $decayParticle } particles are emitted from
-        decaying atoms and move away. Currently, sample is { $time } seconds old and { $percentageUndecayed }
-        percent remains. { $undecayedCount } { $isotope } atoms undecayed. { $decayedCount } { $isotope } atoms decayed.
+      decayOccurring:
+        accessibleList:
+          leadingParagraph: 'Currently,'
+          sampleAge: '{ $isotope } sample is { $time } seconds old and { $percentageUndecayed } percent remains.'
+          undecayedCountItem: '{ $undecayedCount } { $parentIsotope } atoms.'
+          decayedCountItem: '{ $decayedCount } { $daughterIsotope } atoms.'
     numberOfAtomsControl:
       accessibleName: '{ $isotope } Atoms'
-    addAtomsButton:
-      accessibleName: Add Atoms
+    setSampleControl:
+      accessibleName: Set Sample
+      accessibleHelpText: Choose number of atoms for radioactive sample. Then look for set sample button.
     resetSampleButton:
       accessibleName: Reset Sample
     decayDataHeading: Decay Data
@@ -218,10 +221,12 @@ a11y:
         addAtoms: Add atoms to begin observations.
         afterDecay: Reset sample to continue observations.
     radioactiveSample:
-      decayOccurring: >-
-        Original sample contains { $addedAtoms } { $isotope } atoms, decaying. Currently, sample is
-        { $time } seconds old and { $percentageUndecayed } percent remains. { $undecayedCount } { $isotope }
-        atoms. { $decayedCount } { $isotope } atoms.
+      decayOccurring:
+        accessibleList:
+          leadingParagraph: 'Currently,'
+          sampleAge: '{ $isotope } sample is { $time } seconds old and { $percentageUndecayed } percent remains.'
+          undecayedCountItem: '{ $undecayedCount } { $parentIsotope } atoms.'
+          decayedCountItem: '{ $decayedCount } { $daughterIsotope } atoms.'
     decayGraphHeading: Decay Graph
     decayGraphPanel:
       accessibleParagraph: 'Decay graph plots percent of isotope remaining as a function of time. Currently, { $checkedComponents } visible on graph.'

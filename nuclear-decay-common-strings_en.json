@@ -428,7 +428,20 @@
           "value": "Original sample contains { $addedAtoms } { $isotope } atoms, ready to decay."
         },
         "decayOccurring": {
-          "value": "Original sample contains { $addedAtoms } { $isotope } atoms. { $decayParticle } particles are emitted from decaying atoms and move away. Currently, sample is { $time } seconds old and { $percentageUndecayed } percent remains. { $undecayedCount } { $isotope } atoms undecayed. { $decayedCount } { $isotope } atoms decayed."
+          "accessibleList": {
+            "leadingParagraph": {
+              "value": "Currently,"
+            },
+            "sampleAge": {
+              "value": "{ $isotope } sample is { $time } seconds old and { $percentageUndecayed } percent remains."
+            },
+            "undecayedCountItem": {
+              "value": "{ $undecayedCount } { $parentIsotope } atoms."
+            },
+            "decayedCountItem": {
+              "value": "{ $decayedCount } { $daughterIsotope } atoms."
+            }
+          }
         }
       },
       "numberOfAtomsControl": {
@@ -436,9 +449,12 @@
           "value": "{ $isotope } Atoms"
         }
       },
-      "addAtomsButton": {
+      "setSampleControl": {
         "accessibleName": {
-          "value": "Add Atoms"
+          "value": "Set Sample"
+        },
+        "accessibleHelpText": {
+          "value": "Choose number of atoms for radioactive sample. Then look for set sample button."
         }
       },
       "resetSampleButton": {
@@ -491,7 +507,20 @@
       },
       "radioactiveSample": {
         "decayOccurring": {
-          "value": "Original sample contains { $addedAtoms } { $isotope } atoms, decaying. Currently, sample is { $time } seconds old and { $percentageUndecayed } percent remains. { $undecayedCount } { $isotope } atoms. { $decayedCount } { $isotope } atoms."
+          "accessibleList": {
+            "leadingParagraph": {
+              "value": "Currently,"
+            },
+            "sampleAge": {
+              "value": "{ $isotope } sample is { $time } seconds old and { $percentageUndecayed } percent remains."
+            },
+            "undecayedCountItem": {
+              "value": "{ $undecayedCount } { $parentIsotope } atoms."
+            },
+            "decayedCountItem": {
+              "value": "{ $decayedCount } { $daughterIsotope } atoms."
+            }
+          }
         }
       },
       "decayGraphHeading": {

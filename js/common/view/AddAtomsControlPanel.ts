@@ -64,6 +64,7 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
       accessibleName: NuclearDecayCommonFluent.a11y.multipleAtoms.numberOfAtomsControl.accessibleName.createProperty( {
         isotope: isotopeDynamicNameProperty
       } ),
+      accessibleHelpText: NuclearDecayCommonFluent.a11y.multipleAtoms.setSampleControl.accessibleHelpTextStringProperty,
       tandem: options.tandem.createTandem( 'numberOfAtomsSpinner' )
     } );
 
@@ -75,7 +76,7 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
       listener: () => {
         addAtomsCallback( atomsToAddProperty.value );
       },
-      accessibleName: NuclearDecayCommonFluent.a11y.multipleAtoms.addAtomsButton.accessibleNameStringProperty,
+      accessibleName: NuclearDecayCommonFluent.a11y.multipleAtoms.setSampleControl.accessibleNameStringProperty,
       tandem: options.tandem.createTandem( 'setSampleButton' )
     } );
 

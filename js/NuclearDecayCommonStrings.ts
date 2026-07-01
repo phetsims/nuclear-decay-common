@@ -319,16 +319,28 @@ type StringsType = {
         'noAtomsStringProperty': LocalizedStringProperty;
         'readyToDecay': string;
         'readyToDecayStringProperty': LocalizedStringProperty;
-        'decayOccurring': string;
-        'decayOccurringStringProperty': LocalizedStringProperty;
+        'decayOccurring': {
+          'accessibleList': {
+            'leadingParagraph': string;
+            'leadingParagraphStringProperty': LocalizedStringProperty;
+            'sampleAge': string;
+            'sampleAgeStringProperty': LocalizedStringProperty;
+            'undecayedCountItem': string;
+            'undecayedCountItemStringProperty': LocalizedStringProperty;
+            'decayedCountItem': string;
+            'decayedCountItemStringProperty': LocalizedStringProperty;
+          }
+        }
       };
       'numberOfAtomsControl': {
         'accessibleName': string;
         'accessibleNameStringProperty': LocalizedStringProperty;
       };
-      'addAtomsButton': {
+      'setSampleControl': {
         'accessibleName': string;
         'accessibleNameStringProperty': LocalizedStringProperty;
+        'accessibleHelpText': string;
+        'accessibleHelpTextStringProperty': LocalizedStringProperty;
       };
       'resetSampleButton': {
         'accessibleName': string;
@@ -367,8 +379,18 @@ type StringsType = {
         }
       };
       'radioactiveSample': {
-        'decayOccurring': string;
-        'decayOccurringStringProperty': LocalizedStringProperty;
+        'decayOccurring': {
+          'accessibleList': {
+            'leadingParagraph': string;
+            'leadingParagraphStringProperty': LocalizedStringProperty;
+            'sampleAge': string;
+            'sampleAgeStringProperty': LocalizedStringProperty;
+            'undecayedCountItem': string;
+            'undecayedCountItemStringProperty': LocalizedStringProperty;
+            'decayedCountItem': string;
+            'decayedCountItemStringProperty': LocalizedStringProperty;
+          }
+        }
       };
       'decayGraphHeading': string;
       'decayGraphHeadingStringProperty': LocalizedStringProperty;

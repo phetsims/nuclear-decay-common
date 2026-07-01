@@ -5,7 +5,7 @@
 /* eslint-disable */
 /* @formatter:off */
 
-import { TReadOnlyProperty } from '../../axon/js/TReadOnlyProperty.js';
+import {TReadOnlyProperty} from '../../axon/js/TReadOnlyProperty.js';
 import FluentLibrary from '../../chipper/js/browser-and-node/FluentLibrary.js';
 import FluentConstant from '../../chipper/js/browser/FluentConstant.js';
 import FluentContainer from '../../chipper/js/browser/FluentContainer.js';
@@ -143,9 +143,13 @@ addToMapIfDefined( 'a11y_multipleAtoms_screenSummary_interactionHint_afterDecay'
 addToMapIfDefined( 'a11y_multipleAtoms_radioactiveSampleHeading', 'a11y.multipleAtoms.radioactiveSampleHeadingStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_radioactiveSample_noAtoms', 'a11y.multipleAtoms.radioactiveSample.noAtomsStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_radioactiveSample_readyToDecay', 'a11y.multipleAtoms.radioactiveSample.readyToDecayStringProperty' );
-addToMapIfDefined( 'a11y_multipleAtoms_radioactiveSample_decayOccurring', 'a11y.multipleAtoms.radioactiveSample.decayOccurringStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_radioactiveSample_decayOccurring_accessibleList_leadingParagraph', 'a11y.multipleAtoms.radioactiveSample.decayOccurring.accessibleList.leadingParagraphStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_radioactiveSample_decayOccurring_accessibleList_sampleAge', 'a11y.multipleAtoms.radioactiveSample.decayOccurring.accessibleList.sampleAgeStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_radioactiveSample_decayOccurring_accessibleList_undecayedCountItem', 'a11y.multipleAtoms.radioactiveSample.decayOccurring.accessibleList.undecayedCountItemStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_radioactiveSample_decayOccurring_accessibleList_decayedCountItem', 'a11y.multipleAtoms.radioactiveSample.decayOccurring.accessibleList.decayedCountItemStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_numberOfAtomsControl_accessibleName', 'a11y.multipleAtoms.numberOfAtomsControl.accessibleNameStringProperty' );
-addToMapIfDefined( 'a11y_multipleAtoms_addAtomsButton_accessibleName', 'a11y.multipleAtoms.addAtomsButton.accessibleNameStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_setSampleControl_accessibleName', 'a11y.multipleAtoms.setSampleControl.accessibleNameStringProperty' );
+addToMapIfDefined( 'a11y_multipleAtoms_setSampleControl_accessibleHelpText', 'a11y.multipleAtoms.setSampleControl.accessibleHelpTextStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_resetSampleButton_accessibleName', 'a11y.multipleAtoms.resetSampleButton.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_decayDataHeading', 'a11y.multipleAtoms.decayDataHeadingStringProperty' );
 addToMapIfDefined( 'a11y_multipleAtoms_decayTimeHistogramAtHalfLife', 'a11y.multipleAtoms.decayTimeHistogramAtHalfLifeStringProperty' );
@@ -158,7 +162,10 @@ addToMapIfDefined( 'a11y_decayRate_screenSummary_controlArea', 'a11y.decayRate.s
 addToMapIfDefined( 'a11y_decayRate_screenSummary_currentDetails', 'a11y.decayRate.screenSummary.currentDetailsStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_screenSummary_interactionHint_addAtoms', 'a11y.decayRate.screenSummary.interactionHint.addAtomsStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_screenSummary_interactionHint_afterDecay', 'a11y.decayRate.screenSummary.interactionHint.afterDecayStringProperty' );
-addToMapIfDefined( 'a11y_decayRate_radioactiveSample_decayOccurring', 'a11y.decayRate.radioactiveSample.decayOccurringStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_radioactiveSample_decayOccurring_accessibleList_leadingParagraph', 'a11y.decayRate.radioactiveSample.decayOccurring.accessibleList.leadingParagraphStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_radioactiveSample_decayOccurring_accessibleList_sampleAge', 'a11y.decayRate.radioactiveSample.decayOccurring.accessibleList.sampleAgeStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_radioactiveSample_decayOccurring_accessibleList_undecayedCountItem', 'a11y.decayRate.radioactiveSample.decayOccurring.accessibleList.undecayedCountItemStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_radioactiveSample_decayOccurring_accessibleList_decayedCountItem', 'a11y.decayRate.radioactiveSample.decayOccurring.accessibleList.decayedCountItemStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_decayGraphHeading', 'a11y.decayRate.decayGraphHeadingStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_decayGraphPanel_accessibleParagraph', 'a11y.decayRate.decayGraphPanel.accessibleParagraphStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_undecayedCheckbox_accessibleName', 'a11y.decayRate.undecayedCheckbox.accessibleNameStringProperty' );
@@ -373,13 +380,21 @@ const NuclearDecayCommonFluent = {
       radioactiveSample: {
         noAtoms: new FluentPattern<{ isotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_multipleAtoms_radioactiveSample_noAtoms', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.radioactiveSample.noAtomsStringProperty' ), [{"name":"isotope"}] ),
         readyToDecay: new FluentPattern<{ addedAtoms: FluentVariable, isotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_multipleAtoms_radioactiveSample_readyToDecay', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.radioactiveSample.readyToDecayStringProperty' ), [{"name":"addedAtoms"},{"name":"isotope"}] ),
-        decayOccurring: new FluentPattern<{ addedAtoms: FluentVariable, decayedCount: FluentVariable, decayParticle: FluentVariable, isotope: FluentVariable, percentageUndecayed: FluentVariable, time: FluentVariable, undecayedCount: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_multipleAtoms_radioactiveSample_decayOccurring', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.radioactiveSample.decayOccurringStringProperty' ), [{"name":"addedAtoms"},{"name":"decayedCount"},{"name":"decayParticle"},{"name":"isotope"},{"name":"percentageUndecayed"},{"name":"time"},{"name":"undecayedCount"}] )
+        decayOccurring: {
+          accessibleList: {
+            leadingParagraphStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_radioactiveSample_decayOccurring_accessibleList_leadingParagraph', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.radioactiveSample.decayOccurring.accessibleList.leadingParagraphStringProperty' ) ),
+            sampleAge: new FluentPattern<{ isotope: FluentVariable, percentageUndecayed: FluentVariable, time: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_multipleAtoms_radioactiveSample_decayOccurring_accessibleList_sampleAge', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.radioactiveSample.decayOccurring.accessibleList.sampleAgeStringProperty' ), [{"name":"isotope"},{"name":"percentageUndecayed"},{"name":"time"}] ),
+            undecayedCountItem: new FluentPattern<{ parentIsotope: FluentVariable, undecayedCount: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_multipleAtoms_radioactiveSample_decayOccurring_accessibleList_undecayedCountItem', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.radioactiveSample.decayOccurring.accessibleList.undecayedCountItemStringProperty' ), [{"name":"parentIsotope"},{"name":"undecayedCount"}] ),
+            decayedCountItem: new FluentPattern<{ daughterIsotope: FluentVariable, decayedCount: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_multipleAtoms_radioactiveSample_decayOccurring_accessibleList_decayedCountItem', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.radioactiveSample.decayOccurring.accessibleList.decayedCountItemStringProperty' ), [{"name":"daughterIsotope"},{"name":"decayedCount"}] )
+          }
+        }
       },
       numberOfAtomsControl: {
         accessibleName: new FluentPattern<{ isotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_multipleAtoms_numberOfAtomsControl_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.numberOfAtomsControl.accessibleNameStringProperty' ), [{"name":"isotope"}] )
       },
-      addAtomsButton: {
-        accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_addAtomsButton_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.addAtomsButton.accessibleNameStringProperty' ) )
+      setSampleControl: {
+        accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_setSampleControl_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.setSampleControl.accessibleNameStringProperty' ) ),
+        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_setSampleControl_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.setSampleControl.accessibleHelpTextStringProperty' ) )
       },
       resetSampleButton: {
         accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_multipleAtoms_resetSampleButton_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.multipleAtoms.resetSampleButton.accessibleNameStringProperty' ) )
@@ -406,7 +421,14 @@ const NuclearDecayCommonFluent = {
         }
       },
       radioactiveSample: {
-        decayOccurring: new FluentPattern<{ addedAtoms: FluentVariable, decayedCount: FluentVariable, isotope: FluentVariable, percentageUndecayed: FluentVariable, time: FluentVariable, undecayedCount: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_radioactiveSample_decayOccurring', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.radioactiveSample.decayOccurringStringProperty' ), [{"name":"addedAtoms"},{"name":"decayedCount"},{"name":"isotope"},{"name":"percentageUndecayed"},{"name":"time"},{"name":"undecayedCount"}] )
+        decayOccurring: {
+          accessibleList: {
+            leadingParagraphStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_radioactiveSample_decayOccurring_accessibleList_leadingParagraph', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.radioactiveSample.decayOccurring.accessibleList.leadingParagraphStringProperty' ) ),
+            sampleAge: new FluentPattern<{ isotope: FluentVariable, percentageUndecayed: FluentVariable, time: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_radioactiveSample_decayOccurring_accessibleList_sampleAge', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.radioactiveSample.decayOccurring.accessibleList.sampleAgeStringProperty' ), [{"name":"isotope"},{"name":"percentageUndecayed"},{"name":"time"}] ),
+            undecayedCountItem: new FluentPattern<{ parentIsotope: FluentVariable, undecayedCount: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_radioactiveSample_decayOccurring_accessibleList_undecayedCountItem', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.radioactiveSample.decayOccurring.accessibleList.undecayedCountItemStringProperty' ), [{"name":"parentIsotope"},{"name":"undecayedCount"}] ),
+            decayedCountItem: new FluentPattern<{ daughterIsotope: FluentVariable, decayedCount: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_radioactiveSample_decayOccurring_accessibleList_decayedCountItem', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.radioactiveSample.decayOccurring.accessibleList.decayedCountItemStringProperty' ), [{"name":"daughterIsotope"},{"name":"decayedCount"}] )
+          }
+        }
       },
       decayGraphHeadingStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_decayGraphHeading', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.decayGraphHeadingStringProperty' ) ),
       decayGraphPanel: {

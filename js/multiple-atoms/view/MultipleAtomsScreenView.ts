@@ -19,6 +19,7 @@ import NuclearDecayCommonConstants from '../../../../nuclear-decay-common/js/Nuc
 import NuclearDecayCommonFluent from '../../../../nuclear-decay-common/js/NuclearDecayCommonFluent.js';
 import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
 import optionize from '../../../../phet-core/js/optionize.js';
+import AccessibleList from '../../../../scenery-phet/js/accessibility/AccessibleList.js';
 import Stopwatch from '../../../../scenery-phet/js/Stopwatch.js';
 import StopwatchNode from '../../../../scenery-phet/js/StopwatchNode.js';
 import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
@@ -204,10 +205,16 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
 
     // ---- PDOM description nodes ----
 
-    // Dynamic isotope name used in accessible descriptions.
+    // Dynamic name for the undecayed (parent) isotope used in accessible descriptions.
     const isotopeNameProperty = NuclearDecayAtom.createDynamicIsotopeNameAndMassStringProperty(
       model.selectedIsotopeProperty,
       NuclearDecayCommonFluent.isotopeAStringProperty
+    );
+
+    // Dynamic name for the decay-product (daughter) isotope used in accessible descriptions.
+    const daughterIsotopeNameProperty = NuclearDecayAtom.createDynamicDecayProductNameAndMassStringProperty(
+      model.selectedIsotopeProperty,
+      NuclearDecayCommonFluent.isotopeBStringProperty
     );
 
     // State 1: No atoms in play area.
@@ -233,14 +240,23 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     // State 3: Atoms added and at least one has decayed.
     const decayOccurringDescNode = new Node( {
       visibleProperty: model.decayedCountProperty.derived( count => count > 0 ),
-      accessibleParagraph: NuclearDecayCommonFluent.a11y.multipleAtoms.radioactiveSample.decayOccurring.createProperty( {
-        addedAtoms: model.activeAtomsCountProperty,
-        isotope: isotopeNameProperty,
-        decayParticle: options.decayParticleStringProperty,
-        time: model.timeProperty.derived( t => toFixed( t, 2 ) ),
-        percentageUndecayed: model.percentageOfUndecayedProperty.derived( p => `${roundSymmetric( p * 100 )}` ),
-        undecayedCount: model.undecayedCountProperty,
-        decayedCount: model.decayedCountProperty
+      accessibleTemplate: AccessibleList.createTemplateProperty( {
+        leadingParagraphStringProperty: NuclearDecayCommonFluent.a11y.multipleAtoms.radioactiveSample.decayOccurring.accessibleList.leadingParagraphStringProperty,
+        listItems: [
+          NuclearDecayCommonFluent.a11y.multipleAtoms.radioactiveSample.decayOccurring.accessibleList.sampleAge.createProperty( {
+            isotope: isotopeNameProperty,
+            time: model.timeProperty.derived( t => toFixed( t, 2 ) ),
+            percentageUndecayed: model.percentageOfUndecayedProperty.derived( p => `${roundSymmetric( p * 100 )}` )
+          } ),
+          NuclearDecayCommonFluent.a11y.multipleAtoms.radioactiveSample.decayOccurring.accessibleList.undecayedCountItem.createProperty( {
+            undecayedCount: model.undecayedCountProperty,
+            parentIsotope: isotopeNameProperty
+          } ),
+          NuclearDecayCommonFluent.a11y.multipleAtoms.radioactiveSample.decayOccurring.accessibleList.decayedCountItem.createProperty( {
+            decayedCount: model.decayedCountProperty,
+            daughterIsotope: daughterIsotopeNameProperty
+          } )
+        ]
       } )
     } );
 
