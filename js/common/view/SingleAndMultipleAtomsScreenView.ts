@@ -124,7 +124,13 @@ export default class SingleAndMultipleAtomsScreenView extends NuclearDecayScreen
     this.resetAllButton = new ResetAllButton( {
       listener: () => {
         model.reset();
+
+        const startTime = window.performance.now();
+
         this.reset();
+
+        const elapsedTime = window.performance.now() - startTime;
+        console.log( `this.reset() took ${elapsedTime} ms` );
       },
       right: this.layoutBounds.maxX - MARGIN_X,
       bottom: this.layoutBounds.maxY - MARGIN_Y,

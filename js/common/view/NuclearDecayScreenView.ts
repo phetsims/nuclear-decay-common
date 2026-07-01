@@ -125,6 +125,8 @@ export default class NuclearDecayScreenView extends ScreenView {
       // For screens that use VibratingDecayingAtomNode, labelsVisibleProperty must be provided.
       affirm( options.labelsVisibleProperty, 'labelsVisibleProperty is required for multiple-atoms screens' );
 
+      const startTime = window.performance.now();
+
       model.atomPool.forEach( atom => {
         const atomNode = new VibratingDecayingAtomNode(
           atom,
@@ -136,6 +138,9 @@ export default class NuclearDecayScreenView extends ScreenView {
         this.atomNodes.push( atomNode );
         this.addChild( atomNode );
       } );
+
+      const elapsedTime = window.performance.now() - startTime;
+      console.log( `VibratingDecayingAtomNode creation loop took ${elapsedTime} ms` );
     }
     else if ( model.maxNumberOfAtoms === NuclearDecayCommonConstants.MAX_ATOMS_THIRD_SCREEN ) {
       model.atomPool.forEach( atom => {

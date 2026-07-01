@@ -455,6 +455,8 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
    * @param [decayDt] - an optional separate time used in the decay calculation
    */
   public updateAtoms( dt = 0, decayDt = dt ): void {
+    const startTime = window.performance.now();
+
     this.activeAtoms.forEach( ( atom: NuclearDecayAtom ) => {
       const hadDecayed = atom.hasDecayed;
       if ( dt && decayDt ) {
@@ -472,6 +474,11 @@ export default class NuclearDecayModel extends PhetioObject implements TModel {
         this.decayedCountProperty.value = this.decayedAtoms.length;
       }
     } );
+
+    const elapsedTime = window.performance.now() - startTime;
+    if ( elapsedTime > 160 ) {
+      console.log( `activeAtoms step loop took ${elapsedTime} ms` );
+    }
 
     // Update several variables used to control and present the view.
     this.undecayedAtoms = this.activeAtoms.filter( atom => !atom.hasDecayed );
