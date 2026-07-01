@@ -2,9 +2,9 @@
 
 /**
  * NucleusImageNodeFactory is a singleton that efficiently produces rasterized images of atomic nuclei made up of
- * individual protons and neutrons. Creating the individual nucleon nodes (ShadedSphereNodes) and rasterizing them is
- * relatively expensive, and many nuclei are created and recreated over the lifetime of a simulation. To avoid paying
- * that cost repeatedly, this factory caches a pool of nucleon nodes and a single positional "trellis" structure.
+ * individual protons and neutrons. Creating the individual nucleon nodes and rasterizing them is relatively expensive,
+ * and many nuclei are created and recreated over the lifetime of a simulation. To avoid paying that cost repeatedly,
+ * this factory caches a pool of nucleon nodes and a single positional "trellis" structure.
  *
  * The nucleons placed for the previous request are left in place between calls. Each request then adds or removes only
  * enough nodes to match the new configuration and trades the locations of a fraction of the nucleons before
@@ -18,11 +18,10 @@ import dotRandom from '../../../../dot/js/dotRandom.js';
 import { roundSymmetric } from '../../../../dot/js/util/roundSymmetric.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
-import ShadedSphereNode from '../../../../scenery-phet/js/ShadedSphereNode.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import { rasterizeNode } from '../../../../scenery/js/util/rasterizeNode.js';
 import AtomConfig from '../../../../shred/js/model/AtomConfig.js';
-import ShredColors from '../../../../shred/js/ShredColors.js';
+import ParticleNode from '../../../../shred/js/view/ParticleNode.js';
 
 // Radius of an individual nucleon, in screen coordinates (unitless). Matches the value previously used in
 // VibratingDecayingAtomNode so that the rendered nuclei stay the same visual size.
@@ -58,13 +57,13 @@ class NucleusImageNodeFactory {
   private readonly trellis: TrellisShell[];
 
   // Free (created but not currently placed) nucleon nodes, available to be added to the nucleus.
-  private readonly freeProtonNodes: ShadedSphereNode[] = [];
-  private readonly freeNeutronNodes: ShadedSphereNode[] = [];
+  private readonly freeProtonNodes: ParticleNode[] = [];
+  private readonly freeNeutronNodes: ParticleNode[] = [];
 
   // Nucleon nodes currently placed on the trellis and parented to the scratch node. These persist across requests so
   // that successive nuclei can be produced by adjusting only the difference rather than rebuilding from scratch.
-  private readonly activeProtonNodes: ShadedSphereNode[] = [];
-  private readonly activeNeutronNodes: ShadedSphereNode[] = [];
+  private readonly activeProtonNodes: ParticleNode[] = [];
+  private readonly activeNeutronNodes: ParticleNode[] = [];
 
   // Maps each active nucleon node to the trellis location it currently occupies, so a node can be relocated or removed
   // without searching the whole trellis.
@@ -133,7 +132,7 @@ class NucleusImageNodeFactory {
    * trellis location; removed nodes are taken from the outermost occupied location so the nucleus stays reasonably
    * round.
    */
-  private changeNucleonCount( freeNodes: ShadedSphereNode[], activeNodes: ShadedSphereNode[], delta: number ): void {
+  private changeNucleonCount( freeNodes: ParticleNode[], activeNodes: ParticleNode[], delta: number ): void {
     _.times( Math.max( delta, 0 ), () => this.addNucleonNode( freeNodes, activeNodes ) );
     _.times( Math.max( -delta, 0 ), () => this.removeOutermostNucleonNode( freeNodes, activeNodes ) );
   }
@@ -142,7 +141,7 @@ class NucleusImageNodeFactory {
    * Move a free nucleon node into the innermost open trellis location, so the nucleus fills in from the center outward
    * and looks like a fairly solid, round thing.
    */
-  private addNucleonNode( freeNodes: ShadedSphereNode[], activeNodes: ShadedSphereNode[] ): void {
+  private addNucleonNode( freeNodes: ParticleNode[], activeNodes: ParticleNode[] ): void {
     const nucleonNode = freeNodes.pop()!;
     affirm( nucleonNode, 'Expected a free nucleon node to be available.' );
 
@@ -165,7 +164,7 @@ class NucleusImageNodeFactory {
   /**
    * Remove the outermost active nucleon node of the given type from the nucleus, returning it to the free pool.
    */
-  private removeOutermostNucleonNode( freeNodes: ShadedSphereNode[], activeNodes: ShadedSphereNode[] ): void {
+  private removeOutermostNucleonNode( freeNodes: ParticleNode[], activeNodes: ParticleNode[] ): void {
     const outermostNode = _.maxBy( activeNodes, node => node.center.magnitude )!;
     affirm( outermostNode, 'Expected an active nucleon node to remove.' );
 
@@ -228,14 +227,14 @@ class NucleusImageNodeFactory {
    * creating new nodes only when the existing cache is insufficient.
    */
   private ensureCreatedNodeCount(
-    freeNodes: ShadedSphereNode[],
-    activeNodes: ShadedSphereNode[],
+    freeNodes: ParticleNode[],
+    activeNodes: ParticleNode[],
     count: number,
     isProton: boolean
   ): void {
     while ( freeNodes.length + activeNodes.length < count ) {
-      freeNodes.push( new ShadedSphereNode( 2 * NUCLEON_RADIUS, {
-        mainColor: isProton ? ShredColors.protonColorProperty : ShredColors.neutronColorProperty
+      freeNodes.push( new ParticleNode( isProton ? 'proton' : 'neutron', NUCLEON_RADIUS, {
+        lineWidth: NUCLEON_RADIUS / 8
       } ) );
     }
   }

@@ -10,10 +10,9 @@
 
 import { roundSymmetric } from '../../../../dot/js/util/roundSymmetric.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
-import ShadedSphereNode from '../../../../scenery-phet/js/ShadedSphereNode.js';
 import Circle from '../../../../scenery/js/nodes/Circle.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
-import ShredColors from '../../../../shred/js/ShredColors.js';
+import ParticleNode from '../../../../shred/js/view/ParticleNode.js';
 
 /**
  * @param protonCount - number of protons in the nucleus
@@ -88,9 +87,12 @@ const createNucleusIconNode = ( protonCount: number, neutronCount: number, nucle
   // Black backing circle so gaps between nucleons are not visible.
   parentNode.addChild( new Circle( backingRadius, { fill: 'black' } ) );
 
+  // The divisor here is empirical, chosen to make the nucleon outlines look good at a variety of nucleonRadius values.
+  const nucleonLineWidth = nucleonRadius / 8;
+
   nucleonData.forEach( nucleon => {
-    const sphere = new ShadedSphereNode( 2 * nucleonRadius, {
-      mainColor: nucleon.isProton ? ShredColors.protonColorProperty : ShredColors.neutronColorProperty
+    const sphere = new ParticleNode( nucleon.isProton ? 'proton' : 'neutron', nucleonRadius, {
+      lineWidth: nucleonLineWidth
     } );
     sphere.center = new Vector2( nucleon.x, nucleon.y );
     parentNode.addChild( sphere );

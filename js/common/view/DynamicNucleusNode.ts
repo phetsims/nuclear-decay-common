@@ -149,7 +149,7 @@ class DynamicNucleusNode extends Node implements Updatable {
   ) {
 
     const options = optionize<DynamicNucleusNodeOptions, SelfOptions, NodeOptions>()( {
-      nucleonRadius: 6,
+      nucleonRadius: 5,
       escapeRadiusProperty: null
     }, providedOptions );
 

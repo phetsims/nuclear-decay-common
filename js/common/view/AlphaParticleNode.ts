@@ -30,11 +30,13 @@ export default class AlphaParticleNode extends Node {
 
     const nucleonRadius = options.nucleonDiameter / 2;
 
+    const lineWidth = nucleonRadius / 8; // empirically determined
+
     options.children = [
-      new ParticleNode( 'proton', nucleonRadius, { x: 0, y: 0 } ),
-      new ParticleNode( 'neutron', nucleonRadius, { x: particleOffset, y: 0 } ),
-      new ParticleNode( 'neutron', nucleonRadius, { x: 0, y: particleOffset } ),
-      new ParticleNode( 'proton', nucleonRadius, { x: particleOffset, y: particleOffset } )
+      new ParticleNode( 'proton', nucleonRadius, { lineWidth: lineWidth, x: 0, y: 0 } ),
+      new ParticleNode( 'neutron', nucleonRadius, { lineWidth: lineWidth, x: particleOffset, y: 0 } ),
+      new ParticleNode( 'neutron', nucleonRadius, { lineWidth: lineWidth, x: 0, y: particleOffset } ),
+      new ParticleNode( 'proton', nucleonRadius, { lineWidth: lineWidth, x: particleOffset, y: particleOffset } )
     ];
 
     super( options );
