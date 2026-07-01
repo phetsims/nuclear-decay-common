@@ -32,8 +32,6 @@ export default class SingleAtomScreenView extends SingleAndMultipleAtomsScreenVi
   public constructor( model: SingleAtomModel, providedOptions: SingleAndMultipleAtomsScreenViewOptions ) {
 
     const options = optionize<SingleAtomScreenViewOptions, SelfOptions, SingleAndMultipleAtomsScreenViewOptions>()( {
-      // TODO: Move from Alpha Decay to here https://github.com/phetsims/alpha-decay/issues/3
-      // screenSummaryContent: new ADSingleAtomScreenSummaryContent( model )
     }, providedOptions );
 
     super( model, options );
