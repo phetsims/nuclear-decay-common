@@ -110,13 +110,20 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
         mainIcon
       ]
     } );
+    const undecayedIsotopeNameProperty = NuclearDecayAtom.createDynamicIsotopeNameAndMassStringProperty(
+      model.selectedIsotopeProperty, NuclearDecayCommonFluent.isotopeAStringProperty
+    );
     const undecayedCheckbox = new Checkbox( visibleProperties.showUndecayedProperty, undecayedCheckboxContent, {
       accessibleName: NuclearDecayCommonFluent.a11y.decayRate.undecayedCheckbox.accessibleName.createProperty( {
-        isotope: NuclearDecayAtom.createDynamicIsotopeNameAndMassStringProperty(
-          model.selectedIsotopeProperty, NuclearDecayCommonFluent.isotopeAStringProperty
-        )
+        isotope: undecayedIsotopeNameProperty
       } ),
       accessibleHelpText: NuclearDecayCommonFluent.a11y.decayRate.undecayedCheckbox.accessibleHelpTextStringProperty,
+      accessibleContextResponseChecked: NuclearDecayCommonFluent.a11y.decayRate.undecayedCheckbox.accessibleContextResponseChecked.createProperty( {
+        isotope: undecayedIsotopeNameProperty
+      } ),
+      accessibleContextResponseUnchecked: NuclearDecayCommonFluent.a11y.decayRate.undecayedCheckbox.accessibleContextResponseUnchecked.createProperty( {
+        isotope: undecayedIsotopeNameProperty
+      } ),
       tandem: options.tandem.createTandem( 'undecayedCheckbox' )
     } );
 
@@ -137,13 +144,20 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
         productIcon
       ]
     } );
+    const decayedIsotopeNameProperty = NuclearDecayAtom.createDynamicDecayProductNameAndMassStringProperty(
+      model.selectedIsotopeProperty, NuclearDecayCommonFluent.isotopeBStringProperty
+    );
     const decayedCheckbox = new Checkbox( visibleProperties.showDecayedProperty, decayedCheckboxContent, {
       accessibleName: NuclearDecayCommonFluent.a11y.decayRate.decayedCheckbox.accessibleName.createProperty( {
-        isotope: NuclearDecayAtom.createDynamicDecayProductNameAndMassStringProperty(
-          model.selectedIsotopeProperty, NuclearDecayCommonFluent.isotopeBStringProperty
-        )
+        isotope: decayedIsotopeNameProperty
       } ),
       accessibleHelpText: NuclearDecayCommonFluent.a11y.decayRate.decayedCheckbox.accessibleHelpTextStringProperty,
+      accessibleContextResponseChecked: NuclearDecayCommonFluent.a11y.decayRate.decayedCheckbox.accessibleContextResponseChecked.createProperty( {
+        isotope: decayedIsotopeNameProperty
+      } ),
+      accessibleContextResponseUnchecked: NuclearDecayCommonFluent.a11y.decayRate.decayedCheckbox.accessibleContextResponseUnchecked.createProperty( {
+        isotope: decayedIsotopeNameProperty
+      } ),
       tandem: options.tandem.createTandem( 'decayedCheckbox' )
     } );
 
@@ -163,6 +177,8 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     const halfLivesCheckbox = new Checkbox( visibleProperties.showHalfLivesProperty, halfLivesCheckboxContent, {
       accessibleName: NuclearDecayCommonFluent.a11y.decayRate.halfLivesCheckbox.accessibleNameStringProperty,
       accessibleHelpText: NuclearDecayCommonFluent.a11y.decayRate.halfLivesCheckbox.accessibleHelpTextStringProperty,
+      accessibleContextResponseChecked: NuclearDecayCommonFluent.a11y.decayRate.halfLivesCheckbox.accessibleContextResponseCheckedStringProperty,
+      accessibleContextResponseUnchecked: NuclearDecayCommonFluent.a11y.decayRate.halfLivesCheckbox.accessibleContextResponseUncheckedStringProperty,
       tandem: options.tandem.createTandem( 'halfLivesCheckbox' )
     } );
 
@@ -174,6 +190,8 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     const dataProbeCheckbox = new Checkbox( visibleProperties.showDataProbeProperty, dataProbeCheckboxContent, {
       accessibleName: NuclearDecayCommonFluent.a11y.decayRate.dataProbeCheckbox.accessibleNameStringProperty,
       accessibleHelpText: NuclearDecayCommonFluent.a11y.decayRate.dataProbeCheckbox.accessibleHelpTextStringProperty,
+      accessibleContextResponseChecked: NuclearDecayCommonFluent.a11y.decayRate.dataProbeCheckbox.accessibleContextResponseCheckedStringProperty,
+      accessibleContextResponseUnchecked: NuclearDecayCommonFluent.a11y.decayRate.dataProbeCheckbox.accessibleContextResponseUncheckedStringProperty,
       tandem: options.tandem.createTandem( 'dataProbeCheckbox' )
     } );
 

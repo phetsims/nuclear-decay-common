@@ -433,24 +433,40 @@ type StringsType = {
         'accessibleNameStringProperty': LocalizedStringProperty;
         'accessibleHelpText': string;
         'accessibleHelpTextStringProperty': LocalizedStringProperty;
+        'accessibleContextResponseChecked': string;
+        'accessibleContextResponseCheckedStringProperty': LocalizedStringProperty;
+        'accessibleContextResponseUnchecked': string;
+        'accessibleContextResponseUncheckedStringProperty': LocalizedStringProperty;
       };
       'decayedCheckbox': {
         'accessibleName': string;
         'accessibleNameStringProperty': LocalizedStringProperty;
         'accessibleHelpText': string;
         'accessibleHelpTextStringProperty': LocalizedStringProperty;
+        'accessibleContextResponseChecked': string;
+        'accessibleContextResponseCheckedStringProperty': LocalizedStringProperty;
+        'accessibleContextResponseUnchecked': string;
+        'accessibleContextResponseUncheckedStringProperty': LocalizedStringProperty;
       };
       'halfLivesCheckbox': {
         'accessibleName': string;
         'accessibleNameStringProperty': LocalizedStringProperty;
         'accessibleHelpText': string;
         'accessibleHelpTextStringProperty': LocalizedStringProperty;
+        'accessibleContextResponseChecked': string;
+        'accessibleContextResponseCheckedStringProperty': LocalizedStringProperty;
+        'accessibleContextResponseUnchecked': string;
+        'accessibleContextResponseUncheckedStringProperty': LocalizedStringProperty;
       };
       'dataProbeCheckbox': {
         'accessibleName': string;
         'accessibleNameStringProperty': LocalizedStringProperty;
         'accessibleHelpText': string;
         'accessibleHelpTextStringProperty': LocalizedStringProperty;
+        'accessibleContextResponseChecked': string;
+        'accessibleContextResponseCheckedStringProperty': LocalizedStringProperty;
+        'accessibleContextResponseUnchecked': string;
+        'accessibleContextResponseUncheckedStringProperty': LocalizedStringProperty;
       };
       'sortButton': {
         'accessibleName': string;

@@ -259,15 +259,23 @@ a11y:
     undecayedCheckbox:
       accessibleName: '{ $isotope } Curve'
       accessibleHelpText: Show or hide decay curve.
+      accessibleContextResponseChecked: '{ $isotope } curve displayed in graph.'
+      accessibleContextResponseUnchecked: '{ $isotope } curve removed from graph.'
     decayedCheckbox:
       accessibleName: '{ $isotope } Curve'
       accessibleHelpText: Show or hide formation curve.
+      accessibleContextResponseChecked: '{ $isotope } curve displayed in graph.'
+      accessibleContextResponseUnchecked: '{ $isotope } curve removed from graph.'
     halfLivesCheckbox:
       accessibleName: Half-Lives
       accessibleHelpText: Explore decay graph with or without half-life markers.
+      accessibleContextResponseChecked: Half-life markers added to graph.
+      accessibleContextResponseUnchecked: Half-life markers removed from graph.
     dataProbeCheckbox:
       accessibleName: Data Probe
       accessibleHelpText: Explore decay graph with or without values.
+      accessibleContextResponseChecked: Data Probe available in graph.
+      accessibleContextResponseUnchecked: Data probe removed from graph.
     sortButton:
       accessibleName: Sort
       accessibleHelpText: Group atoms by isotope.

@@ -186,12 +186,20 @@ addToMapIfDefined( 'a11y_decayRate_decayGraphPanel_checkedComponentsListThree', 
 addToMapIfDefined( 'a11y_decayRate_atHalfLifeContextResponse', 'a11y.decayRate.atHalfLifeContextResponseStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_undecayedCheckbox_accessibleName', 'a11y.decayRate.undecayedCheckbox.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_undecayedCheckbox_accessibleHelpText', 'a11y.decayRate.undecayedCheckbox.accessibleHelpTextStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_undecayedCheckbox_accessibleContextResponseChecked', 'a11y.decayRate.undecayedCheckbox.accessibleContextResponseCheckedStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_undecayedCheckbox_accessibleContextResponseUnchecked', 'a11y.decayRate.undecayedCheckbox.accessibleContextResponseUncheckedStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_decayedCheckbox_accessibleName', 'a11y.decayRate.decayedCheckbox.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_decayedCheckbox_accessibleHelpText', 'a11y.decayRate.decayedCheckbox.accessibleHelpTextStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_decayedCheckbox_accessibleContextResponseChecked', 'a11y.decayRate.decayedCheckbox.accessibleContextResponseCheckedStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_decayedCheckbox_accessibleContextResponseUnchecked', 'a11y.decayRate.decayedCheckbox.accessibleContextResponseUncheckedStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_halfLivesCheckbox_accessibleName', 'a11y.decayRate.halfLivesCheckbox.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_halfLivesCheckbox_accessibleHelpText', 'a11y.decayRate.halfLivesCheckbox.accessibleHelpTextStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_halfLivesCheckbox_accessibleContextResponseChecked', 'a11y.decayRate.halfLivesCheckbox.accessibleContextResponseCheckedStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_halfLivesCheckbox_accessibleContextResponseUnchecked', 'a11y.decayRate.halfLivesCheckbox.accessibleContextResponseUncheckedStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_dataProbeCheckbox_accessibleName', 'a11y.decayRate.dataProbeCheckbox.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_dataProbeCheckbox_accessibleHelpText', 'a11y.decayRate.dataProbeCheckbox.accessibleHelpTextStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_dataProbeCheckbox_accessibleContextResponseChecked', 'a11y.decayRate.dataProbeCheckbox.accessibleContextResponseCheckedStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_dataProbeCheckbox_accessibleContextResponseUnchecked', 'a11y.decayRate.dataProbeCheckbox.accessibleContextResponseUncheckedStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_sortButton_accessibleName', 'a11y.decayRate.sortButton.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_sortButton_accessibleHelpText', 'a11y.decayRate.sortButton.accessibleHelpTextStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_resetSampleButton_accessibleName', 'a11y.decayRate.resetSampleButton.accessibleNameStringProperty' );
@@ -469,19 +477,27 @@ const NuclearDecayCommonFluent = {
       atHalfLifeContextResponse: new FluentPattern<{ nth: 1 | 2 | 3 | 4 | 5 | number | 'other' | TReadOnlyProperty<1 | 2 | 3 | 4 | 5 | number | 'other'> }>( fluentSupport.bundleProperty, 'a11y_decayRate_atHalfLifeContextResponse', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.atHalfLifeContextResponseStringProperty' ), [{"name":"nth","variants":[1,2,3,4,5,{"type":"number","value":"other"}]}] ),
       undecayedCheckbox: {
         accessibleName: new FluentPattern<{ isotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_undecayedCheckbox_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.undecayedCheckbox.accessibleNameStringProperty' ), [{"name":"isotope"}] ),
-        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_undecayedCheckbox_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.undecayedCheckbox.accessibleHelpTextStringProperty' ) )
+        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_undecayedCheckbox_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.undecayedCheckbox.accessibleHelpTextStringProperty' ) ),
+        accessibleContextResponseChecked: new FluentPattern<{ isotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_undecayedCheckbox_accessibleContextResponseChecked', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.undecayedCheckbox.accessibleContextResponseCheckedStringProperty' ), [{"name":"isotope"}] ),
+        accessibleContextResponseUnchecked: new FluentPattern<{ isotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_undecayedCheckbox_accessibleContextResponseUnchecked', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.undecayedCheckbox.accessibleContextResponseUncheckedStringProperty' ), [{"name":"isotope"}] )
       },
       decayedCheckbox: {
         accessibleName: new FluentPattern<{ isotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_decayedCheckbox_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.decayedCheckbox.accessibleNameStringProperty' ), [{"name":"isotope"}] ),
-        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_decayedCheckbox_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.decayedCheckbox.accessibleHelpTextStringProperty' ) )
+        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_decayedCheckbox_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.decayedCheckbox.accessibleHelpTextStringProperty' ) ),
+        accessibleContextResponseChecked: new FluentPattern<{ isotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_decayedCheckbox_accessibleContextResponseChecked', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.decayedCheckbox.accessibleContextResponseCheckedStringProperty' ), [{"name":"isotope"}] ),
+        accessibleContextResponseUnchecked: new FluentPattern<{ isotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_decayedCheckbox_accessibleContextResponseUnchecked', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.decayedCheckbox.accessibleContextResponseUncheckedStringProperty' ), [{"name":"isotope"}] )
       },
       halfLivesCheckbox: {
         accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_halfLivesCheckbox_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.halfLivesCheckbox.accessibleNameStringProperty' ) ),
-        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_halfLivesCheckbox_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.halfLivesCheckbox.accessibleHelpTextStringProperty' ) )
+        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_halfLivesCheckbox_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.halfLivesCheckbox.accessibleHelpTextStringProperty' ) ),
+        accessibleContextResponseCheckedStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_halfLivesCheckbox_accessibleContextResponseChecked', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.halfLivesCheckbox.accessibleContextResponseCheckedStringProperty' ) ),
+        accessibleContextResponseUncheckedStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_halfLivesCheckbox_accessibleContextResponseUnchecked', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.halfLivesCheckbox.accessibleContextResponseUncheckedStringProperty' ) )
       },
       dataProbeCheckbox: {
         accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_dataProbeCheckbox_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.dataProbeCheckbox.accessibleNameStringProperty' ) ),
-        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_dataProbeCheckbox_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.dataProbeCheckbox.accessibleHelpTextStringProperty' ) )
+        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_dataProbeCheckbox_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.dataProbeCheckbox.accessibleHelpTextStringProperty' ) ),
+        accessibleContextResponseCheckedStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_dataProbeCheckbox_accessibleContextResponseChecked', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.dataProbeCheckbox.accessibleContextResponseCheckedStringProperty' ) ),
+        accessibleContextResponseUncheckedStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_dataProbeCheckbox_accessibleContextResponseUnchecked', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.dataProbeCheckbox.accessibleContextResponseUncheckedStringProperty' ) )
       },
       sortButton: {
         accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_sortButton_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.sortButton.accessibleNameStringProperty' ) ),
