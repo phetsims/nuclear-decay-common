@@ -291,6 +291,25 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
       }
     } );
 
+    // Announce each time an integer multiple of the half-life is reached, up through the sixth (the decay graph
+    // only plots half-life markers up to the sixth). previousHalfLivesElapsed resets to 0 whenever the sample is
+    // reactivated and time restarts, since elapsedHalfLivesProperty drops back to 0 at that point.
+    let previousHalfLivesElapsed = 0;
+    model.elapsedHalfLivesProperty.link( elapsedHalfLives => {
+      const halfLivesElapsed = Math.floor( elapsedHalfLives );
+      if ( halfLivesElapsed < previousHalfLivesElapsed ) {
+        previousHalfLivesElapsed = 0;
+      }
+      if ( halfLivesElapsed > previousHalfLivesElapsed && halfLivesElapsed <= 6 ) {
+        this.addAccessibleContextResponse( NuclearDecayCommonFluent.a11y.decayRate.atHalfLifeContextResponse.format( {
+          nth: halfLivesElapsed
+        } ) );
+      }
+      if ( halfLivesElapsed > previousHalfLivesElapsed ) {
+        previousHalfLivesElapsed = halfLivesElapsed;
+      }
+    } );
+
     // Play Area pdomOrder:
     //   Radioactive Sample heading → Decay Graph heading → Isotopes legend
     this.pdomPlayAreaNode.pdomOrder = [

@@ -237,6 +237,15 @@ a11y:
     decayGraphHeading: Decay Graph
     decayGraphPanel:
       accessibleParagraph: 'Decay graph plots percent of isotope remaining as a function of time. Currently, { $checkedComponents } visible on graph.'
+    atHalfLifeContextResponse: |-
+      { $nth ->
+      [1] At first half-life, about 50 percent remains.
+      [2] At second half-life, about 25 percent remains.
+      [3] At third half-life, about 12.5 percent remains.
+      [4] At fourth half-life, about 6.3 percent remains.
+      [5] At fifth half-life, about 3.1 percent remains.
+      *[other] At sixth half-life, about 1.6 percent remains.
+      }
     undecayedCheckbox:
       accessibleName: '{ $isotope } Curve'
       accessibleHelpText: Show or hide decay curve.

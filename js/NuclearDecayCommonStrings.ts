@@ -412,6 +412,8 @@ type StringsType = {
         'accessibleParagraph': string;
         'accessibleParagraphStringProperty': LocalizedStringProperty;
       };
+      'atHalfLifeContextResponse': string;
+      'atHalfLifeContextResponseStringProperty': LocalizedStringProperty;
       'undecayedCheckbox': {
         'accessibleName': string;
         'accessibleNameStringProperty': LocalizedStringProperty;

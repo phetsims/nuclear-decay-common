@@ -175,6 +175,7 @@ addToMapIfDefined( 'a11y_decayRate_radioactiveSample_decayOccurring_accessibleLi
 addToMapIfDefined( 'a11y_decayRate_radioactiveSample_decayOccurring_accessibleList_decayedCountItem', 'a11y.decayRate.radioactiveSample.decayOccurring.accessibleList.decayedCountItemStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_decayGraphHeading', 'a11y.decayRate.decayGraphHeadingStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_decayGraphPanel_accessibleParagraph', 'a11y.decayRate.decayGraphPanel.accessibleParagraphStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_atHalfLifeContextResponse', 'a11y.decayRate.atHalfLifeContextResponseStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_undecayedCheckbox_accessibleName', 'a11y.decayRate.undecayedCheckbox.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_undecayedCheckbox_accessibleHelpText', 'a11y.decayRate.undecayedCheckbox.accessibleHelpTextStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_decayedCheckbox_accessibleName', 'a11y.decayRate.decayedCheckbox.accessibleNameStringProperty' );
@@ -448,6 +449,7 @@ const NuclearDecayCommonFluent = {
       decayGraphPanel: {
         accessibleParagraph: new FluentPattern<{ checkedComponents: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_decayGraphPanel_accessibleParagraph', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.decayGraphPanel.accessibleParagraphStringProperty' ), [{"name":"checkedComponents"}] )
       },
+      atHalfLifeContextResponse: new FluentPattern<{ nth: 1 | 2 | 3 | 4 | 5 | number | 'other' | TReadOnlyProperty<1 | 2 | 3 | 4 | 5 | number | 'other'> }>( fluentSupport.bundleProperty, 'a11y_decayRate_atHalfLifeContextResponse', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.atHalfLifeContextResponseStringProperty' ), [{"name":"nth","variants":[1,2,3,4,5,{"type":"number","value":"other"}]}] ),
       undecayedCheckbox: {
         accessibleName: new FluentPattern<{ isotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_undecayedCheckbox_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.undecayedCheckbox.accessibleNameStringProperty' ), [{"name":"isotope"}] ),
         accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_undecayedCheckbox_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.undecayedCheckbox.accessibleHelpTextStringProperty' ) )
