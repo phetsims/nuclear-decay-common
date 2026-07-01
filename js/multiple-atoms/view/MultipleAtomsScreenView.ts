@@ -9,6 +9,7 @@
 
 import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
 import Property from '../../../../axon/js/Property.js';
+import StringProperty from '../../../../axon/js/StringProperty.js';
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
 import { roundSymmetric } from '../../../../dot/js/util/roundSymmetric.js';
@@ -276,10 +277,32 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     this.addChild( decayOccurringDescNode );
     this.addChild( radioactiveSampleHeadingNode );
 
+    // At-half-life paragraph: appears once the elapsed sample time has reached the half-life.
+    const halfLifeReachedProperty = new DerivedProperty(
+      [ model.timeProperty, model.halfLifeProperty, model.isPlayAreaEmptyProperty ],
+      ( time, halfLife, isEmpty ) => !isEmpty && time > 0 && time >= halfLife
+    );
+
+    const percentageAtHalfLifeProperty = new StringProperty( '' );
+    halfLifeReachedProperty.link( reached => {
+      const value = reached ? model.percentageOfUndecayedProperty.value : 0;
+      percentageAtHalfLifeProperty.value = `${roundSymmetric( value * 100 )}`;
+    } );
+
+    const atHalfLifeDescNode = new Node( {
+      visibleProperty: halfLifeReachedProperty,
+      accessibleParagraph: NuclearDecayCommonFluent.a11y.multipleAtoms.decayTimeHistogramAtHalfLife.createProperty( {
+        halfLifePercentageUndecayed: percentageAtHalfLifeProperty
+      } )
+    } );
+    this.addChild( atHalfLifeDescNode );
+
     // Play Area pdomOrder:
     //   Radioactive Sample heading → Decay Data heading → Particle legend → Isotope panel
     this.pdomPlayAreaNode.pdomOrder = [
       radioactiveSampleHeadingNode,
+      this.decayTimeHistogramPanel,
+      atHalfLifeDescNode,
       this.particleLegendPanel,
       this.isotopePanel
     ];
