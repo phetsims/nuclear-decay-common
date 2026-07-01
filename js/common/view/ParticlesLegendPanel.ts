@@ -1,7 +1,7 @@
 // Copyright 2026, University of Colorado Boulder
 /**
- * Node that displays a legend for the three particle types used in Nuclear Decay simulations:
- * Proton, Neutron, and Alpha Particle. Each entry shows a ShadedSphereNode icon next to a label.
+ * ParticlesLegendPanel is a Node that displays a legend for the three particle types used in Nuclear Decay simulations:
+ * Proton, Neutron, and Alpha Particle. Each entry shows an icon representing the particle next to a label.
  *
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
@@ -9,12 +9,11 @@
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import optionize, { combineOptions, EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import AccessibleList from '../../../../scenery-phet/js/accessibility/AccessibleList.js';
-import ShadedSphereNode from '../../../../scenery-phet/js/ShadedSphereNode.js';
 import HBox, { HBoxOptions } from '../../../../scenery/js/layout/nodes/HBox.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import RichText from '../../../../scenery/js/nodes/RichText.js';
-import ShredColors from '../../../../shred/js/ShredColors.js';
+import ParticleNode from '../../../../shred/js/view/ParticleNode.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import NuclearDecayCommonStrings from '../../NuclearDecayCommonStrings.js';
@@ -26,7 +25,7 @@ type SelfOptions = EmptySelfOptions;
 export type ParticlesLegendPanelOptions = SelfOptions & NuclearDecayPanelOptions;
 
 const ITEM_SPACING = 6;
-const SPHERE_DIAMETER = 13; // Empirically determined to look good
+const SPHERE_RADIUS = 6; // empirically determined to look good
 
 export default class ParticlesLegendPanel extends NuclearDecayPanel {
   public constructor( providedOptions?: ParticlesLegendPanelOptions ) {
@@ -53,17 +52,17 @@ export default class ParticlesLegendPanel extends NuclearDecayPanel {
     };
 
     const protonLegend = particleLegendItem(
-      new ShadedSphereNode( SPHERE_DIAMETER, { mainColor: ShredColors.protonColorProperty } ),
+      new ParticleNode( 'proton', SPHERE_RADIUS ),
       NuclearDecayCommonStrings.protonStringProperty
     );
 
     const neutronLegend = particleLegendItem(
-      new ShadedSphereNode( SPHERE_DIAMETER, { mainColor: ShredColors.neutronColorProperty } ),
+      new ParticleNode( 'neutron', SPHERE_RADIUS ),
       NuclearDecayCommonStrings.neutronStringProperty
     );
 
     const alphaParticleIcon = new AlphaParticleNode( {
-      nucleonDiameter: SPHERE_DIAMETER
+      nucleonDiameter: SPHERE_RADIUS * 2
     } );
 
     const alphaParticleLegend = particleLegendItem(

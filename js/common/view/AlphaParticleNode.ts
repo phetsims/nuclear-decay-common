@@ -6,9 +6,8 @@
  */
 
 import optionize from '../../../../phet-core/js/optionize.js';
-import ShadedSphereNode from '../../../../scenery-phet/js/ShadedSphereNode.js';
 import Node, { NodeOptions } from '../../../../scenery/js/nodes/Node.js';
-import ShredColors from '../../../../shred/js/ShredColors.js';
+import ParticleNode from '../../../../shred/js/view/ParticleNode.js';
 
 type SelfOptions = {
   nucleonDiameter?: number;
@@ -29,11 +28,13 @@ export default class AlphaParticleNode extends Node {
     // This will go away when we populate properly the atomNode
     const particleOffset = options.particleOffsetRate * options.nucleonDiameter;
 
+    const nucleonRadius = options.nucleonDiameter / 2;
+
     options.children = [
-      new ShadedSphereNode( options.nucleonDiameter, { mainColor: ShredColors.protonColorProperty, x: 0, y: 0 } ),
-      new ShadedSphereNode( options.nucleonDiameter, { mainColor: ShredColors.neutronColorProperty, x: particleOffset, y: 0 } ),
-      new ShadedSphereNode( options.nucleonDiameter, { mainColor: ShredColors.neutronColorProperty, x: 0, y: particleOffset } ),
-      new ShadedSphereNode( options.nucleonDiameter, { mainColor: ShredColors.protonColorProperty, x: particleOffset, y: particleOffset } )
+      new ParticleNode( 'proton', nucleonRadius, { x: 0, y: 0 } ),
+      new ParticleNode( 'neutron', nucleonRadius, { x: particleOffset, y: 0 } ),
+      new ParticleNode( 'neutron', nucleonRadius, { x: 0, y: particleOffset } ),
+      new ParticleNode( 'proton', nucleonRadius, { x: particleOffset, y: particleOffset } )
     ];
 
     super( options );

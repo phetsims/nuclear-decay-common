@@ -17,13 +17,12 @@ import Vector2 from '../../../../dot/js/Vector2.js';
 import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 import ModelViewTransform2 from '../../../../phetcommon/js/view/ModelViewTransform2.js';
-import ShadedSphereNode from '../../../../scenery-phet/js/ShadedSphereNode.js';
 import Circle from '../../../../scenery/js/nodes/Circle.js';
 import Node, { NodeOptions } from '../../../../scenery/js/nodes/Node.js';
 import Color from '../../../../scenery/js/util/Color.js';
 import AtomConfig from '../../../../shred/js/model/AtomConfig.js';
 import { PARTICLE_COLORS } from '../../../../shred/js/model/Particle.js';
-import ShredColors from '../../../../shred/js/ShredColors.js';
+import ParticleNode from '../../../../shred/js/view/ParticleNode.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 import Updatable from '../model/Updatable.js';
@@ -102,8 +101,8 @@ class DynamicNucleusNode extends Node implements Updatable {
   private readonly modelViewTransformProperty: TReadOnlyProperty<ModelViewTransform2>;
 
   // Separate particle collections are stored as fields so member methods can manipulate them directly.
-  private readonly protonNodes: ShadedSphereNode[] = [];
-  private readonly neutronNodes: ShadedSphereNode[] = [];
+  private readonly protonNodes: ParticleNode[] = [];
+  private readonly neutronNodes: ParticleNode[] = [];
   private readonly alphaParticleNodes: AlphaParticleNode[] = [];
 
   // Accumulates the scaled time between particle updates.
@@ -150,7 +149,7 @@ class DynamicNucleusNode extends Node implements Updatable {
   ) {
 
     const options = optionize<DynamicNucleusNodeOptions, SelfOptions, NodeOptions>()( {
-      nucleonRadius: 5,
+      nucleonRadius: 6,
       escapeRadiusProperty: null
     }, providedOptions );
 
@@ -800,16 +799,12 @@ class DynamicNucleusNode extends Node implements Updatable {
     };
   }
 
-  private static createProtonNode( nucleonRadius: number ): ShadedSphereNode {
-    return new ShadedSphereNode( 2 * nucleonRadius, {
-      mainColor: ShredColors.protonColorProperty
-    } );
+  private static createProtonNode( nucleonRadius: number ): ParticleNode {
+    return new ParticleNode( 'proton', nucleonRadius );
   }
 
-  private static createNeutronNode( nucleonRadius: number ): ShadedSphereNode {
-    return new ShadedSphereNode( 2 * nucleonRadius, {
-      mainColor: ShredColors.neutronColorProperty
-    } );
+  private static createNeutronNode( nucleonRadius: number ): ParticleNode {
+    return new ParticleNode( 'neutron', nucleonRadius );
   }
 
   private static createAlphaParticle( nucleonRadius: number, rotationalAngle: number ): Node {
