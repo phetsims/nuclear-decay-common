@@ -264,7 +264,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
         {
           stroke: NuclearDecayCommonColors.halfLifeColorProperty,
           lineWidth: 2,
-          lineDash: [ 5, 5 ]
+          lineDash: [ 5, 4 ]
         }
       );
 
