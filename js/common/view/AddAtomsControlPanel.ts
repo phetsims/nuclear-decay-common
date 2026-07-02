@@ -45,7 +45,7 @@ export default class AddAtomsControlPanel extends NuclearDecayPanel {
 
     const isotopeDynamicNameProperty = NuclearDecayAtom.createDynamicIsotopeNameAndMassStringProperty(
       selectedIsotopeProperty,
-      NuclearDecayCommonFluent.customStringProperty
+      NuclearDecayCommonFluent.isotopeAStringProperty
     );
 
     const titleText = new RichText( isotopeDynamicNameProperty, {

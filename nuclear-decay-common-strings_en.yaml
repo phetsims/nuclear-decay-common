@@ -131,7 +131,7 @@ a11y:
         linear: Linear
         logarithmic: Logarithmic
   halfLifeSlider:
-    accessibleHelpText: Adjust time for isotope A to undergo one half-life.
+    accessibleHelpText: Adjust time for Isotope A to undergo one half-life.
     accessibleContextResponse: 'Alpha particle energy { $initialEProgress }, alpha particle escape distance { $distanceProgress }.'
   dataProbeSlider:
     accessibleHelpText: Move probe horizontally to explore graph values.
@@ -171,12 +171,12 @@ a11y:
         remains and reset the sample to repeat your experiment. A timeline shows the moment of each decay
         relative to the half-life. With a custom isotope, you can also experiment with the half-life time.
       controlArea: >-
-        Checkboxes let you show or hide the electron cloud and stopwatch. You can control how fast the action
+        Checkboxes let you show or hide the isotope labels and stopwatch. You can control how fast the action
         happens including buttons to pause and step forward. Reset sim to start over.
       currentDetails:
         select_atom:
           noAtoms: Currently, there are no atoms in sample.
-          withAtoms: 'Currently { $percentage } percent radioactive sample remaining.'
+          withAtoms: 'Currently { $percentage } percent of radioactive sample remains.'
       interactionHint:
         addAtoms: Add atoms to begin observations.
         afterDecay: Reset sample to continue observations.

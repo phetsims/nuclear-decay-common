@@ -316,7 +316,7 @@
     },
     "halfLifeSlider": {
       "accessibleHelpText": {
-        "value": "Adjust time for isotope A to undergo one half-life."
+        "value": "Adjust time for Isotope A to undergo one half-life."
       },
       "accessibleContextResponse": {
         "value": "Alpha particle energy { $initialEProgress }, alpha particle escape distance { $distanceProgress }."
@@ -409,10 +409,10 @@
           "value": "You can add atoms to a radioactive sample and watch them decay. As time passes, you can track how much remains and reset the sample to repeat your experiment. A timeline shows the moment of each decay relative to the half-life. With a custom isotope, you can also experiment with the half-life time."
         },
         "controlArea": {
-          "value": "Checkboxes let you show or hide the electron cloud and stopwatch. You can control how fast the action happens including buttons to pause and step forward. Reset sim to start over."
+          "value": "Checkboxes let you show or hide the isotope labels and stopwatch. You can control how fast the action happens including buttons to pause and step forward. Reset sim to start over."
         },
         "currentDetails": {
-          "value": "{ $atom ->\n  [noAtoms] Currently, there are no atoms in sample.\n  *[withAtoms] Currently { $percentage } percent radioactive sample remaining.\n}"
+          "value": "{ $atom ->\n  [noAtoms] Currently, there are no atoms in sample.\n  *[withAtoms] Currently { $percentage } percent of radioactive sample remains.\n}"
         },
         "interactionHint": {
           "addAtoms": {
