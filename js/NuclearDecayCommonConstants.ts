@@ -8,6 +8,7 @@
 
 import Range from '../../dot/js/Range.js';
 import { clamp } from '../../dot/js/util/clamp.js';
+import { roundSymmetric } from '../../dot/js/util/roundSymmetric.js';
 import PhetFont from '../../scenery-phet/js/PhetFont.js';
 import AtomConfig from '../../shred/js/model/AtomConfig.js';
 
@@ -37,9 +38,13 @@ export default class NuclearDecayCommonConstants {
   public static readonly MAX_TIME_EXPONENT = MAX_TIME_EXPONENT;
   public static readonly MAX_TIME = Math.pow( 10, MAX_TIME_EXPONENT );
 
-  // Function for getting exponential time based with the proper clamps
+  // Function for getting exponential time based with the proper clamps. The result's mantissa is rounded to the
+  // nearest integer (e.g. 5.78e9 -> 6e9) so displayed values don't show spurious precision.
   public static readonly EXPONENTIAL_TIME = ( exponent: number ): number => {
-    return Math.min( Math.pow( 10, exponent ), Number.MAX_VALUE );
+    const rawValue = Math.min( Math.pow( 10, exponent ), Number.MAX_VALUE );
+    const magnitude = Math.floor( Math.log10( rawValue ) );
+    const roundedMantissa = roundSymmetric( rawValue / Math.pow( 10, magnitude ) );
+    return roundedMantissa * Math.pow( 10, magnitude );
   };
 
   // Atom dimensions in model coordinates. Because it's difficult to come up with any sort of reasonable real units for
