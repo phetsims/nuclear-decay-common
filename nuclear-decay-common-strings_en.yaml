@@ -185,6 +185,7 @@ a11y:
       noAtoms: 'No atoms in sample. Look for { $isotope } atoms control to get started.'
       readyToDecay: 'Original sample contains { $addedAtoms } { $isotope } atoms, ready to decay.'
       decayOccurring:
+        paragraph: 'Original sample contains { $addedAtoms } { $isotope } atoms. Alpha particles are emitted from decaying atoms and move away.'
         accessibleList:
           leadingParagraph: 'Currently,'
           sampleAge: '{ $isotope } sample is { $time } seconds old and { $percentageUndecayed } percent remains.'

@@ -245,6 +245,10 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     // State 3: Atoms added and at least one has decayed.
     const decayOccurringDescNode = new Node( {
       visibleProperty: model.decayedCountProperty.derived( count => count > 0 ),
+      accessibleParagraph: NuclearDecayCommonFluent.a11y.multipleAtoms.radioactiveSample.decayOccurring.paragraph.createProperty( {
+        addedAtoms: model.activeAtomsCountProperty,
+        isotope: isotopeNameProperty
+      } ),
       accessibleTemplate: AccessibleList.createTemplateProperty( {
         leadingParagraphStringProperty: NuclearDecayCommonFluent.a11y.multipleAtoms.radioactiveSample.decayOccurring.accessibleList.leadingParagraphStringProperty,
         listItems: [

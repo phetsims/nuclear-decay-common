@@ -324,6 +324,8 @@ type StringsType = {
         'readyToDecay': string;
         'readyToDecayStringProperty': LocalizedStringProperty;
         'decayOccurring': {
+          'paragraph': string;
+          'paragraphStringProperty': LocalizedStringProperty;
           'accessibleList': {
             'leadingParagraph': string;
             'leadingParagraphStringProperty': LocalizedStringProperty;
