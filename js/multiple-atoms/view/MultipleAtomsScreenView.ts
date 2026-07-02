@@ -321,7 +321,8 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
       this.decayTimeHistogramPanel,
       atHalfLifeDescNode,
       this.particleLegendPanel,
-      this.isotopePanel
+      this.isotopePanel,
+      stopwatchNode
     ];
 
     // Control Area pdomOrder:
