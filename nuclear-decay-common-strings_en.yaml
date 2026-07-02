@@ -149,6 +149,8 @@ a11y:
     accessibleHelpTextCollapsed: View numbers of protons and neutrons in current isotope.
     accessibleParagraph: '{ $isotope } contains { $protons } protons and { $neutrons } neutrons.'
     noData: No data to display.
+    pMinusTwo: 'p minus 2'
+    nMinusTwo: 'n minus 2'
   nuclearEquation:
     accessibleHelpTextCollapsed: View nuclear equation for decay.
     noEquation: No equation yet.

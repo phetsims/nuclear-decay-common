@@ -272,6 +272,10 @@ type StringsType = {
       'accessibleParagraphStringProperty': LocalizedStringProperty;
       'noData': string;
       'noDataStringProperty': LocalizedStringProperty;
+      'pMinusTwo': string;
+      'pMinusTwoStringProperty': LocalizedStringProperty;
+      'nMinusTwo': string;
+      'nMinusTwoStringProperty': LocalizedStringProperty;
     };
     'nuclearEquation': {
       'accessibleHelpTextCollapsed': string;

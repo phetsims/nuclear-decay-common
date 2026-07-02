@@ -363,6 +363,12 @@
       },
       "noData": {
         "value": "No data to display."
+      },
+      "pMinusTwo": {
+        "value": "p minus 2"
+      },
+      "nMinusTwo": {
+        "value": "n minus 2"
       }
     },
     "nuclearEquation": {

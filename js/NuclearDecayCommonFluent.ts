@@ -5,7 +5,7 @@
 /* eslint-disable */
 /* @formatter:off */
 
-import { TReadOnlyProperty } from '../../axon/js/TReadOnlyProperty.js';
+import {TReadOnlyProperty} from '../../axon/js/TReadOnlyProperty.js';
 import FluentLibrary from '../../chipper/js/browser-and-node/FluentLibrary.js';
 import FluentComment from '../../chipper/js/browser/FluentComment.js';
 import FluentConstant from '../../chipper/js/browser/FluentConstant.js';
@@ -128,6 +128,8 @@ addToMapIfDefined( 'a11y_particleCounts_accessibleName', 'a11y.particleCounts.ac
 addToMapIfDefined( 'a11y_particleCounts_accessibleHelpTextCollapsed', 'a11y.particleCounts.accessibleHelpTextCollapsedStringProperty' );
 addToMapIfDefined( 'a11y_particleCounts_accessibleParagraph', 'a11y.particleCounts.accessibleParagraphStringProperty' );
 addToMapIfDefined( 'a11y_particleCounts_noData', 'a11y.particleCounts.noDataStringProperty' );
+addToMapIfDefined( 'a11y_particleCounts_pMinusTwo', 'a11y.particleCounts.pMinusTwoStringProperty' );
+addToMapIfDefined( 'a11y_particleCounts_nMinusTwo', 'a11y.particleCounts.nMinusTwoStringProperty' );
 addToMapIfDefined( 'a11y_nuclearEquation_accessibleHelpTextCollapsed', 'a11y.nuclearEquation.accessibleHelpTextCollapsedStringProperty' );
 addToMapIfDefined( 'a11y_nuclearEquation_noEquation', 'a11y.nuclearEquation.noEquationStringProperty' );
 addToMapIfDefined( 'a11y_nuclearEquation_beforeDecay', 'a11y.nuclearEquation.beforeDecayStringProperty' );
@@ -372,7 +374,9 @@ const NuclearDecayCommonFluent = {
       accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_particleCounts_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.particleCounts.accessibleNameStringProperty' ) ),
       accessibleHelpTextCollapsedStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_particleCounts_accessibleHelpTextCollapsed', _.get( NuclearDecayCommonStrings, 'a11y.particleCounts.accessibleHelpTextCollapsedStringProperty' ) ),
       accessibleParagraph: new FluentPattern<{ isotope: FluentVariable, neutrons: FluentVariable, protons: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_particleCounts_accessibleParagraph', _.get( NuclearDecayCommonStrings, 'a11y.particleCounts.accessibleParagraphStringProperty' ), [{"name":"isotope"},{"name":"neutrons"},{"name":"protons"}] ),
-      noDataStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_particleCounts_noData', _.get( NuclearDecayCommonStrings, 'a11y.particleCounts.noDataStringProperty' ) )
+      noDataStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_particleCounts_noData', _.get( NuclearDecayCommonStrings, 'a11y.particleCounts.noDataStringProperty' ) ),
+      pMinusTwoStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_particleCounts_pMinusTwo', _.get( NuclearDecayCommonStrings, 'a11y.particleCounts.pMinusTwoStringProperty' ) ),
+      nMinusTwoStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_particleCounts_nMinusTwo', _.get( NuclearDecayCommonStrings, 'a11y.particleCounts.nMinusTwoStringProperty' ) )
     },
     nuclearEquation: {
       accessibleHelpTextCollapsedStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_nuclearEquation_accessibleHelpTextCollapsed', _.get( NuclearDecayCommonStrings, 'a11y.nuclearEquation.accessibleHelpTextCollapsedStringProperty' ) ),

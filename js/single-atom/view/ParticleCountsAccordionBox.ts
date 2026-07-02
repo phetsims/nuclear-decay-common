@@ -159,8 +159,8 @@ export default class ParticleCountsAccordionBox extends NuclearDecayAccordionBox
         else {
           return NuclearDecayCommonFluent.a11y.particleCounts.accessibleParagraph.format( {
             isotope: hasDecayOccurred ? isotopeBName : isotopeAName,
-            protons: hasDecayOccurred ? 'p\u22122' : 'p',
-            neutrons: hasDecayOccurred ? 'n\u22122' : 'n'
+            protons: hasDecayOccurred ? NuclearDecayCommonFluent.a11y.particleCounts.pMinusTwoStringProperty.value : 'p',
+            neutrons: hasDecayOccurred ? NuclearDecayCommonFluent.a11y.particleCounts.nMinusTwoStringProperty.value : 'n'
           } );
         }
       } );
