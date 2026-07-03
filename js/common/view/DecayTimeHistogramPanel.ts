@@ -7,6 +7,7 @@
  */
 
 import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
+import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
 import Multilink from '../../../../axon/js/Multilink.js';
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
@@ -399,7 +400,9 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     const timelineParagraphStringProperty = NuclearDecayCommonFluent.a11y.decayTimeHistogram.accessibleParagraph.createProperty( {
       scale: scaleStringProperty,
       isotope: isotopeNameProperty,
-      hLifeTime: model.halfLifeProperty.derived( halfLife => formatTimescaleStrings( halfLife, model.timescaleProperty.value ) )
+      hLifeTime: new DerivedProperty( [ model.halfLifeProperty, model.timescaleProperty ], ( halfLife, timescale ) => {
+        return formatTimescaleStrings( halfLife, timescale );
+      } )
     } );
 
     const timelineParagraphNode = new Node( {
