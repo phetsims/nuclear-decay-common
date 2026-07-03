@@ -13,7 +13,7 @@ import Range from '../../../../dot/js/Range.js';
 import { clamp } from '../../../../dot/js/util/clamp.js';
 import Vector2 from '../../../../dot/js/Vector2.js';
 import Shape from '../../../../kite/js/Shape.js';
-import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import optionize, { combineOptions, EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
 import SoundDragListener from '../../../../scenery-phet/js/SoundDragListener.js';
 import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
@@ -25,7 +25,7 @@ import Path from '../../../../scenery/js/nodes/Path.js';
 import Rectangle from '../../../../scenery/js/nodes/Rectangle.js';
 import RichText from '../../../../scenery/js/nodes/RichText.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
-import Checkbox from '../../../../sun/js/Checkbox.js';
+import Checkbox, { CheckboxOptions } from '../../../../sun/js/Checkbox.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
 import NuclearDecayAtom, { ISOTOPE_TO_COLOR } from '../../common/model/NuclearDecayAtom.js';
 import { DecayPieChartNode } from '../../common/view/DecayPieChartNode.js';
@@ -113,7 +113,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     const undecayedIsotopeNameProperty = NuclearDecayAtom.createDynamicIsotopeNameAndMassStringProperty(
       model.selectedIsotopeProperty, NuclearDecayCommonFluent.isotopeAStringProperty
     );
-    const undecayedCheckbox = new Checkbox( visibleProperties.showUndecayedProperty, undecayedCheckboxContent, {
+    const undecayedCheckbox = new Checkbox( visibleProperties.showUndecayedProperty, undecayedCheckboxContent, combineOptions<CheckboxOptions>( {
       accessibleName: NuclearDecayCommonFluent.a11y.decayRate.undecayedCheckbox.accessibleName.createProperty( {
         isotope: undecayedIsotopeNameProperty
       } ),
@@ -125,7 +125,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
         isotope: undecayedIsotopeNameProperty
       } ),
       tandem: options.tandem.createTandem( 'undecayedCheckbox' )
-    } );
+    } ) );
 
     // Growth curve icon: filled area under a growth quad curve (bottom-left to top-right)
     const growthShape = new Shape()
@@ -147,7 +147,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     const decayedIsotopeNameProperty = NuclearDecayAtom.createDynamicDecayProductNameAndMassStringProperty(
       model.selectedIsotopeProperty, NuclearDecayCommonFluent.isotopeBStringProperty
     );
-    const decayedCheckbox = new Checkbox( visibleProperties.showDecayedProperty, decayedCheckboxContent, {
+    const decayedCheckbox = new Checkbox( visibleProperties.showDecayedProperty, decayedCheckboxContent, combineOptions<CheckboxOptions>( {
       accessibleName: NuclearDecayCommonFluent.a11y.decayRate.decayedCheckbox.accessibleName.createProperty( {
         isotope: decayedIsotopeNameProperty
       } ),
@@ -159,7 +159,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
         isotope: decayedIsotopeNameProperty
       } ),
       tandem: options.tandem.createTandem( 'decayedCheckbox' )
-    } );
+    } ) );
 
     // Half-Lives checkbox: label + dotted line sample
     const halfLifeLineSample = new Line( 0, 0, 0, LINE_SAMPLE_LENGTH, {
@@ -174,26 +174,26 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
         halfLifeLineSample
       ]
     } );
-    const halfLivesCheckbox = new Checkbox( visibleProperties.showHalfLivesProperty, halfLivesCheckboxContent, {
+    const halfLivesCheckbox = new Checkbox( visibleProperties.showHalfLivesProperty, halfLivesCheckboxContent, combineOptions<CheckboxOptions>( {
       accessibleName: NuclearDecayCommonFluent.a11y.decayRate.halfLivesCheckbox.accessibleNameStringProperty,
       accessibleHelpText: NuclearDecayCommonFluent.a11y.decayRate.halfLivesCheckbox.accessibleHelpTextStringProperty,
       accessibleContextResponseChecked: NuclearDecayCommonFluent.a11y.decayRate.halfLivesCheckbox.accessibleContextResponseCheckedStringProperty,
       accessibleContextResponseUnchecked: NuclearDecayCommonFluent.a11y.decayRate.halfLivesCheckbox.accessibleContextResponseUncheckedStringProperty,
       tandem: options.tandem.createTandem( 'halfLivesCheckbox' )
-    } );
+    } ) );
 
     // Data Probe checkbox
     const dataProbeCheckboxContent = new Text( NuclearDecayCommonFluent.dataProbeStringProperty, {
       font: CHECKBOX_LABEL_FONT,
       maxWidth: 100
     } );
-    const dataProbeCheckbox = new Checkbox( visibleProperties.showDataProbeProperty, dataProbeCheckboxContent, {
+    const dataProbeCheckbox = new Checkbox( visibleProperties.showDataProbeProperty, dataProbeCheckboxContent, combineOptions<CheckboxOptions>( {
       accessibleName: NuclearDecayCommonFluent.a11y.decayRate.dataProbeCheckbox.accessibleNameStringProperty,
       accessibleHelpText: NuclearDecayCommonFluent.a11y.decayRate.dataProbeCheckbox.accessibleHelpTextStringProperty,
       accessibleContextResponseChecked: NuclearDecayCommonFluent.a11y.decayRate.dataProbeCheckbox.accessibleContextResponseCheckedStringProperty,
       accessibleContextResponseUnchecked: NuclearDecayCommonFluent.a11y.decayRate.dataProbeCheckbox.accessibleContextResponseUncheckedStringProperty,
       tandem: options.tandem.createTandem( 'dataProbeCheckbox' )
-    } );
+    } ) );
 
     const checkboxGroup = new VBox( {
       spacing: 10,

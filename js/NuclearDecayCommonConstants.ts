@@ -11,6 +11,7 @@ import { clamp } from '../../dot/js/util/clamp.js';
 import { roundSymmetric } from '../../dot/js/util/roundSymmetric.js';
 import PhetFont from '../../scenery-phet/js/PhetFont.js';
 import AtomConfig from '../../shred/js/model/AtomConfig.js';
+import { CheckboxOptions } from '../../sun/js/Checkbox.js';
 
 const EXPONENTIAL_HALF_LIFE_EXPONENT_RANGE = new Range( -3, 19 );
 const MAX_HALF_LIFE_EXPONENT = 18.5;
@@ -52,6 +53,10 @@ export default class NuclearDecayCommonConstants {
   // JB REVIEW: I think we should rename this to something like ATOMIC_NUCLEUS_RADIUS and potentially have another for
   //            the radius including the electron cloud.
   public static readonly ATOM_RADIUS = 1;
+
+  public static readonly CHECKBOX_OPTIONS: CheckboxOptions = {
+    boxWidth: 24
+  };
 
   // Isotopes
   public static readonly ALPHA_PARTICLE = new AtomConfig( 2, 2, 0 );

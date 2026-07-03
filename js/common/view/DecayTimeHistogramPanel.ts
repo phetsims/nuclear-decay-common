@@ -13,7 +13,7 @@ import Bounds2 from '../../../../dot/js/Bounds2.js';
 import { clamp } from '../../../../dot/js/util/clamp.js';
 import { toFixed } from '../../../../dot/js/util/toFixed.js';
 import Shape from '../../../../kite/js/Shape.js';
-import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
+import optionize, { combineOptions, EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
 import ArrowNode from '../../../../scenery-phet/js/ArrowNode.js';
 import EraserButton from '../../../../scenery-phet/js/buttons/EraserButton.js';
@@ -28,7 +28,7 @@ import RichText from '../../../../scenery/js/nodes/RichText.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
 import Color from '../../../../scenery/js/util/Color.js';
 import InfinityNode from '../../../../shred/js/view/InfinityNode.js';
-import Checkbox from '../../../../sun/js/Checkbox.js';
+import Checkbox, { CheckboxOptions } from '../../../../sun/js/Checkbox.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
@@ -411,7 +411,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       new Text( NuclearDecayCommonFluent.timeScaleStringProperty, {
         font: NuclearDecayCommonConstants.CONTROL_FONT,
         maxWidth: NuclearDecayCommonConstants.TEXT_MAX_WIDTH
-      } ), {
+      } ), combineOptions<CheckboxOptions>( {
         right: NuclearDecayCommonConstants.LONG_PANEL_WIDTH - MARGIN_X,
         centerY: timesAxisNode.centerY,
 
@@ -422,7 +422,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
         // PhET-iO
         tandem: options.tandem.createTandem( 'timescaleCheckbox' )
-      }
+      } )
     );
 
     // For bounds purposes, time axis and checkbox are contained in this node that only shows up in custom

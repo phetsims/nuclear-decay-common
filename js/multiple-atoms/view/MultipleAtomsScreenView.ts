@@ -19,7 +19,7 @@ import AddAtomsControlPanel from '../../../../nuclear-decay-common/js/common/vie
 import NuclearDecayCommonConstants from '../../../../nuclear-decay-common/js/NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../../../nuclear-decay-common/js/NuclearDecayCommonFluent.js';
 import affirm from '../../../../perennial-alias/js/browser-and-node/affirm.js';
-import optionize from '../../../../phet-core/js/optionize.js';
+import optionize, { combineOptions } from '../../../../phet-core/js/optionize.js';
 import AccessibleList from '../../../../scenery-phet/js/accessibility/AccessibleList.js';
 import Stopwatch from '../../../../scenery-phet/js/Stopwatch.js';
 import StopwatchNode from '../../../../scenery-phet/js/StopwatchNode.js';
@@ -27,7 +27,7 @@ import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
 import { rasterizeNode } from '../../../../scenery/js/util/rasterizeNode.js';
-import Checkbox from '../../../../sun/js/Checkbox.js';
+import Checkbox, { CheckboxOptions } from '../../../../sun/js/Checkbox.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
 import NuclearDecayAtom from '../../common/model/NuclearDecayAtom.js';
 import createNucleusIconNode from '../../common/view/createNucleusIconNode.js';
@@ -83,13 +83,13 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
         children: [
           new Text( NuclearDecayCommonFluent.labelsStringProperty, { font: NuclearDecayCommonConstants.CONTROL_FONT } )
         ]
-      } ), {
+      } ), combineOptions<CheckboxOptions>( {
         accessibleName: NuclearDecayCommonFluent.a11y.multipleAtoms.labelsCheckbox.accessibleNameStringProperty,
         accessibleHelpText: NuclearDecayCommonFluent.a11y.multipleAtoms.labelsCheckbox.accessibleHelpTextStringProperty,
         accessibleContextResponseChecked: NuclearDecayCommonFluent.a11y.multipleAtoms.labelsCheckbox.accessibleContextResponseCheckedStringProperty,
         accessibleContextResponseUnchecked: NuclearDecayCommonFluent.a11y.multipleAtoms.labelsCheckbox.accessibleContextResponseUncheckedStringProperty,
         tandem: providedOptions.tandem.createTandem( 'labelsVisibleCheckbox' )
-      }
+      }, NuclearDecayCommonConstants.CHECKBOX_OPTIONS )
     );
     const stopwatchCheckbox = new Checkbox( visibleProperties.stopwatchVisibleProperty,
       new HBox( {
@@ -98,13 +98,13 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
           new Text( NuclearDecayCommonFluent.stopwatchStringProperty, { font: NuclearDecayCommonConstants.CONTROL_FONT } ),
           stopwatchIcon
         ]
-      } ), {
+      } ), combineOptions<CheckboxOptions>( {
         accessibleName: NuclearDecayCommonFluent.a11y.multipleAtoms.stopwatchCheckbox.accessibleNameStringProperty,
         accessibleHelpText: NuclearDecayCommonFluent.a11y.multipleAtoms.stopwatchCheckbox.accessibleHelpTextStringProperty,
         accessibleContextResponseChecked: NuclearDecayCommonFluent.a11y.multipleAtoms.stopwatchCheckbox.accessibleContextResponseCheckedStringProperty,
         accessibleContextResponseUnchecked: NuclearDecayCommonFluent.a11y.multipleAtoms.stopwatchCheckbox.accessibleContextResponseUncheckedStringProperty,
         tandem: providedOptions.tandem.createTandem( 'stopwatchCheckbox' )
-      }
+      } )
     );
 
     const isotopePanelMiddleContent = [ labelsVisibleCheckbox, stopwatchCheckbox ];
