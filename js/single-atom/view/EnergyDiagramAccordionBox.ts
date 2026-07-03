@@ -212,6 +212,33 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       visibleProperty: isAtomInPlayAreaProperty
     } );
 
+    // Groups each grabber with its dashed/solid guide line so that the entire line is draggable, not just the
+    // small grabber arrow. The line stays visible outside of custom isotope mode (as a static indicator), so
+    // only the pointer area (set below, once the grabber's visibility is known) is restricted to when the
+    // grabber itself is meant to be interactive.
+    const potentialEnergyIndicator = new Node( {
+      children: [ potentialEnergyHeightIndicator, potentialEnergyGrabber ],
+      cursor: 'pointer'
+    } );
+    const alphaParticleEnergyIndicator = new Node( {
+      children: [ alphaParticleEnergyGraphLine, alphaParticleEnergyGrabber ],
+      cursor: 'pointer'
+    } );
+
+    const updatePotentialEnergyPointerArea = () => {
+      const pointerArea = potentialEnergyGrabber.visible ? potentialEnergyIndicator.localBounds.dilated( 5 ) : null;
+      potentialEnergyIndicator.mouseArea = pointerArea;
+      potentialEnergyIndicator.touchArea = pointerArea;
+    };
+    potentialEnergyGrabber.visibleProperty.link( updatePotentialEnergyPointerArea );
+
+    const updateAlphaParticleEnergyPointerArea = () => {
+      const pointerArea = alphaParticleEnergyGrabber.visible ? alphaParticleEnergyIndicator.localBounds.dilated( 5 ) : null;
+      alphaParticleEnergyIndicator.mouseArea = pointerArea;
+      alphaParticleEnergyIndicator.touchArea = pointerArea;
+    };
+    alphaParticleEnergyGrabber.visibleProperty.link( updateAlphaParticleEnergyPointerArea );
+
     const energyIntersectionPointProperty = new Vector2Property( Vector2.ZERO, {
       tandem: Tandem.OPT_OUT
     } );
@@ -333,10 +360,8 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         preDecayWellLabel,
         yAxis,
         xAxis,
-        potentialEnergyHeightIndicator,
-        potentialEnergyGrabber,
-        alphaParticleEnergyGraphLine,
-        alphaParticleEnergyGrabber,
+        potentialEnergyIndicator,
+        alphaParticleEnergyIndicator,
         particleLayer
       ]
     } );
@@ -348,8 +373,9 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     //
     // contentsNode is defined below; safe to reference because these callbacks only fire at runtime.
 
-    // Pointer drag: convert absolute pointer position to an alphaParticleEnergyProperty value.
-    alphaParticleEnergyGrabber.addInputListener( new SoundDragListener( {
+    // Pointer drag: convert absolute pointer position to an alphaParticleEnergyProperty value. Attached to the
+    // whole indicator (line and grabber) so the user can grab it anywhere along the line.
+    alphaParticleEnergyIndicator.addInputListener( new SoundDragListener( {
       tandem: Tandem.OPT_OUT,
       drag: event => {
         const localY = contentsNode.globalToLocalPoint( event.pointer.point ).y;
@@ -369,8 +395,9 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     // The barrier peak sits at screen-y = ENERGY_PEAK_Y * value / range.max + COULOMB_MIN_Y.
     // Inverting: value = (localY − COULOMB_MIN_Y) / ENERGY_PEAK_Y * range.max.
 
-    // Pointer drag: convert absolute pointer position to a potentialEnergyProperty value.
-    potentialEnergyGrabber.addInputListener( new SoundDragListener( {
+    // Pointer drag: convert absolute pointer position to a potentialEnergyProperty value. Attached to the whole
+    // indicator (line and grabber) so the user can grab it anywhere along the line.
+    potentialEnergyIndicator.addInputListener( new SoundDragListener( {
       tandem: Tandem.OPT_OUT,
       drag: event => {
         const localY = contentsNode.globalToLocalPoint( event.pointer.point ).y;
@@ -424,6 +451,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         potentialEnergyGrabber.centerY = peakY;
         potentialEnergyHeightIndicator.setLine( wellCenterX + wellHalfWidth, peakY,
           potentialEnergyGrabber.x + 20, peakY );
+        updatePotentialEnergyPointerArea();
 
         // After decay, lower the well bottom proportionally to alpha particle energy (higher energy = deeper well).
         const wellBottomY = hasDecayOccurred
@@ -453,6 +481,7 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         const alphaParticleEnergyHeight = alphaParticleEnergy * ENERGY_PEAK_Y;
         alphaParticleEnergyGraphLine.y = alphaParticleEnergyHeight;
         alphaParticleEnergyGrabber.centerY = alphaParticleEnergyHeight;
+        updateAlphaParticleEnergyPointerArea();
 
         // A ray at the height of the initial energy, directed horizontally into the potential energy curve.
         const alphaParticleEnergyRay = new Ray2(

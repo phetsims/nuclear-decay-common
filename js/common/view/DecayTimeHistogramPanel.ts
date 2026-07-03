@@ -284,6 +284,18 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       bottom: model.isSingleAtomMode ? GRAPH_HEIGHT : GRAPH_HEIGHT + halfLifeNumberDisplay.height + 2
     } );
 
+    // Make the whole indicator (title, dashed line, and grabber) draggable, not just the small grabber sphere,
+    // but only while it is actually meant to be interactive (custom isotope mode).
+    const updateHalfLifePointerArea = () => {
+      const isDraggable = halfLifeGrabberNode.visible;
+      halfLifeIndicator.cursor = isDraggable ? 'ew-resize' : null;
+      const pointerArea = isDraggable ? halfLifeIndicator.localBounds.dilated( 5 ) : null;
+      halfLifeIndicator.mouseArea = pointerArea;
+      halfLifeIndicator.touchArea = pointerArea;
+    };
+    halfLifeGrabberNode.visibleProperty.link( updateHalfLifePointerArea );
+    halfLifeIndicator.localBoundsProperty.link( updateHalfLifePointerArea );
+
     const infinityIndicator = new VBox( {
       visibleProperty: model.isNucleusStableProperty,
       spacing: 2,
@@ -332,9 +344,10 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       }
     };
 
-    // Pointer drag: convert the pointer's absolute x position to a normalized half-life value.
+    // Pointer drag: convert the pointer's absolute x position to a normalized half-life value. Attached to the
+    // whole indicator (title, line, and grabber) so the user can grab it anywhere, not just on the small sphere.
     // graphAreaNode is defined below; safe to reference because this callback only fires at runtime.
-    halfLifeGrabberNode.addInputListener( new SoundDragListener( {
+    halfLifeIndicator.addInputListener( new SoundDragListener( {
       tandem: Tandem.OPT_OUT,
       drag: event => {
         const localX = graphAreaNode.globalToLocalPoint( event.pointer.point ).x;
