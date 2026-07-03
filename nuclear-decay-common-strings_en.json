@@ -130,6 +130,43 @@
       "value": "yr"
     }
   },
+  "keyboardHelpDialog": {
+    "halfLifeAndEnergyControls": {
+      "heading": {
+        "value": "Half-Life and Energy Controls"
+      },
+      "adjust": {
+        "value": "half-life, potential energy, or initial energy"
+      }
+    },
+    "halfLifeControl": {
+      "heading": {
+        "value": "Half-Life Control"
+      },
+      "adjust": {
+        "value": "half-life"
+      }
+    },
+    "dataProbe": {
+      "heading": {
+        "value": "Data Probe"
+      },
+      "probe": {
+        "value": "probe"
+      }
+    },
+    "numberOfAtoms": {
+      "value": "number of atoms"
+    },
+    "moveStopwatch": {
+      "heading": {
+        "value": "Move Stopwatch"
+      },
+      "move": {
+        "value": "Move"
+      }
+    }
+  },
   "a11y": {
     "qualitative": {
       "positionAbove": {

@@ -102,6 +102,34 @@ type StringsType = {
     'yr': string;
     'yrStringProperty': LocalizedStringProperty;
   };
+  'keyboardHelpDialog': {
+    'halfLifeAndEnergyControls': {
+      'heading': string;
+      'headingStringProperty': LocalizedStringProperty;
+      'adjust': string;
+      'adjustStringProperty': LocalizedStringProperty;
+    };
+    'halfLifeControl': {
+      'heading': string;
+      'headingStringProperty': LocalizedStringProperty;
+      'adjust': string;
+      'adjustStringProperty': LocalizedStringProperty;
+    };
+    'dataProbe': {
+      'heading': string;
+      'headingStringProperty': LocalizedStringProperty;
+      'probe': string;
+      'probeStringProperty': LocalizedStringProperty;
+    };
+    'numberOfAtoms': string;
+    'numberOfAtomsStringProperty': LocalizedStringProperty;
+    'moveStopwatch': {
+      'heading': string;
+      'headingStringProperty': LocalizedStringProperty;
+      'move': string;
+      'moveStringProperty': LocalizedStringProperty;
+    }
+  };
   'a11y': {
     'qualitative': {
       'positionAbove': string;

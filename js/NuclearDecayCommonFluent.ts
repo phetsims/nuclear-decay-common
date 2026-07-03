@@ -64,6 +64,15 @@ addToMapIfDefined( 'timesMap_min', 'timesMap.minStringProperty' );
 addToMapIfDefined( 'timesMap_hr', 'timesMap.hrStringProperty' );
 addToMapIfDefined( 'timesMap_day', 'timesMap.dayStringProperty' );
 addToMapIfDefined( 'timesMap_yr', 'timesMap.yrStringProperty' );
+addToMapIfDefined( 'keyboardHelpDialog_halfLifeAndEnergyControls_heading', 'keyboardHelpDialog.halfLifeAndEnergyControls.headingStringProperty' );
+addToMapIfDefined( 'keyboardHelpDialog_halfLifeAndEnergyControls_adjust', 'keyboardHelpDialog.halfLifeAndEnergyControls.adjustStringProperty' );
+addToMapIfDefined( 'keyboardHelpDialog_halfLifeControl_heading', 'keyboardHelpDialog.halfLifeControl.headingStringProperty' );
+addToMapIfDefined( 'keyboardHelpDialog_halfLifeControl_adjust', 'keyboardHelpDialog.halfLifeControl.adjustStringProperty' );
+addToMapIfDefined( 'keyboardHelpDialog_dataProbe_heading', 'keyboardHelpDialog.dataProbe.headingStringProperty' );
+addToMapIfDefined( 'keyboardHelpDialog_dataProbe_probe', 'keyboardHelpDialog.dataProbe.probeStringProperty' );
+addToMapIfDefined( 'keyboardHelpDialog_numberOfAtoms', 'keyboardHelpDialog.numberOfAtomsStringProperty' );
+addToMapIfDefined( 'keyboardHelpDialog_moveStopwatch_heading', 'keyboardHelpDialog.moveStopwatch.headingStringProperty' );
+addToMapIfDefined( 'keyboardHelpDialog_moveStopwatch_move', 'keyboardHelpDialog.moveStopwatch.moveStringProperty' );
 addToMapIfDefined( 'a11y_qualitative_positionAbove', 'a11y.qualitative.positionAboveStringProperty' );
 addToMapIfDefined( 'a11y_qualitative_positionBelow', 'a11y.qualitative.positionBelowStringProperty' );
 addToMapIfDefined( 'a11y_qualitative_positionEqualTo', 'a11y.qualitative.positionEqualToStringProperty' );
@@ -269,6 +278,25 @@ const NuclearDecayCommonFluent = {
     hrStringProperty: _.get( NuclearDecayCommonStrings, 'timesMap.hrStringProperty' ),
     dayStringProperty: _.get( NuclearDecayCommonStrings, 'timesMap.dayStringProperty' ),
     yrStringProperty: _.get( NuclearDecayCommonStrings, 'timesMap.yrStringProperty' )
+  },
+  keyboardHelpDialog: {
+    halfLifeAndEnergyControls: {
+      headingStringProperty: _.get( NuclearDecayCommonStrings, 'keyboardHelpDialog.halfLifeAndEnergyControls.headingStringProperty' ),
+      adjustStringProperty: _.get( NuclearDecayCommonStrings, 'keyboardHelpDialog.halfLifeAndEnergyControls.adjustStringProperty' )
+    },
+    halfLifeControl: {
+      headingStringProperty: _.get( NuclearDecayCommonStrings, 'keyboardHelpDialog.halfLifeControl.headingStringProperty' ),
+      adjustStringProperty: _.get( NuclearDecayCommonStrings, 'keyboardHelpDialog.halfLifeControl.adjustStringProperty' )
+    },
+    dataProbe: {
+      headingStringProperty: _.get( NuclearDecayCommonStrings, 'keyboardHelpDialog.dataProbe.headingStringProperty' ),
+      probeStringProperty: _.get( NuclearDecayCommonStrings, 'keyboardHelpDialog.dataProbe.probeStringProperty' )
+    },
+    numberOfAtomsStringProperty: _.get( NuclearDecayCommonStrings, 'keyboardHelpDialog.numberOfAtomsStringProperty' ),
+    moveStopwatch: {
+      headingStringProperty: _.get( NuclearDecayCommonStrings, 'keyboardHelpDialog.moveStopwatch.headingStringProperty' ),
+      moveStringProperty: _.get( NuclearDecayCommonStrings, 'keyboardHelpDialog.moveStopwatch.moveStringProperty' )
+    }
   },
   a11y: {
     qualitative: {

@@ -43,6 +43,21 @@ timesMap:
   day: day
   yr: yr
 
+keyboardHelpDialog:
+  halfLifeAndEnergyControls:
+    heading: Half-Life and Energy Controls
+    adjust: half-life, potential energy, or initial energy
+  halfLifeControl:
+    heading: Half-Life Control
+    adjust: half-life
+  dataProbe:
+    heading: Data Probe
+    probe: probe
+  numberOfAtoms: number of atoms
+  moveStopwatch:
+    heading: Move Stopwatch
+    move: Move
+
 a11y:
   qualitative:
     positionAbove: above
