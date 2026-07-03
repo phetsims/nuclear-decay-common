@@ -7,15 +7,18 @@
  * @author Agustín Vallejo
  */
 
+import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
 import { clamp } from '../../../../dot/js/util/clamp.js';
 import { roundSymmetric } from '../../../../dot/js/util/roundSymmetric.js';
 import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
 import Orientation from '../../../../phet-core/js/Orientation.js';
 import StrictOmit from '../../../../phet-core/js/types/StrictOmit.js';
 import StringUtils from '../../../../phetcommon/js/util/StringUtils.js';
+import ArrowNode from '../../../../scenery-phet/js/ArrowNode.js';
 import ShadedSphereNode, { ShadedSphereNodeOptions } from '../../../../scenery-phet/js/ShadedSphereNode.js';
 import AccessibleSlider, { type AccessibleSliderOptions } from '../../../../sun/js/accessibility/AccessibleSlider.js';
 import ValueChangeSoundPlayer from '../../../../tambo/js/sound-generators/ValueChangeSoundPlayer.js';
+import Tandem from '../../../../tandem/js/Tandem.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
@@ -38,6 +41,10 @@ const EXPONENT_RANGE = NuclearDecayCommonConstants.EXPONENTIAL_HALF_LIFE_EXPONEN
 const EXPONENTIAL_SHIFT_KEYBOARD_STEP = 1 / ( 100 * EXPONENT_RANGE.getLength() );
 
 export default class HalfLifeGrabberNode extends AccessibleSlider( ShadedSphereNode, 1 ) {
+
+  // Whether the user has ever dragged (via pointer or keyboard) this grabber. Used to hide the cueing arrows once
+  // the user has discovered the interaction; reappears via reset().
+  public readonly wasDraggedProperty: BooleanProperty;
 
   public constructor( model: NuclearDecayModel, providedOptions?: HalfLifeGrabberNodeOptions ) {
 
@@ -131,6 +138,8 @@ export default class HalfLifeGrabberNode extends AccessibleSlider( ShadedSphereN
       },
       startDrag: () => { previousValue = model.customHalfLifeProperty.value; },
       drag: () => {
+        this.wasDraggedProperty.value = true;
+
         const newValue = model.customHalfLifeProperty.value;
         valueChangeSoundPlayer.playSoundIfThresholdReached( newValue, previousValue );
         previousValue = newValue;
@@ -141,6 +150,34 @@ export default class HalfLifeGrabberNode extends AccessibleSlider( ShadedSphereN
 
     super( diameter, options );
 
+    this.wasDraggedProperty = new BooleanProperty( false, {
+      tandem: Tandem.OPT_OUT
+    } );
+
+    // Red cueing arrows pointing left and right, cueing the user that this grabber can be dragged horizontally.
+    // They disappear once the user drags the grabber (by pointer or keyboard), and only reappear on reset().
+    const cueingArrowOptions = {
+      fill: 'red',
+      stroke: null,
+      headWidth: 10,
+      headHeight: 8,
+      tailWidth: 3,
+      pickable: false
+    };
+    const cueingArrowSpacing = diameter / 2 + 3;
+    const cueingArrowLength = 12;
+    const leftCueingArrow = new ArrowNode(
+      -cueingArrowSpacing, 0, -cueingArrowSpacing - cueingArrowLength, 0, cueingArrowOptions );
+    const rightCueingArrow = new ArrowNode(
+      cueingArrowSpacing, 0, cueingArrowSpacing + cueingArrowLength, 0, cueingArrowOptions );
+    this.addChild( leftCueingArrow );
+    this.addChild( rightCueingArrow );
+
+    this.wasDraggedProperty.link( wasDragged => {
+      leftCueingArrow.visible = !wasDragged;
+      rightCueingArrow.visible = !wasDragged;
+    } );
+
     // Keep the keyboard steps in sync with the current timescale, since it can change (e.g. when the isotope
     // selection switches between 'custom' and a real isotope, or between single- and multi-atom screens).
     model.timescaleProperty.lazyLink( timescale => {
@@ -149,6 +186,11 @@ export default class HalfLifeGrabberNode extends AccessibleSlider( ShadedSphereN
       this.shiftKeyboardStep = keyboardSteps.shiftKeyboardStep!;
       this.pageKeyboardStep = keyboardSteps.pageKeyboardStep!;
     } );
+  }
+
+  public override reset(): void {
+    super.reset();
+    this.wasDraggedProperty.reset();
   }
 
   public setContextResponseAlert( contextResponseAlert: ContextResponseAlert | null ): void {

@@ -355,6 +355,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       },
       start: () => {
         model.isUserInteractingProperty.value = true;
+        halfLifeGrabberNode.wasDraggedProperty.value = true;
       },
       end: () => {
         model.isUserInteractingProperty.value = false;
@@ -498,6 +499,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
   public reset(): void {
     this.timescaleVisibleProperty.reset();
+    this.halfLifeGrabberNode.reset();
   }
 
   /**
