@@ -453,7 +453,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     const allAxisBox = new VBox( {
       children: [ yAxisBox, timeText ],
       spacing: 10,
-      align: 'right',
+      align: 'left',
       right: GRAPH_X_OFFSET - 30,
       centerY: GRAPH_HEIGHT / 2 + 10
     } );
