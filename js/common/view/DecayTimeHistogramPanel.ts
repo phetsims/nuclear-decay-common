@@ -422,7 +422,7 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
 
         // PhET-iO
         tandem: options.tandem.createTandem( 'timescaleCheckbox' )
-      } )
+      }, NuclearDecayCommonConstants.CHECKBOX_OPTIONS )
     );
 
     // For bounds purposes, time axis and checkbox are contained in this node that only shows up in custom

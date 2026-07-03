@@ -104,7 +104,7 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
         accessibleContextResponseChecked: NuclearDecayCommonFluent.a11y.multipleAtoms.stopwatchCheckbox.accessibleContextResponseCheckedStringProperty,
         accessibleContextResponseUnchecked: NuclearDecayCommonFluent.a11y.multipleAtoms.stopwatchCheckbox.accessibleContextResponseUncheckedStringProperty,
         tandem: providedOptions.tandem.createTandem( 'stopwatchCheckbox' )
-      } )
+      }, NuclearDecayCommonConstants.CHECKBOX_OPTIONS )
     );
 
     const isotopePanelMiddleContent = [ labelsVisibleCheckbox, stopwatchCheckbox ];
