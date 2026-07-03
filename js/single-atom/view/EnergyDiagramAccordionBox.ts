@@ -279,17 +279,20 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       }
     );
 
-    // Qualitative string for escape distance, using view-space intersection point x as the measure.
+    // Qualitative string for escape distance, using view-space intersection point x as the measure. Polonium-211's
+    // escape distance is always described as small, regardless of the (exaggerated, for visibility) rendered value.
     const escapeDistanceStringProperty = new DerivedProperty(
       [
+        model.selectedIsotopeProperty,
         energyIntersectionPointProperty,
         NuclearDecayCommonFluent.a11y.qualitative.distanceSmallStringProperty,
         NuclearDecayCommonFluent.a11y.qualitative.distanceMediumStringProperty,
         NuclearDecayCommonFluent.a11y.qualitative.distanceLargeStringProperty,
         NuclearDecayCommonFluent.a11y.qualitative.distanceInfiniteStringProperty
       ],
-      ( point, small, medium, large, infinite ) => {
-        if ( point.x >= MAX_ESCAPE_DISTANCE ) { return infinite; }
+      ( selectedIsotope, point, small, medium, large, infinite ) => {
+        if ( selectedIsotope === 'polonium-211' ) { return small; }
+        else if ( point.x >= MAX_ESCAPE_DISTANCE ) { return infinite; }
         else if ( point.x >= 100 ) { return large; }
         else if ( point.x >= 50 ) { return medium; }
         else { return small; }
