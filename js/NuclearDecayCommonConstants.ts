@@ -55,7 +55,7 @@ export default class NuclearDecayCommonConstants {
   public static readonly ATOM_RADIUS = 1;
 
   public static readonly CHECKBOX_OPTIONS: CheckboxOptions = {
-    boxWidth: 24
+    boxWidth: 16
   };
 
   // Isotopes
