@@ -9,9 +9,11 @@
 import BooleanProperty from '../../../../axon/js/BooleanProperty.js';
 import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
 import Multilink from '../../../../axon/js/Multilink.js';
+import StringProperty from '../../../../axon/js/StringProperty.js';
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
 import { clamp } from '../../../../dot/js/util/clamp.js';
+import { roundSymmetric } from '../../../../dot/js/util/roundSymmetric.js';
 import { toFixed } from '../../../../dot/js/util/toFixed.js';
 import Shape from '../../../../kite/js/Shape.js';
 import optionize, { combineOptions, EmptySelfOptions } from '../../../../phet-core/js/optionize.js';
@@ -489,13 +491,38 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
       ]
     } );
 
+    // At-half-life paragraph: appears once the elapsed sample time has reached the half-life.
+    const halfLifeReachedProperty = new DerivedProperty(
+      [ model.timeProperty, model.halfLifeProperty, model.isPlayAreaEmptyProperty ],
+      ( time, halfLife, isEmpty ) => !isEmpty && time > 0 && time >= halfLife
+    );
+
+    const percentageAtHalfLifeProperty = new StringProperty( '' );
+    halfLifeReachedProperty.link( reached => {
+      const value = reached ? model.percentageOfUndecayedProperty.value : 0;
+      percentageAtHalfLifeProperty.value = `${roundSymmetric( value * 100 )}`;
+      if ( reached ) {
+        this.addAccessibleContextResponse( NuclearDecayCommonFluent.a11y.multipleAtoms.decayTimeHistogramAtHalfLife.format( {
+          halfLifePercentageUndecayed: percentageAtHalfLifeProperty.value
+        } ) );
+      }
+    } );
+
+    const atHalfLifeParagraph = new Node( {
+      visibleProperty: halfLifeReachedProperty,
+      accessibleParagraph: NuclearDecayCommonFluent.a11y.multipleAtoms.decayTimeHistogramAtHalfLife.createProperty( {
+        halfLifePercentageUndecayed: percentageAtHalfLifeProperty
+      } )
+    } );
+
     const contentsNode = new HBox( {
       xMargin: NuclearDecayCommonConstants.PANEL_X_MARGIN,
       spacing: 30,
       justify: 'center',
       children: [
         pieChartNode,
-        graphNode
+        graphNode,
+        atHalfLifeParagraph
       ]
     } );
 

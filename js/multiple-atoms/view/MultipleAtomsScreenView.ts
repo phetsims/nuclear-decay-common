@@ -9,7 +9,6 @@
 
 import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
 import Property from '../../../../axon/js/Property.js';
-import StringProperty from '../../../../axon/js/StringProperty.js';
 import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
 import { roundSymmetric } from '../../../../dot/js/util/roundSymmetric.js';
@@ -223,7 +222,7 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     );
 
     // State 1: No atoms in play area.
-    const noAtomsDescNode = new Node( {
+    const noAtomsDescription = new Node( {
       visibleProperty: model.isPlayAreaEmptyProperty,
       accessibleParagraph: NuclearDecayCommonFluent.a11y.multipleAtoms.radioactiveSample.noAtoms.createProperty( {
         isotope: isotopeNameProperty
@@ -231,7 +230,7 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     } );
 
     // State 2: Atoms added but none have decayed yet.
-    const readyToDecayDescNode = new Node( {
+    const readyToDecayDescription = new Node( {
       visibleProperty: new DerivedProperty(
         [ model.isPlayAreaEmptyProperty, model.decayedCountProperty ],
         ( isEmpty, decayedCount ) => !isEmpty && decayedCount === 0
@@ -243,7 +242,7 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     } );
 
     // State 3: Atoms added and at least one has decayed.
-    const decayOccurringDescNode = new Node( {
+    const decayOccurringDescription = new Node( {
       visibleProperty: model.decayedCountProperty.derived( count => count > 0 ),
       accessibleParagraph: NuclearDecayCommonFluent.a11y.multipleAtoms.radioactiveSample.decayOccurring.paragraph.createProperty( {
         addedAtoms: model.activeAtomsCountProperty,
@@ -274,41 +273,16 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
       accessibleHeading: NuclearDecayCommonFluent.a11y.multipleAtoms.radioactiveSampleHeadingStringProperty
     } );
     radioactiveSampleHeadingNode.pdomOrder = [
-      noAtomsDescNode,
-      readyToDecayDescNode,
-      decayOccurringDescNode,
+      noAtomsDescription,
+      readyToDecayDescription,
+      decayOccurringDescription,
       addAtomsPanel,
       resetSampleButton
     ];
-    this.addChild( noAtomsDescNode );
-    this.addChild( readyToDecayDescNode );
-    this.addChild( decayOccurringDescNode );
+    this.addChild( noAtomsDescription );
+    this.addChild( readyToDecayDescription );
+    this.addChild( decayOccurringDescription );
     this.addChild( radioactiveSampleHeadingNode );
-
-    // At-half-life paragraph: appears once the elapsed sample time has reached the half-life.
-    const halfLifeReachedProperty = new DerivedProperty(
-      [ model.timeProperty, model.halfLifeProperty, model.isPlayAreaEmptyProperty ],
-      ( time, halfLife, isEmpty ) => !isEmpty && time > 0 && time >= halfLife
-    );
-
-    const percentageAtHalfLifeProperty = new StringProperty( '' );
-    halfLifeReachedProperty.link( reached => {
-      const value = reached ? model.percentageOfUndecayedProperty.value : 0;
-      percentageAtHalfLifeProperty.value = `${roundSymmetric( value * 100 )}`;
-      if ( reached ) {
-        this.addAccessibleContextResponse( NuclearDecayCommonFluent.a11y.multipleAtoms.decayTimeHistogramAtHalfLife.format( {
-          halfLifePercentageUndecayed: percentageAtHalfLifeProperty.value
-        } ) );
-      }
-    } );
-
-    const atHalfLifeDescNode = new Node( {
-      visibleProperty: halfLifeReachedProperty,
-      accessibleParagraph: NuclearDecayCommonFluent.a11y.multipleAtoms.decayTimeHistogramAtHalfLife.createProperty( {
-        halfLifePercentageUndecayed: percentageAtHalfLifeProperty
-      } )
-    } );
-    this.addChild( atHalfLifeDescNode );
 
     model.undecayedCountProperty.link( count => {
       if ( count === 0 && model.activeAtoms.length !== 0 ) {
@@ -323,7 +297,6 @@ export default class MultipleAtomsScreenView extends SingleAndMultipleAtomsScree
     this.pdomPlayAreaNode.pdomOrder = [
       radioactiveSampleHeadingNode,
       this.decayTimeHistogramPanel,
-      atHalfLifeDescNode,
       this.particleLegendPanel,
       this.isotopePanel,
       stopwatchNode
