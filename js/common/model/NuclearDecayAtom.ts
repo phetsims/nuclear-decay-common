@@ -101,7 +101,8 @@ type SelfOptions = {
 
 export type NuclearDecayAtomOptions = SelfOptions;
 
-const DEFAULT_PARTICLE_EJECTION_SPEED = NuclearDecayCommonConstants.ATOM_RADIUS * 30; // in model units per second
+// The speed at which ejected decay particles travel, in model units, empirically determined.
+const DEFAULT_PARTICLE_EJECTION_SPEED = NuclearDecayCommonConstants.NUCLEON_RADIUS * 250; //
 
 // Define the angle ranges at which decay produce particles can be ejected when restricted angles are turned on.
 const EJECTION_ANGLE_MULTIPLIER = 0.1;
@@ -526,6 +527,13 @@ export default class NuclearDecayAtom {
     return DecayProductValues.includes( this.isotope as DecayProducts );
   }
 
+  /**
+   * Get the current atom configuration based on whether the atom has decayed.
+   */
+  public getCurrentAtomConfiguration(): AtomConfig {
+    return this.hasDecayed ? this.atomConfigAfterDecay : this.atomConfigBeforeDecay;
+  }
+
   private decay( randomizeEjectionDestination: boolean ): void {
     affirm( !this.hasDecayed, 'Atom should not be trying to decay after it has already decayed' );
 
@@ -560,8 +568,9 @@ export default class NuclearDecayAtom {
   private getEjectionDestination(): Vector2 {
 
     // Set the distance. In reality, ejected particles wouldn't stop until they hit or otherwise interacted with
-    // something, but in the sim we don't bother moving them once they are out of view.
-    const ejectionTravelDistance = NuclearDecayCommonConstants.ATOM_RADIUS * 500;
+    // something, but in the sim we don't bother moving them once they are out of view. The values was empirically
+    // determined.
+    const ejectionTravelDistance = NuclearDecayCommonConstants.NUCLEON_RADIUS * 1000;
 
     let ejectionAngle: number; // in radians
     if ( !this.restrictEjectionAngles ) {

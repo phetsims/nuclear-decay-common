@@ -12,6 +12,7 @@ import { roundSymmetric } from '../../dot/js/util/roundSymmetric.js';
 import PhetFont from '../../scenery-phet/js/PhetFont.js';
 import AtomConfig from '../../shred/js/model/AtomConfig.js';
 import { CheckboxOptions } from '../../sun/js/Checkbox.js';
+import getNucleusRadius from './common/model/getNucleusRadius.js';
 
 const EXPONENTIAL_HALF_LIFE_EXPONENT_RANGE = new Range( -3, 19 );
 const MAX_HALF_LIFE_EXPONENT = 18.5;
@@ -39,6 +40,13 @@ export default class NuclearDecayCommonConstants {
   public static readonly MAX_TIME_EXPONENT = MAX_TIME_EXPONENT;
   public static readonly MAX_TIME = Math.pow( 10, MAX_TIME_EXPONENT );
 
+  // The radius of a nucleon, meaning either a proton or neutron, in model coordinates. We use a what is essentially a
+  // normalized, unitless value here to keep the model simple. While we could potentially use femtometers (the generally
+  // accepted radius of a proton is 0.84 fm, so we are actually fairly close), our models are way off in terms of things
+  // like the size of the nucleus versus the electron cloud, so using a simple arbitrary value makes the code easier in
+  // a number of places.
+  public static readonly NUCLEON_RADIUS = 1;
+
   // Function for getting exponential time based with the proper clamps. The result's mantissa is rounded to the
   // nearest integer (e.g. 5.78e9 -> 6e9) so displayed values don't show spurious precision.
   public static readonly EXPONENTIAL_TIME = ( exponent: number ): number => {
@@ -47,12 +55,6 @@ export default class NuclearDecayCommonConstants {
     const roundedMantissa = roundSymmetric( rawValue / Math.pow( 10, magnitude ) );
     return roundedMantissa * Math.pow( 10, magnitude );
   };
-
-  // Atom dimensions in model coordinates. Because it's difficult to come up with any sort of reasonable real units for
-  // modeling the particle, we are using a normalized value here.
-  // JB REVIEW: I think we should rename this to something like ATOMIC_NUCLEUS_RADIUS and potentially have another for
-  //            the radius including the electron cloud.
-  public static readonly ATOM_RADIUS = 1;
 
   public static readonly CHECKBOX_OPTIONS: CheckboxOptions = {
     boxWidth: 16
@@ -66,6 +68,34 @@ export default class NuclearDecayCommonConstants {
   public static readonly NITROGEN_14 = new AtomConfig( 7, 7, 7 );
   public static readonly HYDROGEN_3 = new AtomConfig( 1, 2, 1 );
   public static readonly HELIUM_3 = new AtomConfig( 2, 1, 2 );
+
+  // Define the radii for several of the commonly used nuclei that appear in the Nuclear Decay sim suite. Beyond a
+  // certain number of nucleons, we don't worry about a neutron here or there. For example, LEAD_RADIUS uses a
+  // particular isotope of lead, but the radius is close enough for all isotopes of lead.
+  public static readonly POLONIUM_RADIUS = getNucleusRadius(
+    NuclearDecayCommonConstants.POLONIUM_211.getMassNumber(),
+    NuclearDecayCommonConstants.NUCLEON_RADIUS
+  );
+  public static readonly LEAD_RADIUS = getNucleusRadius(
+    NuclearDecayCommonConstants.LEAD_207.getMassNumber(),
+    NuclearDecayCommonConstants.NUCLEON_RADIUS
+  );
+  public static readonly CARBON_RADIUS = getNucleusRadius(
+    NuclearDecayCommonConstants.CARBON_14.getMassNumber(),
+    NuclearDecayCommonConstants.NUCLEON_RADIUS
+  );
+  public static readonly NITROGEN_RADIUS = getNucleusRadius(
+    NuclearDecayCommonConstants.NITROGEN_14.getMassNumber(),
+    NuclearDecayCommonConstants.NUCLEON_RADIUS
+  );
+  public static readonly DEUTERIUM_RADIUS = getNucleusRadius(
+    NuclearDecayCommonConstants.HYDROGEN_3.getMassNumber(),
+    NuclearDecayCommonConstants.NUCLEON_RADIUS
+  );
+  public static readonly HELIUM_RADIUS = getNucleusRadius(
+    NuclearDecayCommonConstants.HELIUM_3.getMassNumber(),
+    NuclearDecayCommonConstants.NUCLEON_RADIUS
+  );
 
   // Custom atom configurations for user-defined half-lives. These use proton/neutron counts (123, 119) that are above
   // the heaviest known real element (Oganesson, Z=118), so they will never collide with real isotope data in

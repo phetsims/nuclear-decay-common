@@ -32,6 +32,7 @@ import Path from '../../../../scenery/js/nodes/Path.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
 import EjectedDecayParticle from '../../common/model/EjectedDecayParticle.js';
+import getNucleusRadius from '../../common/model/getNucleusRadius.js';
 import AlphaParticleNode from '../../common/view/AlphaParticleNode.js';
 import DynamicNucleusNode from '../../common/view/DynamicNucleusNode.js';
 import NuclearDecayAccordionBox, { NuclearDecayAccordionBoxOptions } from '../../common/view/NuclearDecayAccordionBox.js';
@@ -119,7 +120,11 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
 
     // JB REVIEW: I don't understand the following comment. Can we improve?
     // Left edge inside which wellCenterX can sit without pushing the curve out of the graph region.
-    let wellHalfWidth = modelViewTransformProperty.value.modelToViewDeltaX( NuclearDecayCommonConstants.ATOM_RADIUS );
+    const nucleusRadiusInModelUnits = getNucleusRadius(
+      atom.atomConfigBeforeDecay.getMassNumber(),
+      NuclearDecayCommonConstants.NUCLEON_RADIUS
+    );
+    let wellHalfWidth = modelViewTransformProperty.value.modelToViewDeltaX( nucleusRadiusInModelUnits );
     const wellCenterMinX = wellHalfWidth + POINTINESS_FACTOR;
     const wellCenterMaxX = graphRightX - wellHalfWidth - POINTINESS_FACTOR;
 
@@ -473,7 +478,11 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
 
         // JB REVIEW: Get rid of tweak factor by addressing root cause.
         const wellWidthTweakFactor = -5;
-        wellHalfWidth = modelViewTransformProperty.value.modelToViewDeltaX( NuclearDecayCommonConstants.ATOM_RADIUS ) + wellWidthTweakFactor;
+        const nucleusRadiusInModelUnits = getNucleusRadius(
+          atom.atomConfigBeforeDecay.getMassNumber(),
+          NuclearDecayCommonConstants.NUCLEON_RADIUS
+        );
+        wellHalfWidth = modelViewTransformProperty.value.modelToViewDeltaX( nucleusRadiusInModelUnits ) + wellWidthTweakFactor;
 
         maxParticleXDelta = wellHalfWidth - 2 * options.nucleonRadius;
 

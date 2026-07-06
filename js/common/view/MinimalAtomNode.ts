@@ -21,19 +21,25 @@ type SelfOptions = EmptySelfOptions;
 export type MinimalAtomNodeOptions = SelfOptions & CircleOptions;
 
 export default class MinimalAtomNode extends Circle implements Updatable {
+
   public constructor(
     private readonly decayingAtom: NuclearDecayAtom,
     private readonly modelViewTransformProperty: TReadOnlyProperty<ModelViewTransform2>,
     providedOptions?: MinimalAtomNodeOptions ) {
+
     const options = optionize<MinimalAtomNodeOptions, SelfOptions, MinimalAtomNodeOptions>()( {
       visible: decayingAtom.isActive,
       fill: NuclearDecayCommonColors.poloniumColorProperty
     }, providedOptions );
 
-    super( modelViewTransformProperty.value.modelToViewDeltaX( NuclearDecayCommonConstants.ATOM_RADIUS ), options );
+    // Determine the model radius value to use. Because this particular node represents the nucleus as a circle, we use
+    // a fixed value for all instances.
+    const modelRadius = NuclearDecayCommonConstants.LEAD_RADIUS;
+
+    super( modelViewTransformProperty.value.modelToViewDeltaX( modelRadius ), options );
 
     modelViewTransformProperty.link( mvt => {
-      const desiredAtomRadius = mvt.modelToViewDeltaX( NuclearDecayCommonConstants.ATOM_RADIUS );
+      const desiredAtomRadius = mvt.modelToViewDeltaX( modelRadius );
       this.setRadius( desiredAtomRadius );
       this.updatePosition();
     } );
@@ -49,7 +55,9 @@ export default class MinimalAtomNode extends Circle implements Updatable {
 
   public update(): void {
     this.visible = this.decayingAtom.isActive;
-    this.fill = this.decayingAtom.hasDecayed ? NuclearDecayCommonColors.decayedProperty : ISOTOPE_TO_COLOR.get( this.decayingAtom.isotope )!;
+    this.fill = this.decayingAtom.hasDecayed ?
+                NuclearDecayCommonColors.decayedProperty :
+                ISOTOPE_TO_COLOR.get( this.decayingAtom.isotope )!;
     this.updatePosition();
   }
 }

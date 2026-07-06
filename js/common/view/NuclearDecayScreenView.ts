@@ -197,9 +197,9 @@ export default class NuclearDecayScreenView extends ScreenView {
       atom.ejectedDecayParticles.forEach( particle => {
         if ( particle.type === 'alpha' ) {
           const particleNode = new AlphaParticleNode( {
-            nucleonDiameter: this.modelViewTransformProperty.value.modelToViewDeltaX( 0.2 ),
+            nucleonDiameter: this.modelViewTransformProperty.value.modelToViewDeltaX( NuclearDecayCommonConstants.NUCLEON_RADIUS ) * 2,
             visibleProperty: particle.isActiveProperty,
-            scale: 0.8 // TODO Instead of manually setting the scale of the particle, connect to the MVT https://github.com/phetsims/alpha-decay/issues/19
+            scale: 0.5 // TODO Instead of manually setting the scale of the particle, connect to the MVT https://github.com/phetsims/alpha-decay/issues/19
           } );
           this.addChild( particleNode );
           particle.positionProperty.link( position => {
@@ -222,7 +222,10 @@ export default class NuclearDecayScreenView extends ScreenView {
    */
   public setPlayAreaBounds( playAreaBounds: Bounds2 ): void {
 
-    const atomAreaModelWidth = 2 * NuclearDecayCommonConstants.ATOM_RADIUS * this.numberOfAtomsInPlayAreaWidthProperty.value;
+    // TODO: See https://github.com/phetsims/alpha-decay/issues/28. This uses a specific radius now, but we probably
+    //       want to handle this differently once the code is more evolved, so we should revisit.
+    const atomAreaModelWidth = 2 * NuclearDecayCommonConstants.POLONIUM_RADIUS *
+                               this.numberOfAtomsInPlayAreaWidthProperty.value;
     const scale = playAreaBounds.width / atomAreaModelWidth;
     this.modelViewTransformProperty.value = ModelViewTransform2.createSinglePointScaleInvertedYMapping(
       Vector2.ZERO,

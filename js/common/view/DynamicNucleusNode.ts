@@ -24,6 +24,7 @@ import AtomConfig from '../../../../shred/js/model/AtomConfig.js';
 import { PARTICLE_COLORS } from '../../../../shred/js/model/Particle.js';
 import ParticleNode from '../../../../shred/js/view/ParticleNode.js';
 import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import getNucleusRadius from '../model/getNucleusRadius.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 import Updatable from '../model/Updatable.js';
 import AlphaParticleNode from './AlphaParticleNode.js';
@@ -251,12 +252,14 @@ class DynamicNucleusNode extends Node implements Updatable {
     // Update the nucleus radius and position if the model-view transform changes. Note that this does the initial
     // positioning too.
     modelViewTransformProperty.link( mvt => {
-      this.setNucleusRadius( mvt.modelToViewDeltaX( NuclearDecayCommonConstants.ATOM_RADIUS ) );
+      const nucleonCount = this.atom.getCurrentAtomConfiguration().getMassNumber();
+      const nucleusRadiusInModelUnits = getNucleusRadius( nucleonCount, NuclearDecayCommonConstants.NUCLEON_RADIUS );
+      this.setNucleusRadius( mvt.modelToViewDeltaX( nucleusRadiusInModelUnits ) );
       this.update();
     } );
 
     if ( SHOW_RADIUS_NODE ) {
-      const viewRadius = modelViewTransformProperty.value.modelToViewDeltaX( NuclearDecayCommonConstants.ATOM_RADIUS );
+      const viewRadius = this.getNucleusRadius();
       this.radiusNode = new Circle( viewRadius, {
         fill: Color.GREEN.withAlpha( 0.1 ),
         stroke: Color.GREEN.withAlpha( 0.5 ),
@@ -267,6 +270,19 @@ class DynamicNucleusNode extends Node implements Updatable {
     else {
       this.radiusNode = null;
     }
+  }
+
+  /**
+   * Get the radius of this nucleus in view coordinates based on the current atom configuration.
+   */
+  private getNucleusRadius(): number {
+    const nucleonCount = this.atom.getCurrentAtomConfiguration().getMassNumber();
+    const nucleusRadiusInModelUnits = getNucleusRadius( nucleonCount, NuclearDecayCommonConstants.NUCLEON_RADIUS );
+    const nucleusRadiusInViewCoordinates = this.modelViewTransformProperty.value.modelToViewDeltaX(
+      nucleusRadiusInModelUnits
+    );
+    this.setNucleusRadius( nucleusRadiusInViewCoordinates );
+    return nucleusRadiusInViewCoordinates;
   }
 
   public agitateNucleus(): void {
@@ -346,9 +362,7 @@ class DynamicNucleusNode extends Node implements Updatable {
     this.translation = this.modelViewTransformProperty.value.modelToViewPosition( this.atom.position );
     this.atomLabelNode.update();
     if ( this.radiusNode ) {
-      this.radiusNode.setRadius(
-        this.modelViewTransformProperty.value.modelToViewDeltaX( NuclearDecayCommonConstants.ATOM_RADIUS )
-      );
+      this.radiusNode.setRadius( this.getNucleusRadius() );
     }
   }
 
