@@ -344,6 +344,9 @@
       }
     },
     "decayTimeHistogram": {
+      "simpleAccessibleParagraph": {
+        "value": "Timeline shows when each { $isotope } atom decayed relative to the half-life, { $hLifeTime } seconds."
+      },
       "accessibleParagraph": {
         "value": "{ $scale } timeline shows when each { $isotope } atom decayed relative to the half-life, { $hLifeTime } seconds."
       },

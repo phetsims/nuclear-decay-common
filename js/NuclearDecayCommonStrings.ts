@@ -258,6 +258,8 @@ type StringsType = {
       'accessibleHelpTextStringProperty': LocalizedStringProperty;
     };
     'decayTimeHistogram': {
+      'simpleAccessibleParagraph': string;
+      'simpleAccessibleParagraphStringProperty': LocalizedStringProperty;
       'accessibleParagraph': string;
       'accessibleParagraphStringProperty': LocalizedStringProperty;
       'scale': string;

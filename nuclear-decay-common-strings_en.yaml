@@ -140,6 +140,7 @@ a11y:
     accessibleName: Alpha Particle Energy
     accessibleHelpText: Adjust energy of alpha particles in nucleus.
   decayTimeHistogram:
+    simpleAccessibleParagraph: 'Timeline shows when each { $isotope } atom decayed relative to the half-life, { $hLifeTime } seconds.'
     accessibleParagraph: '{ $scale } timeline shows when each { $isotope } atom decayed relative to the half-life, { $hLifeTime } seconds.'
     scale:
       select_scale:

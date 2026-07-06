@@ -397,13 +397,19 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     const isotopeNameProperty = NuclearDecayAtom.createDynamicIsotopeNameAndMassStringProperty(
       model.selectedIsotopeProperty, NuclearDecayCommonFluent.isotopeAStringProperty );
 
-    const timelineParagraphStringProperty = NuclearDecayCommonFluent.a11y.decayTimeHistogram.accessibleParagraph.createProperty( {
-      scale: scaleStringProperty,
-      isotope: isotopeNameProperty,
-      hLifeTime: new DerivedProperty( [ model.halfLifeProperty, model.timescaleProperty ], ( halfLife, timescale ) => {
-        return formatTimescaleStrings( halfLife, timescale );
-      } )
+    const hLifeTimeProperty = new DerivedProperty( [ model.halfLifeProperty, model.timescaleProperty ], ( halfLife, timescale ) => {
+      return formatTimescaleStrings( halfLife, timescale );
     } );
+    const timelineParagraphStringProperty = model.isSingleAtomMode ?
+                                            NuclearDecayCommonFluent.a11y.decayTimeHistogram.accessibleParagraph.createProperty( {
+                                              scale: scaleStringProperty,
+                                              isotope: isotopeNameProperty,
+                                              hLifeTime: hLifeTimeProperty
+                                            } ) :
+                                            NuclearDecayCommonFluent.a11y.decayTimeHistogram.simpleAccessibleParagraph.createProperty( {
+                                              isotope: isotopeNameProperty,
+                                              hLifeTime: hLifeTimeProperty
+                                            } );
 
     const timelineParagraphNode = new Node( {
       accessibleParagraph: timelineParagraphStringProperty
