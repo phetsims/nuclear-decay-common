@@ -21,6 +21,7 @@ import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
 import ArrowNode from '../../../../scenery-phet/js/ArrowNode.js';
 import EraserButton from '../../../../scenery-phet/js/buttons/EraserButton.js';
 import SoundDragListener from '../../../../scenery-phet/js/SoundDragListener.js';
+import HighlightFromNode from '../../../../scenery/js/accessibility/HighlightFromNode.js';
 import HBox from '../../../../scenery/js/layout/nodes/HBox.js';
 import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
 import Line from '../../../../scenery/js/nodes/Line.js';
@@ -288,16 +289,25 @@ export default class DecayTimeHistogramPanel extends NuclearDecayPanel {
     } );
 
     // Make the whole indicator (title, dashed line, and grabber) draggable, not just the small grabber sphere,
-    // but only while it is actually meant to be interactive (custom isotope mode).
+    // but only while it is actually meant to be interactive (custom isotope mode). The enlarged area is set on
+    // the grabber itself (translated into its local frame), rather than on halfLifeIndicator, so that the same
+    // region drives hit-testing, dragging, and the interactive/focus highlight consistently.
     const updateHalfLifePointerArea = () => {
       const isDraggable = halfLifeGrabberNode.visible;
       halfLifeIndicator.cursor = isDraggable ? 'ew-resize' : null;
-      const pointerArea = isDraggable ? halfLifeIndicator.localBounds.dilated( 5 ) : null;
-      halfLifeIndicator.mouseArea = pointerArea;
-      halfLifeIndicator.touchArea = pointerArea;
+      const pointerArea = isDraggable ?
+                          halfLifeGrabberNode.globalToLocalBounds(
+                            halfLifeIndicator.localToGlobalBounds( halfLifeIndicator.localBounds.dilated( 5 ) ) ) :
+                          null;
+      halfLifeGrabberNode.mouseArea = pointerArea;
+      halfLifeGrabberNode.touchArea = pointerArea;
     };
     halfLifeGrabberNode.visibleProperty.link( updateHalfLifePointerArea );
     halfLifeIndicator.localBoundsProperty.link( updateHalfLifePointerArea );
+
+    // Extend the grabber's interactive/focus highlight to cover the whole draggable indicator (title, dashed
+    // line, and number readout), not just the small grabber sphere.
+    halfLifeGrabberNode.focusHighlight = new HighlightFromNode( halfLifeIndicator );
 
     const infinityIndicator = new VBox( {
       visibleProperty: model.isNucleusStableProperty,

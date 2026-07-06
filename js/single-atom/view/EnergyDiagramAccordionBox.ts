@@ -25,6 +25,7 @@ import ModelViewTransform2 from '../../../../phetcommon/js/view/ModelViewTransfo
 import AccessibleList from '../../../../scenery-phet/js/accessibility/AccessibleList.js';
 import ArrowNode from '../../../../scenery-phet/js/ArrowNode.js';
 import SoundDragListener from '../../../../scenery-phet/js/SoundDragListener.js';
+import HighlightFromNode from '../../../../scenery/js/accessibility/HighlightFromNode.js';
 import Line from '../../../../scenery/js/nodes/Line.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import Path from '../../../../scenery/js/nodes/Path.js';
@@ -226,19 +227,48 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
       cursor: 'pointer'
     } );
 
-    const updatePotentialEnergyPointerArea = () => {
-      const pointerArea = potentialEnergyGrabber.visible ? potentialEnergyIndicator.localBounds.dilated( 5 ) : null;
-      potentialEnergyIndicator.mouseArea = pointerArea;
-      potentialEnergyIndicator.touchArea = pointerArea;
+    // The enlarged pointer area is set on each grabber itself (translated into its local frame), rather than on
+    // the indicator wrapper Node, so that the same region drives hit-testing, dragging, and the interactive/
+    // focus highlight consistently.
+    const updateEnergyPointerArea = ( visible: boolean, grabber: EnergyGrabberNode, indicator: Node ) => {
+      const pointerArea = visible ?
+                          grabber.globalToLocalBounds(
+                            indicator.localToGlobalBounds( indicator.localBounds.dilated( 5 ) ) ) :
+                          null;
+      grabber.mouseArea = pointerArea;
+      grabber.touchArea = pointerArea;
     };
-    potentialEnergyGrabber.visibleProperty.link( updatePotentialEnergyPointerArea );
+
+    const updatePotentialEnergyPointerArea = () => {
+      updateEnergyPointerArea( potentialEnergyGrabber.visibleProperty.value, potentialEnergyGrabber, potentialEnergyIndicator );
+    };
 
     const updateAlphaParticleEnergyPointerArea = () => {
-      const pointerArea = alphaParticleEnergyGrabber.visible ? alphaParticleEnergyIndicator.localBounds.dilated( 5 ) : null;
-      alphaParticleEnergyIndicator.mouseArea = pointerArea;
-      alphaParticleEnergyIndicator.touchArea = pointerArea;
+      updateEnergyPointerArea( alphaParticleEnergyGrabber.visibleProperty.value, alphaParticleEnergyGrabber, alphaParticleEnergyIndicator );
     };
-    alphaParticleEnergyGrabber.visibleProperty.link( updateAlphaParticleEnergyPointerArea );
+
+    // Extend each grabber's interactive/focus highlight to cover the whole draggable indicator (grabber plus its
+    // guide line), not just the small grabber arrow.
+    Multilink.multilink(
+      [
+        potentialEnergyGrabber.visibleProperty,
+        potentialEnergyHeightIndicator.visibleProperty,
+        potentialEnergyIndicator.localBoundsProperty
+      ], visible => {
+        updateEnergyPointerArea( visible, potentialEnergyGrabber, potentialEnergyIndicator );
+        potentialEnergyGrabber.focusHighlight = new HighlightFromNode( potentialEnergyIndicator );
+      }
+    );
+
+    Multilink.multilink(
+      [
+        alphaParticleEnergyGrabber.visibleProperty,
+        alphaParticleEnergyIndicator.localBoundsProperty
+      ], visible => {
+        updateEnergyPointerArea( visible, alphaParticleEnergyGrabber, alphaParticleEnergyIndicator );
+        alphaParticleEnergyGrabber.focusHighlight = new HighlightFromNode( alphaParticleEnergyIndicator );
+      }
+    );
 
     const energyIntersectionPointProperty = new Vector2Property( Vector2.ZERO, {
       tandem: Tandem.OPT_OUT
