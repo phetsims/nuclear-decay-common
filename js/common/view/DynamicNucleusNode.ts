@@ -1,10 +1,11 @@
 // Copyright 2026, University of Colorado Boulder
 
 /**
- * DynamicNucleusNode portrays an atomic nucleus made of protons and neutrons that are moving around. Depending on the
- * decay type of the atom being portrayed, some clustering of the nucleons into alpha particles may occur, and the alpha
- * particles may move outside the nucleus radius as a sort of "pre-tunneling" behavior. The nucleons portrayed in this
- * view do not track model elements. In other words, the dynamic behavior is a view-specific feature of this Node.
+ * DynamicNucleusNode is a composite Scenery Node that portrays an atomic nucleus made of protons and neutrons that are
+ * moving around but sticking together as a dynamic blob. Depending on the decay type of the atom being portrayed, some
+ * clustering of the nucleons into alpha particles may occur, and the alpha particles may move outside the nucleus
+ * radius as a sort of "pre-tunneling" behavior. The nucleons portrayed in this view do not track model elements. In
+ * other words, the dynamic behavior is a view-specific feature of this Node.
  *
  * @author John Blanco (PhET Interactive Simulations)
  */
@@ -31,9 +32,6 @@ import AlphaParticleNode from './AlphaParticleNode.js';
 import AtomLabelNode from './AtomLabelNode.js';
 
 type SelfOptions = {
-
-  // The radius to use for nucleons, in screen coordinates.
-  nucleonRadius?: number;
 
   // The radius to which particles that can tunnel can move prior to tunneling.
   escapeRadiusProperty?: TReadOnlyProperty<number> | null;
@@ -66,14 +64,14 @@ const UPDATE_FREQUENCY_RANGE = new Range( 10, 25 );
 
 // The range of allowed particle jumps, in particle radii. This is used when animating the nucleus and trying to make it
 // appear more or less agitated.
-const PARTICLE_JUMP_RANGE = new Range( 0.2, 1.5 );
+const PARTICLE_JUMP_RANGE = new Range( 0.2, 1 );
 
 // The range of allowed particle swaps that can occur on an update. This is used when animating the nucleus and trying
 // to make it appear more or less agitated. A swap means two particles change positions in the nucleus structure.
 const PARTICLE_SWAP_PROPORTION_RANGE = new Range( 0.01, 0.03 );
 
 // The label is positioned this many nucleon radii above the nucleus center.
-const LABEL_OFFSET_IN_NUCLEON_RADII = 10;
+const LABEL_OFFSET_IN_NUCLEON_RADII = 8;
 
 // Maximum number of particle nodes that will be supported by the trellis structure. Make this bigger if you need to.
 const MAX_PARTICLE_NODES_SUPPORTED = 200;
@@ -90,10 +88,6 @@ const SHOW_RADIUS_NODE = false;
 const MIN_AGITATION_LEVEL = 0.1;
 
 class DynamicNucleusNode extends Node implements Updatable {
-
-  // The radius of the individual nucleons that comprise the nucleus.  All nucleons are depicted as spheres with this
-  // radius.
-  private readonly nucleonRadius: number;
 
   // The model atom that this Node depicts and uses for particle configuration data.
   private readonly atom: NuclearDecayAtom;
@@ -150,7 +144,6 @@ class DynamicNucleusNode extends Node implements Updatable {
   ) {
 
     const options = optionize<DynamicNucleusNodeOptions, SelfOptions, NodeOptions>()( {
-      nucleonRadius: 5,
       escapeRadiusProperty: null
     }, providedOptions );
 
@@ -158,19 +151,13 @@ class DynamicNucleusNode extends Node implements Updatable {
 
     this.atom = atom;
     this.modelViewTransformProperty = modelViewTransformProperty;
-    this.nucleonRadius = options.nucleonRadius;
     this.escapeRadiusProperty = options.escapeRadiusProperty;
 
+    // Create and add the label for the nucleus.
     this.atomLabelNode = new AtomLabelNode( atom, {
       font: NuclearDecayCommonConstants.TITLE_BOLD_FONT
     } );
     this.addChild( this.atomLabelNode );
-
-    // Keep the label positioned above the nucleus.
-    this.atomLabelNode.localBoundsProperty.link( () => {
-      this.atomLabelNode.centerX = 0;
-      this.atomLabelNode.bottom = -LABEL_OFFSET_IN_NUCLEON_RADII * this.nucleonRadius;
-    } );
 
     // Add a listener to the atom's step emitter that implements the dynamic motion of the particles in the nucleus.
     atom.steppedEmitter.addListener( dt => {
@@ -185,8 +172,7 @@ class DynamicNucleusNode extends Node implements Updatable {
     } );
 
     // Create the positional structure, which is like a trellis in a garden, that will be used to efficiently position
-    // the particle nodes that comprise this nucleus.  It is initially created based on the size of the nucleons, then
-    // scaled to match the prescribed nucleus radius.
+    // the particle nodes that comprise this nucleus. Its size is derived from the size of the individual nucleons.
     this.particleNodeTrellis = [];
     let currentShell = 0;
     let currentShellRadius = 0;
@@ -217,12 +203,12 @@ class DynamicNucleusNode extends Node implements Updatable {
           // Time to move to the next shell.
           currentShell++;
 
-          // Calculate the shell radius using a function that increases forever, but in decreasing amounts in order to
-          // create a round look with the collection of particles. The multiplier at the end is empirically determined
-          // and can be adjusted to create a more or less tightly packed appearance.
-          currentShellRadius = this.nucleonRadius * Math.log( currentShell + 1 ) * 2.25;
+          // Calculate the radius for this new shell.
+          currentShellRadius = this.getNucleonShellRadius( currentShell );
 
-          particlesAllowedInThisShell = Math.floor( 2 * Math.PI * currentShellRadius / ( this.nucleonRadius * 2 ) );
+          // Determine how many nucleons could fit in this shell.
+          particlesAllowedInThisShell = Math.floor( 2 * Math.PI * currentShellRadius / ( this.getNucleonRadius() * 2 ) );
+
           particlePositionsInThisShell = 0;
 
           // Set an initial angle that is random for a somewhat chaotic look.
@@ -236,7 +222,8 @@ class DynamicNucleusNode extends Node implements Updatable {
       }
     }
 
-    // Add the background circle. The initial size is arbitrary - it will be sized on particle updates.
+    // Add the background circle that prevents the background from bleeding through as the particles get moved around.
+    // The initial size is arbitrary - it will be sized on particle updates.
     const backgroundCircleColor = PARTICLE_COLORS.neutron.blend( PARTICLE_COLORS.proton, 0.5 ).colorUtilsDarker( 0.5 );
     this.backgroundCircle = new Circle( 1, { fill: backgroundCircleColor } );
     this.addChild( this.backgroundCircle );
@@ -251,16 +238,18 @@ class DynamicNucleusNode extends Node implements Updatable {
 
     // Update the nucleus radius and position if the model-view transform changes. Note that this does the initial
     // positioning too.
-    modelViewTransformProperty.link( mvt => {
-      const nucleonCount = this.atom.getCurrentAtomConfiguration().getMassNumber();
-      const nucleusRadiusInModelUnits = getNucleusRadius( nucleonCount, NuclearDecayCommonConstants.NUCLEON_RADIUS );
-      this.setNucleusRadius( mvt.modelToViewDeltaX( nucleusRadiusInModelUnits ) );
+    modelViewTransformProperty.link( () => {
+      this.updateNucleonSize();
+      this.updateTrellisSize();
+      this.updateLabelPosition();
+      this.updateBackgroundNode();
       this.update();
     } );
 
     if ( SHOW_RADIUS_NODE ) {
-      const viewRadius = this.getNucleusRadius();
-      this.radiusNode = new Circle( viewRadius, {
+
+      // Create the radius node. The initial size is arbitrary, as it will be updated
+      this.radiusNode = new Circle( 10, {
         fill: Color.GREEN.withAlpha( 0.1 ),
         stroke: Color.GREEN.withAlpha( 0.5 ),
         center: Vector2.ZERO
@@ -278,11 +267,12 @@ class DynamicNucleusNode extends Node implements Updatable {
   private getNucleusRadius(): number {
     const nucleonCount = this.atom.getCurrentAtomConfiguration().getMassNumber();
     const nucleusRadiusInModelUnits = getNucleusRadius( nucleonCount, NuclearDecayCommonConstants.NUCLEON_RADIUS );
-    const nucleusRadiusInViewCoordinates = this.modelViewTransformProperty.value.modelToViewDeltaX(
-      nucleusRadiusInModelUnits
-    );
-    this.setNucleusRadius( nucleusRadiusInViewCoordinates );
-    return nucleusRadiusInViewCoordinates;
+    return this.modelViewTransformProperty.value.modelToViewDeltaX( nucleusRadiusInModelUnits );
+  }
+
+  private updateLabelPosition(): void {
+    this.atomLabelNode.centerX = 0;
+    this.atomLabelNode.bottom = -LABEL_OFFSET_IN_NUCLEON_RADII * this.getNucleonRadius();
   }
 
   public agitateNucleus(): void {
@@ -297,34 +287,42 @@ class DynamicNucleusNode extends Node implements Updatable {
     this.updateAgitationLevel();
   }
 
+  private updateTrellisSize(): void {
+    this.particleNodeTrellis.forEach( ( shell, index ) => {
+      shell.radius = this.getNucleonShellRadius( index );
+      shell.locations.forEach( location => {
+        if ( location.particle !== null ) {
+          location.particle.center = this.getParticlePositionForTrellisLocation( shell, location );
+        }
+      } );
+    } );
+  }
+
+  private updateNucleonSize(): void {
+    const nucleonRadiusInViewUnits = this.getNucleonRadius();
+    [ ...this.protonNodes, ...this.neutronNodes ].forEach( nucleonNode => {
+      nucleonNode.setRadius( nucleonRadiusInViewUnits );
+    } );
+
+    // Make the alpha particle nucleons a little smaller than the other nucleons. Otherwise, it doesn't look quite right.
+    this.alphaParticleNodes.forEach( alphaParticleNode => {
+      alphaParticleNode.setNucleonRadius( nucleonRadiusInViewUnits * 0.75 );
+    } );
+  }
+
   /**
-   * Scale the shell radii so the outer shell matches the requested nucleus radius, and reposition any occupied
-   * trellis locations to their new shell radii.
-   * @param radius - Desired overall nucleus radius in view coordinates.
+   * Update the size of the background node. Note that this is based on the particle trellis, so make sure that's up to
+   * date before calling this.
    */
-  private setNucleusRadius( radius: number ): void {
+  private updateBackgroundNode(): void {
 
-    // TODO: See https://github.com/phetsims/alpha-decay/issues/28. Scaling the nucleus size without scaling the
-    //       nucleons is causing weird behavior, so this is bypassed for now, and we need to work out something better.
-
-    // Determine the radius of the outer shell. Somewhat arbitrarily, the code says we have to have and outer shell of
-    // at least one nucleon radius.  This value can't be zero or the calculations won't work.
-    // const targetOuterShellRadius = Math.max( radius - this.nucleonRadius, this.nucleonRadius );
-
-    // const currentOuterShellRadius = this.particleNodeTrellis[ this.particleNodeTrellis.length - 1 ].radius;
-    // const scaleFactor = targetOuterShellRadius / currentOuterShellRadius;
-
-    // this.particleNodeTrellis.forEach( shell => {
-    //   shell.radius *= scaleFactor;
-    //   shell.locations.forEach( location => {
-    //     if ( location.particle !== null ) {
-    //       location.particle.center = this.getParticlePositionForTrellisLocation( shell, location );
-    //     }
-    //   } );
-    // } );
-
-    // this.updateAgitationLevel( targetOuterShellRadius );
-    this.updateParticlePositions();
+    // Find the radius of the outermost shell in the trellis.
+    const maxShellRadius = this.particleNodeTrellis.reduce(
+      ( maxRadius, shell ) => Math.max( maxRadius, shell.radius ),
+      0
+    );
+    this.backgroundCircle.setRadius( maxShellRadius * 0.8 );
+    this.backgroundCircle.moveToBack();
   }
 
   /**
@@ -524,8 +522,8 @@ class DynamicNucleusNode extends Node implements Updatable {
       }
 
       locationForParticle.jitterOffset = new Vector2(
-        dotRandom.nextDouble() * this.maxParticleJump * this.nucleonRadius, 0
-      ).rotated( dotRandom.nextDouble() );
+        dotRandom.nextDouble() * this.maxParticleJump * this.getNucleonRadius(), 0
+      ).rotated( dotRandom.nextDouble() * 2 * Math.PI );
       particleNode.center = this.getParticlePositionForTrellisLocation( shellForParticle, locationForParticle );
     } );
 
@@ -571,15 +569,11 @@ class DynamicNucleusNode extends Node implements Updatable {
 
     if ( !this.atom.hasDecayed ) {
 
-      // Log the calculated nucleus size: the furthest-out particle's center distance plus one nucleon radius.
-      const particleNodesSortedByDistance = [ ...particleNodesInNucleus ].sort( ( a, b ) => b.center.magnitude - a.center.magnitude );
-      const nucleusSize = particleNodesSortedByDistance[ 0 ].center.magnitude + this.nucleonRadius;
-
       // If an escape radius was provided, randomly move some alpha particles out of the trellis and into the
       // almost-tunneling state, where they appear to move outside the nucleus but inside the escape radius.
       if ( this.escapeRadiusProperty ) {
         const escapeRadius = this.escapeRadiusProperty.value;
-        const minimumAlmostTunnelingDistance = nucleusSize;
+        const minimumAlmostTunnelingDistance = this.getNucleusRadius();
 
         if ( this.alphaParticleNodes.length > 0 && escapeRadius > minimumAlmostTunnelingDistance ) {
           this.alphaParticleNodes.forEach( alphaParticleNode => {
@@ -670,6 +664,12 @@ class DynamicNucleusNode extends Node implements Updatable {
     } );
   }
 
+  /**
+   * Get the nucleon radius in view coordinates using the current model-view transform.
+   */
+  private getNucleonRadius(): number {
+    return this.modelViewTransformProperty.value.modelToViewDeltaX( NuclearDecayCommonConstants.NUCLEON_RADIUS );
+  }
 
   /**
    * Return the provided alpha particle node to the nucleus.
@@ -728,21 +728,23 @@ class DynamicNucleusNode extends Node implements Updatable {
 
     // Create the particle nodes.
 
+    const nucleonRadius = this.getNucleonRadius();
+
     _.times( individualProtonCount, () => {
-      const protonNode = DynamicNucleusNode.createProtonNode( this.nucleonRadius );
+      const protonNode = DynamicNucleusNode.createProtonNode( nucleonRadius );
       this.protonNodes.push( protonNode );
     } );
 
     _.times( individualNeutronCount, () => {
-      const neutronNode = DynamicNucleusNode.createNeutronNode( this.nucleonRadius );
+      const neutronNode = DynamicNucleusNode.createNeutronNode( nucleonRadius );
       this.neutronNodes.push( neutronNode );
     } );
 
     _.times( alphaParticleCount, () => {
-      const alphaParticleNode = DynamicNucleusNode.createAlphaParticle(
-        this.nucleonRadius,
-        dotRandom.nextDouble() * 2 * Math.PI
-      );
+      const alphaParticleNode = new AlphaParticleNode( { nucleonDiameter: nucleonRadius * 1.75 } );
+
+      // Rotate each one a random amount so the nucleus has a somewhat chaotic look.
+      alphaParticleNode.rotation = dotRandom.nextDouble() * 2 * Math.PI;
       this.alphaParticleNodes.push( alphaParticleNode );
     } );
 
@@ -757,13 +759,10 @@ class DynamicNucleusNode extends Node implements Updatable {
     // Make sure the label is out in front of the z-order.
     this.atomLabelNode.moveToFront();
 
-    // Make sure the background is small enough not to peak around the edges and at the back of the z-order.
-    const maxParticleDistance = particleNodesSortedByDistance[ 0 ].center.distance( Vector2.ZERO );
-    this.backgroundCircle.setRadius( maxParticleDistance * 0.8 );
-    this.backgroundCircle.moveToBack();
-
     // If the radius node is present, make sure it is in front of the z-order.
     this.radiusNode && this.radiusNode.moveToFront();
+
+    this.updateBackgroundNode();
 
     this.currentlyDepictedAtomConfig = activeAtomConfig;
   }
@@ -821,27 +820,23 @@ class DynamicNucleusNode extends Node implements Updatable {
     return new ParticleNode( 'proton', nucleonRadius );
   }
 
-  private static createNeutronNode( nucleonRadius: number ): ParticleNode {
-    return new ParticleNode( 'neutron', nucleonRadius );
+  /**
+   * Get the radius in view coordinates of the nucleon shell number provided. These values are used to position the
+   * nucleon nodes to get the round-ish sort of appearance needed for the nucleus.
+   */
+  private getNucleonShellRadius( shellNumber: number ): number {
+
+    // Calculate the shell radius using a function that increases forever, but in decreasing amounts in order to
+    // create a round look with the collection of particles. The multiplier at the end is empirically determined
+    // and can be adjusted to create a more or less tightly packed appearance.
+    const shellRadiusInModelUnits = NuclearDecayCommonConstants.NUCLEON_RADIUS * Math.log( shellNumber + 1 ) * 2.25;
+
+    // Transform the value into view units.
+    return this.modelViewTransformProperty.value.modelToViewDeltaX( shellRadiusInModelUnits );
   }
 
-  private static createAlphaParticle( nucleonRadius: number, rotationalAngle: number ): Node {
-    affirm( rotationalAngle >= 0 && rotationalAngle <= Math.PI * 2, 'out of range rotation angle' );
-    const p1 = DynamicNucleusNode.createProtonNode( nucleonRadius );
-    const p2 = DynamicNucleusNode.createProtonNode( nucleonRadius );
-    const n1 = DynamicNucleusNode.createNeutronNode( nucleonRadius );
-    const n2 = DynamicNucleusNode.createNeutronNode( nucleonRadius );
-    const nucleonPositioningVector = new Vector2( -nucleonRadius, 0 ).rotated( rotationalAngle );
-    n1.center = nucleonPositioningVector.copy();
-    nucleonPositioningVector.rotate( Math.PI );
-    n2.center = nucleonPositioningVector.copy();
-    nucleonPositioningVector.multiplyScalar( 0.75 ); // multiplier empirically determined
-    nucleonPositioningVector.rotate( Math.PI / 2 );
-    p1.center = nucleonPositioningVector.copy();
-    nucleonPositioningVector.rotate( Math.PI );
-    p2.center = nucleonPositioningVector.copy();
-
-    return new Node( { children: [ p2, n1, n2, p1 ] } );
+  private static createNeutronNode( nucleonRadius: number ): ParticleNode {
+    return new ParticleNode( 'neutron', nucleonRadius );
   }
 }
 

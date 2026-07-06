@@ -198,12 +198,15 @@ export default class NuclearDecayScreenView extends ScreenView {
         if ( particle.type === 'alpha' ) {
           const particleNode = new AlphaParticleNode( {
             nucleonDiameter: this.modelViewTransformProperty.value.modelToViewDeltaX( NuclearDecayCommonConstants.NUCLEON_RADIUS ) * 2,
-            visibleProperty: particle.isActiveProperty,
-            scale: 0.5 // TODO Instead of manually setting the scale of the particle, connect to the MVT https://github.com/phetsims/alpha-decay/issues/19
+            visibleProperty: particle.isActiveProperty
           } );
           this.addChild( particleNode );
           particle.positionProperty.link( position => {
             particleNode.center = this.modelViewTransformProperty.value.modelToViewPosition( position );
+          } );
+          this.modelViewTransformProperty.lazyLink( mvt => {
+            const nucleonRadiusInViewUnits = mvt.modelToViewDeltaX( NuclearDecayCommonConstants.NUCLEON_RADIUS );
+            particleNode.setNucleonRadius( nucleonRadiusInViewUnits );
           } );
         }
         else {
