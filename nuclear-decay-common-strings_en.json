@@ -625,6 +625,9 @@
       "atHalfLifeContextResponse": {
         "value": "{ $nth ->\n[1] At first half-life, about 50 percent remains.\n[2] At second half-life, about 25 percent remains.\n[3] At third half-life, about 12.5 percent remains.\n[4] At fourth half-life, about 6.3 percent remains.\n[5] At fifth half-life, about 3.1 percent remains.\n*[other] At sixth half-life, about 1.6 percent remains.\n}"
       },
+      "atHalfLifeContextResponseShort": {
+        "value": "{ $nth ->\n[1] At first half-life.\n[2] At second half-life.\n[3] At third half-life.\n[4] At fourth half-life.\n[5] At fifth half-life.\n*[other] At sixth half-life.\n}"
+      },
       "undecayedCheckbox": {
         "accessibleName": {
           "value": "{ $isotope } Curve"

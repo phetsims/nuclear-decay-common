@@ -464,6 +464,8 @@ type StringsType = {
       };
       'atHalfLifeContextResponse': string;
       'atHalfLifeContextResponseStringProperty': LocalizedStringProperty;
+      'atHalfLifeContextResponseShort': string;
+      'atHalfLifeContextResponseShortStringProperty': LocalizedStringProperty;
       'undecayedCheckbox': {
         'accessibleName': string;
         'accessibleNameStringProperty': LocalizedStringProperty;

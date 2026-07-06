@@ -275,6 +275,15 @@ a11y:
       [5] At fifth half-life, about 3.1 percent remains.
       *[other] At sixth half-life, about 1.6 percent remains.
       }
+    atHalfLifeContextResponseShort: |-
+      { $nth ->
+      [1] At first half-life.
+      [2] At second half-life.
+      [3] At third half-life.
+      [4] At fourth half-life.
+      [5] At fifth half-life.
+      *[other] At sixth half-life.
+      }
     undecayedCheckbox:
       accessibleName: '{ $isotope } Curve'
       accessibleHelpText: Show or hide decay curve.

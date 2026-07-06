@@ -197,6 +197,7 @@ addToMapIfDefined( 'a11y_decayRate_decayGraphPanel_checkedComponentsListOne', 'a
 addToMapIfDefined( 'a11y_decayRate_decayGraphPanel_checkedComponentsListTwo', 'a11y.decayRate.decayGraphPanel.checkedComponentsListTwoStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_decayGraphPanel_checkedComponentsListThree', 'a11y.decayRate.decayGraphPanel.checkedComponentsListThreeStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_atHalfLifeContextResponse', 'a11y.decayRate.atHalfLifeContextResponseStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_atHalfLifeContextResponseShort', 'a11y.decayRate.atHalfLifeContextResponseShortStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_undecayedCheckbox_accessibleName', 'a11y.decayRate.undecayedCheckbox.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_undecayedCheckbox_accessibleHelpText', 'a11y.decayRate.undecayedCheckbox.accessibleHelpTextStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_undecayedCheckbox_accessibleContextResponseChecked', 'a11y.decayRate.undecayedCheckbox.accessibleContextResponseCheckedStringProperty' );
@@ -512,6 +513,7 @@ const NuclearDecayCommonFluent = {
         checkedComponentsListThree: new FluentPattern<{ item1: FluentVariable, item2: FluentVariable, item3: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_decayGraphPanel_checkedComponentsListThree', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.decayGraphPanel.checkedComponentsListThreeStringProperty' ), [{"name":"item1"},{"name":"item2"},{"name":"item3"}] )
       },
       atHalfLifeContextResponse: new FluentPattern<{ nth: 1 | 2 | 3 | 4 | 5 | number | 'other' | TReadOnlyProperty<1 | 2 | 3 | 4 | 5 | number | 'other'> }>( fluentSupport.bundleProperty, 'a11y_decayRate_atHalfLifeContextResponse', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.atHalfLifeContextResponseStringProperty' ), [{"name":"nth","variants":[1,2,3,4,5,{"type":"number","value":"other"}]}] ),
+      atHalfLifeContextResponseShort: new FluentPattern<{ nth: 1 | 2 | 3 | 4 | 5 | number | 'other' | TReadOnlyProperty<1 | 2 | 3 | 4 | 5 | number | 'other'> }>( fluentSupport.bundleProperty, 'a11y_decayRate_atHalfLifeContextResponseShort', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.atHalfLifeContextResponseShortStringProperty' ), [{"name":"nth","variants":[1,2,3,4,5,{"type":"number","value":"other"}]}] ),
       undecayedCheckbox: {
         accessibleName: new FluentPattern<{ isotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_decayRate_undecayedCheckbox_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.undecayedCheckbox.accessibleNameStringProperty' ), [{"name":"isotope"}] ),
         accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_undecayedCheckbox_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.undecayedCheckbox.accessibleHelpTextStringProperty' ) ),

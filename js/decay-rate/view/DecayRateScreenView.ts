@@ -316,7 +316,14 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
         previousHalfLivesElapsed = 0;
       }
       if ( halfLivesElapsed > previousHalfLivesElapsed && halfLivesElapsed <= 6 ) {
-        this.addAccessibleContextResponse( NuclearDecayCommonFluent.a11y.decayRate.atHalfLifeContextResponse.format( {
+
+        // Use the full response (with percentage remaining) at slow speed or when stepping forward while paused.
+        // At normal speed while playing, use the shorter response.
+        const useFullResponse = model.timeSpeedProperty.value === TimeSpeed.SLOW || !model.isPlayingProperty.value;
+        const response = useFullResponse ?
+                          NuclearDecayCommonFluent.a11y.decayRate.atHalfLifeContextResponse :
+                          NuclearDecayCommonFluent.a11y.decayRate.atHalfLifeContextResponseShort;
+        this.addAccessibleContextResponse( response.format( {
           nth: halfLivesElapsed
         } ) );
       }
