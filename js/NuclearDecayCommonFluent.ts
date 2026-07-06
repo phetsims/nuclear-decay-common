@@ -215,6 +215,7 @@ addToMapIfDefined( 'a11y_decayRate_dataProbeCheckbox_accessibleContextResponseCh
 addToMapIfDefined( 'a11y_decayRate_dataProbeCheckbox_accessibleContextResponseUnchecked', 'a11y.decayRate.dataProbeCheckbox.accessibleContextResponseUncheckedStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_sortButton_accessibleName', 'a11y.decayRate.sortButton.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_sortButton_accessibleHelpText', 'a11y.decayRate.sortButton.accessibleHelpTextStringProperty' );
+addToMapIfDefined( 'a11y_decayRate_sortButton_accessibleContextResponse', 'a11y.decayRate.sortButton.accessibleContextResponseStringProperty' );
 addToMapIfDefined( 'a11y_decayRate_resetSampleButton_accessibleName', 'a11y.decayRate.resetSampleButton.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_particlesLegendPanel_accessibleList_leadingParagraph', 'a11y.particlesLegendPanel.accessibleList.leadingParagraphStringProperty' );
 addToMapIfDefined( 'a11y_particlesLegendPanel_accessibleList_proton', 'a11y.particlesLegendPanel.accessibleList.protonStringProperty' );
@@ -537,7 +538,8 @@ const NuclearDecayCommonFluent = {
       },
       sortButton: {
         accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_sortButton_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.sortButton.accessibleNameStringProperty' ) ),
-        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_sortButton_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.sortButton.accessibleHelpTextStringProperty' ) )
+        accessibleHelpTextStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_sortButton_accessibleHelpText', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.sortButton.accessibleHelpTextStringProperty' ) ),
+        accessibleContextResponseStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_sortButton_accessibleContextResponse', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.sortButton.accessibleContextResponseStringProperty' ) )
       },
       resetSampleButton: {
         accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_decayRate_resetSampleButton_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.decayRate.resetSampleButton.accessibleNameStringProperty' ) )

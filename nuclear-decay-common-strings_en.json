@@ -675,7 +675,7 @@
           "value": "Explore decay graph with or without values."
         },
         "accessibleContextResponseChecked": {
-          "value": "Data Probe available in graph."
+          "value": "Data probe available in graph."
         },
         "accessibleContextResponseUnchecked": {
           "value": "Data probe removed from graph."
@@ -687,6 +687,9 @@
         },
         "accessibleHelpText": {
           "value": "Group atoms by isotope."
+        },
+        "accessibleContextResponse": {
+          "value": "Atoms sorted."
         }
       },
       "resetSampleButton": {

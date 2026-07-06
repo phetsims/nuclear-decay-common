@@ -293,11 +293,12 @@ a11y:
     dataProbeCheckbox:
       accessibleName: Data Probe
       accessibleHelpText: Explore decay graph with or without values.
-      accessibleContextResponseChecked: Data Probe available in graph.
+      accessibleContextResponseChecked: Data probe available in graph.
       accessibleContextResponseUnchecked: Data probe removed from graph.
     sortButton:
       accessibleName: Sort
       accessibleHelpText: Group atoms by isotope.
+      accessibleContextResponse: Atoms sorted.
     resetSampleButton:
       accessibleName: Reset Sample
   particlesLegendPanel:

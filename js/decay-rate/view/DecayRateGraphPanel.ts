@@ -68,6 +68,9 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
   // Data probe grabber exposed for pdomOrder placement under the Decay Graph heading.
   public readonly dataProbeGrabber: DataProbeGrabberNode;
 
+  // Checkboxes exposed for pdomOrder
+  public readonly checkboxes: Node;
+
   public constructor(
     private readonly model: DecayRateModel,
     private readonly visibleProperties: DecayRateVisibleProperties,
@@ -436,13 +439,7 @@ export default class DecayRateGraphPanel extends NuclearDecayPanel {
     this.decayRateModel = model;
     this.dataProbeXProperty = dataProbeXProperty;
     this.dataProbeGrabber = dataProbeGrabber;
-
-    this.pdomOrder = [
-      undecayedCheckbox,
-      decayedCheckbox,
-      halfLivesCheckbox,
-      dataProbeCheckbox
-    ];
+    this.checkboxes = checkboxGroup;
 
     this.dataProbeXProperty.link( position => {
       dataProbeNode.centerX = clamp( position, 0, GRAPH_WIDTH );

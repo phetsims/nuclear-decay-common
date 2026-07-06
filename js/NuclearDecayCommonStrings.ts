@@ -509,6 +509,8 @@ type StringsType = {
         'accessibleNameStringProperty': LocalizedStringProperty;
         'accessibleHelpText': string;
         'accessibleHelpTextStringProperty': LocalizedStringProperty;
+        'accessibleContextResponse': string;
+        'accessibleContextResponseStringProperty': LocalizedStringProperty;
       };
       'resetSampleButton': {
         'accessibleName': string;

@@ -159,6 +159,9 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
       listener: () => {
         model.sort();
         this.updateAtomNodes();
+        this.addAccessibleContextResponse(
+          NuclearDecayCommonFluent.a11y.decayRate.sortButton.accessibleContextResponseStringProperty
+        );
       }
     } );
 
@@ -333,6 +336,7 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
     // Control Area pdomOrder:
     //   Isotope curve checkboxes → Half-lives checkbox → Data probe checkbox → Time controls → Reset All
     this.pdomControlAreaNode.pdomOrder = [
+      this.decayRateGraphPanel.checkboxes,
       timeControlNode,
       resetAllButton
     ];
