@@ -2,8 +2,8 @@
 
 /**
  * VibratingDecayingAtomNode is a representation of an atomic nucleus that depicts individual protons and neutrons,
- * vibrates (i.e. does an animation where it jumps around) before it decays and then is still after, and reconfigures
- * the nucleus when decay occurs.
+ * vibrates (i.e. does an animation where it jumps around) before it decays and then is still post decay, and
+ * reconfigures the nucleus when decay occurs.
  *
  * @author John Blanco (PhET Interactive Simulations)
  */
@@ -28,7 +28,7 @@ type SelfOptions = {
 export type VibratingDecayingAtomNodeOptions = SelfOptions & NodeOptions;
 
 // Period between vibration updates for undecayed nuclei, in seconds.
-const VIBRATION_UPDATE_PERIOD = 0.032;
+const VIBRATION_UPDATE_PERIOD = ( 1 / 60 ) * 2;
 
 // Maximum offset for vibration, in screen coordinates.
 const MAX_VIBRATION_OFFSET = 4;
