@@ -50,10 +50,10 @@ type SelfOptions = {
 export type EnergyDiagramAccordionBoxOptions = SelfOptions & NuclearDecayAccordionBoxOptions;
 
 const CONTENT_X_MARGIN = 10;
-const CONTENT_Y_MARGIN = 20;
+const CONTENT_Y_MARGIN = 10;
 
 // Height of the graph region (y-axis length). Kept constant; width is derived from provided bounds.
-const GRAPH_HEIGHT = 160;
+const GRAPH_HEIGHT = 200;
 
 // Fraction of GRAPH_HEIGHT that lies above the x-axis (positive-energy region).
 // 0.5 → equal split; increase to give more room to the positive region, decrease for more negative room.
@@ -229,7 +229,8 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
     } );
     const alphaParticleEnergyIndicator = new Node( {
       children: [ alphaParticleEnergyGraphLine, alphaParticleEnergyGrabber ],
-      cursor: 'pointer'
+      cursor: 'pointer',
+      enabledProperty: model.selectedIsotopeProperty.derived( isotope => isotope === 'custom' )
     } );
 
     // The enlarged pointer area is set on each grabber itself (translated into its local frame), rather than on
@@ -399,8 +400,8 @@ export default class EnergyDiagramAccordionBox extends NuclearDecayAccordionBox 
         preDecayWellLabel,
         yAxis,
         xAxis,
-        potentialEnergyIndicator,
         alphaParticleEnergyIndicator,
+        potentialEnergyIndicator,
         particleLayer
       ]
     } );

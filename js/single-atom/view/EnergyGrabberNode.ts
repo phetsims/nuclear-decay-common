@@ -11,6 +11,7 @@ import DerivedProperty from '../../../../axon/js/DerivedProperty.js';
 import NumberProperty from '../../../../axon/js/NumberProperty.js';
 import Range from '../../../../dot/js/Range.js';
 import { equalsEpsilon } from '../../../../dot/js/util/equalsEpsilon.js';
+import { roundSymmetric } from '../../../../dot/js/util/roundSymmetric.js';
 import optionize from '../../../../phet-core/js/optionize.js';
 import Orientation from '../../../../phet-core/js/Orientation.js';
 import StrictOmit from '../../../../phet-core/js/types/StrictOmit.js';
@@ -40,7 +41,7 @@ export default class EnergyGrabberNode extends AccessibleSlider( Path, 1 ) {
     const shiftStepSize = 0.05;
 
     const valueChangeSoundPlayer = new ValueChangeSoundPlayer( energyProperty.rangeProperty, {
-      numberOfMiddleThresholds: energyProperty.rangeProperty.value.getLength() / shiftStepSize
+      numberOfMiddleThresholds: roundSymmetric( energyProperty.rangeProperty.value.getLength() / shiftStepSize )
     } );
     let previousValue = energyProperty.value;
     let previousHalfLife = model.halfLifeProperty.value;

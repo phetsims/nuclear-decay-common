@@ -187,7 +187,7 @@ a11y:
         remains and reset the sample to repeat your experiment. A timeline shows the moment of each decay
         relative to the half-life. With a custom isotope, you can also experiment with the half-life time.
       controlArea: >-
-        Checkboxes let you show or hide the isotope labels and stopwatch. You can control how fast the action
+        Checkboxes let you show or hide isotope labels and stopwatch. You can control how fast the action
         happens including buttons to pause and step forward. Reset sim to start over.
       currentDetails:
         select_atom:

@@ -59,14 +59,14 @@ export default class SingleAtomModel extends NuclearDecayModel {
       phetioReadOnly: true
     } );
 
-    this.potentialEnergyProperty = new NumberProperty( 1, {
+    this.potentialEnergyProperty = new NumberProperty( 0.7, {
       range: new Range( 0.1, 1 ),
       tandem: options.tandem.createTandem( 'potentialEnergyProperty' ),
       phetioFeatured: true
     } );
 
-    this.alphaParticleEnergyProperty = new NumberProperty( 0.5, {
-      range: new Range( -1 * NuclearDecayCommonConstants.WELL_DEPTH, 1 ),
+    this.alphaParticleEnergyProperty = new NumberProperty( 0.25, {
+      range: new Range( -0.4, 1 ),
       tandem: options.tandem.createTandem( 'alphaParticleEnergyProperty' ),
       phetioFeatured: true
     } );
@@ -88,12 +88,15 @@ export default class SingleAtomModel extends NuclearDecayModel {
       tandem: particleCountsTandem.createTandem( 'alphaParticleDistanceProperty' )
     } );
 
-    this.selectedIsotopeProperty.link( isotope => {
-
-      // Default energy values for polonium.
-      if ( isotope === 'polonium-211' ) {
-        this.potentialEnergyProperty.value = 0.7;
-        this.alphaParticleEnergyProperty.value = 0.25;
+    this.selectedIsotopeProperty.lazyLink( isotope => {
+      if ( isotope === 'custom' ) {
+        this.customHalfLifeProperty.value = NuclearDecayCommonConstants.EXPONENTIAL_HALF_LIFE_EXPONENT_RANGE.getNormalizedValue(
+          Math.log10( NuclearDecayAtom.getHalfLife( 'polonium-211' )! )
+        );
+      }
+      else {
+        this.potentialEnergyProperty.reset();
+        this.alphaParticleDistanceProperty.reset();
       }
     } );
 

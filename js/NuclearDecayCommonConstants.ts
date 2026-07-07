@@ -28,7 +28,7 @@ export default class NuclearDecayCommonConstants {
   public static readonly MAX_ATOMS_THIRD_SCREEN = 1000;
 
   // Time ranges for custom half-life in linear time mode.
-  public static readonly LINEAR_HALF_LIFE = new Range( 0.1, 3 ); // seconds
+  public static readonly LINEAR_HALF_LIFE = new Range( 0.2, 3 ); // seconds
 
   // Time exponent ranges for custom half-life in exponential time mode. The actual half-life will be 10^x.
   public static readonly EXPONENTIAL_HALF_LIFE_EXPONENT_RANGE = EXPONENTIAL_HALF_LIFE_EXPONENT_RANGE;
@@ -106,7 +106,7 @@ export default class NuclearDecayCommonConstants {
 
   // Screen view margins
   public static readonly SCREEN_VIEW_X_MARGIN = 15;
-  public static readonly SCREEN_VIEW_Y_MARGIN = 15;
+  public static readonly SCREEN_VIEW_Y_MARGIN = 7;
 
   // Text constants
   public static readonly TEXT_MAX_WIDTH = 200;
@@ -135,7 +135,7 @@ export default class NuclearDecayCommonConstants {
   public static readonly SLOW_SPEED_SCALE = 0.1;
 
   // How deep the well is with respect to half the graph height. 1 corresponds to the lower end of the Y axis.
-  public static readonly WELL_DEPTH = 0.3;
+  public static readonly WELL_DEPTH = 0.6;
 
   // We work with normalized energy and halfLife values so it's easier to map between them
   public static readonly CALCULATE_HALF_LIFE =
