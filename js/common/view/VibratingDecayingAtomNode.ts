@@ -121,6 +121,9 @@ export default class VibratingDecayingAtomNode extends Node implements Updatable
 
       this.update();
     } );
+
+    // Update if the MVT changes.
+    modelViewTransformProperty.lazyLink( () => this.update() );
   }
 
   /**
