@@ -14,7 +14,7 @@ import VBox from '../../../../scenery/js/layout/nodes/VBox.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import RichText from '../../../../scenery/js/nodes/RichText.js';
 import ParticleNode from '../../../../shred/js/view/ParticleNode.js';
-import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import NuclearDecayCommonStrings from '../../NuclearDecayCommonStrings.js';
 import AlphaParticleNode from './AlphaParticleNode.js';

@@ -12,7 +12,7 @@ import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.
 import ModelViewTransform2 from '../../../../phetcommon/js/view/ModelViewTransform2.js';
 import Circle, { CircleOptions } from '../../../../scenery/js/nodes/Circle.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
-import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayAtom, { ISOTOPE_TO_COLOR } from '../model/NuclearDecayAtom.js';
 import Updatable from '../model/Updatable.js';
 

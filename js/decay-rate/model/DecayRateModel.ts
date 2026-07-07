@@ -17,7 +17,7 @@ import IOType from '../../../../tandem/js/types/IOType.js';
 import NumberIO from '../../../../tandem/js/types/NumberIO.js';
 import { StartingIsotopes } from '../../common/model/NuclearDecayAtom.js';
 import NuclearDecayModel, { NuclearDecayModelOptions } from '../../common/model/NuclearDecayModel.js';
-import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonConstants from '../../common/NuclearDecayCommonConstants.js';
 
 type SelfOptions = EmptySelfOptions;
 

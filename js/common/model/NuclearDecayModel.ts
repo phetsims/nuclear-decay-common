@@ -33,7 +33,7 @@ import IOType from '../../../../tandem/js/types/IOType.js';
 import NullableIO from '../../../../tandem/js/types/NullableIO.js';
 import NumberIO from '../../../../tandem/js/types/NumberIO.js';
 import StringUnionIO from '../../../../tandem/js/types/StringUnionIO.js';
-import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import HistogramData from './HistogramData.js';
 import NuclearDecayAtom, { StartingIsotopes, StartingIsotopesValues } from './NuclearDecayAtom.js';
 

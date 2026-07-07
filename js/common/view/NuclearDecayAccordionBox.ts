@@ -10,7 +10,7 @@ import WithRequired from '../../../../phet-core/js/types/WithRequired.js';
 import Node from '../../../../scenery/js/nodes/Node.js';
 import ShredColors from '../../../../shred/js/ShredColors.js';
 import AccordionBox, { AccordionBoxOptions } from '../../../../sun/js/AccordionBox.js';
-import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 
 type SelfOptions = EmptySelfOptions;
 

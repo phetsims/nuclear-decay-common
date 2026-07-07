@@ -18,7 +18,7 @@ import Node from '../../../../scenery/js/nodes/Node.js';
 import RichText from '../../../../scenery/js/nodes/RichText.js';
 import sharedSoundPlayers from '../../../../tambo/js/sharedSoundPlayers.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
-import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import NuclearDecayAtom, { StartingIsotopes } from '../model/NuclearDecayAtom.js';
 import ArrowWithTailButton from './ArrowWithTailButton.js';

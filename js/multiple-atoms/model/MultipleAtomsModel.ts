@@ -9,7 +9,7 @@ import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.
 import { DecayType } from '../../../../shred/js/AtomInfoUtils.js';
 import { StartingIsotopes } from '../../common/model/NuclearDecayAtom.js';
 import NuclearDecayModel, { NuclearDecayModelOptions } from '../../common/model/NuclearDecayModel.js';
-import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonConstants from '../../common/NuclearDecayCommonConstants.js';
 
 type SelfOptions = EmptySelfOptions;
 

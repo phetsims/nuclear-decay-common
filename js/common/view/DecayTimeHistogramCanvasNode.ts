@@ -11,7 +11,7 @@ import { TReadOnlyProperty } from '../../../../axon/js/TReadOnlyProperty.js';
 import Bounds2 from '../../../../dot/js/Bounds2.js';
 import CanvasNode from '../../../../scenery/js/nodes/CanvasNode.js';
 import Text from '../../../../scenery/js/nodes/Text.js';
-import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import HistogramData from '../model/HistogramData.js';
 import { ISOTOPE_TO_COLOR, StartingIsotopes } from '../model/NuclearDecayAtom.js';
 import { Timescale } from '../model/NuclearDecayModel.js';

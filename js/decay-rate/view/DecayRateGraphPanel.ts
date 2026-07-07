@@ -31,7 +31,7 @@ import NuclearDecayAtom, { ISOTOPE_TO_COLOR } from '../../common/model/NuclearDe
 import { DecayPieChartNode } from '../../common/view/DecayPieChartNode.js';
 import NuclearDecayPanel, { NuclearDecayPanelOptions } from '../../common/view/NuclearDecayPanel.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
-import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonConstants from '../../common/NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import DecayRateModel from '../model/DecayRateModel.js';
 import DataProbeGrabberNode from './DataProbeGrabberNode.js';

@@ -20,7 +20,7 @@ import AccessibleSlider, { type AccessibleSliderOptions } from '../../../../sun/
 import ValueChangeSoundPlayer from '../../../../tambo/js/sound-generators/ValueChangeSoundPlayer.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
-import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import NuclearDecayModel, { Timescale } from '../model/NuclearDecayModel.js';
 import formatTimescaleStrings from './formatTimescaleStrings.js';

@@ -37,7 +37,7 @@ import AlphaParticleNode from '../../common/view/AlphaParticleNode.js';
 import DynamicNucleusNode from '../../common/view/DynamicNucleusNode.js';
 import NuclearDecayAccordionBox, { NuclearDecayAccordionBoxOptions } from '../../common/view/NuclearDecayAccordionBox.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
-import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonConstants from '../../common/NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import SingleAtomModel from '../model/SingleAtomModel.js';
 import EnergyDiagramLegendNode from './EnergyDiagramLegendNode.js';

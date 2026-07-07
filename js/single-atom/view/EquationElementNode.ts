@@ -14,7 +14,7 @@ import RichText from '../../../../scenery/js/nodes/RichText.js';
 import type TPaint from '../../../../scenery/js/util/TPaint.js';
 import AtomNameUtils from '../../../../shred/js/AtomNameUtils.js';
 import NuclearDecayAtom, { ValidIsotopes } from '../../common/model/NuclearDecayAtom.js';
-import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonConstants from '../../common/NuclearDecayCommonConstants.js';
 
 type SelfOptions = {
   fill?: TPaint;

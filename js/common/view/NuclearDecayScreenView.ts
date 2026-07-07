@@ -24,7 +24,7 @@ import SoundClip from '../../../../tambo/js/sound-generators/SoundClip.js';
 import soundManager from '../../../../tambo/js/soundManager.js';
 import phetioStateSetEmitter from '../../../../tandem/js/phetioStateSetEmitter.js';
 import decaySound_mp3 from '../../../sounds/decaySound_mp3.js';
-import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayModel from '../model/NuclearDecayModel.js';
 import Updatable from '../model/Updatable.js';
 import AlphaParticleNode from './AlphaParticleNode.js';

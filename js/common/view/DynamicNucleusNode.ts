@@ -24,7 +24,7 @@ import Color from '../../../../scenery/js/util/Color.js';
 import AtomConfig from '../../../../shred/js/model/AtomConfig.js';
 import { PARTICLE_COLORS } from '../../../../shred/js/model/Particle.js';
 import ParticleNode from '../../../../shred/js/view/ParticleNode.js';
-import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import getNucleusRadius from '../model/getNucleusRadius.js';
 import NuclearDecayAtom from '../model/NuclearDecayAtom.js';
 import Updatable from '../model/Updatable.js';

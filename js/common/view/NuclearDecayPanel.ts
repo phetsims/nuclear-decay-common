@@ -9,7 +9,7 @@ import optionize, { EmptySelfOptions } from '../../../../phet-core/js/optionize.
 import Node from '../../../../scenery/js/nodes/Node.js';
 import ShredColors from '../../../../shred/js/ShredColors.js';
 import Panel, { PanelOptions } from '../../../../sun/js/Panel.js';
-import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 
 type SelfOptions = EmptySelfOptions;
 

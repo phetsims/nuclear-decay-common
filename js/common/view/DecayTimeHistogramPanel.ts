@@ -35,7 +35,7 @@ import InfinityNode from '../../../../shred/js/view/InfinityNode.js';
 import Checkbox, { CheckboxOptions } from '../../../../sun/js/Checkbox.js';
 import Tandem from '../../../../tandem/js/Tandem.js';
 import NuclearDecayCommonColors from '../../NuclearDecayCommonColors.js';
-import NuclearDecayCommonConstants from '../../NuclearDecayCommonConstants.js';
+import NuclearDecayCommonConstants from '../NuclearDecayCommonConstants.js';
 import NuclearDecayCommonFluent from '../../NuclearDecayCommonFluent.js';
 import NuclearDecayAtom, { ISOTOPE_TO_COLOR, StartingIsotopes } from '../model/NuclearDecayAtom.js';
 import NuclearDecayModel, { Timescale } from '../model/NuclearDecayModel.js';

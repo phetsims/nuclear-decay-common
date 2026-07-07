@@ -6,13 +6,13 @@
  * @author Agustín Vallejo (PhET Interactive Simulations)
  */
 
-import Range from '../../dot/js/Range.js';
-import { clamp } from '../../dot/js/util/clamp.js';
-import { roundSymmetric } from '../../dot/js/util/roundSymmetric.js';
-import PhetFont from '../../scenery-phet/js/PhetFont.js';
-import AtomConfig from '../../shred/js/model/AtomConfig.js';
-import { CheckboxOptions } from '../../sun/js/Checkbox.js';
-import getNucleusRadius from './common/model/getNucleusRadius.js';
+import Range from '../../../dot/js/Range.js';
+import { clamp } from '../../../dot/js/util/clamp.js';
+import { roundSymmetric } from '../../../dot/js/util/roundSymmetric.js';
+import PhetFont from '../../../scenery-phet/js/PhetFont.js';
+import AtomConfig from '../../../shred/js/model/AtomConfig.js';
+import { CheckboxOptions } from '../../../sun/js/Checkbox.js';
+import getNucleusRadius from './model/getNucleusRadius.js';
 
 const EXPONENTIAL_HALF_LIFE_EXPONENT_RANGE = new Range( -3, 19 );
 const MAX_HALF_LIFE_EXPONENT = 18.5;
