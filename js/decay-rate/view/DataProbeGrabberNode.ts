@@ -57,7 +57,7 @@ export default class DataProbeGrabberNode extends AccessibleSlider( ShadedSphere
       },
       createAriaValueText: ( _formattedValue: number, value: number ) => {
         const time = ( value / graphWidth ) * MAX_TIME;
-        return toFixed( time, 2 );
+        return NuclearDecayCommonFluent.a11y.timeSeconds.format( { time: toFixed( time, 2 ) } );
       }
     }, providedOptions );
 

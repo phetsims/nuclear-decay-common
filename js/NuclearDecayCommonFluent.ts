@@ -5,7 +5,7 @@
 /* eslint-disable */
 /* @formatter:off */
 
-import { TReadOnlyProperty } from '../../axon/js/TReadOnlyProperty.js';
+import {TReadOnlyProperty} from '../../axon/js/TReadOnlyProperty.js';
 import FluentLibrary from '../../chipper/js/browser-and-node/FluentLibrary.js';
 import FluentComment from '../../chipper/js/browser/FluentComment.js';
 import FluentConstant from '../../chipper/js/browser/FluentConstant.js';
@@ -92,6 +92,7 @@ addToMapIfDefined( 'a11y_qualitative_valueLow', 'a11y.qualitative.valueLowString
 addToMapIfDefined( 'a11y_qualitative_valueMedium', 'a11y.qualitative.valueMediumStringProperty' );
 addToMapIfDefined( 'a11y_qualitative_valueHigh', 'a11y.qualitative.valueHighStringProperty' );
 addToMapIfDefined( 'a11y_scientificNotation', 'a11y.scientificNotationStringProperty' );
+addToMapIfDefined( 'a11y_timeSeconds', 'a11y.timeSecondsStringProperty' );
 addToMapIfDefined( 'a11y_signSelector', 'a11y.signSelectorStringProperty' );
 addToMapIfDefined( 'a11y_alphaDecay_screenSummary_playArea', 'a11y.alphaDecay.screenSummary.playAreaStringProperty' );
 addToMapIfDefined( 'a11y_alphaDecay_screenSummary_energyGraph', 'a11y.alphaDecay.screenSummary.energyGraphStringProperty' );
@@ -145,6 +146,7 @@ addToMapIfDefined( 'a11y_nuclearEquation_noEquation', 'a11y.nuclearEquation.noEq
 addToMapIfDefined( 'a11y_nuclearEquation_beforeDecay', 'a11y.nuclearEquation.beforeDecayStringProperty' );
 addToMapIfDefined( 'a11y_nuclearEquation_afterDecay', 'a11y.nuclearEquation.afterDecayStringProperty' );
 addToMapIfDefined( 'a11y_timeControls_accessibleHeading', 'a11y.timeControls.accessibleHeadingStringProperty' );
+addToMapIfDefined( 'a11y_timeControls_pauseContextResponse', 'a11y.timeControls.pauseContextResponseStringProperty' );
 addToMapIfDefined( 'a11y_replayDecay_accessibleName', 'a11y.replayDecay.accessibleNameStringProperty' );
 addToMapIfDefined( 'a11y_replayDecay_accessibleHelpText', 'a11y.replayDecay.accessibleHelpTextStringProperty' );
 addToMapIfDefined( 'a11y_speedControls_accessibleHelpText', 'a11y.speedControls.accessibleHelpTextStringProperty' );
@@ -323,6 +325,7 @@ const NuclearDecayCommonFluent = {
       valueHighStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_qualitative_valueHigh', _.get( NuclearDecayCommonStrings, 'a11y.qualitative.valueHighStringProperty' ) )
     },
     scientificNotation: new FluentPattern<{ exponent: FluentVariable, mantissa: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_scientificNotation', _.get( NuclearDecayCommonStrings, 'a11y.scientificNotationStringProperty' ), [{"name":"exponent"},{"name":"mantissa"}] ),
+    timeSeconds: new FluentPattern<{ time: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_timeSeconds', _.get( NuclearDecayCommonStrings, 'a11y.timeSecondsStringProperty' ), [{"name":"time"}] ),
     signSelector: new FluentPattern<{ sign: 'positive' | 'negative' | TReadOnlyProperty<'positive' | 'negative'>, value: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_signSelector', _.get( NuclearDecayCommonStrings, 'a11y.signSelectorStringProperty' ), [{"name":"sign","variants":["positive","negative"]},{"name":"value"}] ),
     alphaDecay: {
       screenSummary: {
@@ -418,7 +421,8 @@ const NuclearDecayCommonFluent = {
       afterDecay: new FluentPattern<{ daughterIsotope: FluentVariable, parentIsotope: FluentVariable }>( fluentSupport.bundleProperty, 'a11y_nuclearEquation_afterDecay', _.get( NuclearDecayCommonStrings, 'a11y.nuclearEquation.afterDecayStringProperty' ), [{"name":"daughterIsotope"},{"name":"parentIsotope"}] )
     },
     timeControls: {
-      accessibleHeadingStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_timeControls_accessibleHeading', _.get( NuclearDecayCommonStrings, 'a11y.timeControls.accessibleHeadingStringProperty' ) )
+      accessibleHeadingStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_timeControls_accessibleHeading', _.get( NuclearDecayCommonStrings, 'a11y.timeControls.accessibleHeadingStringProperty' ) ),
+      pauseContextResponseStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_timeControls_pauseContextResponse', _.get( NuclearDecayCommonStrings, 'a11y.timeControls.pauseContextResponseStringProperty' ) )
     },
     replayDecay: {
       accessibleNameStringProperty: new FluentConstant( fluentSupport.bundleProperty, 'a11y_replayDecay_accessibleName', _.get( NuclearDecayCommonStrings, 'a11y.replayDecay.accessibleNameStringProperty' ) ),

@@ -128,6 +128,9 @@ export default class SingleAndMultipleAtomsScreenView extends NuclearDecayScreen
       playPauseStepButtonOptions: {
         stepForwardButtonOptions: {
           listener: () => model.manualStep()
+        },
+        playPauseButtonOptions: {
+          accessibleContextResponseOff: NuclearDecayCommonFluent.a11y.timeControls.pauseContextResponseStringProperty
         }
       },
       speedRadioButtonGroupOptions: {

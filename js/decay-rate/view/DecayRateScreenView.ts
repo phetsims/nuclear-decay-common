@@ -78,6 +78,9 @@ export default class DecayRateScreenView extends NuclearDecayScreenView {
       playPauseStepButtonOptions: {
         stepForwardButtonOptions: {
           listener: () => model.manualStep()
+        },
+        playPauseButtonOptions: {
+          accessibleContextResponseOff: NuclearDecayCommonFluent.a11y.timeControls.pauseContextResponseStringProperty
         }
       },
       flowBoxSpacing: 10,

@@ -171,6 +171,8 @@ type StringsType = {
     };
     'scientificNotation': string;
     'scientificNotationStringProperty': LocalizedStringProperty;
+    'timeSeconds': string;
+    'timeSecondsStringProperty': LocalizedStringProperty;
     'signSelector': string;
     'signSelectorStringProperty': LocalizedStringProperty;
     'alphaDecay': {
@@ -320,6 +322,8 @@ type StringsType = {
     'timeControls': {
       'accessibleHeading': string;
       'accessibleHeadingStringProperty': LocalizedStringProperty;
+      'pauseContextResponse': string;
+      'pauseContextResponseStringProperty': LocalizedStringProperty;
     };
     'replayDecay': {
       'accessibleName': string;

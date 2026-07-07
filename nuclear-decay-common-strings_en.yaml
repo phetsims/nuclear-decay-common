@@ -79,6 +79,7 @@ a11y:
     valueMedium: Medium
     valueHigh: High
   scientificNotation: '{ $mantissa } times 10 to the { $exponent }'
+  timeSeconds: '{ $time } seconds'
   signSelector:
     select_sign:
       positive: '{ $value }'
@@ -175,6 +176,7 @@ a11y:
       { $parentIsotope } decays to { $daughterIsotope } and an alpha particle.
   timeControls:
     accessibleHeading: Time Controls
+    pauseContextResponse: 'Sim paused. Step forward for detailed exploration.'
   replayDecay:
     accessibleName: Replay Decay
     accessibleHelpText: Restart time just before last decay.
