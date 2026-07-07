@@ -227,7 +227,7 @@ export default class NuclearDecayScreenView extends ScreenView {
 
     // TODO: See https://github.com/phetsims/alpha-decay/issues/28. This uses a specific radius now, but we probably
     //       want to handle this differently once the code is more evolved, so we should revisit.
-    const atomAreaModelWidth = 2 * NuclearDecayCommonConstants.POLONIUM_RADIUS *
+    const atomAreaModelWidth = 2 * NuclearDecayCommonConstants.POLONIUM_NUCLEUS_RADIUS *
                                this.numberOfAtomsInPlayAreaWidthProperty.value;
     const scale = playAreaBounds.width / atomAreaModelWidth;
     this.modelViewTransformProperty.value = ModelViewTransform2.createSinglePointScaleInvertedYMapping(

@@ -72,27 +72,27 @@ export default class NuclearDecayCommonConstants {
   // Define the radii for several of the commonly used nuclei that appear in the Nuclear Decay sim suite. Beyond a
   // certain number of nucleons, we don't worry about a neutron here or there. For example, LEAD_RADIUS uses a
   // particular isotope of lead, but the radius is close enough for all isotopes of lead.
-  public static readonly POLONIUM_RADIUS = getNucleusRadius(
+  public static readonly POLONIUM_NUCLEUS_RADIUS = getNucleusRadius(
     NuclearDecayCommonConstants.POLONIUM_211.getMassNumber(),
     NuclearDecayCommonConstants.NUCLEON_RADIUS
   );
-  public static readonly LEAD_RADIUS = getNucleusRadius(
+  public static readonly LEAD_NUCLEUS_RADIUS = getNucleusRadius(
     NuclearDecayCommonConstants.LEAD_207.getMassNumber(),
     NuclearDecayCommonConstants.NUCLEON_RADIUS
   );
-  public static readonly CARBON_RADIUS = getNucleusRadius(
+  public static readonly CARBON_NUCLEUS_RADIUS = getNucleusRadius(
     NuclearDecayCommonConstants.CARBON_14.getMassNumber(),
     NuclearDecayCommonConstants.NUCLEON_RADIUS
   );
-  public static readonly NITROGEN_RADIUS = getNucleusRadius(
+  public static readonly NITROGEN_NUCLEUS_RADIUS = getNucleusRadius(
     NuclearDecayCommonConstants.NITROGEN_14.getMassNumber(),
     NuclearDecayCommonConstants.NUCLEON_RADIUS
   );
-  public static readonly DEUTERIUM_RADIUS = getNucleusRadius(
+  public static readonly DEUTERIUM_NUCLEUS_RADIUS = getNucleusRadius(
     NuclearDecayCommonConstants.HYDROGEN_3.getMassNumber(),
     NuclearDecayCommonConstants.NUCLEON_RADIUS
   );
-  public static readonly HELIUM_RADIUS = getNucleusRadius(
+  public static readonly HELIUM_NUCLEUS_RADIUS = getNucleusRadius(
     NuclearDecayCommonConstants.HELIUM_3.getMassNumber(),
     NuclearDecayCommonConstants.NUCLEON_RADIUS
   );

@@ -34,7 +34,7 @@ export default class MinimalAtomNode extends Circle implements Updatable {
 
     // Determine the model radius value to use. Because this particular node represents the nucleus as a circle, we use
     // a fixed value for all instances.
-    const modelRadius = NuclearDecayCommonConstants.LEAD_RADIUS;
+    const modelRadius = NuclearDecayCommonConstants.LEAD_NUCLEUS_RADIUS;
 
     super( modelViewTransformProperty.value.modelToViewDeltaX( modelRadius ), options );
 
